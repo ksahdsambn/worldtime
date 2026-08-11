@@ -1,0 +1,130 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "World clock / time zone converter / meeting scheduler"
+  },
+  "Common": {
+    "add": "Add",
+    "delete": "Delete",
+    "settings": "Settings",
+    "cancel": "Cancel",
+    "confirm": "OK"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "Search city, country or time zone…",
+    "noResults": "No results"
+  },
+  "Settings": {
+    "title": "Settings",
+    "hourFormat": "Hour format",
+    "fmt12": "12-hour",
+    "fmt24": "24-hour",
+    "fmtMixed": "Mixed (native per place)"
+  },
+  "Places": {
+    "title": "Places",
+    "empty": "No places yet. Search to add one.",
+    "setHome": "Set as home",
+    "remove": "Remove",
+    "home": "Home",
+    "utcRow": "Coordinated Universal Time",
+    "offsetFromHome": "Offset from home (positive = ahead)",
+    "dstActive": "Currently in daylight saving time",
+    "dst": "DST",
+    "yes": "yes",
+    "no": "no",
+    "nextChange": "Next change",
+    "noUpcoming": "no upcoming change",
+    "dstWarnSoon": "DST change approaching",
+    "rename": "Rename",
+    "renamePrompt": "Custom display name",
+    "tags": "Tags",
+    "tagsPrompt": "Tags (comma separated)",
+    "all": "All",
+    "dragHandle": "Drag to reorder",
+    "confirmRemoveHome": "Remove the home place?",
+    "sunNone": "none"
+  },
+  "Selection": {
+    "duration": "Duration",
+    "clear": "Clear selection",
+    "hour": "hour",
+    "minute": "minute",
+    "hours": "hours",
+    "minutes": "minutes"
+  },
+  "Export": {
+    "export": "Export",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google Calendar",
+    "email": "Email link",
+    "eventPage": "Public event page",
+    "copySummary": "Copy time summary",
+    "shareLink": "Copy share link",
+    "copied": "Copied"
+  },
+  "Event": {
+    "title": "Public event",
+    "description": "The corresponding local times for this event:",
+    "openOriginal": "Open in WorldTime"
+  },
+  "Heatmap": {
+    "green": "All working hours",
+    "orange": "Some contactable",
+    "red": "Someone resting",
+    "worstStatus": "worst status wins"
+  },
+  "Now": {
+    "backToNow": "Back to now"
+  },
+  "Cursor": {
+    "cursor": "Cursor",
+    "enable": "Enable cursor",
+    "move": "move",
+    "resize": "resize edge"
+  },
+  "DateJump": {
+    "jumpTo": "Jump to",
+    "today": "Today"
+  },
+  "Theme": {
+    "toggle": "Toggle light/dark theme"
+  },
+  "Gcal": {
+    "label": "Google Calendar",
+    "connect": "Connect & overlay",
+    "connected": "Connected (click to disconnect)"
+  },
+  "PrintExport": {
+    "print": "Print",
+    "image": "Export image"
+  },
+  "Grid": {
+    "empty": "Add a place to view the time grid."
+  },
+  "Landing": {
+    "title": "Time Zone Converter",
+    "description": "Time difference and comparison table",
+    "cityPair": "City pair",
+    "tzPair": "Time zone pair",
+    "timeComparison": "Time comparison",
+    "isAhead": "is ahead",
+    "lags": "lags",
+    "vs": "vs",
+    "aheadNote": "is ahead (later)",
+    "behindNote": "is behind (earlier)",
+    "bNote": "{b} is {dir} relative to {a}.",
+    "currentOffsetNote": "(current offset; may differ on DST transition days)",
+    "comparisonNote": "Typical hours comparison (fixed offset).",
+    "updatedAt": "Generated at {time} (refreshed hourly)."
+  },
+  "Widget": {
+    "eventTitle": "WorldTime Event Widget",
+    "worldClockTitle": "WorldTime World Clock Widget"
+  }
+}

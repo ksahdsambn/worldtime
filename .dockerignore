@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+npm-debug.log*
+Dockerfile
+.dockerignore
+markdown
+*.md
+.env*
+tests
+scripts
+tsconfig.tsbuildinfo
+.playwright-cli
+vitest.config.ts
+vitest.config.mts
+coverage

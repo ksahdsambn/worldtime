@@ -1,0 +1,130 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "世界时钟 / 时区转换 / 会议排期工具"
+  },
+  "Common": {
+    "add": "添加",
+    "delete": "删除",
+    "settings": "设置",
+    "cancel": "取消",
+    "confirm": "确定"
+  },
+  "LocaleSwitcher": {
+    "label": "语言",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "搜索城市、国家或时区…",
+    "noResults": "无匹配结果"
+  },
+  "Settings": {
+    "title": "设置",
+    "hourFormat": "小时格式",
+    "fmt12": "12 小时制",
+    "fmt24": "24 小时制",
+    "fmtMixed": "混合（各地原生）"
+  },
+  "Places": {
+    "title": "地点",
+    "empty": "尚未添加地点，请搜索添加。",
+    "setHome": "设为主地点",
+    "remove": "删除",
+    "home": "主地点",
+    "utcRow": "协调世界时",
+    "offsetFromHome": "与主地点的时差（正为领先）",
+    "dstActive": "当前处于夏令时",
+    "dst": "夏令时",
+    "yes": "是",
+    "no": "否",
+    "nextChange": "下次切换",
+    "noUpcoming": "近期无切换",
+    "dstWarnSoon": "夏令时切换临近",
+    "rename": "重命名",
+    "renamePrompt": "自定义显示名",
+    "tags": "标签",
+    "tagsPrompt": "标签（逗号分隔）",
+    "all": "全部",
+    "dragHandle": "拖拽排序",
+    "confirmRemoveHome": "确认删除主地点？",
+    "sunNone": "无"
+  },
+  "Selection": {
+    "duration": "时长",
+    "clear": "清除选区",
+    "hour": "小时",
+    "minute": "分钟",
+    "hours": "小时",
+    "minutes": "分钟"
+  },
+  "Export": {
+    "export": "导出",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google 日历",
+    "email": "邮件链接",
+    "eventPage": "公开事件页",
+    "copySummary": "复制时间摘要",
+    "shareLink": "复制分享链接",
+    "copied": "已复制"
+  },
+  "Event": {
+    "title": "公开事件",
+    "description": "以下为该事件在各地对应时间。",
+    "openOriginal": "在 WorldTime 中打开"
+  },
+  "Heatmap": {
+    "green": "全员工作时段",
+    "orange": "有人可联系",
+    "red": "有人休息",
+    "worstStatus": "取最差状态"
+  },
+  "Now": {
+    "backToNow": "回到现在"
+  },
+  "Cursor": {
+    "cursor": "游标",
+    "enable": "启用游标",
+    "move": "移动",
+    "resize": "微调选区边缘"
+  },
+  "DateJump": {
+    "jumpTo": "跳转日期",
+    "today": "今天"
+  },
+  "Theme": {
+    "toggle": "切换明暗主题"
+  },
+  "Gcal": {
+    "label": "Google 日历",
+    "connect": "连接并叠加",
+    "connected": "已连接（点击断开）"
+  },
+  "PrintExport": {
+    "print": "打印",
+    "image": "导出图片"
+  },
+  "Grid": {
+    "empty": "请先添加地点以查看时间网格。"
+  },
+  "Landing": {
+    "title": "时区转换",
+    "description": "两地时差与时段对照表",
+    "cityPair": "城市对",
+    "tzPair": "时区对",
+    "timeComparison": "时间对照表",
+    "isAhead": "领先",
+    "lags": "落后",
+    "vs": "对比",
+    "aheadNote": "时间更晚（领先）",
+    "behindNote": "时间更早（落后）",
+    "bNote": "{b} 相对 {a} {dir}。",
+    "currentOffsetNote": "（当前偏移，夏令时切换日可能有变化）",
+    "comparisonNote": "以下为固定时差的典型时段对照。",
+    "updatedAt": "数据生成于 {time}（每小时刷新）。"
+  },
+  "Widget": {
+    "eventTitle": "WorldTime 事件小组件",
+    "worldClockTitle": "WorldTime 世界时钟小组件"
+  }
+}

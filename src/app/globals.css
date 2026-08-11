@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 深色主题（6.8）—— 通过 .dark 类切换，覆盖常用语义颜色 */
+.dark {
+  background-color: #0f172a;
+  color: #e5e7eb;
+}
+.dark .bg-white {
+  background-color: #1e293b !important;
+  color: #e5e7eb;
+}
+.dark .text-black {
+  color: #f1f5f9 !important;
+}
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: #cbd5e1 !important;
+}
+.dark .text-gray-400 {
+  color: #94a3b8 !important;
+}
+.dark .border,
+.dark .border-b,
+.dark .border-l,
+.dark .border-r,
+.dark .border-t {
+  border-color: #334155 !important;
+}
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: #334155 !important;
+}
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: #1e293b !important;
+  color: #e5e7eb;
+}
+.dark .hover\:bg-gray-100:hover {
+  background-color: #334155 !important;
+}
+.dark .hover\:bg-blue-50:hover {
+  background-color: #1e3a5f !important;
+}
+.dark .bg-blue-50 {
+  background-color: #1e3a5f !important;
+}
+.dark .bg-blue-100 {
+  background-color: #1e40af !important;
+}
+
+/* 打印样式（6.9）：隐藏不需要的控件，确保网格、地点、选区信息完整可读 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  main {
+    overflow: visible !important;
+  }
+}
