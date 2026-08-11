@@ -90,7 +90,8 @@
     "cursor": "游標",
     "enable": "啟用游標",
     "move": "移動",
-    "resize": "調整選取邊緣"
+    "resize": "調整選取邊緣",
+    "disable": "關閉游標"
   },
   "DateJump": {
     "jumpTo": "跳至",
@@ -129,6 +130,9 @@
   },
   "Widget": {
     "eventTitle": "WorldTime 活動小工具",
-    "worldClockTitle": "WorldTime 世界時鐘小工具"
+    "worldClockTitle": "WorldTime 世界時鐘小工具",
+    "worldClock": "世界時鐘",
+    "worldClockEmpty": "?cities=...",
+    "eventEmpty": "?code=..."
   }
 }

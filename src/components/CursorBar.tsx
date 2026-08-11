@@ -87,6 +87,15 @@ export default function CursorBar() {
           <span className="text-gray-400">
             · ←/→ {t("move")} · Shift+←/→ {t("resize")}
           </span>
+          <button
+            type="button"
+            onClick={() => setCursor(null)}
+            data-testid="disable-cursor"
+            className="rounded border px-2 py-0.5 hover:bg-gray-100"
+            title={t("disable")}
+          >
+            {t("disable")}
+          </button>
         </>
       )}
     </div>

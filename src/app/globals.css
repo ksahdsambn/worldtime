@@ -59,6 +59,27 @@ body {
   background-color: #1e40af !important;
 }
 
+/* 深色模式热力图配色（审查报告 P2）：浅色热力底（bg-green-200/60 等）叠加在
+   深色背景上刺眼且与主题割裂；此处改为深色半透明底，文字保持高对比。
+   覆盖 heatBg() 输出的三类背景 + TimeGrid 选区/周末单元格。 */
+.dark .bg-green-200\/60 {
+  background-color: rgba(34, 197, 94, 0.25) !important;
+}
+.dark .bg-orange-200\/60 {
+  background-color: rgba(249, 115, 22, 0.25) !important;
+}
+.dark .bg-red-200\/60 {
+  background-color: rgba(239, 68, 68, 0.25) !important;
+}
+.dark .bg-blue-300 {
+  background-color: #1e40af !important;
+  color: #dbeafe !important;
+}
+.dark .bg-blue-300.text-blue-900,
+.dark .bg-blue-300 .text-blue-900 {
+  color: #dbeafe !important;
+}
+
 /* 打印样式（6.9）：隐藏不需要的控件，确保网格、地点、选区信息完整可读 */
 @media print {
   .no-print {

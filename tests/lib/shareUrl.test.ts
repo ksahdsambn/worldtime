@@ -80,4 +80,30 @@ describe("shareUrl 编解码 round-trip", () => {
     const { cursorMs } = decodeState(q);
     expect(cursorMs).toBeNull();
   });
+
+  /**
+   * 审查报告 P1：decodeState 必须拒绝反向选区（startMs > endMs）。
+   * 旧实现只校验 \d+-\d+ 格式，不校验大小关系，导致下游显示负时长 / 生成
+   * 无效日历事件（DTEND 早于 DTSTART）。
+   */
+  it("反向选区（startMs > endMs）被拒绝，selection 为 null", () => {
+    expect(decodeState("s=2000-1000").selection).toBeNull();
+  });
+
+  it("正向选区正常解码", () => {
+    expect(decodeState("s=1000-2000").selection).toEqual({
+      startMs: 1000,
+      endMs: 2000,
+    });
+  });
+
+  it("相等起止被拒绝（起必须严格小于止）", () => {
+    expect(decodeState("s=1000-1000").selection).toBeNull();
+  });
+
+  it("差值超过 7 天上限被拒绝（防御极端值）", () => {
+    const week = 7 * 24 * 3600_000;
+    expect(decodeState(`s=1000-${1000 + week}`).selection).not.toBeNull();
+    expect(decodeState(`s=1000-${1000 + week + 1}`).selection).toBeNull();
+  });
 });

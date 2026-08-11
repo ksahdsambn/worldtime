@@ -90,7 +90,8 @@
     "cursor": "Cursor",
     "enable": "Cursor aktivieren",
     "move": "verschieben",
-    "resize": "Rand anpassen"
+    "resize": "Rand anpassen",
+    "disable": "Cursor deaktivieren"
   },
   "DateJump": {
     "jumpTo": "Springen zu",
@@ -129,6 +130,9 @@
   },
   "Widget": {
     "eventTitle": "WorldTime Veranstaltungs-Widget",
-    "worldClockTitle": "WorldTime Weltuhr-Widget"
+    "worldClockTitle": "WorldTime Weltuhr-Widget",
+    "worldClock": "Weltuhr",
+    "worldClockEmpty": "?cities=...",
+    "eventEmpty": "?code=..."
   }
 }

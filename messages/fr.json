@@ -90,7 +90,8 @@
     "cursor": "Curseur",
     "enable": "Activer le curseur",
     "move": "déplacer",
-    "resize": "ajuster le bord"
+    "resize": "ajuster le bord",
+    "disable": "Désactiver le curseur"
   },
   "DateJump": {
     "jumpTo": "Aller à",
@@ -129,6 +130,9 @@
   },
   "Widget": {
     "eventTitle": "Widget d'événement WorldTime",
-    "worldClockTitle": "Widget d'horloge mondiale WorldTime"
+    "worldClockTitle": "Widget d'horloge mondiale WorldTime",
+    "worldClock": "Horloge mondiale",
+    "worldClockEmpty": "?cities=...",
+    "eventEmpty": "?code=..."
   }
 }

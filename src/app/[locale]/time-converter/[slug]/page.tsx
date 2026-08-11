@@ -1,5 +1,4 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { useTranslations } from "next-intl";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { DateTime } from "luxon";
@@ -8,7 +7,7 @@ import { parseSlug } from "@/lib/landingSlug";
 import { routing } from "@/i18n/routing";
 
 type Props = {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 /**
@@ -67,10 +66,11 @@ export const revalidate = 3600;
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string; slug: string };
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: "Landing" });
-  const info = parseSlug(params.slug);
+  const { locale, slug } = await params;
+  const t = await getTranslations({ locale, namespace: "Landing" });
+  const info = parseSlug(slug);
   const title = info
     ? `${info.aLabel} ↔ ${info.bLabel} | ${t("title")}`
     : t("title");
@@ -82,10 +82,12 @@ export async function generateMetadata({
   };
 }
 
-export default function LandingPage({ params }: Props) {
-  setRequestLocale(params.locale);
-  const t = useTranslations("Landing");
-  const info = parseSlug(params.slug);
+export default async function LandingPage({ params }: Props) {
+  const { locale, slug } = await params;
+  setRequestLocale(locale);
+  // async server component 中不能用 hook，用 getTranslations 替代 useTranslations
+  const t = await getTranslations({ locale, namespace: "Landing" });
+  const info = parseSlug(slug);
   if (!info) notFound();
 
   // 服务端"当前"时刻用于对照表（固定采样若干小时）。

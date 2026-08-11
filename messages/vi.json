@@ -90,7 +90,8 @@
     "cursor": "Con trỏ",
     "enable": "Bật con trỏ",
     "move": "di chuyển",
-    "resize": "chỉnh biên"
+    "resize": "chỉnh biên",
+    "disable": "Tắt con trỏ"
   },
   "DateJump": {
     "jumpTo": "Chuyển đến",
@@ -129,6 +130,9 @@
   },
   "Widget": {
     "eventTitle": "Tiện ích sự kiện WorldTime",
-    "worldClockTitle": "Tiện ích đồng hồ thế giới WorldTime"
+    "worldClockTitle": "Tiện ích đồng hồ thế giới WorldTime",
+    "worldClock": "Đồng hồ thế giới",
+    "worldClockEmpty": "?cities=...",
+    "eventEmpty": "?code=..."
   }
 }

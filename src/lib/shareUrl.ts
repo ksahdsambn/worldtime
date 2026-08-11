@@ -84,10 +84,14 @@ export function decodeState(
   if (s) {
     const m = s.match(/^(\d+)-(\d+)$/);
     if (m) {
-      result.selection = {
-        startMs: Number(m[1]),
-        endMs: Number(m[2]),
-      };
+      const a = Number(m[1]);
+      const b = Number(m[2]);
+      // 校验：起 < 止（拒绝反向选区，避免下游显示负时长 / 生成无效日历事件）；
+      // 且差值不超过 7 天（防御极端值，如 s=99999999999999999999-1）。
+      const SELECTION_MAX_MS = 7 * 24 * 3600_000;
+      if (a < b && b - a <= SELECTION_MAX_MS) {
+        result.selection = { startMs: a, endMs: b };
+      }
     }
   }
 

@@ -1,5 +1,4 @@
-import { useTranslations } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
+import { setRequestLocale, getTranslations } from "next-intl/server";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import CitySearch from "@/components/CitySearch";
 import PlacesPanel from "@/components/PlacesPanel";
@@ -17,13 +16,15 @@ import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 
 type Props = {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
-export default function Home({ params }: Props) {
+export default async function Home({ params }: Props) {
+  const { locale } = await params;
   // 启用静态渲染
-  setRequestLocale(params.locale);
-  const t = useTranslations("App");
+  setRequestLocale(locale);
+  // async server component 中不能用 hook，用 getTranslations 替代 useTranslations
+  const t = await getTranslations({ locale, namespace: "App" });
 
   return (
     <div className="flex min-h-screen flex-col">

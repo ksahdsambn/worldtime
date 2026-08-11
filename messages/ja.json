@@ -90,7 +90,8 @@
     "cursor": "カーソル",
     "enable": "カーソルを有効化",
     "move": "移動",
-    "resize": "端を調整"
+    "resize": "端を調整",
+    "disable": "カーソルを無効化"
   },
   "DateJump": {
     "jumpTo": "移動",
@@ -129,6 +130,9 @@
   },
   "Widget": {
     "eventTitle": "WorldTime イベントウィジェット",
-    "worldClockTitle": "WorldTime 世界時計ウィジェット"
+    "worldClockTitle": "WorldTime 世界時計ウィジェット",
+    "worldClock": "世界時計",
+    "worldClockEmpty": "?cities=...",
+    "eventEmpty": "?code=..."
   }
 }

@@ -72,6 +72,23 @@ describe("columnColor 配色规则", () => {
     const p = { ...PLACES.beijing(), countryCode: "XX" };
     expect(columnColor([p], ms, DEFAULT_DAY_PERIODS)).toBe("green");
   });
+
+  /**
+   * 审查报告 P2：所有地点时区非法时 columnColor 应返回 null（不渲染热力），
+   * 而非旧实现的「worst 保持初值 0 → green」误导用户为全员工作时段。
+   */
+  it("所有地点时区非法时返回 null（而非 green）", () => {
+    const ms = DateTime.fromISO("2026-07-15T12:00:00Z").toMillis();
+    const invalid = { ...PLACES.beijing(), timeZone: "Foo/Bar" };
+    expect(columnColor([invalid], ms, DEFAULT_DAY_PERIODS)).toBeNull();
+  });
+
+  it("多地点中仅部分时区非法：合法地点仍参与判定", () => {
+    // 一个非法 + 一个合法（北京本地 12:00 工作）→ 应为 green（合法地点决定）
+    const ms = DateTime.fromISO("2026-07-15T12:00:00", { zone: "Asia/Shanghai" }).toMillis();
+    const invalid = { ...PLACES.newYork(), timeZone: "Invalid/Zone" };
+    expect(columnColor([invalid, PLACES.beijing()], ms, DEFAULT_DAY_PERIODS)).toBe("green");
+  });
 });
 
 describe("heatLabel", () => {

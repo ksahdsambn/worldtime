@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
+import { useTranslations } from "next-intl";
 import { CITY_BY_ID } from "@/data/cities";
 
 /**
@@ -12,6 +13,7 @@ import { CITY_BY_ID } from "@/data/cities";
  * - hours：12 | 24
  */
 export default function WorldClockWidget() {
+  const t = useTranslations("Widget");
   const [now, setNow] = useState<number | null>(null);
   const [params, setParams] = useState<{ cities: string; theme: string; hours: string }>({
     cities: "",
@@ -48,9 +50,9 @@ export default function WorldClockWidget() {
       className={`rounded-lg border p-4 ${dark ? "bg-slate-800 text-slate-100" : "bg-white text-gray-900"}`}
       style={{ minWidth: 200 }}
     >
-      <h2 className="mb-2 text-sm font-bold">World Clock</h2>
+      <h2 className="mb-2 text-sm font-bold">{t("worldClock")}</h2>
       <ul className="space-y-1 text-sm">
-        {cities.length === 0 && <li className="text-gray-500">?cities=...</li>}
+        {cities.length === 0 && <li className="text-gray-500">{t("worldClockEmpty")}</li>}
         {cities.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
             <span>{c.flag}</span>

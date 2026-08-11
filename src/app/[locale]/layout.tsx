@@ -13,23 +13,24 @@ export function generateStaticParams() {
 
 type Props = {
   children: React.ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 };
 
 export async function generateMetadata({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: "App" });
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "App" });
   return {
     title: t("title"),
     description: t("tagline"),
   };
 }
 
-export default function LocaleLayout({ children, params }: Props) {
-  const { locale } = params;
+export default async function LocaleLayout({ children, params }: Props) {
+  const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }

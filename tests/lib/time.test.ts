@@ -9,6 +9,7 @@ import {
   isDaytime,
   prefers12Hour,
   formatClock,
+  nextDSTChange,
 } from "@/lib/time";
 import { DEFAULT_DAY_PERIODS } from "@/store/useWorldTimeStore";
 
@@ -135,5 +136,59 @@ describe("formatClock", () => {
   it("mixed：美国用 12 小时制", () => {
     const usMs = DateTime.fromISO("2026-06-15T14:30:00", { zone: "America/New_York" }).toMillis();
     expect(formatClock("America/New_York", usMs, "mixed", "US")).toBe("2:30 PM");
+  });
+});
+
+/**
+ * nextDSTChange 测试（审查报告 P3 验证建议）。
+ * 覆盖北半球（NY）、南半球（Sydney），以及多个起始月份与切换日当天。
+ */
+describe("nextDSTChange", () => {
+  // NY 2026 春进：03-08（02:00→03:00），秋退：11-01（02:00→01:00）
+  it("NY 从 1 月中探测：下次春进 = 2026-03-08", () => {
+    const from = DateTime.fromISO("2026-01-15T12:00:00", { zone: "America/New_York" }).toMillis();
+    const res = nextDSTChange("America/New_York", from);
+    expect(res).not.toBeNull();
+    expect(DateTime.fromMillis(res!, { zone: "America/New_York" }).toFormat("yyyy-MM-dd")).toBe("2026-03-08");
+  });
+
+  it("NY 从 7 月中探测：下次秋退 = 2026-11-01", () => {
+    const from = DateTime.fromISO("2026-07-15T12:00:00", { zone: "America/New_York" }).toMillis();
+    const res = nextDSTChange("America/New_York", from);
+    expect(res).not.toBeNull();
+    expect(DateTime.fromMillis(res!, { zone: "America/New_York" }).toFormat("yyyy-MM-dd")).toBe("2026-11-01");
+  });
+
+  it("NY 从 3 月春进日前探测：仍指向 03-08", () => {
+    const from = DateTime.fromISO("2026-03-01T12:00:00", { zone: "America/New_York" }).toMillis();
+    const res = nextDSTChange("America/New_York", from);
+    expect(DateTime.fromMillis(res!, { zone: "America/New_York" }).toFormat("yyyy-MM-dd")).toBe("2026-03-08");
+  });
+
+  // Sydney 2026 春进（南半球）：10-04（02:00→03:00），秋退：04-05（03:00→02:00）
+  it("Sydney 从 1 月探测：下次秋退 = 2026-04-05", () => {
+    const from = DateTime.fromISO("2026-01-15T12:00:00", { zone: "Australia/Sydney" }).toMillis();
+    const res = nextDSTChange("Australia/Sydney", from);
+    expect(res).not.toBeNull();
+    expect(DateTime.fromMillis(res!, { zone: "Australia/Sydney" }).toFormat("yyyy-MM-dd")).toBe("2026-04-05");
+  });
+
+  it("Sydney 从 7 月探测：下次春进 = 2026-10-04", () => {
+    const from = DateTime.fromISO("2026-07-15T12:00:00", { zone: "Australia/Sydney" }).toMillis();
+    const res = nextDSTChange("Australia/Sydney", from);
+    expect(res).not.toBeNull();
+    expect(DateTime.fromMillis(res!, { zone: "Australia/Sydney" }).toFormat("yyyy-MM-dd")).toBe("2026-10-04");
+  });
+
+  it("北京（无 DST）：一年内返回 null", () => {
+    const from = DateTime.fromISO("2026-06-15T12:00:00", { zone: "Asia/Shanghai" }).toMillis();
+    expect(nextDSTChange("Asia/Shanghai", from)).toBeNull();
+  });
+
+  it("NY 从 10 月探测：下次秋退 = 2026-11-01（跨月逼近）", () => {
+    const from = DateTime.fromISO("2026-10-15T12:00:00", { zone: "America/New_York" }).toMillis();
+    const res = nextDSTChange("America/New_York", from);
+    expect(res).not.toBeNull();
+    expect(DateTime.fromMillis(res!, { zone: "America/New_York" }).toFormat("yyyy-MM-dd")).toBe("2026-11-01");
   });
 });

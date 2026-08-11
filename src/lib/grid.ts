@@ -27,10 +27,18 @@ export interface GridColumn {
  * @param days 天数（默认 7）
  * @returns 列数组，按时间升序
  *
- * 注意：必须保证每列的 ms（epoch）唯一。若按「日 × 小时」双重循环用
- * `plus({days:d, hours:h})`，在 DST 春进日（本地 02:00→03:00 被跳过）会出现
- * 该日 h=23 与次日 h=0 落到同一 epoch，导致 React key 重复、热力图色错位。
- * 故改为从单一起点逐小时累加，并按 ms 去重，确保每列唯一。
+ * 算法（按自然日生成，修复 DST 末尾日截断问题）：
+ * 不以固定 `days*24` 为循环上界（那样秋退日 25 小时会把末尾日的 23:00 推出窗口），
+ * 而是逐日 `startOf("day").plus({days:d})` 取该日午夜，再在该日内逐小时
+ * `plus({hours:1})` 推进，直到跨入次日午夜即停。这样：
+ * - 春进日（02:00→03:00 跳过）自动产出 23 列；
+ * - 秋退日（01:00 出现两次、offset 不同）自动产出 25 列（Luxon plus 在回退
+ *   瞬间产生与首个 01:00 不同 epoch 的第二段，无需特殊处理）；
+ * - 普通日 24 列；
+ * - 每个自然日都完整覆盖 00:00~23:00，末尾日不会被截断。
+ *
+ * 每列 ms（epoch）天然唯一：秋退日两段 01:00 的 offset 不同故 epoch 不同，
+ * 其余每日本地小时递增 epoch 也不同。dayIndex 直接取自然日序号 d，无歧义。
  */
 export function buildColumns(
   homeZone: string,
@@ -42,23 +50,22 @@ export function buildColumns(
   const startLocal = DateTime.fromMillis(startDateMs, { zone: homeZone }).startOf(
     "day",
   );
-  const totalHours = days * 24;
-  // dayIndex 按该列本地日期相对起始日的差计算，而非循环计数器，
-  // 以正确反映 DST 推移导致的「该日实际跨入的本地日期」。
-  const seenMs = new Set<number>();
-  for (let i = 0; i < totalHours; i++) {
-    const dt = startLocal.plus({ hours: i });
-    const ms = dt.toMillis();
-    // 去重（理论上不应重复，防御 DST 边界）
-    if (seenMs.has(ms)) continue;
-    seenMs.add(ms);
-    columns.push({
-      ms,
-      homeHour: dt.hour,
-      dayIndex: Math.floor(
-        dt.diff(startLocal.startOf("day"), "days").days,
-      ),
-    });
+  for (let d = 0; d < days; d++) {
+    const dayStart = startLocal.plus({ days: d }).startOf("day");
+    const dayIso = dayStart.toISODate();
+    let dt = dayStart;
+    // 在该自然日内逐小时推进，直到下一小时跨入次日
+    while (true) {
+      columns.push({
+        ms: dt.toMillis(),
+        homeHour: dt.hour,
+        dayIndex: d,
+      });
+      const nextHour = dt.plus({ hours: 1 });
+      // 用 ISO 日期字符串判断是否跨入次日，避免月份边界时 .day 比较歧义
+      if (nextHour.startOf("day").toISODate() !== dayIso) break;
+      dt = nextHour;
+    }
   }
   return columns;
 }

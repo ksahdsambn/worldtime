@@ -17,8 +17,25 @@ import type { PlaceItem, DayPeriods, HourFormat } from "@/store/useWorldTimeStor
 
 const KEY = "worldtime:v1";
 
+/**
+ * 持久化结构。
+ * - places：每项含 id + 用户可变字段（customName / tags）。审查报告 P2 修复：
+ *   旧版仅存 placeIds，刷新后 customName / tags 全部丢失。现完整保存用户字段，
+ *   恢复时与 CITY_BY_ID 基础数据合并。
+ * - 兼容旧格式：若读取到的数据仍是 { placeIds: string[] }（无 places 字段），
+ *   则回退到旧的「仅 id」恢复路径（customName/tags 不可恢复，符合旧行为）。
+ */
+interface PersistPlace {
+  id: string;
+  customName?: string;
+  tags?: string[];
+}
+
 interface PersistShape {
-  placeIds: string[];
+  /** 用户可变地点数据（新版）。与 placeIds 二选一存在。 */
+  places?: PersistPlace[];
+  /** 旧版仅存 id 列表（向后兼容读取）。 */
+  placeIds?: string[];
   homeId: string | null;
   hourFormat: HourFormat;
   dayPeriods: DayPeriods;
@@ -59,14 +76,33 @@ export function useLocalPersist() {
       const data = JSON.parse(raw) as PersistShape;
 
       // 还原 places：仅当 URL 未带 p 参数
-      if (!hasUrlPlaces && Array.isArray(data.placeIds) && data.placeIds.length > 0) {
-        const restoredPlaces: PlaceItem[] = [];
-        for (const id of data.placeIds) {
-          const city = CITY_BY_ID[id];
-          if (city) restoredPlaces.push({ ...city, tags: [] });
-        }
-        if (restoredPlaces.length > 0) {
-          setPlaces(restoredPlaces, data.homeId ?? restoredPlaces[0].id);
+      if (!hasUrlPlaces) {
+        // 优先用新版完整字段恢复（customName / tags）；回退旧版仅 id 列表
+        const persistPlaces = Array.isArray(data.places) ? data.places : null;
+        const oldPlaceIds = Array.isArray(data.placeIds) ? data.placeIds : null;
+        const source: PersistPlace[] | string[] | null = persistPlaces ?? oldPlaceIds;
+        if (source && source.length > 0) {
+          const restoredPlaces: PlaceItem[] = [];
+          for (const item of source) {
+            if (typeof item === "string") {
+              // 旧格式：仅 id
+              const city = CITY_BY_ID[item];
+              if (city) restoredPlaces.push({ ...city, tags: [] });
+            } else {
+              // 新格式：id + 用户字段，与城市基础数据合并
+              const city = CITY_BY_ID[item.id];
+              if (city) {
+                restoredPlaces.push({
+                  ...city,
+                  customName: item.customName,
+                  tags: Array.isArray(item.tags) ? item.tags : [],
+                });
+              }
+            }
+          }
+          if (restoredPlaces.length > 0) {
+            setPlaces(restoredPlaces, data.homeId ?? restoredPlaces[0].id);
+          }
         }
       }
       // hourFormat / dayPeriods 始终从本地恢复（URL 不编码这些）
@@ -96,7 +132,12 @@ export function useLocalPersist() {
     if (!restored.current) return;
     const snap = useWorldTimeStore.getState();
     const payload: PersistShape = {
-      placeIds: snap.places.map((p) => p.id),
+      // 完整保存用户可变字段（customName / tags），修复刷新丢失问题
+      places: snap.places.map((p) => ({
+        id: p.id,
+        ...(p.customName != null ? { customName: p.customName } : {}),
+        tags: p.tags,
+      })),
       homeId: snap.homeId,
       hourFormat: snap.hourFormat,
       dayPeriods: snap.dayPeriods,

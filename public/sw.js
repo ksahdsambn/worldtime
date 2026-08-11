@@ -113,24 +113,33 @@ self.addEventListener("fetch", (event) => {
 
   // 导航请求：network-first（带超时），超时或离线时回退到缓存的 shell 页面
   if (req.mode === "navigate") {
+    // 隐私修复（审查报告 P2）：缓存键剥离 query string，避免带 p=/s=/c= 的
+    // 分享 URL 把地点列表 / 选区 / 游标持久化进 SW 缓存（跨会话留存、共用设备泄漏）。
+    // 离线回放同样按裸路径匹配，保证重开干净外壳。
+    const bareUrl = (() => {
+      const u = new URL(req.url);
+      u.search = "";
+      return u.toString();
+    })();
+
     event.respondWith(
       (async () => {
         try {
           const res = await fetchWithTimeout(req, NAV_TIMEOUT_MS);
-          // 仅缓存成功的最终页面（过滤掉鉴权重定向等）
+          // 仅缓存成功的最终页面（过滤掉鉴权重定向等）；以裸 URL 作为缓存键
           if (res.ok) {
             const copy = res.clone();
             caches
               .open(CACHE)
-              .then((c) => c.put(req, copy))
+              .then((c) => c.put(bareUrl, copy))
               .catch(() => undefined);
           }
           return res;
         } catch {
-          // 离线或超时：精确匹配本 URL；未命中则按 locale 回退到 shell 页面；
+          // 离线或超时：按裸路径匹配；未命中则按 locale 回退到 shell 页面；
           // 仍无命中时返回兜底 shell（取任一已缓存的 shell）。
-          const exact = await caches.match(req);
-          if (exact) return exact;
+          const cached = await caches.match(bareUrl);
+          if (cached) return cached;
           const locale = url.pathname.startsWith("/en") ? "/en" : "/zh";
           const shell = (await caches.match(locale)) || (await caches.match("/zh"));
           if (shell) return shell;

@@ -90,7 +90,8 @@
     "cursor": "Курсор",
     "enable": "Включить курсор",
     "move": "переместить",
-    "resize": "край выделения"
+    "resize": "край выделения",
+    "disable": "Отключить курсор"
   },
   "DateJump": {
     "jumpTo": "Перейти к",
@@ -129,6 +130,9 @@
   },
   "Widget": {
     "eventTitle": "Виджет событий WorldTime",
-    "worldClockTitle": "Виджет мировых часов WorldTime"
+    "worldClockTitle": "Виджет мировых часов WorldTime",
+    "worldClock": "Мировые часы",
+    "worldClockEmpty": "?cities=...",
+    "eventEmpty": "?code=..."
   }
 }

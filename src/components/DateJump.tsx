@@ -41,6 +41,10 @@ export default function DateJump() {
     setViewStartDate(null);
   }
 
+  // 无地点时禁用日期选择器（审查报告 P3）：原实现输入框仍可交互但 onChange 静默
+  // 丢弃输入，用户无反馈。现禁用并加 aria-disabled。
+  const disabled = !home;
+
   return (
     <label className="flex items-center gap-1 text-xs text-gray-600">
       <span>{t("jumpTo")}：</span>
@@ -48,8 +52,10 @@ export default function DateJump() {
         type="date"
         value={value}
         onChange={onChange}
+        disabled={disabled}
+        aria-disabled={disabled}
         data-testid="date-jump"
-        className="border rounded px-1 py-0.5 text-xs"
+        className="border rounded px-1 py-0.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
       />
       <button
         type="button"

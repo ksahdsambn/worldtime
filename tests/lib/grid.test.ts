@@ -58,7 +58,7 @@ function headerGroups(columns: ReturnType<typeof buildColumns>): Array<{ dayInde
 }
 
 describe("buildColumns DST 表头对齐", () => {
-  it("春进日作起始：表头总跨列 = 表体列数；春进日组为 23 列", () => {
+  it("春进日作起始：表头总跨列 = 表体列数；春进日组为 23 列，恰好 7 个自然日", () => {
     // 2026-03-08 为 NY 春进日（本地 02:00→03:00）
     const start = DateTime.fromISO("2026-03-08", { zone: "America/New_York" }).startOf("day").toMillis();
     const cols = buildColumns("America/New_York", start, 7);
@@ -68,21 +68,26 @@ describe("buildColumns DST 表头对齐", () => {
     // 春进日（dayIndex 0）只有 23 个本地小时
     const day0 = groups.find((g) => g.dayIndex === 0)!;
     expect(day0.count).toBe(23);
+    // 修复后：每个自然日完整覆盖，共 7 个 dayIndex（0..6），末尾日 24 列
+    expect(groups.map((g) => g.dayIndex)).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    expect(groups[groups.length - 1].count).toBe(24);
   });
 
-  it("窗口含春进日：表头总跨列 = 表体列数；春进日组为 23 列，末组 1 列", () => {
+  it("窗口含春进日：表头总跨列 = 表体列数；春进日组 23 列，末组 24 列（自然日完整）", () => {
     // 起始 2026-03-06，窗口含 03-08 春进
     const start = DateTime.fromISO("2026-03-06", { zone: "America/New_York" }).startOf("day").toMillis();
     const cols = buildColumns("America/New_York", start, 7);
     const groups = headerGroups(cols);
     const totalSpan = groups.reduce((s, g) => s + g.count, 0);
     expect(totalSpan).toBe(cols.length);
-    // 春进日（dayIndex 2）23 列；DST 推移使末尾多出 1 列落在 dayIndex 7
+    // 春进日（dayIndex 2）23 列；修复后末尾日仍为完整 24 列
     expect(groups.find((g) => g.dayIndex === 2)!.count).toBe(23);
-    expect(groups[groups.length - 1].count).toBe(1);
+    expect(groups[groups.length - 1].count).toBe(24);
+    // dayIndex 连续覆盖 0..6
+    expect(groups.map((g) => g.dayIndex)).toEqual([0, 1, 2, 3, 4, 5, 6]);
   });
 
-  it("秋退日作起始：表头总跨列 = 表体列数；秋退日组为 25 列", () => {
+  it("秋退日作起始：表头总跨列 = 表体列数；秋退日组为 25 列，末尾日 23:00 未被截断", () => {
     // 2026-11-01 为 NY 秋退日（本地 02:00→01:00，01 时段重复）
     const start = DateTime.fromISO("2026-11-01", { zone: "America/New_York" }).startOf("day").toMillis();
     const cols = buildColumns("America/New_York", start, 7);
@@ -91,6 +96,30 @@ describe("buildColumns DST 表头对齐", () => {
     expect(totalSpan).toBe(cols.length);
     // 秋退日（dayIndex 0）有 25 个本地小时（01 出现两次）
     expect(groups.find((g) => g.dayIndex === 0)!.count).toBe(25);
+    // 修复前 bug：秋退日消耗了 1 个步进，末尾日（dayIndex 6）只剩 23 列、缺 23:00。
+    // 修复后：末尾日完整 24 列，最后一列落在第 7 天的 23:00。
+    expect(groups.find((g) => g.dayIndex === 6)!.count).toBe(24);
+    const lastCol = cols[cols.length - 1];
+    const lastLocal = DateTime.fromMillis(lastCol.ms, { zone: "America/New_York" });
+    expect(lastLocal.hour).toBe(23);
+    expect(lastCol.dayIndex).toBe(6);
+  });
+
+  it("秋退窗口：最后一列本地时刻 = 起始日+6 天的 23:00（回归 bug 修复）", () => {
+    // 复刻审查报告 P1 复现：起始日 = NY 秋退日 2026-11-01，days=7
+    const start = DateTime.fromISO("2026-11-01", { zone: "America/New_York" }).startOf("day").toMillis();
+    const cols = buildColumns("America/New_York", start, 7);
+    // 各日列数之和 = 总列数
+    const groups = headerGroups(cols);
+    expect(groups.reduce((s, g) => s + g.count, 0)).toBe(cols.length);
+    // dayIndex 连续覆盖 0..6
+    expect(groups.map((g) => g.dayIndex)).toEqual([0, 1, 2, 3, 4, 5, 6]);
+    // 最后一列 = 起始日 +6 天的 23:00
+    const lastExpected = DateTime.fromISO("2026-11-01", { zone: "America/New_York" })
+      .startOf("day")
+      .plus({ days: 6, hours: 23 })
+      .toMillis();
+    expect(cols[cols.length - 1].ms).toBe(lastExpected);
   });
 
   it("无 DST 基线（北京）：7 组各 24 列", () => {

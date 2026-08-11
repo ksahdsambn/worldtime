@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
@@ -81,6 +81,10 @@ export default function TimeGrid() {
   const [dragEndMs, setDragEndMs] = useState<number | null>(null);
   // 拖拽进行态用 state 表达，使其能进入 highlight 的依赖数组（避免在 memo 中读 ref）
   const [isDragging, setIsDragging] = useState(false);
+  // 记录拖拽过程中指针是否真的移动到过别的格子（区分「点击」与「拖拽」）。
+  // 审查报告 P2：单击（未拖拽）原实现会强制选中 1 小时，导致触屏误触与无法
+  // 用指针清除选区。现改为：只有真的移动过才选中；纯点击则清除已有选区。
+  const movedRef = useRef(false);
 
   // 当前高亮范围（拖拽中优先，否则用已确认选区）
   const highlight = useMemo<{ start: number; end: number } | null>(() => {
@@ -110,18 +114,30 @@ export default function TimeGrid() {
     setIsDragging(true);
     setDragStartMs(ms);
     setDragEndMs(ms);
+    movedRef.current = false;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }
 
   function onPointerMove(e: React.PointerEvent) {
     if (!isDragging) return;
     const ms = msFromPoint(e.clientX, e.clientY);
-    if (ms != null) setDragEndMs(ms);
+    if (ms != null && ms !== dragEndMs) {
+      // 仅当落到不同格子时才视为「真移动」，避免微抖动误判
+      movedRef.current = true;
+      setDragEndMs(ms);
+    }
   }
 
   function onPointerUp(_e: React.PointerEvent) {
     if (!isDragging) return;
     setIsDragging(false);
+    // 单击（未移动到别的格子）：清除已有选区，不强制选中 1 小时
+    if (!movedRef.current) {
+      setSelection(null);
+      setDragStartMs(null);
+      setDragEndMs(null);
+      return;
+    }
     if (dragStartMs == null || dragEndMs == null) {
       setSelection(null);
       return;

@@ -18,6 +18,7 @@ import type { AppLocale } from "@/i18n/routing";
  */
 export default function EventWidget({ locale }: { locale: AppLocale }) {
   const t = useTranslations("Event");
+  const tw = useTranslations("Widget");
   // null 表示尚未挂载或解析失败，与首屏占位一致
   const [data, setData] = useState<ReturnType<typeof decodeState> | null>(null);
 
@@ -33,7 +34,7 @@ export default function EventWidget({ locale }: { locale: AppLocale }) {
   if (!data || !data.selection) {
     return (
       <div data-testid="event-widget" className="rounded-lg border p-4 text-sm text-gray-500">
-        ?code=...
+        {tw("eventEmpty")}
       </div>
     );
   }

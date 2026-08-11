@@ -90,7 +90,8 @@
     "cursor": "커서",
     "enable": "커서 활성화",
     "move": "이동",
-    "resize": "가장자리 조정"
+    "resize": "가장자리 조정",
+    "disable": "커서 비활성화"
   },
   "DateJump": {
     "jumpTo": "이동",
@@ -129,6 +130,9 @@
   },
   "Widget": {
     "eventTitle": "WorldTime 이벤트 위젯",
-    "worldClockTitle": "WorldTime 세계 시계 위젯"
+    "worldClockTitle": "WorldTime 세계 시계 위젯",
+    "worldClock": "세계 시계",
+    "worldClockEmpty": "?cities=...",
+    "eventEmpty": "?code=..."
   }
 }

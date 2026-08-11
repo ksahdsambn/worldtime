@@ -46,9 +46,11 @@ export function columnColor(
 ): HeatColor | null {
   if (places.length === 0) return null;
   let worst = 0; // 全工作起步
+  let anyValid = false; // 是否存在任一时区有效地点（审查报告 P2：全无效应返回 null）
   for (const p of places) {
     const dt = DateTime.fromMillis(ms, { zone: p.timeZone });
     if (!dt.isValid) continue;
+    anyValid = true;
     // 周末覆盖（4.3.2 P0）：该地点处于其地区周末 -> 视为休息
     if (isWeekendAt(p.timeZone, p.countryCode, ms)) {
       worst = Math.max(worst, periodRank("rest"));
@@ -63,6 +65,8 @@ export function columnColor(
     const period = classifyLocalPeriod(dt.hour, periods);
     worst = Math.max(worst, periodRank(period));
   }
+  // 所有时区均非法时返回 null（不渲染热力），而非误判为 green
+  if (!anyValid) return null;
   return rankToColor(worst);
 }
 
