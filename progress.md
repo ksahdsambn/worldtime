@@ -388,3 +388,36 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 ### 未提交但已知的遗留
 
 - `heatLabel` 函数在生产代码中无调用（图例组件直接用 `useTranslations`），仅被测试引用。作为合理的公共工具函数保留，未删除。
+
+---
+
+## 第 13 轮：品牌与 SEO 视觉素材
+
+> 时间：2026-08-12
+> 范围：为 WorldTime 补齐统一的品牌标识、favicon、PWA 图标与社交分享视觉素材，并接入首页、Web App Manifest 和 Open Graph 图片。
+
+### 完成内容
+
+- 新增可缩放 SVG 品牌图标与横向 Logo：地球经纬线结合时钟指针，使用深海军蓝、亮蓝与金色秒针作为品牌色。
+- 新增 `src/app/icon.svg`，由 Next.js 作为站点 favicon；PWA manifest 同步声明常规与 maskable SVG 图标。
+- 生成并保存 1200×630 社交分享卡片与高清原始背景图：地球、时针与城市轨迹表达跨时区协作，并预留左侧文案安全区。
+- 首页标题接入品牌图标；动态 Open Graph 图片增加与 favicon 一致的时钟标识，提升搜索结果和社交分享的一致性。
+
+### 涉及文件
+
+- `public/brand/worldtime-mark.svg`
+- `public/brand/worldtime-logo.svg`
+- `public/brand/worldtime-social-card.png`
+- `public/brand/worldtime-social-background.png`
+- `src/app/icon.svg`
+- `src/app/manifest.ts`
+- `src/app/[locale]/page.tsx`
+- `src/app/[locale]/opengraph-image.tsx`
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | 通过 |
+| `npm test` | 164/164 通过 |
+| `npm run build` | 通过；140 个静态页面成功生成 |

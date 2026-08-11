@@ -1,4 +1,5 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
+import Image from "next/image";
 import LocaleSwitcher from "@/components/LocaleSwitcher";
 import CitySearch from "@/components/CitySearch";
 import PlacesPanel from "@/components/PlacesPanel";
@@ -62,7 +63,10 @@ export default async function Home({ params }: Props) {
       <KeyboardShortcuts />
       {/* 顶部导航栏：品牌、城市搜索、语言切换、设置（设置入口后续步骤补全） */}
       <header className="flex flex-wrap items-center gap-3 border-b px-4 py-2 bg-white">
-        <h1 className="text-lg font-bold">{t("title")}</h1>
+        <h1 className="flex items-center gap-2 text-lg font-bold">
+          <Image src="/brand/worldtime-mark.svg" alt="" width={28} height={28} priority />
+          {t("title")}
+        </h1>
         <span className="hidden sm:inline text-xs text-gray-500">{t("tagline")}</span>
         <div className="ml-auto flex items-center gap-3">
           <CitySearch />

@@ -32,7 +32,23 @@ export default function OpengraphImage() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "baseline", gap: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          <div
+            style={{
+              width: 112,
+              height: 112,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 28,
+              background: "#0f172a",
+              border: "5px solid #38bdf8",
+              color: "#ffffff",
+              fontSize: 60,
+            }}
+          >
+            ◷
+          </div>
           <span style={{ fontSize: 96, fontWeight: 800, letterSpacing: -2 }}>
             WorldTime
           </span>

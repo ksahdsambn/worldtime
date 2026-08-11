@@ -17,7 +17,8 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: "#ffffff",
     theme_color: "#2563eb",
     icons: [
-      { src: "/favicon.ico", sizes: "any", type: "image/x-icon" },
+      { src: "/icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+      { src: "/brand/worldtime-mark.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
     ],
   };
 }
