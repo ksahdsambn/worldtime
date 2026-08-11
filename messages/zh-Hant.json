@@ -1,0 +1,134 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "世界時鐘 / 時區轉換 / 會議排程工具"
+  },
+  "Common": {
+    "add": "新增",
+    "delete": "刪除",
+    "settings": "設定",
+    "cancel": "取消",
+    "confirm": "確定"
+  },
+  "LocaleSwitcher": {
+    "label": "語言",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "搜尋城市、國家或時區…",
+    "noResults": "無相符結果"
+  },
+  "Settings": {
+    "title": "設定",
+    "hourFormat": "小時格式",
+    "fmt12": "12 小時制",
+    "fmt24": "24 小時制",
+    "fmtMixed": "混合（各地原生）"
+  },
+  "Places": {
+    "title": "地點",
+    "empty": "尚未新增地點，請搜尋後新增。",
+    "setHome": "設為主要地點",
+    "remove": "移除",
+    "home": "主要",
+    "utcRow": "協調世界時",
+    "offsetFromHome": "與主要地點的時差（正值為超前）",
+    "dstActive": "目前為日光節約時間",
+    "dst": "日光節約時間",
+    "yes": "是",
+    "no": "否",
+    "nextChange": "下次切換",
+    "noUpcoming": "近期無切換",
+    "dstWarnSoon": "日光節約時間即將切換",
+    "rename": "重新命名",
+    "renamePrompt": "自訂顯示名稱",
+    "tags": "標籤",
+    "tagsPrompt": "標籤（以逗號分隔）",
+    "all": "全部",
+    "dragHandle": "拖曳以重新排序",
+    "confirmRemoveHome": "確定移除主要地點？",
+    "sunNone": "無"
+  },
+  "Selection": {
+    "duration": "時長",
+    "clear": "清除選取範圍",
+    "hour": "小時",
+    "minute": "分鐘",
+    "hours": "小時",
+    "minutes": "分鐘"
+  },
+  "Summary": {
+    "title": "會議時段",
+    "homeSuffix": "（主要）"
+  },
+  "Export": {
+    "export": "匯出",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google 行事曆",
+    "email": "電子郵件連結",
+    "eventPage": "公開活動頁面",
+    "copySummary": "複製時間摘要",
+    "shareLink": "複製分享連結",
+    "copied": "已複製"
+  },
+  "Event": {
+    "title": "公開活動",
+    "description": "以下為此活動在各地的對應時間。",
+    "openOriginal": "在 WorldTime 中開啟"
+  },
+  "Heatmap": {
+    "green": "全員工作時段",
+    "orange": "有人可聯繫",
+    "red": "有人休息中",
+    "worstStatus": "取最差狀態"
+  },
+  "Now": {
+    "backToNow": "回到現在"
+  },
+  "Cursor": {
+    "cursor": "游標",
+    "enable": "啟用游標",
+    "move": "移動",
+    "resize": "調整選取邊緣"
+  },
+  "DateJump": {
+    "jumpTo": "跳至",
+    "today": "今天"
+  },
+  "Theme": {
+    "toggle": "切換淺色/深色主題"
+  },
+  "Gcal": {
+    "label": "Google 行事曆",
+    "connect": "連結並重疊顯示",
+    "connected": "已連結（點擊以解除）"
+  },
+  "PrintExport": {
+    "print": "列印",
+    "image": "匯出圖片"
+  },
+  "Grid": {
+    "empty": "請先新增地點以檢視時間網格。"
+  },
+  "Landing": {
+    "title": "時區轉換",
+    "description": "兩地時差與時段對照表",
+    "cityPair": "城市配對",
+    "tzPair": "時區配對",
+    "timeComparison": "時間對照表",
+    "isAhead": "超前",
+    "lags": "落後",
+    "vs": "對比",
+    "aheadNote": "時間較晚（超前）",
+    "behindNote": "時間較早（落後）",
+    "bNote": "{b} 相對 {a} {dir}。",
+    "currentOffsetNote": "（目前偏移，日光節約時間切換日可能有變動）",
+    "comparisonNote": "以下為固定時差的典型時段對照。",
+    "updatedAt": "資料產生於 {time}（每小時更新）。"
+  },
+  "Widget": {
+    "eventTitle": "WorldTime 活動小工具",
+    "worldClockTitle": "WorldTime 世界時鐘小工具"
+  }
+}

@@ -6,20 +6,21 @@ import { DateTime } from "luxon";
 import { Link } from "@/i18n/navigation";
 import { decodeState, encodeState } from "@/lib/shareUrl";
 import { decodeEventCode } from "@/lib/calendar";
+import { localCityName } from "@/lib/cityName";
+import type { AppLocale } from "@/i18n/routing";
 
 /**
  * 公开事件视图（MS-5）：解析 base64 状态，展示事件在各地时区的对应时间。
- * 城市名随页面 locale 切换（中文页显示中文名，英文页显示英文名）。
+ * 城市名随页面 locale 切换（中文页显示中文名，其余语言显示英文名）。
  */
 export default function EventView({
   code,
   locale,
 }: {
   code: string;
-  locale: string;
+  locale: AppLocale;
 }) {
   const t = useTranslations("Event");
-  const isZh = locale === "zh";
 
   const data = useMemo(() => {
     try {
@@ -59,7 +60,7 @@ export default function EventView({
           return (
             <li key={p.id} className="flex items-center gap-2 text-sm">
               <span className="text-lg">{p.flag}</span>
-              <span className="font-medium">{isZh ? p.nameZh : p.nameEn}</span>
+              <span className="font-medium">{localCityName(locale, p)}</span>
               <span className="text-gray-500">
                 {s} - {e}
               </span>

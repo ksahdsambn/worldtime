@@ -1,6 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { Metadata } from "next";
 import EventView from "@/components/EventView";
+import { routing, type AppLocale } from "@/i18n/routing";
 
 type Props = {
   params: { locale: string; code: string };
@@ -13,7 +14,10 @@ type Props = {
  */
 export default function EventPage({ params }: Props) {
   setRequestLocale(params.locale);
-  return <EventView code={params.code} locale={params.locale} />;
+  const locale = routing.locales.includes(params.locale as AppLocale)
+    ? (params.locale as AppLocale)
+    : routing.defaultLocale;
+  return <EventView code={params.code} locale={locale} />;
 }
 
 export async function generateMetadata({

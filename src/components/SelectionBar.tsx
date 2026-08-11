@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
-import { formatDuration } from "@/lib/duration";
+import { formatDuration, defaultSep } from "@/lib/duration";
 import { buildIcs, downloadIcs, googleCalendarUrl, mailtoUrl, encodeEventCode } from "@/lib/calendar";
 import { summaryText } from "@/lib/summary";
 import { encodeState, copyText } from "@/lib/shareUrl";
+import type { AppLocale } from "@/i18n/routing";
 
 /**
  * 选区操作栏：显示选区总时长（TC-12），并提供清除、日历导出（MS-2）、
@@ -15,13 +16,14 @@ import { encodeState, copyText } from "@/lib/shareUrl";
 export default function SelectionBar() {
   const t = useTranslations("Selection");
   const tExp = useTranslations("Export");
+  const tSum = useTranslations("Summary");
   const selection = useWorldTimeStore((s) => s.selection);
   const setSelection = useWorldTimeStore((s) => s.setSelection);
   const places = useWorldTimeStore((s) => s.places);
   const homeId = useWorldTimeStore((s) => s.homeId);
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
   const cursorMs = useWorldTimeStore((s) => s.cursorMs);
-  const locale = useLocale() as "zh" | "en";
+  const locale = useLocale() as AppLocale;
   const [flash, setFlash] = useState<string | null>(null);
   // 仅在客户端挂载后才访问 window.location，避免渲染期直接引用导致 SSR 报错
   const [origin, setOrigin] = useState<string>("");
@@ -36,9 +38,27 @@ export default function SelectionBar() {
   const eventUrl = origin ? `${origin}/${locale}/event/${eventCode}` : "";
 
   const ms = sel.endMs - sel.startMs;
+  // 选区时长单位词：由 messages 提供单复数文案，分隔符按 locale 派生（中文无空格）
+  const sep = defaultSep(locale);
+  const durationWords = {
+    hour: t("hour"),
+    hours: t("hours"),
+    minute: t("minute"),
+    minutes: t("minutes"),
+    zero: `0${sep}${t("minutes")}`,
+    sep,
+  };
 
   async function onCopySummary() {
-    const ok = await copyText(summaryText(sel, places, hourFormat, locale, homeId));
+    const ok = await copyText(
+      summaryText(
+        sel,
+        places,
+        hourFormat,
+        { title: tSum("title"), homeSuffix: tSum("homeSuffix") },
+        homeId,
+      ),
+    );
     if (ok) {
       setFlash("summary");
       setTimeout(() => setFlash(null), 1500);
@@ -60,7 +80,7 @@ export default function SelectionBar() {
     <div className="flex flex-wrap items-center gap-2 border-t bg-gray-50 px-4 py-2 text-sm">
       <span className="text-gray-600">{t("duration")}：</span>
       <span className="font-semibold text-gray-900" data-testid="selection-duration">
-        {formatDuration(ms, locale)}
+        {formatDuration(ms, durationWords)}
       </span>
 
       <div className="ml-auto flex flex-wrap items-center gap-2">

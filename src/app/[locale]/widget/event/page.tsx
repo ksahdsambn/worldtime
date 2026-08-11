@@ -1,6 +1,7 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import EventWidget from "@/components/EventWidget";
+import { routing, type AppLocale } from "@/i18n/routing";
 
 type Props = { params: { locale: string } };
 
@@ -15,5 +16,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function EventWidgetPage({ params }: Props) {
   setRequestLocale(params.locale);
-  return <EventWidget locale={params.locale} />;
+  const locale = routing.locales.includes(params.locale as AppLocale)
+    ? (params.locale as AppLocale)
+    : routing.defaultLocale;
+  return <EventWidget locale={locale} />;
 }

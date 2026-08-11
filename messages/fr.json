@@ -1,0 +1,134 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "Horloge mondiale / convertisseur de fuseaux horaires / planificateur de réunions"
+  },
+  "Common": {
+    "add": "Ajouter",
+    "delete": "Supprimer",
+    "settings": "Paramètres",
+    "cancel": "Annuler",
+    "confirm": "OK"
+  },
+  "LocaleSwitcher": {
+    "label": "Langue",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "Rechercher une ville, un pays ou un fuseau horaire…",
+    "noResults": "Aucun résultat"
+  },
+  "Settings": {
+    "title": "Paramètres",
+    "hourFormat": "Format de l'heure",
+    "fmt12": "12 heures",
+    "fmt24": "24 heures",
+    "fmtMixed": "Mixte (natif selon le lieu)"
+  },
+  "Places": {
+    "title": "Lieux",
+    "empty": "Aucun lieu pour le moment. Recherchez pour en ajouter un.",
+    "setHome": "Définir comme principal",
+    "remove": "Retirer",
+    "home": "Principal",
+    "utcRow": "Temps universel coordonné",
+    "offsetFromHome": "Décalage avec le principal (positif = en avance)",
+    "dstActive": "Actuellement en heure d'été",
+    "dst": "Heure d'été",
+    "yes": "oui",
+    "no": "non",
+    "nextChange": "Prochain changement",
+    "noUpcoming": "aucun changement à venir",
+    "dstWarnSoon": "Changement d'heure d'été à venir",
+    "rename": "Renommer",
+    "renamePrompt": "Nom d'affichage personnalisé",
+    "tags": "Étiquettes",
+    "tagsPrompt": "Étiquettes (séparées par des virgules)",
+    "all": "Toutes",
+    "dragHandle": "Glisser pour réordonner",
+    "confirmRemoveHome": "Retirer le lieu principal ?",
+    "sunNone": "aucun"
+  },
+  "Selection": {
+    "duration": "Durée",
+    "clear": "Effacer la sélection",
+    "hour": "heure",
+    "minute": "minute",
+    "hours": "heures",
+    "minutes": "minutes"
+  },
+  "Summary": {
+    "title": "Heure de la réunion",
+    "homeSuffix": " (principal)"
+  },
+  "Export": {
+    "export": "Exporter",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google Calendar",
+    "email": "Lien e-mail",
+    "eventPage": "Page publique de l'événement",
+    "copySummary": "Copier le résumé des horaires",
+    "shareLink": "Copier le lien de partage",
+    "copied": "Copié"
+  },
+  "Event": {
+    "title": "Événement public",
+    "description": "Les heures locales correspondantes pour cet événement :",
+    "openOriginal": "Ouvrir dans WorldTime"
+  },
+  "Heatmap": {
+    "green": "Tous en heures ouvrables",
+    "orange": "Certains joignables",
+    "red": "Quelqu'un se repose",
+    "worstStatus": "l'état le plus défavorable l'emporte"
+  },
+  "Now": {
+    "backToNow": "Revenir à maintenant"
+  },
+  "Cursor": {
+    "cursor": "Curseur",
+    "enable": "Activer le curseur",
+    "move": "déplacer",
+    "resize": "ajuster le bord"
+  },
+  "DateJump": {
+    "jumpTo": "Aller à",
+    "today": "Aujourd'hui"
+  },
+  "Theme": {
+    "toggle": "Basculer thème clair/sombre"
+  },
+  "Gcal": {
+    "label": "Google Calendar",
+    "connect": "Connecter et superposer",
+    "connected": "Connecté (cliquer pour déconnecter)"
+  },
+  "PrintExport": {
+    "print": "Imprimer",
+    "image": "Exporter l'image"
+  },
+  "Grid": {
+    "empty": "Ajoutez un lieu pour afficher la grille horaire."
+  },
+  "Landing": {
+    "title": "Convertisseur de fuseaux horaires",
+    "description": "Différence horaire et tableau de comparaison",
+    "cityPair": "Paire de villes",
+    "tzPair": "Paire de fuseaux horaires",
+    "timeComparison": "Comparaison horaire",
+    "isAhead": "en avance",
+    "lags": "en retard",
+    "vs": "vs",
+    "aheadNote": "est en avance (plus tard)",
+    "behindNote": "est en retard (plus tôt)",
+    "bNote": "{b} est {dir} par rapport à {a}.",
+    "currentOffsetNote": "(décalage actuel ; peut différer les jours de passage à l'heure d'été)",
+    "comparisonNote": "Comparaison typique des heures (décalage fixe).",
+    "updatedAt": "Généré à {time} (actualisé toutes les heures)."
+  },
+  "Widget": {
+    "eventTitle": "Widget d'événement WorldTime",
+    "worldClockTitle": "Widget d'horloge mondiale WorldTime"
+  }
+}

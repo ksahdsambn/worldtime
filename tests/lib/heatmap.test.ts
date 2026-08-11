@@ -75,10 +75,22 @@ describe("columnColor 配色规则", () => {
 });
 
 describe("heatLabel", () => {
-  it("中英标签", () => {
-    expect(heatLabel("green", "zh")).toBe("全员工作时段");
-    expect(heatLabel("green", "en")).toBe("All working");
-    expect(heatLabel("orange", "en")).toBe("Some contactable");
-    expect(heatLabel("red", "en")).toBe("Someone resting");
+  it("按传入的标签映射返回对应颜色文案", () => {
+    // 中文标签（来自 messages/zh.json 的 Heatmap 命名空间）
+    const zh = {
+      green: "全员工作时段",
+      orange: "有人可联系",
+      red: "有人休息",
+    } as const;
+    // 英文标签（来自 messages/en.json 的 Heatmap 命名空间）
+    const en = {
+      green: "All working",
+      orange: "Some contactable",
+      red: "Someone resting",
+    } as const;
+    expect(heatLabel("green", { ...zh })).toBe("全员工作时段");
+    expect(heatLabel("green", { ...en })).toBe("All working");
+    expect(heatLabel("orange", { ...en })).toBe("Some contactable");
+    expect(heatLabel("red", { ...en })).toBe("Someone resting");
   });
 });

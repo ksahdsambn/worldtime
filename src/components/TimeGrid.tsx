@@ -1,13 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
 import { buildColumns, todayStartMs, localHourAt, isWeekendAt } from "@/lib/grid";
 import { prefers12Hour } from "@/lib/time";
 import { columnColor, heatBg, type HeatColor } from "@/lib/heatmap";
+import { localCityName } from "@/lib/cityName";
+import type { AppLocale } from "@/i18n/routing";
 
 /**
  * 时间网格（TC-1）+ 拖拽选区（TC-2）。
@@ -19,6 +21,7 @@ import { columnColor, heatBg, type HeatColor } from "@/lib/heatmap";
  */
 export default function TimeGrid() {
   const t = useTranslations("Grid");
+  const locale = useLocale() as AppLocale;
   const places = useWorldTimeStore((s) => s.places);
   const homeId = useWorldTimeStore((s) => s.homeId);
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
@@ -169,7 +172,7 @@ export default function TimeGrid() {
         <thead>
           <tr>
             <th className="sticky left-0 z-10 bg-white px-2 py-1 text-left">
-              {home.nameZh}
+              {localCityName(locale, home)}
             </th>
             {dayGroups.map((g) => {
               const dt = DateTime.fromMillis(
@@ -203,7 +206,7 @@ export default function TimeGrid() {
           {places.map((p) => (
             <Row
               key={p.id}
-              label={`${p.flag} ${p.nameZh}`}
+              label={`${p.flag} ${localCityName(locale, p)}`}
               zone={p.timeZone}
               countryCode={p.countryCode}
               columns={columns}

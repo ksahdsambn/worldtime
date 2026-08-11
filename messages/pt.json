@@ -1,0 +1,134 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "Relógio mundial / conversor de fusos / agendador de reuniões"
+  },
+  "Common": {
+    "add": "Adicionar",
+    "delete": "Excluir",
+    "settings": "Configurações",
+    "cancel": "Cancelar",
+    "confirm": "OK"
+  },
+  "LocaleSwitcher": {
+    "label": "Idioma",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "Buscar cidade, país ou fuso horário…",
+    "noResults": "Sem resultados"
+  },
+  "Settings": {
+    "title": "Configurações",
+    "hourFormat": "Formato de hora",
+    "fmt12": "12 horas",
+    "fmt24": "24 horas",
+    "fmtMixed": "Misto (nativo por local)"
+  },
+  "Places": {
+    "title": "Locais",
+    "empty": "Ainda não há locais. Busque para adicionar um.",
+    "setHome": "Definir como principal",
+    "remove": "Remover",
+    "home": "Principal",
+    "utcRow": "Tempo Universal Coordenado",
+    "offsetFromHome": "Diferença para o principal (positivo = à frente)",
+    "dstActive": "Atualmente em horário de verão",
+    "dst": "Horário de verão",
+    "yes": "sim",
+    "no": "não",
+    "nextChange": "Próxima mudança",
+    "noUpcoming": "sem mudanças próximas",
+    "dstWarnSoon": "Mudança de horário de verão se aproxima",
+    "rename": "Renomear",
+    "renamePrompt": "Nome de exibição personalizado",
+    "tags": "Marcadores",
+    "tagsPrompt": "Marcadores (separados por vírgulas)",
+    "all": "Todos",
+    "dragHandle": "Arraste para reordenar",
+    "confirmRemoveHome": "Remover o local principal?",
+    "sunNone": "nenhum"
+  },
+  "Selection": {
+    "duration": "Duração",
+    "clear": "Limpar seleção",
+    "hour": "hora",
+    "minute": "minuto",
+    "hours": "horas",
+    "minutes": "minutos"
+  },
+  "Summary": {
+    "title": "Horário da reunião",
+    "homeSuffix": " (principal)"
+  },
+  "Export": {
+    "export": "Exportar",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google Agenda",
+    "email": "Link por e-mail",
+    "eventPage": "Página pública do evento",
+    "copySummary": "Copiar resumo de horários",
+    "shareLink": "Copiar link de compartilhamento",
+    "copied": "Copiado"
+  },
+  "Event": {
+    "title": "Evento público",
+    "description": "Os horários locais correspondentes para este evento:",
+    "openOriginal": "Abrir no WorldTime"
+  },
+  "Heatmap": {
+    "green": "Todos em horário de trabalho",
+    "orange": "Alguns disponíveis",
+    "red": "Alguém descansando",
+    "worstStatus": "prevalece o pior estado"
+  },
+  "Now": {
+    "backToNow": "Voltar para agora"
+  },
+  "Cursor": {
+    "cursor": "Cursor",
+    "enable": "Ativar cursor",
+    "move": "mover",
+    "resize": "ajustar borda"
+  },
+  "DateJump": {
+    "jumpTo": "Ir para",
+    "today": "Hoje"
+  },
+  "Theme": {
+    "toggle": "Alternar tema claro/escuro"
+  },
+  "Gcal": {
+    "label": "Google Agenda",
+    "connect": "Conectar e sobrepor",
+    "connected": "Conectado (clique para desconectar)"
+  },
+  "PrintExport": {
+    "print": "Imprimir",
+    "image": "Exportar imagem"
+  },
+  "Grid": {
+    "empty": "Adicione um local para ver a grade de horários."
+  },
+  "Landing": {
+    "title": "Conversor de fusos horários",
+    "description": "Diferença de horário e tabela comparativa",
+    "cityPair": "Par de cidades",
+    "tzPair": "Par de fusos horários",
+    "timeComparison": "Comparação de horários",
+    "isAhead": "à frente",
+    "lags": "atrás",
+    "vs": "vs",
+    "aheadNote": "está à frente (mais tarde)",
+    "behindNote": "está atrás (mais cedo)",
+    "bNote": "{b} está {dir} em relação a {a}.",
+    "currentOffsetNote": "(diferença atual; pode variar nos dias de mudança de horário de verão)",
+    "comparisonNote": "Comparação típica de horas (diferença fixa).",
+    "updatedAt": "Gerado às {time} (atualizado a cada hora)."
+  },
+  "Widget": {
+    "eventTitle": "Widget de eventos do WorldTime",
+    "worldClockTitle": "Widget de relógio mundial do WorldTime"
+  }
+}

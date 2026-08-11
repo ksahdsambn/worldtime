@@ -80,11 +80,19 @@ export function heatBg(color: HeatColor | null): string {
   }
 }
 
-/** 颜色 → 中文/英文标签（供图例与无障碍）。 */
-export function heatLabel(color: HeatColor, locale: "zh" | "en"): string {
-  const zh = { green: "全员工作时段", orange: "有人可联系", red: "有人休息" };
-  const en = { green: "All working", orange: "Some contactable", red: "Someone resting" };
-  return locale === "zh" ? zh[color] : en[color];
+/**
+ * 颜色 → 标签（供图例与无障碍）。
+ *
+ * 重构（国际化扩展）：不再内置中英两套文案，而是接收由调用方从 messages
+ * 中取出的已翻译标签映射，任意新增语言无需改动本函数。
+ * 注意：生产环境图例 HeatmapLegend 组件已直接使用 useTranslations("Heatmap")，
+ * 本函数主要供纯逻辑/测试场景使用。
+ */
+export function heatLabel(
+  color: HeatColor,
+  labels: Record<HeatColor, string>,
+): string {
+  return labels[color];
 }
 
 /** 国家代码 → weekendDays（供测试与外部使用）。 */

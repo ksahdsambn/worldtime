@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
+import { useTranslations } from "next-intl";
 import { decodeState } from "@/lib/shareUrl";
 import { decodeEventCode } from "@/lib/calendar";
+import { localCityName } from "@/lib/cityName";
+import type { AppLocale } from "@/i18n/routing";
 
 /**
  * 事件小组件（第七章 6.2）。
@@ -13,8 +16,8 @@ import { decodeEventCode } from "@/lib/calendar";
  * 通过 useEffect + useState 在客户端挂载后读取查询参数，
  * 保证 SSR 与首屏客户端渲染一致（避免水合告警）。
  */
-export default function EventWidget({ locale }: { locale: string }) {
-  const isZh = locale === "zh";
+export default function EventWidget({ locale }: { locale: AppLocale }) {
+  const t = useTranslations("Event");
   // null 表示尚未挂载或解析失败，与首屏占位一致
   const [data, setData] = useState<ReturnType<typeof decodeState> | null>(null);
 
@@ -41,7 +44,7 @@ export default function EventWidget({ locale }: { locale: string }) {
       className="rounded-lg border bg-white p-4 text-gray-900"
       style={{ minWidth: 240 }}
     >
-      <h2 className="mb-2 text-sm font-bold">{isZh ? "事件" : "Event"}</h2>
+      <h2 className="mb-2 text-sm font-bold">{t("title")}</h2>
       <ul className="space-y-1 text-sm">
         {data.places.map((p) => {
           const s = DateTime.fromMillis(data.selection!.startMs, { zone: p.timeZone }).toFormat("MM-dd HH:mm");
@@ -49,7 +52,7 @@ export default function EventWidget({ locale }: { locale: string }) {
           return (
             <li key={p.id} className="flex items-center gap-2">
               <span>{p.flag}</span>
-              <span className="flex-1">{isZh ? p.nameZh : p.nameEn}</span>
+              <span className="flex-1">{localCityName(locale, p)}</span>
               <span className="font-mono tabular-nums">{s} - {e}</span>
             </li>
           );

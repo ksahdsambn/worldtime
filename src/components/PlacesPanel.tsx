@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import {
   DndContext,
@@ -25,6 +25,8 @@ import { useNow } from "@/lib/useNow";
 import AnalogClock from "@/components/AnalogClock";
 import { getLatLng } from "@/data/latlng";
 import { sunRiseSet } from "@/lib/sun";
+import { localCityName } from "@/lib/cityName";
+import type { AppLocale } from "@/i18n/routing";
 import {
   classifyLocalPeriod,
   type LocalPeriod,
@@ -57,6 +59,7 @@ function dayNightIcon(
 export default function PlacesPanel() {
   const t = useTranslations("Places");
   const tCom = useTranslations("Common");
+  const locale = useLocale() as AppLocale;
   const places = useWorldTimeStore((s) => s.places);
   const homeId = useWorldTimeStore((s) => s.homeId);
   const removePlace = useWorldTimeStore((s) => s.removePlace);
@@ -171,6 +174,7 @@ export default function PlacesPanel() {
                 hourFormat={hourFormat}
                 dayPeriods={dayPeriods}
                 home={home}
+                locale={locale}
                 t={t}
                 tCom={tCom}
                 onSetHome={setHome}
@@ -195,6 +199,7 @@ function PlaceRow({
   hourFormat,
   dayPeriods,
   home,
+  locale,
   t,
   tCom,
   onSetHome,
@@ -209,6 +214,7 @@ function PlaceRow({
   hourFormat: "12" | "24" | "mixed";
   dayPeriods: DayPeriods;
   home: PlaceItem | null;
+  locale: AppLocale;
   t: (k: string) => string;
   tCom: (k: string) => string;
   onSetHome: (id: string) => void;
@@ -284,7 +290,7 @@ function PlaceRow({
       <AnalogClock timeZone={p.timeZone} now={now} size={36} />
       <span className="flex-1">
         <span className="font-medium text-black">
-          {p.customName || p.nameZh}
+          {p.customName || localCityName(locale, p)}
         </span>
         {isHome && (
           <span className="ml-1 rounded bg-blue-100 px-1 text-[10px] text-blue-700">
@@ -369,7 +375,7 @@ function PlaceRow({
       <button
         type="button"
         onClick={() => {
-          const name = window.prompt(t("renamePrompt"), p.customName || p.nameZh);
+          const name = window.prompt(t("renamePrompt"), p.customName || localCityName(locale, p));
           if (name !== null) onRename(p.id, name);
         }}
         className="rounded px-1.5 py-0.5 text-[11px] text-gray-600 hover:bg-gray-100"

@@ -1,0 +1,134 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "世界時計 / タイムゾーン変換 / 会議スケジューラー"
+  },
+  "Common": {
+    "add": "追加",
+    "delete": "削除",
+    "settings": "設定",
+    "cancel": "キャンセル",
+    "confirm": "OK"
+  },
+  "LocaleSwitcher": {
+    "label": "言語",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "都市・国・タイムゾーンを検索…",
+    "noResults": "結果がありません"
+  },
+  "Settings": {
+    "title": "設定",
+    "hourFormat": "時間形式",
+    "fmt12": "12時間制",
+    "fmt24": "24時間制",
+    "fmtMixed": "混合（各地の標準）"
+  },
+  "Places": {
+    "title": "場所",
+    "empty": "まだ場所がありません。検索して追加してください。",
+    "setHome": "基準に設定",
+    "remove": "削除",
+    "home": "基準",
+    "utcRow": "協定世界時",
+    "offsetFromHome": "基準との時差（正=進んでいる）",
+    "dstActive": "現在サマータイム中",
+    "dst": "サマータイム",
+    "yes": "はい",
+    "no": "いいえ",
+    "nextChange": "次の切替",
+    "noUpcoming": "直近の切替なし",
+    "dstWarnSoon": "サマータイム切替が迫っています",
+    "rename": "名前変更",
+    "renamePrompt": "表示名（カスタム）",
+    "tags": "タグ",
+    "tagsPrompt": "タグ（カンマ区切り）",
+    "all": "すべて",
+    "dragHandle": "ドラッグで並び替え",
+    "confirmRemoveHome": "基準場所を削除しますか？",
+    "sunNone": "なし"
+  },
+  "Selection": {
+    "duration": "時間",
+    "clear": "選択を解除",
+    "hour": "時間",
+    "minute": "分",
+    "hours": "時間",
+    "minutes": "分"
+  },
+  "Summary": {
+    "title": "会議時間",
+    "homeSuffix": " (基準)"
+  },
+  "Export": {
+    "export": "エクスポート",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google カレンダー",
+    "email": "メールリンク",
+    "eventPage": "公開イベントページ",
+    "copySummary": "時間サマリーをコピー",
+    "shareLink": "共有リンクをコピー",
+    "copied": "コピーしました"
+  },
+  "Event": {
+    "title": "公開イベント",
+    "description": "このイベントの各地での現地時間：",
+    "openOriginal": "WorldTime で開く"
+  },
+  "Heatmap": {
+    "green": "全員が勤務時間",
+    "orange": "連絡可能な人あり",
+    "red": "休憩中の人居",
+    "worstStatus": "最悪状態が優先"
+  },
+  "Now": {
+    "backToNow": "現在に戻る"
+  },
+  "Cursor": {
+    "cursor": "カーソル",
+    "enable": "カーソルを有効化",
+    "move": "移動",
+    "resize": "端を調整"
+  },
+  "DateJump": {
+    "jumpTo": "移動",
+    "today": "今日"
+  },
+  "Theme": {
+    "toggle": "ライト/ダークを切替"
+  },
+  "Gcal": {
+    "label": "Google カレンダー",
+    "connect": "接続して重ね合わせ",
+    "connected": "接続済み（クリックで切断）"
+  },
+  "PrintExport": {
+    "print": "印刷",
+    "image": "画像エクスポート"
+  },
+  "Grid": {
+    "empty": "場所を追加すると時間グリッドが表示されます。"
+  },
+  "Landing": {
+    "title": "タイムゾーン変換",
+    "description": "時差と比較表",
+    "cityPair": "都市ペア",
+    "tzPair": "タイムゾーンペア",
+    "timeComparison": "時間比較",
+    "isAhead": "進んでいる",
+    "lags": "遅れている",
+    "vs": "対",
+    "aheadNote": "進んでいる（後の時間）",
+    "behindNote": "遅れている（前の時間）",
+    "bNote": "{b} は {a} より {dir}。",
+    "currentOffsetNote": "（現在のオフセット、サマータイム切替日は異なる場合あり）",
+    "comparisonNote": "固定オフセットでの代表的な時間比較。",
+    "updatedAt": "{time} に生成（1時間ごとに更新）。"
+  },
+  "Widget": {
+    "eventTitle": "WorldTime イベントウィジェット",
+    "worldClockTitle": "WorldTime 世界時計ウィジェット"
+  }
+}

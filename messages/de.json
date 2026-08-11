@@ -1,0 +1,134 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "Weltuhr / Zeitzonen-Rechner / Meeting-Planer"
+  },
+  "Common": {
+    "add": "Hinzufügen",
+    "delete": "Löschen",
+    "settings": "Einstellungen",
+    "cancel": "Abbrechen",
+    "confirm": "OK"
+  },
+  "LocaleSwitcher": {
+    "label": "Sprache",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "Stadt, Land oder Zeitzone suchen…",
+    "noResults": "Keine Ergebnisse"
+  },
+  "Settings": {
+    "title": "Einstellungen",
+    "hourFormat": "Stundenformat",
+    "fmt12": "12-Stunden",
+    "fmt24": "24-Stunden",
+    "fmtMixed": "Gemischt (native je Ort)"
+  },
+  "Places": {
+    "title": "Orte",
+    "empty": "Noch keine Orte. Suche, um einen hinzuzufügen.",
+    "setHome": "Als Hauptort festlegen",
+    "remove": "Entfernen",
+    "home": "Hauptort",
+    "utcRow": "Koordinierte Weltzeit",
+    "offsetFromHome": "Abstand zum Hauptort (positiv = voraus)",
+    "dstActive": "Aktuell in der Sommerzeit",
+    "dst": "Sommerzeit",
+    "yes": "ja",
+    "no": "nein",
+    "nextChange": "Nächste Umstellung",
+    "noUpcoming": "keine anstehende Umstellung",
+    "dstWarnSoon": "Sommerzeitumstellung steht an",
+    "rename": "Umbenennen",
+    "renamePrompt": "Benutzerdefinierter Anzeigename",
+    "tags": "Tags",
+    "tagsPrompt": "Tags (kommagetrennt)",
+    "all": "Alle",
+    "dragHandle": "Ziehen zum Sortieren",
+    "confirmRemoveHome": "Hauptort entfernen?",
+    "sunNone": "keine"
+  },
+  "Selection": {
+    "duration": "Dauer",
+    "clear": "Auswahl löschen",
+    "hour": "Stunde",
+    "minute": "Minute",
+    "hours": "Stunden",
+    "minutes": "Minuten"
+  },
+  "Summary": {
+    "title": "Besprechungszeit",
+    "homeSuffix": " (Haupt)"
+  },
+  "Export": {
+    "export": "Exportieren",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google Calendar",
+    "email": "E-Mail-Link",
+    "eventPage": "Öffentliche Veranstaltungsseite",
+    "copySummary": "Zeitzusammenfassung kopieren",
+    "shareLink": "Teilen-Link kopieren",
+    "copied": "Kopiert"
+  },
+  "Event": {
+    "title": "Öffentliche Veranstaltung",
+    "description": "Die entsprechenden Ortszeiten für diese Veranstaltung:",
+    "openOriginal": "In WorldTime öffnen"
+  },
+  "Heatmap": {
+    "green": "Alle in Arbeitszeit",
+    "orange": "Einige erreichbar",
+    "red": "Jemand ruht",
+    "worstStatus": "schlechtester Status zählt"
+  },
+  "Now": {
+    "backToNow": "Zurück zu jetzt"
+  },
+  "Cursor": {
+    "cursor": "Cursor",
+    "enable": "Cursor aktivieren",
+    "move": "verschieben",
+    "resize": "Rand anpassen"
+  },
+  "DateJump": {
+    "jumpTo": "Springen zu",
+    "today": "Heute"
+  },
+  "Theme": {
+    "toggle": "Hell/Dunkel umschalten"
+  },
+  "Gcal": {
+    "label": "Google Calendar",
+    "connect": "Verbinden & überlagern",
+    "connected": "Verbunden (Klick zum Trennen)"
+  },
+  "PrintExport": {
+    "print": "Drucken",
+    "image": "Bild exportieren"
+  },
+  "Grid": {
+    "empty": "Ort hinzufügen, um das Zeitraster zu sehen."
+  },
+  "Landing": {
+    "title": "Zeitzonen-Rechner",
+    "description": "Zeitunterschied und Vergleichstabelle",
+    "cityPair": "Stadtpaar",
+    "tzPair": "Zeitzonenpaar",
+    "timeComparison": "Zeitvergleich",
+    "isAhead": "voraus",
+    "lags": "hinterher",
+    "vs": "vs",
+    "aheadNote": "ist voraus (später)",
+    "behindNote": "hinkt hinterher (früher)",
+    "bNote": "{b} ist {dir} gegenüber {a}.",
+    "currentOffsetNote": "(aktueller Versatz; kann an Sommerzeitumstellungstagen abweichen)",
+    "comparisonNote": "Typischer Stundenvergleich (fester Versatz).",
+    "updatedAt": "Erzeugt um {time} (stündlich aktualisiert)."
+  },
+  "Widget": {
+    "eventTitle": "WorldTime Veranstaltungs-Widget",
+    "worldClockTitle": "WorldTime Weltuhr-Widget"
+  }
+}

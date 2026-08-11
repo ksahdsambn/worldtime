@@ -1,0 +1,134 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "세계 시계 / 시간대 변환 / 회의 일정 도구"
+  },
+  "Common": {
+    "add": "추가",
+    "delete": "삭제",
+    "settings": "설정",
+    "cancel": "취소",
+    "confirm": "확인"
+  },
+  "LocaleSwitcher": {
+    "label": "언어",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "도시, 국가 또는 시간대 검색…",
+    "noResults": "결과 없음"
+  },
+  "Settings": {
+    "title": "설정",
+    "hourFormat": "시간 형식",
+    "fmt12": "12시간제",
+    "fmt24": "24시간제",
+    "fmtMixed": "혼합 (현지 기준)"
+  },
+  "Places": {
+    "title": "장소",
+    "empty": "아직 장소가 없습니다. 검색하여 추가하세요.",
+    "setHome": "기준으로 설정",
+    "remove": "제거",
+    "home": "기준",
+    "utcRow": "협정 세계시",
+    "offsetFromHome": "기준과의 시차 (양수 = 앞섬)",
+    "dstActive": "현재 서머타임 중",
+    "dst": "서머타임",
+    "yes": "예",
+    "no": "아니오",
+    "nextChange": "다음 변경",
+    "noUpcoming": "예정된 변경 없음",
+    "dstWarnSoon": "서머타임 변경 임박",
+    "rename": "이름 변경",
+    "renamePrompt": "사용자 지정 표시 이름",
+    "tags": "태그",
+    "tagsPrompt": "태그 (쉼표 구분)",
+    "all": "전체",
+    "dragHandle": "드래그하여 재정렬",
+    "confirmRemoveHome": "기준 장소를 제거하시겠습니까?",
+    "sunNone": "없음"
+  },
+  "Selection": {
+    "duration": "기간",
+    "clear": "선택 해제",
+    "hour": "시간",
+    "minute": "분",
+    "hours": "시간",
+    "minutes": "분"
+  },
+  "Summary": {
+    "title": "회의 시간",
+    "homeSuffix": " (기준)"
+  },
+  "Export": {
+    "export": "내보내기",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google 캘린더",
+    "email": "이메일 링크",
+    "eventPage": "공개 이벤트 페이지",
+    "copySummary": "시간 요약 복사",
+    "shareLink": "공유 링크 복사",
+    "copied": "복사됨"
+  },
+  "Event": {
+    "title": "공개 이벤트",
+    "description": "이 이벤트의 각 지역 현지 시간:",
+    "openOriginal": "WorldTime에서 열기"
+  },
+  "Heatmap": {
+    "green": "전원 근무 시간",
+    "orange": "연락 가능한 사람 있음",
+    "red": "휴식 중인 사람 있음",
+    "worstStatus": "최악 상태가 우선"
+  },
+  "Now": {
+    "backToNow": "현재로 돌아가기"
+  },
+  "Cursor": {
+    "cursor": "커서",
+    "enable": "커서 활성화",
+    "move": "이동",
+    "resize": "가장자리 조정"
+  },
+  "DateJump": {
+    "jumpTo": "이동",
+    "today": "오늘"
+  },
+  "Theme": {
+    "toggle": "밝은/어두운 테마 전환"
+  },
+  "Gcal": {
+    "label": "Google 캘린더",
+    "connect": "연결 및 겹쳐 보기",
+    "connected": "연결됨 (클릭하여 해제)"
+  },
+  "PrintExport": {
+    "print": "인쇄",
+    "image": "이미지 내보내기"
+  },
+  "Grid": {
+    "empty": "시간 격자를 보려면 장소를 추가하세요."
+  },
+  "Landing": {
+    "title": "시간대 변환",
+    "description": "시차 및 비교 표",
+    "cityPair": "도시 쌍",
+    "tzPair": "시간대 쌍",
+    "timeComparison": "시간 비교",
+    "isAhead": "앞섬",
+    "lags": "뒤짐",
+    "vs": "대",
+    "aheadNote": "앞섬 (더 늦은 시간)",
+    "behindNote": "뒤짐 (더 이른 시간)",
+    "bNote": "{b}은(는) {a}에 비해 {dir}.",
+    "currentOffsetNote": "(현재 오프셋, 서머타임 전환일에는 다를 수 있음)",
+    "comparisonNote": "고정 오프셋 기준 대표 시간 비교.",
+    "updatedAt": "{time}에 생성 (매시간 갱신)."
+  },
+  "Widget": {
+    "eventTitle": "WorldTime 이벤트 위젯",
+    "worldClockTitle": "WorldTime 세계 시계 위젯"
+  }
+}

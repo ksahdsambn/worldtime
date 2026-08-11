@@ -58,6 +58,10 @@
     "hours": "hours",
     "minutes": "minutes"
   },
+  "Summary": {
+    "title": "Meeting time",
+    "homeSuffix": " (home)"
+  },
   "Export": {
     "export": "Export",
     "ics": "iCal / Outlook (.ics)",

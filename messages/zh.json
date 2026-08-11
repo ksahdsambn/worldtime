@@ -58,6 +58,10 @@
     "hours": "小时",
     "minutes": "分钟"
   },
+  "Summary": {
+    "title": "会议时段",
+    "homeSuffix": " (主)"
+  },
   "Export": {
     "export": "导出",
     "ics": "iCal / Outlook (.ics)",

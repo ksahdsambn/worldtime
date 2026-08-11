@@ -1,0 +1,134 @@
+{
+  "App": {
+    "title": "WorldTime",
+    "tagline": "Đồng hồ thế giới / chuyển đổi múi giờ / lập lịch họp"
+  },
+  "Common": {
+    "add": "Thêm",
+    "delete": "Xoá",
+    "settings": "Cài đặt",
+    "cancel": "Huỷ",
+    "confirm": "OK"
+  },
+  "LocaleSwitcher": {
+    "label": "Ngôn ngữ",
+    "zh": "中文",
+    "en": "English"
+  },
+  "CitySearch": {
+    "placeholder": "Tìm thành phố, quốc gia hoặc múi giờ…",
+    "noResults": "Không có kết quả"
+  },
+  "Settings": {
+    "title": "Cài đặt",
+    "hourFormat": "Định dạng giờ",
+    "fmt12": "12 giờ",
+    "fmt24": "24 giờ",
+    "fmtMixed": "Kết hợp (theo từng địa điểm)"
+  },
+  "Places": {
+    "title": "Địa điểm",
+    "empty": "Chưa có địa điểm. Tìm kiếm để thêm.",
+    "setHome": "Đặt làm chính",
+    "remove": "Xoá",
+    "home": "Chính",
+    "utcRow": "Giờ phối hợp quốc tế",
+    "offsetFromHome": "Chênh lệch với địa điểm chính (dương = nhanh hơn)",
+    "dstActive": "Hiện đang trong giờ mùa hè",
+    "dst": "Giờ mùa hè",
+    "yes": "có",
+    "no": "không",
+    "nextChange": "Lần chuyển tiếp theo",
+    "noUpcoming": "không có chuyển đổi sắp tới",
+    "dstWarnSoon": "Sắp đến giờ mùa hè",
+    "rename": "Đổi tên",
+    "renamePrompt": "Tên hiển thị tuỳ chỉnh",
+    "tags": "Nhãn",
+    "tagsPrompt": "Nhãn (phân tách bằng dấu phẩy)",
+    "all": "Tất cả",
+    "dragHandle": "Kéo để sắp xếp lại",
+    "confirmRemoveHome": "Xoá địa điểm chính?",
+    "sunNone": "không"
+  },
+  "Selection": {
+    "duration": "Thời lượng",
+    "clear": "Xoá vùng chọn",
+    "hour": "giờ",
+    "minute": "phút",
+    "hours": "giờ",
+    "minutes": "phút"
+  },
+  "Summary": {
+    "title": "Giờ họp",
+    "homeSuffix": " (chính)"
+  },
+  "Export": {
+    "export": "Xuất",
+    "ics": "iCal / Outlook (.ics)",
+    "google": "Google Lịch",
+    "email": "Liên kết email",
+    "eventPage": "Trang sự kiện công khai",
+    "copySummary": "Sao chép tóm tắt thời gian",
+    "shareLink": "Sao chép liên kết chia sẻ",
+    "copied": "Đã sao chép"
+  },
+  "Event": {
+    "title": "Sự kiện công khai",
+    "description": "Giờ địa phương tương ứng cho sự kiện này:",
+    "openOriginal": "Mở trong WorldTime"
+  },
+  "Heatmap": {
+    "green": "Tất cả trong giờ làm việc",
+    "orange": "Một số người có thể liên hệ",
+    "red": "Có người đang nghỉ",
+    "worstStatus": "trạng thái xấu nhất được ưu tiên"
+  },
+  "Now": {
+    "backToNow": "Về hiện tại"
+  },
+  "Cursor": {
+    "cursor": "Con trỏ",
+    "enable": "Bật con trỏ",
+    "move": "di chuyển",
+    "resize": "chỉnh biên"
+  },
+  "DateJump": {
+    "jumpTo": "Chuyển đến",
+    "today": "Hôm nay"
+  },
+  "Theme": {
+    "toggle": "Chuyển giao diện sáng/tối"
+  },
+  "Gcal": {
+    "label": "Google Lịch",
+    "connect": "Kết nối & phủ lên",
+    "connected": "Đã kết nối (nhấn để ngắt)"
+  },
+  "PrintExport": {
+    "print": "In",
+    "image": "Xuất hình ảnh"
+  },
+  "Grid": {
+    "empty": "Thêm địa điểm để xem lưới thời gian."
+  },
+  "Landing": {
+    "title": "Chuyển đổi múi giờ",
+    "description": "Chênh lệch giờ và bảng so sánh",
+    "cityPair": "Cặp thành phố",
+    "tzPair": "Cặp múi giờ",
+    "timeComparison": "So sánh thời gian",
+    "isAhead": "nhanh hơn",
+    "lags": "chậm hơn",
+    "vs": "so với",
+    "aheadNote": "nhanh hơn (muộn hơn)",
+    "behindNote": "chậm hơn (sớm hơn)",
+    "bNote": "{b} {dir} so với {a}.",
+    "currentOffsetNote": "(chênh lệch hiện tại; có thể khác trong ngày chuyển giờ mùa hè)",
+    "comparisonNote": "So sánh giờ tiêu biểu (chênh lệch cố định).",
+    "updatedAt": "Tạo lúc {time} (cập nhật mỗi giờ)."
+  },
+  "Widget": {
+    "eventTitle": "Tiện ích sự kiện WorldTime",
+    "worldClockTitle": "Tiện ích đồng hồ thế giới WorldTime"
+  }
+}

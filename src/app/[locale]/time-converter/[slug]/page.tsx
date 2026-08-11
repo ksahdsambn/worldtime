@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { DateTime } from "luxon";
 import { formatOffset } from "@/lib/time";
 import { parseSlug } from "@/lib/landingSlug";
+import { routing } from "@/i18n/routing";
 
 type Props = {
   params: { locale: string; slug: string };
@@ -45,15 +46,16 @@ const POPULAR_TZ_PAIRS: Array<[string, string]> = [
 
 export function generateStaticParams() {
   const params: Array<{ locale: string; slug: string }> = [];
-  // 城市对（以「--」分隔）
-  for (const [a, b] of POPULAR_CITY_PAIRS) {
-    params.push({ locale: "zh", slug: `${a}--${b}` });
-    params.push({ locale: "en", slug: `${a}--${b}` });
-  }
-  // 时区缩写对（以「--」分隔）
-  for (const [a, b] of POPULAR_TZ_PAIRS) {
-    params.push({ locale: "zh", slug: `${a}--${b}` });
-    params.push({ locale: "en", slug: `${a}--${b}` });
+  // 遍历所有支持语言（新增语言后自动覆盖，无需手动维护此列表）
+  for (const locale of routing.locales) {
+    // 城市对（以「--」分隔）
+    for (const [a, b] of POPULAR_CITY_PAIRS) {
+      params.push({ locale, slug: `${a}--${b}` });
+    }
+    // 时区缩写对（以「--」分隔）
+    for (const [a, b] of POPULAR_TZ_PAIRS) {
+      params.push({ locale, slug: `${a}--${b}` });
+    }
   }
   return params;
 }
