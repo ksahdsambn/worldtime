@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google Calendar",
     "connect": "Conectar y superponer",
-    "connected": "Conectado (clic para desconectar)"
+    "connected": "Conectado (clic para desconectar)",
+    "loading": "Conectando…",
+    "error": "Error de conexión, reintenta"
   },
   "PrintExport": {
     "print": "Imprimir",

@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google Agenda",
     "connect": "Conectar e sobrepor",
-    "connected": "Conectado (clique para desconectar)"
+    "connected": "Conectado (clique para desconectar)",
+    "loading": "Conectando…",
+    "error": "Falha na conexão, tente novamente"
   },
   "PrintExport": {
     "print": "Imprimir",

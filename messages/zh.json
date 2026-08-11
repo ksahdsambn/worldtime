@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google 日历",
     "connect": "连接并叠加",
-    "connected": "已连接（点击断开）"
+    "connected": "已连接（点击断开）",
+    "loading": "连接中…",
+    "error": "连接失败，请重试"
   },
   "PrintExport": {
     "print": "打印",

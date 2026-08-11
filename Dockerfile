@@ -14,6 +14,12 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # 构建阶段 Next.js 会读取 next.config.mjs 中的 standalone 输出
 ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_* 在构建期内联进客户端 bundle / SSG 产物（运行时再设无效），
+# 故必须作为构建期 ARG 传入（来源：docker compose 的 build.args / 宿主环境）。
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 RUN npm run build
 
 # 阶段 3：运行（精简镜像）

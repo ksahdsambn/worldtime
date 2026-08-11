@@ -78,6 +78,12 @@ interface WorldTimeState {
 
   /** Google 日历是否已连接（6.1 叠加触发条件） */
   gcalConnected: boolean;
+  /**
+   * Google 日历 access token（6.1 纯前端 Token Client 方案）。
+   * 约 1 小时过期，过期由消费方（TimeGrid 调 freebusy 收到 401 时）静默刷新。
+   * 不持久化到 localStorage——仅由 GoogleCalendarConnect 用 sessionStorage 临时缓存。
+   */
+  gcalAccessToken: string | null;
 
   // ---- 地点操作 ----
   /** 添加地点；若列表为空则自动设为主地点（步骤 2.3 要求） */
@@ -112,6 +118,8 @@ interface WorldTimeState {
 
   /** 切换 Google 日历连接状态 */
   setGcalConnected: (v: boolean) => void;
+  /** 设置 Google 日历 access token（null 表示无 token / 已断开） */
+  setGcalAccessToken: (token: string | null) => void;
 
   // ---- 标签分组（6.5）----
   /** 给地点打标签（覆盖） */
@@ -130,6 +138,7 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   cursorMs: null,
   viewStartDateMs: null,
   gcalConnected: false,
+  gcalAccessToken: null,
   activeTag: null,
 
   addPlace: (city) =>
@@ -222,6 +231,8 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   setViewStartDate: (ms) => set({ viewStartDateMs: ms }),
 
   setGcalConnected: (v) => set({ gcalConnected: v }),
+
+  setGcalAccessToken: (token) => set({ gcalAccessToken: token }),
 
   setPlaceTags: (placeId, tags) =>
     set((state) => ({

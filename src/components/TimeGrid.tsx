@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
@@ -10,6 +10,14 @@ import { prefers12Hour } from "@/lib/time";
 import { columnColor, heatBg, type HeatColor } from "@/lib/heatmap";
 import { localCityName } from "@/lib/cityName";
 import type { AppLocale } from "@/i18n/routing";
+import {
+  busyRangesToMs,
+  fetchFreeBusy,
+  freeBusyWindow,
+  GcalUnauthorizedError,
+  type BusyRange,
+} from "@/lib/gcal";
+import { clearGcalSession, requestSilentRefresh } from "@/lib/gcal-auth";
 
 /**
  * 时间网格（TC-1）+ 拖拽选区（TC-2）。
@@ -36,7 +44,7 @@ export default function TimeGrid() {
   );
 
   const viewStartDateMs = useWorldTimeStore((s) => s.viewStartDateMs);
-  const gcalConnected = useWorldTimeStore((s) => s.gcalConnected);
+  const gcalAccessToken = useWorldTimeStore((s) => s.gcalAccessToken);
   // 表头分组：每个连续 dayIndex 段对应一个 <th>，其 colSpan 等于该段在 columns 中的
   // 实际列数（而非固定 24）。这保证表头与表体列在 DST 切换（某日 23 或 25 小时、
   // 或末尾多出 1 列）时仍逐列对齐——否则日期标签会整体相对表体偏移。
@@ -61,20 +69,60 @@ export default function TimeGrid() {
     return { columns: cols, dayGroups: groups, colors: colorMap };
   }, [home, nowRaw, places, dayPeriods, viewStartDateMs]);
 
-  // Google 日历叠加（6.1）：授权后用示意忙碌区段（主地点本地 10-11 / 14-15，未来 2 天）
-  const gcalBusyMs = useMemo(() => {
-    const set = new Set<number>();
-    if (!home || !gcalConnected) return set;
-    const base = nowRaw ? DateTime.fromMillis(nowRaw, { zone: home.timeZone }).startOf("day") : null;
-    if (!base) return set;
-    for (let d = 0; d < 2; d++) {
-      for (const [s, _e] of [[10, 11], [14, 15]] as const) {
-        const start = base.plus({ days: d, hours: s }).toMillis();
-        set.add(start);
+  // Google 日历叠加（6.1）：授权后调 freebusy 拉真实忙碌区间。
+  const [busyRanges, setBusyRanges] = useState<BusyRange[]>([]);
+  const homeTimeZone = home?.timeZone ?? null;
+  useEffect(() => {
+    // 未授权或无主地点：清空，不请求
+    if (!gcalAccessToken || !homeTimeZone) {
+      setBusyRanges([]);
+      return;
+    }
+    // 窗口 = 当前视图起始日 + 7 天。刻意不依赖 nowRaw（每分钟 tick），避免每分钟重拉；
+    // 跨午夜后窗口不会自动推进，用户交互或刷新页面时会重算（会议排期场景可接受）。
+    const start = viewStartDateMs ?? todayStartMs(homeTimeZone, Date.now());
+    const win = freeBusyWindow(start, 7);
+    let cancelled = false;
+    let refreshed = false;
+    async function run(token: string) {
+      try {
+        const ranges = await fetchFreeBusy(token, {
+          timeMin: win.timeMin,
+          timeMax: win.timeMax,
+          timeZone: homeTimeZone,
+        });
+        if (!cancelled) setBusyRanges(ranges);
+      } catch (e) {
+        if (cancelled) return;
+        if (e instanceof GcalUnauthorizedError && !refreshed) {
+          // token 过期：静默刷新后用新 token 重试一次
+          refreshed = true;
+          const fresh = await requestSilentRefresh();
+          if (cancelled) return;
+          if (!fresh) {
+            // Google 会话已失效：断开，提示用户重新连接
+            clearGcalSession();
+            setBusyRanges([]);
+          }
+          // 成功则 callback 已更新 store.gcalAccessToken，本 effect 会因依赖变化自动
+          // 重跑拉取，无需在此递归——否则与 effect 重跑会重复发起一次 freebusy 请求
+        } else {
+          // 其他错误：保留空叠加，不打断核心功能
+          setBusyRanges([]);
+        }
       }
     }
-    return set;
-  }, [home, nowRaw, gcalConnected]);
+    run(gcalAccessToken);
+    return () => {
+      cancelled = true;
+    };
+  }, [gcalAccessToken, viewStartDateMs, homeTimeZone]);
+
+  // 把忙碌区间投影到当前列（只含真实存在的 column ms，与 Row 的 has() 语义对齐）
+  const gcalBusyMs = useMemo(
+    () => busyRangesToMs(busyRanges, columns),
+    [busyRanges, columns],
+  );
 
   // ---- 拖拽选区状态 ----
   const [dragStartMs, setDragStartMs] = useState<number | null>(null);

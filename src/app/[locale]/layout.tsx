@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import ThemeRegistry from "@/components/ThemeRegistry";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import GisScript from "@/components/GisScript";
 import { getSiteUrl, buildAlternates, buildOpenGraph } from "@/lib/seo";
 import "../globals.css";
 
@@ -74,6 +75,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <body>
           <ThemeRegistry>
             <ServiceWorkerRegister />
+            <GisScript />
             {children}
           </ThemeRegistry>
         </body>

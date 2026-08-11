@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google Calendar",
     "connect": "Verbinden & überlagern",
-    "connected": "Verbunden (Klick zum Trennen)"
+    "connected": "Verbunden (Klick zum Trennen)",
+    "loading": "Verbinden…",
+    "error": "Verbindung fehlgeschlagen, bitte erneut versuchen"
   },
   "PrintExport": {
     "print": "Drucken",

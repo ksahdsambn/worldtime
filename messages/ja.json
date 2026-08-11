@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google カレンダー",
     "connect": "接続して重ね合わせ",
-    "connected": "接続済み（クリックで切断）"
+    "connected": "接続済み（クリックで切断）",
+    "loading": "接続中…",
+    "error": "接続に失敗しました。再試行してください"
   },
   "PrintExport": {
     "print": "印刷",

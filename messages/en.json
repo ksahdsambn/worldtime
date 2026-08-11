@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google Calendar",
     "connect": "Connect & overlay",
-    "connected": "Connected (click to disconnect)"
+    "connected": "Connected (click to disconnect)",
+    "loading": "Connecting…",
+    "error": "Connection failed, please retry"
   },
   "PrintExport": {
     "print": "Print",

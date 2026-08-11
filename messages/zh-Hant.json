@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google 行事曆",
     "connect": "連結並重疊顯示",
-    "connected": "已連結（點擊以解除）"
+    "connected": "已連結（點擊以解除）",
+    "loading": "連線中…",
+    "error": "連線失敗，請重試"
   },
   "PrintExport": {
     "print": "列印",

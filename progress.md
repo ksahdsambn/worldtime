@@ -1,5 +1,66 @@
 # 开发进度记录
 
+## 第 12 轮：Google 日历叠加接入真实 OAuth（替换 mock）
+
+> 时间：2026-08-12
+> 范围：需求 6.1「Google 日历叠加」从 mock 占位接入真实 Google OAuth + Calendar freebusy API，授权后网格显示用户真实忙碌时段。
+> 依据：需求 6.1（P2 可选增强）；原 `GoogleCalendarConnect`/`TimeGrid` 的日历叠加为 mock（localStorage 标记 + 写死 10-11/14-15 色块），本轮替换为真实数据。
+
+### 背景
+
+需求 6.1 的日历叠加自 MVP 起即为 mock：`GoogleCalendarConnect` 仅往 localStorage 写一个布尔标记，`TimeGrid` 据此渲染主地点本地 10-11/14-15 的示意性色块，未接真实日历。本轮接入 Google Identity Services（GIS）Token Client 与 Calendar freebusy API，授权后拉取用户主日历真实空闲/忙碌区间并投影到网格列。
+
+### 架构决策
+
+1. **纯前端 Token Client（隐式授权），不引入后端**。项目为纯客户端架构（无 API 路由），需求 6.1 明确「不构成账户体系」。access token 约 1h 过期、无 refresh token，故采用 **静默刷新**：TimeGrid 调 freebusy 收到 401 时，用 `prompt:"none"` 无交互拿新 token（Google 会话还在则用户无感），失败才提示重连。Client Secret 纯前端方案用不上，不入项目。
+2. **鉴权与 UI 解耦**：GIS 单例（token client、脚本就绪 Promise、回调 resolver）与连接/断开/静默刷新/恢复函数集中到 `src/lib/gcal-auth.ts`；freebusy 拉取与区间→列投影等纯逻辑放 `src/lib/gcal.ts`（可单测）；`GoogleCalendarConnect` 瘦身为纯 UI；`TimeGrid` 只消费。依赖方向：组件 → lib，无循环。
+3. **token 存 sessionStorage 而非 localStorage**：标签关闭即失效，不构成长期凭据；scope 最小化为 `calendar.readonly`（只读）；断开时调 `revoke` 撤销远端授权。
+4. **busy 投影与网格列语义严格对齐**：freebusy 返回的 ISO 绝对时刻投影到 column-start ms 集合，只插入真实存在的列（DST 日 23/25 列的非整点小时被自然跳过），与 `Row` 的 `busyMs.has(c.ms)` 精确匹配。
+5. **scope 现实**：`calendar.readonly` 是 Google sensitive scope，freebusy 端点无更窄 scope；开发期用 consent screen Testing + 测试用户，正式公开需走 verification。
+
+### 改动清单
+
+#### 新增
+- `src/lib/gcal.ts`：`GCAL_SCOPE`/`gcalClientId()`/`freeBusyWindow()`/`fetchFreeBusy()`（401 抛 `GcalUnauthorizedError`）/`busyRangesToMs()`。
+- `src/lib/gcal-auth.ts`：`waitForGis()`（轮询脚本就绪）、`ensureTokenClient()`（单例）、`requestInteractiveAuth()`（首次连接）、`requestSilentRefresh()`（静默刷新）、`restoreGcalToken()`/`clearGcalSession()`/`disconnectGcal()`。
+- `src/components/GisScript.tsx`：镜像 `ServiceWorkerRegister` 注入 `https://accounts.google.com/gsi/client`。
+- `src/types/google-accounts.d.ts`：GIS `google.accounts.oauth2` 最小 ambient 类型。
+- `tests/lib/gcal.test.ts`：8 用例覆盖 `busyRangesToMs`（空集/单列/相切不重叠/跨多列/半小时覆盖/幽灵 ms/多区间合并）与 `freeBusyWindow`。
+- `.env.example`：`NEXT_PUBLIC_GOOGLE_CLIENT_ID` 占位 + 文档。
+
+#### 修改
+- `src/store/useWorldTimeStore.ts`：加 `gcalAccessToken` + `setGcalAccessToken`（不持久化）。
+- `src/components/GoogleCalendarConnect.tsx`：重写为纯 UI，调 gcal-auth 函数；加 loading/error 态。
+- `src/components/TimeGrid.tsx`：删 mock，加 freebusy effect（401 自动静默刷新）；`gcalBusyMs` 改为 `busyRangesToMs(busyRanges, columns)`。
+- `src/app/[locale]/layout.tsx`：挂载 `<GisScript />`。
+- `messages/*.json`（11 语言）：`Gcal` 加 `loading`/`error`。
+- `Dockerfile`/`docker-compose.yml`：`NEXT_PUBLIC_*` 构建期 `ARG` 注入（此类变量构建期内联进 bundle，运行时再设无效）。
+
+### 验证
+
+- `npm run type-check`：干净通过。
+- `npm test`：164 用例全过（含新增 gcal 8 项）。
+- `npm run lint`：零警告。
+- `npm run build`：成功，139 页生成。
+
+### 审查与修复
+
+逐文件审查后纠正一处 P2：静默刷新成功时 `requestSilentRefresh` 的 callback 已 `setGcalAccessToken(newToken)`，而该字段在 TimeGrid effect 依赖数组中 → effect 会自动重跑拉取；原代码又递归 `run(fresh)`，导致一次刷新触发两次 freebusy 请求。修正为成功后直接 return，依赖 effect 重跑驱动。复测 type-check + 164 用例无回归。
+
+### 安全
+
+- Client Secret **未写入任何文件**（纯前端方案用不上，且建议在 Console 重置已暴露的密钥）。
+- `.env.local`（含真实 Client ID）被 `.gitignore` 的 `.env*.local` 忽略，未进 git。
+- Client ID 经 `NEXT_PUBLIC_` 内联进客户端 bundle（前端本就暴露，非机密）。
+
+### 提交与发布
+
+- 工作在 `main` 分支进行。
+- 部署前置（人工，Console 侧）：OAuth client 的 Authorized JavaScript origins 加生产域名 + localhost；consent screen 加测试用户；重置 Client Secret。
+- 生产构建：`NEXT_PUBLIC_*` 必须在 Docker 构建期注入（已配 `build.args`），光运行时设无效。
+
+---
+
 ## 第 11 轮：SEO 基建层全量补齐
 
 > 时间：2026-08-11

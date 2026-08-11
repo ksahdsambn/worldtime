@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google 캘린더",
     "connect": "연결 및 겹쳐 보기",
-    "connected": "연결됨 (클릭하여 해제)"
+    "connected": "연결됨 (클릭하여 해제)",
+    "loading": "연결 중…",
+    "error": "연결에 실패했습니다. 다시 시도하세요"
   },
   "PrintExport": {
     "print": "인쇄",

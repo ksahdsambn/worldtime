@@ -103,7 +103,9 @@
   "Gcal": {
     "label": "Google Lịch",
     "connect": "Kết nối & phủ lên",
-    "connected": "Đã kết nối (nhấn để ngắt)"
+    "connected": "Đã kết nối (nhấn để ngắt)",
+    "loading": "Đang kết nối…",
+    "error": "Kết nối thất bại, vui lòng thử lại"
   },
   "PrintExport": {
     "print": "In",
