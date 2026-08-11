@@ -5,6 +5,7 @@ node_modules
 npm-debug.log*
 Dockerfile
 .dockerignore
+docker-compose.yml
 markdown
 *.md
 .env*
@@ -12,6 +13,7 @@ tests
 scripts
 tsconfig.tsbuildinfo
 .playwright-cli
+output
 vitest.config.ts
 vitest.config.mts
 coverage

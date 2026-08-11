@@ -1,5 +1,42 @@
 # 开发进度记录
 
+## 第 9 轮：改用 Docker Compose 部署
+
+> 时间：2026-08-11
+> 范围：将部署方式从纯 `docker build`/`docker run` 迁移至 `docker compose`。
+
+### 背景
+
+项目原有完善的多阶段 `Dockerfile`，但无 `docker-compose.yml`，部署需手动执行多条 `docker` 命令。改为 compose 后可一条命令完成构建与启动，并内置健康检查与重启策略。
+
+### 改动清单
+
+#### 1. 新建 `docker-compose.yml`
+- 单服务 `app`，基于现有 `Dockerfile` 构建（`build: .`），不重复构建逻辑。
+- 端口映射 `${PORT:-3000}:3000`，宿主端口可通过环境变量自定义。
+- 环境变量 `NODE_ENV=production`、`NEXT_TELEMETRY_DISABLED=1`。
+- `restart: unless-stopped`（异常退出自动重启）。
+- `healthcheck` 用 `wget --spider` 探测 `/zh` 路由（Alpine 自带 wget，无需装 curl）。
+- 应用无状态，不挂载 volumes。
+
+#### 2. 更新 `.dockerignore`
+- 补充排除 `output/`（Playwright 截图）与 `docker-compose.yml` 自身，减小构建上下文。
+
+### 使用方式
+
+```bash
+docker compose up -d --build   # 构建并后台启动
+docker compose logs -f         # 查看日志
+docker compose down            # 停止
+PORT=8080 docker compose up -d # 自定义宿主端口
+```
+
+### 未改动
+- `Dockerfile`：现有三阶段构建已完善，无需改动。
+- `next.config.mjs`：`output: "standalone"` 已正确配置。
+
+---
+
 ## 第 8 轮：国际化扩展（支持 11 种语言）
 
 > 时间：2026-08-11

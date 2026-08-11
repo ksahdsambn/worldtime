@@ -1,10 +1,11 @@
 # 阶段 1：依赖安装
-# 使用 npm ci 基于 lockfile 做可重现安装（确定性、更快、且 lockfile 与
-# package.json 不一致时快速失败）。Next.js 官方 Docker 示例同样采用该策略。
+# 使用 npm install（而非 npm ci）：项目含 @next/swc 等平台相关可选依赖，
+# 其 lockfile 在不同 OS/Node 版本间可能不完全同步，npm ci 会因此失败。
+# npm install 能在保持 lockfile 主干的前提下自动补全当前平台所需依赖。
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci --no-audit --no-fund
+RUN npm install --no-audit --no-fund
 
 # 阶段 2：生产构建
 FROM node:20-alpine AS builder
