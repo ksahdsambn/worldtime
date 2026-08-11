@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "时区转换",
-    "description": "两地时差与时段对照表",
+    "description": "实时时差、时区偏移与逐小时对照表（自动夏令时换算）",
     "cityPair": "城市对",
     "tzPair": "时区对",
     "timeComparison": "时间对照表",
@@ -134,5 +134,10 @@
     "worldClock": "世界时钟",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "世界时钟与时区转换器",
+    "introBody": "WorldTime 是一款免费的世界时钟、时区转换器与会议安排工具。跨城市、跨时区对比当地时间，找到国际会议的最佳时段，并支持自动夏令时（DST）换算与选区时间分享。",
+    "popularTitle": "热门时区转换"
   }
 }

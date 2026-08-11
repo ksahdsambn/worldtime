@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "Conversor de fusos horários",
-    "description": "Diferença de horário e tabela comparativa",
+    "description": "diferença de horário ao vivo, defasagem de fuso horário e tabela de comparação hora a hora (com horário de verão)",
     "cityPair": "Par de cidades",
     "tzPair": "Par de fusos horários",
     "timeComparison": "Comparação de horários",
@@ -134,5 +134,10 @@
     "worldClock": "Relógio mundial",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "Relógio mundial e conversor de fusos horários",
+    "introBody": "WorldTime é um relógio mundial, conversor de fusos horários e organizador de reuniões gratuito. Compare o horário local entre cidades e fusos horários, encontre os melhores horários para reuniões internacionais e compartilhe seleções de horário com suporte automático ao horário de verão (DST).",
+    "popularTitle": "Conversores de fuso horário populares"
   }
 }

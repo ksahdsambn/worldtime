@@ -5,6 +5,15 @@ import { DateTime } from "luxon";
 import { formatOffset } from "@/lib/time";
 import { parseSlug } from "@/lib/landingSlug";
 import { routing } from "@/i18n/routing";
+import { JsonLd } from "@/components/JsonLd";
+import {
+  POPULAR_CITY_PAIRS,
+  POPULAR_TZ_PAIRS,
+  buildAlternates,
+  buildOpenGraph,
+  webAppJsonLd,
+  localeUrl,
+} from "@/lib/seo";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
@@ -24,24 +33,10 @@ type Props = {
  * 渲染策略：构建期静态生成（generateStaticParams 枚举热门组合），
  * 其余长尾组合按需生成（ISR，dynamicParams 默认允许）。
  * 服务端返回的原始 HTML 即含完整时差与对照表内容。
+ *
+ * SEO：每页输出 canonical + 全语言 hreflang（含 x-default），用同名 slug
+ * 把 11 语言版本收束到同一组对照页，避免重复内容惩罚。
  */
-
-/** 热门城市对（构建期预生成）。 */
-const POPULAR_CITY_PAIRS: Array<[string, string]> = [
-  ["cn-beijing", "us-new-york"],
-  ["gb-london", "jp-tokyo"],
-  ["us-new-york", "gb-london"],
-  ["cn-shanghai", "au-sydney"],
-  ["us-los-angeles", "de-berlin"],
-];
-
-/** 热门时区缩写对（构建期预生成）。 */
-const POPULAR_TZ_PAIRS: Array<[string, string]> = [
-  ["EST", "PST"],
-  ["GMT", "CET"],
-  ["JST", "PST"],
-  ["IST", "EST"],
-];
 
 export function generateStaticParams() {
   const params: Array<{ locale: string; slug: string }> = [];
@@ -71,14 +66,27 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   const t = await getTranslations({ locale, namespace: "Landing" });
   const info = parseSlug(slug);
-  const title = info
-    ? `${info.aLabel} ↔ ${info.bLabel} | ${t("title")}`
-    : t("title");
+  const path = `/time-converter/${slug}`;
+  if (!info) {
+    return {
+      title: t("title"),
+      description: t("description"),
+      alternates: buildAlternates(locale, path),
+      openGraph: buildOpenGraph(locale, {
+        title: t("title"),
+        description: t("description"),
+        path,
+      }),
+    };
+  }
+  // title 仅声明页面名，品牌后缀由 layout template 追加（避免重复品牌）
+  const title = `${info.aLabel} ↔ ${info.bLabel} · ${t("title")}`;
+  const description = `${info.aLabel} - ${info.bLabel}: ${t("description")}`;
   return {
     title,
-    description: info
-      ? `${info.aLabel} - ${info.bLabel}: ${t("description")}`
-      : t("description"),
+    description,
+    alternates: buildAlternates(locale, path),
+    openGraph: buildOpenGraph(locale, { title, description, path }),
   };
 }
 
@@ -114,6 +122,8 @@ export default async function LandingPage({ params }: Props) {
       bDay: bDt.toFormat("EEE"),
     };
   });
+
+  const pageTitle = `${info.aLabel} ↔ ${info.bLabel} · ${t("title")}`;
 
   return (
     <main className="p-6 prose max-w-2xl">
@@ -159,6 +169,14 @@ export default async function LandingPage({ params }: Props) {
           {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
         </p>
       )}
+
+      <JsonLd
+        data={webAppJsonLd({
+          name: pageTitle,
+          url: localeUrl(locale, `/time-converter/${slug}`),
+          description: `${info.aLabel} - ${info.bLabel}: ${t("description")}`,
+        })}
+      />
     </main>
   );
 }

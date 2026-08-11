@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "시간대 변환",
-    "description": "시차 및 비교 표",
+    "description": "실시간 시차, 시간대 오프셋, 시간별 비교표 (일광절약시간 지원)",
     "cityPair": "도시 쌍",
     "tzPair": "시간대 쌍",
     "timeComparison": "시간 비교",
@@ -134,5 +134,10 @@
     "worldClock": "세계 시계",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "세계 시계 및 시간대 변환기",
+    "introBody": "WorldTime은 무료 세계 시계, 시간대 변환기, 회의 일정 도구입니다. 도시 및 시간대 간 현지 시간을 비교하고, 국제 회의에 가장 좋은 시간대를 찾고, 일광절약시간(DST) 자동 지원으로 시간 선택을 공유하세요.",
+    "popularTitle": "인기 시간대 변환"
   }
 }

@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "Convertisseur de fuseaux horaires",
-    "description": "Différence horaire et tableau de comparaison",
+    "description": "décalage horaire en direct, décalage de fuseau horaire et tableau de comparaison heure par heure (DST inclus)",
     "cityPair": "Paire de villes",
     "tzPair": "Paire de fuseaux horaires",
     "timeComparison": "Comparaison horaire",
@@ -134,5 +134,10 @@
     "worldClock": "Horloge mondiale",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "Horloge mondiale et convertisseur de fuseaux horaires",
+    "introBody": "WorldTime est une horloge mondiale, un convertisseur de fuseaux horaires et un planificateur de réunions gratuit. Comparez l'heure locale entre villes et fuseaux horaires, trouvez les meilleures plages pour vos réunions internationales et partagez vos sélections horaires avec prise en charge automatique de l'heure d'été (DST).",
+    "popularTitle": "Convertisseurs de fuseau horaire populaires"
   }
 }

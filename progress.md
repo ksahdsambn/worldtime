@@ -1,5 +1,111 @@
 # 开发进度记录
 
+## 第 11 轮：SEO 基建层全量补齐
+
+> 时间：2026-08-11
+> 范围：补齐此前缺失的 12 项 SEO 基础设施（sitemap / robots / metadataBase / hreflang / OpenGraph / Twitter Card / OG 图 / JSON-LD / widget noindex / web manifest / 首页文案 / viewport 导出）。
+> 依据：项目 SEO 评估（地基良好，但"SEO 基建层"几乎为空，真实成熟度约 45–55 分）。
+
+### 背景
+
+前 10 轮已建立 SSR + next-intl 11 语言 + 专门 SEO 着陆页（`time-converter/[slug]`）的良好地基，但驱动排名的核心 SEO 基建缺失：搜索引擎无法发现长尾页（无 sitemap）、无爬虫指令（无 robots）、11 语言版本互相重复且不收束（无 canonical/hreflang）、社交分享无预览（无 OG/Twitter）、无结构化数据（无 JSON-LD）、嵌入页与主站争抢排名（widget 未 noindex）、有 SW 却无 PWA manifest、首页可索引正文过薄等。本轮系统性补齐这 12 项。
+
+### 架构决策
+
+把所有可在构建期确定的 SEO 派生数据抽为纯函数 `src/lib/seo.ts`（站点 URL、hreflang alternates、OpenGraph 对象、JSON-LD、热门配对枚举），使其可在 `tests/lib/seo.test.ts` 中脱离 Next 运行时单元测试；各路由的 `generateMetadata` 与 `sitemap.ts` / `robots.ts` 只做薄封装。`POPULAR_CITY_PAIRS` / `POPULAR_TZ_PAIRS` 从着陆页抽离为单一数据源，供 `page.tsx`、`sitemap.ts`、首页内链区三处复用，消除重复维护。
+
+### 修复清单
+
+#### 1. 新增 `src/lib/seo.ts`（纯 SEO 助手）
+- `getSiteUrl()`：读取 `NEXT_PUBLIC_SITE_URL` 环境变量（生产须配置真实域名），回退占位 `https://worldtime.app`，裁掉末尾斜杠。
+- `localeUrl(locale, path)`：拼某语言绝对 URL。
+- `buildAlternates(locale, path)`：生成 canonical + 全语言 hreflang（含 `x-default` → 默认语言）。
+- `buildOpenGraph(locale, {...})`：生成 OG 对象（type/locale/siteName/title/description/url），返回类型交推断使 `type` 为字面量 `"website"`。
+- `LOCALE_OG_MAP`：locale → `og:locale`（`language_REGION`）。
+- `POPULAR_CITY_PAIRS` / `POPULAR_TZ_PAIRS` / `buildLandingSlugs()`：热门配对单一数据源。
+- `webAppJsonLd({...})`：`WebApplication` 结构化数据（含免费 Offer）。
+
+#### 2. 新增 `tests/lib/seo.test.ts`（+17 用例）
+- 覆盖 `getSiteUrl`（环境变量/回退/末尾斜杠）、`localeUrl`（首页/子路径）、`buildAlternates`（canonical/全语言/x-default）、`buildOpenGraph`（字段完备 + 11 语言 og:locale 映射）、`buildLandingSlugs`（数量/slug 格式/`--` 分隔符）、`webAppJsonLd`（schema 字段）。
+
+#### 3. 新增 `src/app/sitemap.ts`（`/sitemap.xml`）
+- 110 条：首页 × 11 语言 + 9 个热门配对 × 11 语言，每条附全语言 `xhtml:link` hreflang alternates，把 11 语言版本收束到同一对照页。路径含 `.xml` 被 middleware matcher 排除，直接由 Next 提供服务。
+
+#### 4. 新增 `src/app/robots.ts`（`/robots.txt`）
+- 放行 `/`，禁止 `/widget/` 与 `/event/`（嵌入页防关键词蚕食；事件页 URL 为 base64 状态、无稳定 canonical、抓取面无限）。声明 sitemap 与 host。
+
+#### 5. 新增 `src/app/manifest.ts`（`/manifest.webmanifest`）
+- PWA 清单（项目已注册 SW）。名称/简称/描述/start_url/display/theme_color(#2563eb)/background_color/icons(favicon)。PNG 多尺寸图标作为后续可选增强。
+
+#### 6. 新增 `src/app/[locale]/opengraph-image.tsx`（OG 分享图）
+- 1200×630 PNG，`next/og` ImageResponse 渲染。**刻意放置在 `[locale]` 段内**：OG 图路由无扩展名，放根段会被 next-intl 中间件拦截重定向；置于 `[locale]` 段则作为合法 locale 路由放行。文案仅用英文（Satori 默认字体不含中文字形），由 Next 自动注入到所有 `[locale]` 子路由 `og:image`。
+
+#### 7. 新增 `src/components/JsonLd.tsx`
+- 通用 `<script type="application/ld+json">` 注入组件，供各页注入结构化数据。
+
+#### 8. 改造 `src/app/[locale]/layout.tsx`
+- 新增 `export const viewport`（Next 15 起 `themeColor` 须从 metadata 迁出）：`width/initialScale` + 浅/深 `themeColor`。
+- `generateMetadata`：补 `metadataBase`、`title.default + template`（子路由仅声明页面名，品牌后缀由模板统一追加）、`applicationName`、首页 `alternates`（canonical + hreflang）、`openGraph`、`twitter: summary_large_image`、`manifest`、`icons`。
+
+#### 9. 改造首页 `src/app/[locale]/page.tsx`（元数据继承自 layout，已是正确首页 canonical/OG）
+- 新增服务端渲染的 `<footer>` SEO 区：本地化关键词导向文案（`Seo.introTitle` / `introBody`）+ 「热门时区转换」内链列表（用 next-intl `Link` 指向 9 个热门配对，当前语言）。增强可索引正文与站内链接权重传递。
+- 注入 `WebApplication` JSON-LD。
+
+#### 10. 改造 `src/app/[locale]/time-converter/[slug]/page.tsx`
+- 删除内联 `POPULAR_*`，改从 `@/lib/seo` 导入（DRY）。
+- `generateMetadata`：title 走模板（`${a} ↔ ${b} · 时区转换` → 自动追加 `| WorldTime`）；强化 description；补 `alternates`（per-slug 全语言 hreflang）与 `openGraph`。
+- 注入 per-pair `WebApplication` JSON-LD。
+
+#### 11. 改造事件页与 widget 页（noindex）
+- `event/[code]/page.tsx`：`robots: { index:false, follow:false }` + 同 code 全语言 `alternates`（仍可被分享后识别语言版本，但不入索引）。
+- `widget/event`、`widget/world-clock`：`robots: { index:false, follow:false }`，title 用 `{ absolute }` 跳过模板（避免与品牌后缀重复）。
+
+#### 12. 强化文案（11 个 `messages/*.json`，脚本 `scripts/seo-messages.mjs` 一次性注入，幂等）
+- 新增 `Seo` 命名空间（`introTitle` / `introBody` / `popularTitle`，各语言本地化关键词文案）。
+- 强化 `Landing.description` 为关键词更丰富的版本（实时时差/偏移/逐小时对照/DST 感知）。
+- 11 文件 × 21 命名空间完全对齐（原 20 + Seo）。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| 单元测试（`npm test`） | ✅ 156/156 通过（原 139 + 新增 17 SEO 用例） |
+| TypeScript 类型检查（`tsc --noEmit`） | ✅ 通过 |
+| ESLint（`next lint`） | ✅ 无警告/错误 |
+| 生产构建（`next build`） | ✅ 138 个静态页（原 135 + sitemap/robots/manifest 三个元路由；OG 图为按需 ƒ 路由） |
+| messages 键结构一致性 | ✅ 11 文件 × 21 命名空间完全对齐 |
+| 运行时 head 核验（`next start` + curl） | ✅ 首页含 viewport/theme-color/title/description/application-name/manifest/canonical/全语言 hreflang/og:*/twitter:*/JSON-LD |
+| OG 图运行时 | ✅ `/zh/opengraph-image` 返回 200 `image/png` |
+| 着陆页 title/canonical/hreflang | ✅ `Beijing ↔ New York · 时区转换 \| WorldTime`、per-slug canonical、同 slug 全语言 hreflang |
+| widget/event noindex | ✅ 二者均输出 `<meta name="robots" content="noindex, nofollow">` |
+| sitemap.xml | ✅ 110 条，含 `xhtml:link` hreflang alternates |
+| robots.txt | ✅ Allow / + Disallow /widget/ /event/ + Sitemap/Host |
+
+### 设计说明与遗留
+
+- **站点域名**：`metadataBase` / canonical / sitemap 走 `NEXT_PUBLIC_SITE_URL` 环境变量，回退占位 `https://worldtime.app`。**生产部署须设置该环境变量为真实域名**，否则 canonical/sitemap 会指向占位域。
+- **OG 图置于 `[locale]` 段**：因 OG 图路由无扩展名，放根段会被 next-intl 中间件拦截；放 `[locale]` 段作为合法 locale 路由放行。内容与语言无关（英文品牌图），按 locale 参数生成（11 份相同图，可接受）。
+- **event 页 noindex**：事件 URL 为 base64 状态、无稳定 canonical、抓取面无限，故禁止索引；robots.txt 同步禁止 `/event/`。仍输出同 code 的 hreflang 以备分享后识别。
+- **manifest 图标**：暂复用 `favicon.ico`（`image/x-icon`）。多尺寸 PNG 图标作为可选后续增强（不影响 manifest 有效性）。
+- **OG 图字体**：Satori 默认字体不含中文字形，故 OG 图仅用英文文案（社交预览国际化通行做法）。
+
+### 自审纠正记录
+
+提交前对全部未提交更改做了逐文件运行时核验，纠正了两处：
+
+1. **[关键] favicon 404 + 移位**：原 `src/app/[locale]/favicon.ico` 因 Next 的 `favicon.ico` 约定只在 `app/` 根目录生效，实际 `/favicon.ico` 返回 404（且在 layout 显式加了 `icons` 引用后变成可见的坏链接）。修正：`git mv` 移到 `src/app/favicon.ico`（app 根），并移除 layout 的显式 `icons` 字段改由 Next 根 favicon 约定自动注入。核验：`/favicon.ico` → 200 `image/x-icon`，`<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16"/>`。
+2. **[关键] 着陆页/事件页 og:image 缺失**：Next.js 中 `openGraph` 字段在子页面显式设置时**整体替换**父段而非浅合并，导致 `[locale]` 段的 file-based og 图无法传递到覆盖了 `openGraph` 的页面（着陆页、事件页实测无 `og:image`）。修正：在 `buildOpenGraph` 显式注入 `images`（引用 `/{locale}/opengraph-image` 路由，经 metadataBase 解析为绝对 URL），并把尺寸/alt 抽为 `OG_IMAGE` 常量供 opengraph-image.tsx 复用（单一数据源）。核验：首页/着陆/事件/widget 五类页面均输出 `og:image`，首页无重复（1 条）。
+3. **[轻微] OG 图 emoji 跨环境渲染风险**：OG 图原含 🌍⏱️🗓️，本机（Windows）构建渲染正常，但 OG 图是**运行时动态生成**（`ƒ` 路由），项目经 Docker/Alpine 部署，Alpine 无 emoji 字体会渲染成豆腐块。移除 emoji，仅保留纯文本特性标签，保证品牌图跨环境一致渲染。
+4. **[轻微] `buildOpenGraph` JSDoc 过时**：第 2 项修复改了代码（显式加 `images`）但漏同步注释——原注释仍称"OG 图由 file-based 自动注入，此处不重复"，与实现矛盾。已更正注释，说明为何必须显式注入。
+
+### 提交与发布
+
+- 工作在 `main` 分支进行。
+- 提交内容：7 个新增文件（seo.ts / seo.test.ts / JsonLd.tsx / sitemap.ts / robots.ts / manifest.ts / opengraph-image.tsx）+ 6 个改造文件（layout/page/landing/event/2×widget）+ 11 个 messages + seo-messages.mjs 脚本 + progress.md。
+- 提交后可推送到 `origin/main`。
+
+---
+
 ## 第 10 轮：代码审查报告问题全量修复
 
 > 时间：2026-08-11

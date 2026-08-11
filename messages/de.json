@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "Zeitzonen-Rechner",
-    "description": "Zeitunterschied und Vergleichstabelle",
+    "description": "aktueller Zeitunterschied, Zeitzonen-Verschiebung und stündlicher Vergleich (sommerzeitfähig)",
     "cityPair": "Stadtpaar",
     "tzPair": "Zeitzonenpaar",
     "timeComparison": "Zeitvergleich",
@@ -134,5 +134,10 @@
     "worldClock": "Weltuhr",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "Weltuhr und Zeitzonenkonverter",
+    "introBody": "WorldTime ist eine kostenlose Weltuhr, Zeitzonenkonverter und Terminplaner. Vergleichen Sie die Ortszeit zwischen Städten und Zeitzonen, finden Sie die besten Stunden für internationale Meetings und teilen Sie Zeitauswahlen mit automatischer Sommerzeit-Unterstützung (DST).",
+    "popularTitle": "Beliebte Zeitzonenkonverter"
   }
 }

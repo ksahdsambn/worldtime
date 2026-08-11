@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "Conversor de zonas horarias",
-    "description": "Diferencia horaria y tabla de comparación",
+    "description": "diferencia horaria en vivo, desfase de zona horaria y tabla de comparación hora por hora (con horario de verano)",
     "cityPair": "Par de ciudades",
     "tzPair": "Par de zonas horarias",
     "timeComparison": "Comparación horaria",
@@ -134,5 +134,10 @@
     "worldClock": "Reloj mundial",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "Reloj mundial y conversor de zonas horarias",
+    "introBody": "WorldTime es un reloj mundial, conversor de zonas horarias y organizador de reuniones gratuito. Compara la hora local entre ciudades y zonas horarias, encuentra las mejores horas para reuniones internacionales y comparte selecciones de hora con soporte automático del horario de verano (DST).",
+    "popularTitle": "Conversores de zona horaria populares"
   }
 }

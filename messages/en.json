@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "Time Zone Converter",
-    "description": "Time difference and comparison table",
+    "description": "live time difference, time zone offset, and hour-by-hour comparison table (DST-aware)",
     "cityPair": "City pair",
     "tzPair": "Time zone pair",
     "timeComparison": "Time comparison",
@@ -134,5 +134,10 @@
     "worldClock": "World Clock",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "World clock & time zone converter",
+    "introBody": "WorldTime is a free world clock, time zone converter, and meeting planner. Compare the local time across cities and time zones, find the best hours to schedule international meetings, and share time selections with automatic daylight saving time (DST) support.",
+    "popularTitle": "Popular time zone converters"
   }
 }

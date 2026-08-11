@@ -14,10 +14,39 @@ import CursorBar from "@/components/CursorBar";
 import DateJump from "@/components/DateJump";
 import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
+import { JsonLd } from "@/components/JsonLd";
+import { Link } from "@/i18n/navigation";
+import { CITY_BY_ID } from "@/data/cities";
+import {
+  POPULAR_CITY_PAIRS,
+  POPULAR_TZ_PAIRS,
+  webAppJsonLd,
+  localeUrl,
+} from "@/lib/seo";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+/**
+ * 热门时差对照内链项：供首页底部 SEO 文案区使用。
+ * 城市对显示城市英文名；时区缩写对显示缩写。
+ */
+function popularConverterLinks() {
+  const city = POPULAR_CITY_PAIRS.map(([a, b]) => {
+    const ca = CITY_BY_ID[a];
+    const cb = CITY_BY_ID[b];
+    return {
+      slug: `${a}--${b}`,
+      label: ca && cb ? `${ca.nameEn} ↔ ${cb.nameEn}` : `${a} ↔ ${b}`,
+    };
+  });
+  const tz = POPULAR_TZ_PAIRS.map(([a, b]) => ({
+    slug: `${a}--${b}`,
+    label: `${a} ↔ ${b}`,
+  }));
+  return [...city, ...tz];
+}
 
 export default async function Home({ params }: Props) {
   const { locale } = await params;
@@ -25,6 +54,7 @@ export default async function Home({ params }: Props) {
   setRequestLocale(locale);
   // async server component 中不能用 hook，用 getTranslations 替代 useTranslations
   const t = await getTranslations({ locale, namespace: "App" });
+  const tSeo = await getTranslations({ locale, namespace: "Seo" });
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -62,6 +92,43 @@ export default async function Home({ params }: Props) {
 
       {/* 选区操作栏：仅在有选区时出现 */}
       <SelectionBar />
+
+      {/*
+        SEO 介绍与内链区：服务端渲染，含关键词导向文案与到热门时差对照页的
+        站内链接（增强可索引正文与链接权重传递）。视觉上次要，对交互无影响。
+      */}
+      <footer className="border-t bg-white px-4 py-6 text-sm text-gray-600">
+        <h2 className="text-base font-semibold text-gray-800 mb-2">
+          {tSeo("introTitle")}
+        </h2>
+        <p className="max-w-3xl leading-relaxed">{tSeo("introBody")}</p>
+        <h3 className="text-sm font-semibold text-gray-700 mt-4 mb-2">
+          {tSeo("popularTitle")}
+        </h3>
+        <nav>
+          <ul className="flex flex-wrap gap-x-4 gap-y-1">
+            {popularConverterLinks().map((item) => (
+              <li key={item.slug}>
+                <Link
+                  href={`/time-converter/${item.slug}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </footer>
+
+      {/* WebApplication 结构化数据（富结果识别） */}
+      <JsonLd
+        data={webAppJsonLd({
+          name: t("title"),
+          url: localeUrl(locale, ""),
+          description: t("tagline"),
+        })}
+      />
     </div>
   );
 }

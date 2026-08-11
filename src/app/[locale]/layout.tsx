@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import ThemeRegistry from "@/components/ThemeRegistry";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import { getSiteUrl, buildAlternates, buildOpenGraph } from "@/lib/seo";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -16,6 +17,18 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
+/**
+ * 视口配置（Next 15 起 themeColor 须从 metadata 迁出到 viewport 导出）。
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -23,9 +36,27 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "App" });
+  const title = t("title");
+  const description = t("tagline");
   return {
-    title: t("title"),
-    description: t("tagline"),
+    metadataBase: new URL(getSiteUrl()),
+    title: {
+      default: title,
+      // 子路由仅声明页面名，品牌后缀由模板统一追加，避免重复
+      template: `%s | ${title}`,
+    },
+    description,
+    applicationName: title,
+    // 首页 canonical/hreflang；子页面各自覆盖
+    alternates: buildAlternates(locale, ""),
+    openGraph: buildOpenGraph(locale, {
+      title,
+      description,
+      path: "",
+      type: "website",
+    }),
+    twitter: { card: "summary_large_image" },
+    manifest: "/manifest.webmanifest",
   };
 }
 

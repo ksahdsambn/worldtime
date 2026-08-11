@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "Chuyển đổi múi giờ",
-    "description": "Chênh lệch giờ và bảng so sánh",
+    "description": "chênh lệch giờ theo thời gian thực, khoảng bù múi giờ và bảng so sánh từng giờ (có hỗ trợ giờ mùa hè)",
     "cityPair": "Cặp thành phố",
     "tzPair": "Cặp múi giờ",
     "timeComparison": "So sánh thời gian",
@@ -134,5 +134,10 @@
     "worldClock": "Đồng hồ thế giới",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "Đồng hồ thế giới và trình chuyển đổi múi giờ",
+    "introBody": "WorldTime là công cụ đồng hồ thế giới, chuyển đổi múi giờ và lên lịch họp miễn phí. So sánh giờ địa phương giữa các thành phố và múi giờ, tìm khung giờ phù hợp cho các cuộc họp quốc tế và chia sẻ lựa chọn thời gian với hỗ trợ tự động giờ mùa hè (DST).",
+    "popularTitle": "Trình chuyển đổi múi giờ phổ biến"
   }
 }

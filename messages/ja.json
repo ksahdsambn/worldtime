@@ -114,7 +114,7 @@
   },
   "Landing": {
     "title": "タイムゾーン変換",
-    "description": "時差と比較表",
+    "description": "リアルタイムの時差、タイムゾーンオフセット、時間ごとの比較表（夏時間対応）",
     "cityPair": "都市ペア",
     "tzPair": "タイムゾーンペア",
     "timeComparison": "時間比較",
@@ -134,5 +134,10 @@
     "worldClock": "世界時計",
     "worldClockEmpty": "?cities=...",
     "eventEmpty": "?code=..."
+  },
+  "Seo": {
+    "introTitle": "世界時計とタイムゾーン変換",
+    "introBody": "WorldTime は無料の世界時計・タイムゾーン変換・会議スケジュールツールです。都市間・タイムゾーン間の現地時刻を比較し、国際会議に最適な時間帯を見つけ、夏時間（DST）自動対応で時間選択を共有できます。",
+    "popularTitle": "人気のタイムゾーン変換"
   }
 }
