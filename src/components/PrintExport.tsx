@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { toPng } from "html-to-image";
 import { toast } from "@/lib/toast";
+import { IconPrinter, IconImage } from "./icons";
 
 /**
  * 打印与导出图片（6.9）。
@@ -79,7 +80,8 @@ export default function PrintExport() {
         data-testid="btn-print"
         className="btn-ghost btn-sm"
       >
-        🖨️ {t("print")}
+        <IconPrinter className="h-3.5 w-3.5" />
+        {t("print")}
       </button>
       <button
         type="button"
@@ -98,7 +100,10 @@ export default function PrintExport() {
             {t("exporting")}
           </>
         ) : (
-          <>🖼️ {t("image")}</>
+          <>
+            <IconImage className="h-3.5 w-3.5" />
+            {t("image")}
+          </>
         )}
       </button>
     </div>

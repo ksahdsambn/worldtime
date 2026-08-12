@@ -56,7 +56,10 @@
     "sunNone": "keine",
     "emptyFiltered": "Keine Städte mit dem Tag #{tag}.",
     "clearFilter": "Filter löschen",
-    "limitReached": "Du hast das Limit von 30 Städten erreicht."
+    "limitReached": "Du hast das Limit von 30 Städten erreicht.",
+    "periodWork": "Arbeitszeit",
+    "periodContact": "Erreichbarkeit",
+    "periodRest": "Ruhezeit"
   },
   "Selection": {
     "duration": "Dauer",
@@ -100,7 +103,8 @@
     "enable": "Zeitmarkierung anzeigen",
     "move": "verschieben",
     "resize": "Rand anpassen",
-    "disable": "Zeitmarkierung ausblenden"
+    "disable": "Zeitmarkierung ausblenden",
+    "select": "Auswählen"
   },
   "DateJump": {
     "jumpTo": "Springen zu:",
@@ -276,7 +280,9 @@
     "shortcutDelete": "Heimatstadt löschen",
     "shortcutEscape": "Auswahl löschen",
     "shortcutEnter": "Zeitmarkierung an den Auswahlstart setzen",
-    "close": "Schließen"
+    "close": "Schließen",
+    "shortcutSelect": "Auswahl am Zeitmarker beginnen",
+    "shortcutResize": "Auswahl vergrößern/verkleinern"
   },
   "Errors": {
     "title": "Etwas ist schiefgelaufen",

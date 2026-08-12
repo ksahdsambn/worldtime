@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useState, type ComponentType, type SVGProps } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import {
@@ -26,6 +26,17 @@ import { getLatLng } from "@/data/latlng";
 import { sunRiseSet } from "@/lib/sun";
 import { localCityName } from "@/lib/cityName";
 import { useDialog } from "./Dialog";
+import {
+  IconDrag,
+  IconHome,
+  IconEdit,
+  IconTag,
+  IconClose,
+  IconChevronDown,
+  IconBriefcase,
+  IconSun,
+  IconMoon,
+} from "./icons";
 import type { AppLocale } from "@/i18n/routing";
 import {
   classifyLocalPeriod,
@@ -40,19 +51,20 @@ import {
   nextDSTChange,
 } from "@/lib/time";
 
-/** 昼夜状态图标（WC-4），基于三类本地时段细分。 */
+/** 昼夜状态图标（WC-4），基于三类本地时段细分。
+ *  返回 SVG 图标组件（随 currentColor 着色）+ 状态枚举（渲染层翻译为标签）。 */
 function dayNightIcon(
   localHour: number,
   periods: DayPeriods,
-): { icon: string; state: LocalPeriod } {
+): { Icon: ComponentType<SVGProps<SVGSVGElement>>; state: LocalPeriod } {
   const state = classifyLocalPeriod(localHour, periods);
   switch (state) {
     case "work":
-      return { icon: "💼", state }; // 工作时段
+      return { Icon: IconBriefcase, state }; // 工作时段
     case "contact":
-      return { icon: "🌤️", state }; // 可联系时段（早晚）
+      return { Icon: IconSun, state }; // 可联系时段（早晚）
     case "rest":
-      return { icon: "🌙", state }; // 休息 / 睡眠时段
+      return { Icon: IconMoon, state }; // 休息 / 睡眠时段
   }
 }
 
@@ -143,13 +155,13 @@ export default function PlacesPanel() {
             mobileOpen ? "rotate-180" : ""
           }`}
         >
-          ▾
+          <IconChevronDown className="h-4 w-4" />
         </span>
       </button>
 
       <div
         id="places-panel-content"
-        className={`${mobileOpen ? "flex" : "hidden"} flex-col p-3 md:flex`}
+        className={`${mobileOpen ? "flex" : "hidden"} flex-col flex-1 bg-surface-inset p-3 md:flex`}
       >
         {/* UTC 基准行（WC-7）：固定在列表顶部，仅作参考 */}
         <div className="surface mb-3 flex items-center justify-between px-3 py-2">
@@ -386,7 +398,7 @@ const PlaceRow = memo(function PlaceRow({
           {...attributes}
           {...listeners}
         >
-          ⠿
+          <IconDrag className="h-4 w-4" />
         </button>
         <span className="text-xl leading-none" aria-hidden>
           {p.flag}
@@ -396,9 +408,10 @@ const PlaceRow = memo(function PlaceRow({
             {isHome && <span className="sr-only">{t("home")}</span>}
             <span className="truncate text-[13px] font-medium text-ink">
               {isHome && (
-                <span aria-hidden className="text-warm-strong">
-                  ⌂{" "}
-                </span>
+                <IconHome
+                  aria-hidden
+                  className="mr-1 inline h-3.5 w-3.5 shrink-0 text-warm-strong"
+                />
               )}
               {p.customName || localCityName(locale, p)}
             </span>
@@ -429,9 +442,15 @@ const PlaceRow = memo(function PlaceRow({
           <div className="mt-0.5 flex items-center gap-1.5 text-[10px]">
             {(() => {
               const dn = dayNightIcon(localHour, dayPeriods);
+              const label =
+                dn.state === "work"
+                  ? t("periodWork")
+                  : dn.state === "contact"
+                    ? t("periodContact")
+                    : t("periodRest");
               return (
-                <span className="text-xs" title={dn.state} aria-label={dn.state}>
-                  {dn.icon}
+                <span className="text-faint" title={label} aria-label={label}>
+                  <dn.Icon className="h-3.5 w-3.5" />
                 </span>
               );
             })()}
@@ -455,7 +474,7 @@ const PlaceRow = memo(function PlaceRow({
             )}
             {dstWarn && (
               <span
-                className="rounded-full bg-warm-soft px-1 text-[9px] font-semibold text-warm-strong"
+                className="rounded-full bg-warm-soft px-1 text-[9px] font-semibold text-ink"
                 data-testid={`dst-warn-${p.id}`}
                 title={t("dstWarnSoon")}
               >
@@ -471,11 +490,11 @@ const PlaceRow = memo(function PlaceRow({
         <button
           type="button"
           onClick={() => onSetHome(p.id)}
-          className="icon-btn h-9 w-9 text-[13px] md:!h-6 md:!w-6 md:text-[12px]"
+          className="icon-btn h-10 w-10 md:!h-6 md:!w-6"
           title={t("setHome")}
           aria-label={t("setHome")}
         >
-          ⌂
+          <IconHome className="h-4 w-4 md:h-3.5 md:w-3.5" />
         </button>
         <button
           type="button"
@@ -486,11 +505,11 @@ const PlaceRow = memo(function PlaceRow({
             });
             if (name !== null) onRename(p.id, name);
           }}
-          className="icon-btn h-9 w-9 text-[13px] md:!h-6 md:!w-6 md:text-[12px]"
+          className="icon-btn h-10 w-10 md:!h-6 md:!w-6"
           title={t("rename")}
           aria-label={t("rename")}
         >
-          ✎
+          <IconEdit className="h-4 w-4 md:h-3.5 md:w-3.5" />
         </button>
         <button
           type="button"
@@ -509,11 +528,11 @@ const PlaceRow = memo(function PlaceRow({
               );
             }
           }}
-          className="icon-btn h-9 w-9 text-[13px] md:!h-6 md:!w-6 md:text-[12px]"
+          className="icon-btn h-10 w-10 md:!h-6 md:!w-6"
           title={t("tags")}
           aria-label={t("tags")}
         >
-          #
+          <IconTag className="h-4 w-4 md:h-3.5 md:w-3.5" />
         </button>
         <button
           type="button"
@@ -530,11 +549,11 @@ const PlaceRow = memo(function PlaceRow({
               return;
             onRemove(p.id);
           }}
-          className="icon-btn h-9 w-9 text-[13px] md:!h-6 md:!w-6 md:text-[12px] hover:!text-red-500"
+          className="icon-btn h-10 w-10 hover:!text-danger md:!h-6 md:!w-6"
           title={tCom("delete")}
           aria-label={tCom("delete")}
         >
-          ✕
+          <IconClose className="h-4 w-4 md:h-3.5 md:w-3.5" />
         </button>
       </div>
     </li>

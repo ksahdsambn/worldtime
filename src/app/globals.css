@@ -41,6 +41,15 @@
     --warm-strong: #d97706;
     --warm-soft: #fef3c7;
 
+    /* —— 语义状态色（成功 / 危险）——
+       实色填充 + 白字：白字对比均 ≥4.5:1（#dc2626≈5.0:1，#15803d≈5.4:1）。
+       取代此前散落在组件里的 red-500 / emerald-500 硬编码，纳入令牌系统。*/
+    --success: #15803d;
+    --success-fg: #ffffff;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-fg: #ffffff;
+
     /* —— 热力图三色（降低不透明度；与文字/图案冗余，非仅靠颜色）—— */
     --heat-good: rgba(22, 163, 74, 0.16);
     --heat-good-ink: #15803d;
@@ -102,6 +111,13 @@
     --warm: #fbbf24;
     --warm-strong: #fcd34d;
     --warm-soft: rgba(251, 191, 36, 0.16);
+
+    /* 语义状态色：深色主题下沿用同实色（白字对比仍达标），hover 略提亮。*/
+    --success: #15803d;
+    --success-fg: #ffffff;
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-fg: #ffffff;
 
     --heat-good: rgba(34, 197, 94, 0.2);
     --heat-good-ink: #4ade80;
@@ -200,12 +216,12 @@
   /* 危险/破坏性操作（如删除主地点确认）*/
   .btn-danger {
     @apply btn;
-    background-color: #dc2626;
-    color: #ffffff;
+    background-color: var(--danger);
+    color: var(--danger-fg);
     box-shadow: var(--shadow-sm);
   }
   .btn-danger:hover {
-    background-color: #b91c1c;
+    background-color: var(--danger-hover);
   }
   .btn-ghost {
     @apply btn;

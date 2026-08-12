@@ -56,7 +56,10 @@
     "sunNone": "無",
     "emptyFiltered": "沒有 #{tag} 標籤的城市。",
     "clearFilter": "清除篩選",
-    "limitReached": "已達到 30 個城市的上限。"
+    "limitReached": "已達到 30 個城市的上限。",
+    "periodWork": "工作時段",
+    "periodContact": "可聯絡時段",
+    "periodRest": "休息時段"
   },
   "Selection": {
     "duration": "時長",
@@ -100,7 +103,8 @@
     "enable": "顯示時間游標",
     "move": "移動",
     "resize": "調整選取邊緣",
-    "disable": "隱藏時間游標"
+    "disable": "隱藏時間游標",
+    "select": "選擇"
   },
   "DateJump": {
     "jumpTo": "跳至：",
@@ -276,7 +280,9 @@
     "shortcutDelete": "刪除主城市",
     "shortcutEscape": "清除選區",
     "shortcutEnter": "將時間標記對齊到選區起點",
-    "close": "關閉"
+    "close": "關閉",
+    "shortcutSelect": "在時間游標處開始選區",
+    "shortcutResize": "擴展或收縮選區"
   },
   "Errors": {
     "title": "發生錯誤",

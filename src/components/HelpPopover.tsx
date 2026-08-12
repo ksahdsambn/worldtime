@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import HeatmapLegend from "./HeatmapLegend";
 import { usePresence } from "@/lib/usePresence";
+import { IconHelp, IconClose } from "./icons";
 
 /**
  * 应用内「提示」帮助浮层（新访客自助 + 老用户常驻）。
@@ -57,6 +58,8 @@ export default function HelpPopover() {
     { title: t("step3Title"), body: t("step3Body") },
   ];
   const shortcuts: Array<{ keys: string; label: string }> = [
+    { keys: "Enter", label: t("shortcutSelect") },
+    { keys: "Shift + ←/→", label: t("shortcutResize") },
     { keys: "Delete", label: t("shortcutDelete") },
     { keys: "Esc", label: t("shortcutEscape") },
     { keys: "Ctrl/⌘ + Enter", label: t("shortcutEnter") },
@@ -72,9 +75,9 @@ export default function HelpPopover() {
         aria-expanded={open}
         title={t("label")}
         onClick={() => setOpen((o) => !o)}
-        className="icon-btn text-base font-semibold"
+        className="icon-btn"
       >
-        <span aria-hidden>?</span>
+        <IconHelp className="h-4 w-4" />
       </button>
 
       {presence.mounted && (
@@ -96,9 +99,9 @@ export default function HelpPopover() {
                 btnRef.current?.focus();
               }}
               aria-label={t("close")}
-              className="icon-btn !h-6 !w-6 text-xs"
+              className="icon-btn !h-6 !w-6"
             >
-              ✕
+              <IconClose className="h-3.5 w-3.5" />
             </button>
           </div>
 

@@ -1,5 +1,113 @@
 # 开发进度记录
 
+## 第 22 轮：界面质量审计问题全量修复（无障碍 / 图标体系 / 令牌 / 响应式）
+
+> 时间：2026-08-13
+> 范围：依据 `audit` 技能产出的界面质量审计报告（1 严重 / 4 高 / 4 中 / 3 低，共 12 项），逐条修复，零功能回退。审计覆盖无障碍、主题令牌、响应式与设计反模式（AI slop）四个维度。
+> 依据：审计最严重项为 **C1——核心「拖拽选区」功能仅指针可用**（WCAG 2.1.1 键盘 A 级失败：键盘用户无法创建选区）；其余系统性问题为 **H1 全站用 Unicode/emoji 充当功能图标**（与「Linear/Notion 精炼质感」目标冲突）、**H2 DST 徽章对比度仅 ~2.9:1**（AA 失败）、**H3 无 success/danger 语义令牌**（破坏性/错误态绕过令牌系统）、**H4 移动端操作行触控目标 36px**（< 44px 建议）。
+
+### 架构决策
+
+1. **图标体系零依赖**（H1）：不引入 `lucide-react`（项目一贯「零新增依赖」纪律，见第 14/21 轮），改为新增 `src/components/icons.tsx`——纯内联 SVG，lucide 风格描边、`stroke="currentColor"`，随 `text-muted/text-faint` 等令牌着色，跨平台渲染一致。功能控件（拖拽手柄/主页/重命名/标签/关闭/更多/下拉/帮助/打印/图片/昼夜/日月/地球/公文包）全部替换；仅保留信息性 emoji（国旗、日出日落 🌅🌇 数据插画）。
+2. **键盘选区复用既有游标模型**（C1）：不为网格另建 `role="grid"` + roving tabindex（168 列 × N 行，成本高且与拖拽/冻结列纠缠）。改在既有游标（CursorBar）上加一条键盘路径——`Enter`/`Space` 在游标处开始 1 小时选区，`Shift+←/→` 扩展（复用 `resizeSelection`）。入口「显示时间标记」按钮可聚焦，构成完整键盘链路：启用游标 → 方向键定位 → Enter 选 → Shift+方向键扩展。与全局 `KeyboardShortcuts`（Ctrl/⌘+Enter、Esc、Delete）无冲突。
+3. **语义状态令牌补齐**（H3）：`globals.css` `:root`/`.dark` 各加 `--success/--success-fg/--danger/--danger-hover/--danger-fg`（实色填充 + 白字，对比均 ≥4.5:1），`tailwind.config` 映射 `success/danger` 别名，迁移 `btn-danger` + `PlacesPanel` 删除 hover + `GoogleCalendarConnect` 连接点/错误文 + `Toaster` 语义底色。**顺带修复一处潜藏深色对比度 bug**：旧错误 toast 深色用 `--heat-bad-ink`（#f87171 浅红）配白字仅 ~2.4:1，迁到 `--danger`（#dc2626）后达标。
+4. **DST 徽章最小且确定达标的修法**（H2）：保留 `bg-warm-soft`（暖色身份）+ 文字由 `text-warm-strong` 改 `text-ink`。`--text` 在两主题下都是「与背景反相的高对比色」——浅色近黑（#0f172a）配暖白底 ~14.5:1、深色近白（#e6ebf2）配半透明暖底 ~9.2:1，均远超 AA，且无需新增令牌。
+
+### 完成内容
+
+**① `src/components/icons.tsx`（新增）—— 内联 SVG 图标集**
+- 15 个描边图标（`IconDrag/IconHome/IconEdit/IconTag/IconClose/IconMore/IconChevronDown/IconSun/IconMoon/IconGlobe/IconHelp/IconPrinter/IconImage/IconBriefcase`），24×24 viewBox、`strokeWidth=2`、`aria-hidden`、`focusable=false`，尺寸由调用方 `className`（如 `h-4 w-4`）控制。
+
+**② H1 全站图标替换（10 个组件）**
+- `PlacesPanel`：拖拽手柄 `⠿`→`IconDrag`；操作行 `⌂✎#✕`→`IconHome/IconEdit/IconTag/IconClose`；昼夜状态 `💼🌤️🌙`→`IconBriefcase/IconSun/IconMoon`（随 `currentColor` 着色）；折叠 `▾`→`IconChevronDown`。
+- `ThemeToggle`：`☀️🌙` 交叉淡入 → `IconSun/IconMoon` 交叉淡入（保留旋转动效，去掉 emoji 平台差异）。
+- `HeaderActions`：移动端 `⋯`→`IconMore`。`HelpPopover`：`?`→`IconHelp`、`✕`→`IconClose`。
+- `FirstUseEmptyState`：`🌐`→ 品牌 mark（`/brand/worldtime-mark.svg`，与顶栏一致）。
+- `PrintExport`：`🖨️🖼️`→`IconPrinter/IconImage`。`Toaster`：关闭 `×`→`IconClose`。`EventView`：主地点 `⌂`→`IconHome`。
+
+**③ C1 键盘选区（`src/components/CursorBar.tsx`）**
+- keydown 增 `Enter`/`Space` 分支：游标非空且焦点非按钮时 `preventDefault` + `setSelection({startMs:cursorMs, endMs:cursorMs+3600_000})`；焦点在按钮上放行（避免与按钮激活冲突）。
+- 可见提示增 `· Enter {select}`；`HelpPopover` 快捷键列表增 `Enter`（开始选区）与 `Shift+←/→`（扩展/收缩选区）两条。
+- 顺带修一处既有 i18n bug：昼夜状态 `title/aria-label` 原用裸枚举值（"work"/"contact"/"rest"），改为翻译键 `Places.periodWork/periodContact/periodRest`。
+
+**④ H2 DST 徽章对比度（`PlacesPanel.tsx`）**
+- `bg-warm-soft text-warm-strong`（~2.9:1）→ `bg-warm-soft text-ink`（浅 ~14.5:1 / 深 ~9.2:1）。
+
+**⑤ H3 语义状态令牌（`globals.css` + `tailwind.config.ts` + 3 组件）**
+- 新增令牌（两主题）+ Tailwind 别名；迁移 `btn-danger`、`PlacesPanel` 删除 `hover:text-danger`、`GoogleCalendarConnect` 连接点 `bg-success`/错误 `text-danger`、`Toaster` 错误/成功底色用 `--danger/--success`。
+
+**⑥ H4 移动端触控目标（`PlacesPanel.tsx`）**
+- 操作行按钮 `h-9 w-9`（36px）→ `h-10 w-10`（40px，匹配应用自身 `.icon-btn` 手机标准），桌面端仍 `md:!h-6 md:!w-6`；破坏性删除按钮 hover 与其余同尺寸，降低误触。
+
+**⑦ M1 卡片同色表面深度（`PlacesPanel.tsx`）**
+- 面板内容区 `#places-panel-content` 由继承 `bg-surface` 改为 `bg-surface-inset` + `flex-1`：抬升的 aside（surface 框）内含内凹列表托盘（inset），地点卡（surface）在其上真正抬升，恢复「分层表面」深度意图（深浅两主题均成立）。
+
+**⑧ M2 表格 scope（`TimeGrid.tsx`）**
+- 日期组 `<th>` 增 `scope="colgroup"`、城市名列头 `<th>` 增 `scope="col"`、行标签 `<td>` 增 `scope="row"`，屏幕阅读器可建立单元格↔日期/城市关系。
+
+**⑨ M3 链接下划线（`page.tsx` + 着陆页）**
+- 内链由 `hover:underline` 改为常驻 `underline underline-offset-2 hover:text-accent-hover`（不再仅靠颜色区分链接，WCAG 1.4.1）。
+
+**⑩ M4 移动端自动定位到现在（`TimeGrid.tsx`）**
+- 新增 once-effect：手机端（`max-width:767px`）首屏恢复后把 `td[data-now="1"]` 滚到视口中部（复用 `scrollIntoView`），用户落地即见当前时段而非最左 00:00；桌面端保留「从今日 00:00 起」默认定位不变。
+
+**⑪ L1/L2/L3 细节**
+- L1：行标签 `<td>` 加 `select-text`（容器仍 `select-none` 保拖拽洁净），城市名可复制。
+- L2：空状态 emoji 换品牌 mark（见 ②）。
+- L3：`Toaster` 的 `#ffffff` 经 H3 迁移消除；`PrintExport` 的 `toPng({backgroundColor:"#ffffff"})` 为画布导出目标色（非 CSS 变量、白底导出正确），判定合理保留。
+
+**⑫ i18n（11 语言全量同步）**
+- 新增 `Cursor.select`、`Help.shortcutSelect`、`Help.shortcutResize`、`Places.periodWork/periodContact/periodRest`，共 6 键 × 11 文件，CJK/西里尔母语自然，键集一致。经幂等脚本注入（2 脚本用后即删）。
+
+### 涉及文件
+
+- 新增 `src/components/icons.tsx`
+- 改 `src/app/globals.css`（状态令牌 + btn-danger 迁移）、`tailwind.config.ts`（success/danger 别名）
+- 改 `src/components/{PlacesPanel,CursorBar,ThemeToggle,HeaderActions,HelpPopover,FirstUseEmptyState,PrintExport,Toaster,GoogleCalendarConnect,EventView,TimeGrid}.tsx`
+- 改 `src/app/[locale]/page.tsx`、`src/app/[locale]/time-converter/[slug]/page.tsx`（链接下划线）
+- 改 `messages/*.json`（11 语言，6 新键）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 通过（含 `<td scope="row">` —— HTMLTableCellElement 支持） |
+| 单元测试（`vitest run`） | ✅ 172/172 通过 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 生产构建（`next build`） | ✅ 成功，305 个静态页面（11 语言全覆盖） |
+| messages 键一致性 | ✅ 11 文件 6 新键完全对齐 |
+| 键盘选区链路（C1） | ✅ Tab→「显示时间标记」→ 方向键移游标 → Enter 建 1h 选区 → Shift+方向键扩展，全程无需指针；Enter/Space 在按钮焦点上放行不冲突 |
+
+### 审查与修复（第二轮自审，提交前）
+
+对全部未提交 diff 逐文件复查，纠正 / 加固 3 项：
+
+1. **[关键] C1 键盘选区会拦截链接导航**：`CursorBar` 的 `Enter`/`Space` 处理调用 `e.preventDefault()`，当游标启用且焦点恰在页脚 `<a>` 内链上时，按 Enter 会阻止链接原生导航。修正：跳过清单由 `BUTTON` 扩到 `BUTTON | A`（链接的 Enter 放行交还浏览器）。
+2. **[关键] 品牌 logo 经 next/image 静默 404（既存 bug，本轮放大）**：L2 把空状态 emoji 换成品牌 mark 时用了 `<Image src="…svg">`——与顶栏 logo 同一模式。实测 `next/image` 优化器对 SVG 返回 **HTTP 400**（`dangerouslyAllowSVG` 未启用），即**顶栏 logo 自第 13 轮起一直是坏图**（此前 AI 视觉复查未发现）。修正：两处统一改 `<Image … unoptimized>`（跳过优化器、直接服务 SVG，HTTP 200），既修本轮新引入项也修既存坏图；按 Next 自身报错建议处理，未全局开启 `dangerouslyAllowSVG`（避免放行任意 SVG 的脚本注入面）。
+3. 复查 `PlacesPanel` 操作行触控目标：移动端 `.icon-btn` 媒体查询为非层化规则、在 CSS 级联中胜过 Tailwind 工具类层，故 `h-10 w-10` 与 40px 媒体查询一致、桌面 `md:!h-6 md:!w-6` 正常——H4 改动确定无回归。
+
+### 第二轮验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript / ESLint / 单测 | ✅ tsc 0 错；lint 0 警告 0 错（`<img>`→`<Image unoptimized>` 后 `no-img-element` 警告消除）；vitest 172/172 |
+| 生产构建 | ✅ 305 个静态页面 |
+| 运行时核验（`next start` + curl） | ✅ 首页渲染 HTML 含 `src="/brand/worldtime-mark.svg"`（直接路径、非 `/_next/image`）；该 SVG HTTP 200 |
+
+### 设计说明
+
+- **图标零依赖**：选内联 SVG 而非 `lucide-react`，延续项目「零新增依赖」纪律；图标随令牌着色，深浅主题一致，消除 emoji 平台差异（Windows 💼 vs macOS、盲文 `⠿` 拖拽手柄等临时方案）。
+- **键盘可达选最小侵入**：C1 复用既有游标而非重建 grid 键盘模型，风险可控且功能完整；游标本就是「键盘可定位时刻」的设施，扩展到「键盘可建选区」是自然延伸。
+- **对比度修法求确定**：H2 选 `text-ink`（两主题均远超 AA）而非深挖 `--warm-strong`（需逐主题手算且贴近临界），以「确定达标」优先。
+
+### 未做（主动克制 / 留作后续）
+
+- **网格本身的 `role="grid"` + 单元格可聚焦键盘模型**：C1 用游标路径已满足 WCAG 2.1.1（核心功能键盘可用），完整 grid 键盘模型成本高、与拖拽/冻结列耦合深，留作后续增强。
+- **网格数据单元可文本选中**（L1 仅放开行标签）：数据格是拖拽目标，手势与文本选择本质冲突，已通过 SelectionBar 的「复制摘要」提供等价复制路径。
+- **WorldClockWidget 的 slate/gray 原始色**（审计 L3 范围外，独立可嵌入 widget，刻意自成一体）未纳入本轮令牌迁移。
+
+---
+
 ## 第 21 轮：上线前细节打磨（无障碍对比度 / 二级页面完成度 / 焦点细节）
 
 > 时间：2026-08-13

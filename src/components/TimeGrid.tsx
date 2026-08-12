@@ -234,6 +234,23 @@ export default function TimeGrid() {
     };
   }, []);
 
+  // M4：手机端首屏自动把「现在」列滚到视口中部。桌面端保留「从今日 00:00 起」的默认定位。
+  // 网格宽达 168 列，手机若落在最左侧的 00:00，用户需横滑很远才到当前时段；居中后即可见。
+  const didAutoScrollRef = useRef(false);
+  useEffect(() => {
+    if (didAutoScrollRef.current) return;
+    if (!restored || columns.length === 0) return;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    didAutoScrollRef.current = true;
+    const id = requestAnimationFrame(() => {
+      const cell = document.querySelector<HTMLTableCellElement>(
+        'td[data-now="1"]',
+      );
+      if (cell) cell.scrollIntoView({ block: "nearest", inline: "center" });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [restored, columns.length]);
+
   function onPointerUp(_e: React.PointerEvent) {
     if (!isDragging) return;
     if (dragRafRef.current != null) {
@@ -329,7 +346,10 @@ export default function TimeGrid() {
       <table className="wt-grid animate-grid-in text-xs">
         <thead>
           <tr>
-            <th className="sticky-col sticky left-0 z-10 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-ink">
+            <th
+              scope="col"
+              className="sticky-col sticky left-0 z-10 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-ink"
+            >
               <span className="block max-w-[38vw] truncate md:max-w-none">
                 {localCityName(locale, home)}
               </span>
@@ -342,6 +362,7 @@ export default function TimeGrid() {
               return (
                 <th
                   key={g.dayIndex}
+                  scope="colgroup"
                   colSpan={g.count}
                   className="border-l border-line px-2 py-2.5 text-center text-[11px] font-semibold"
                 >
@@ -430,7 +451,10 @@ const Row = memo(function Row({
 
   return (
     <tr>
-      <td className="sticky-col sticky left-0 z-10 px-3 py-1.5 text-[13px] font-medium text-ink">
+      <td
+        scope="row"
+        className="sticky-col sticky left-0 z-10 select-text px-3 py-1.5 text-[13px] font-medium text-ink"
+      >
         <span className="block max-w-[38vw] truncate md:max-w-none">{label}</span>
       </td>
       {columns.map((c, i) => {

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { subscribe, dismiss, type ToastItem } from "@/lib/toast";
 import { usePresence } from "@/lib/usePresence";
+import { IconClose } from "./icons";
 
 /**
  * Toast 渲染器（挂载一次即可，见 ThemeRegistry）。
@@ -89,12 +90,16 @@ function ToastCard({
       style={{
         backgroundColor:
           item.kind === "error"
-            ? "var(--heat-bad-ink)"
+            ? "var(--danger)"
             : item.kind === "success"
-              ? "var(--heat-good-ink)"
+              ? "var(--success)"
               : "var(--surface)",
         color:
-          item.kind === "error" || item.kind === "success" ? "#ffffff" : "var(--text)",
+          item.kind === "error"
+            ? "var(--danger-fg)"
+            : item.kind === "success"
+              ? "var(--success-fg)"
+              : "var(--text)",
         border: item.kind === "info" ? "1px solid var(--border)" : "1px solid transparent",
       }}
     >
@@ -105,7 +110,7 @@ function ToastCard({
         className="shrink-0 opacity-70 hover:opacity-100"
         aria-label={closeLabel}
       >
-        ×
+        <IconClose className="h-3.5 w-3.5" />
       </button>
     </div>
   );

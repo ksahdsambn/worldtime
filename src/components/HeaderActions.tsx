@@ -8,6 +8,7 @@ import SettingsPanel from "./SettingsPanel";
 import ThemeToggle from "./ThemeToggle";
 import GoogleCalendarConnect from "./GoogleCalendarConnect";
 import { usePresence } from "@/lib/usePresence";
+import { IconMore } from "./icons";
 
 /**
  * 顶栏次要操作簇：语言 · 帮助 · 设置 · 主题 · Google 日历。
@@ -66,9 +67,9 @@ export default function HeaderActions() {
         aria-expanded={open}
         aria-controls="header-actions-menu"
         onClick={() => setOpen((o) => !o)}
-        className="icon-btn text-xl leading-none"
+        className="icon-btn"
       >
-        ⋯
+        <IconMore className="h-5 w-5" />
       </button>
       {presence.mounted && (
         <>

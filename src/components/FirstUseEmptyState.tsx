@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { localStarterCities, financeStarterCities } from "@/data/starterSets";
@@ -27,9 +28,17 @@ export default function FirstUseEmptyState() {
     <div className="flex min-h-[340px] flex-col items-center justify-center px-6 py-12">
       <div className="animate-fade-up w-full max-w-md space-y-6 text-center">
         <div className="space-y-2">
-          <div className="text-3xl leading-none" aria-hidden>
-            🌐
-          </div>
+          {/* 品牌印记：unoptimized 跳过 next/image 优化器——SVG 经优化器会被拒
+              （dangerouslyAllowSVG 未启用，返回 400），SVG 本为矢量图亦无优化收益。*/}
+          <Image
+            src="/brand/worldtime-mark.svg"
+            alt=""
+            width={40}
+            height={40}
+            unoptimized
+            className="mx-auto drop-shadow-sm"
+            aria-hidden
+          />
           <h2 className="text-lg font-semibold text-ink">{t("emptyHeadline")}</h2>
           <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted">
             {t("emptyBody")}

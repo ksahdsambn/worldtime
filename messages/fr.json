@@ -56,7 +56,10 @@
     "sunNone": "aucun",
     "emptyFiltered": "Aucune ville avec l'étiquette #{tag}.",
     "clearFilter": "Effacer le filtre",
-    "limitReached": "Vous avez atteint la limite de 30 villes."
+    "limitReached": "Vous avez atteint la limite de 30 villes.",
+    "periodWork": "Heures de travail",
+    "periodContact": "Heures de contact",
+    "periodRest": "Heures de repos"
   },
   "Selection": {
     "duration": "Durée",
@@ -100,7 +103,8 @@
     "enable": "Afficher le repère temporel",
     "move": "déplacer",
     "resize": "ajuster le bord",
-    "disable": "Masquer le repère temporel"
+    "disable": "Masquer le repère temporel",
+    "select": "sélectionner"
   },
   "DateJump": {
     "jumpTo": "Aller à :",
@@ -276,7 +280,9 @@
     "shortcutDelete": "Supprimer la ville de référence",
     "shortcutEscape": "Effacer la sélection",
     "shortcutEnter": "Placer le repère sur le début de la sélection",
-    "close": "Fermer"
+    "close": "Fermer",
+    "shortcutSelect": "Démarrer une sélection au marqueur de temps",
+    "shortcutResize": "Agrandir ou réduire la sélection"
   },
   "Errors": {
     "title": "Une erreur est survenue",
