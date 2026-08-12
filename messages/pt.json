@@ -239,5 +239,32 @@
         "a": "A hora atual é atualizada ao vivo no seu navegador. As páginas de conversão atualizam suas tabelas a cada hora."
       }
     ]
+  },
+  "Onboarding": {
+    "emptyHeadline": "Encontre um horário que funciona para todos",
+    "emptyBody": "Adicione algumas cidades para ver o horário de trabalho e de sono de cada um lado a lado e depois arraste para escolher.",
+    "startLocal": "Começar com meu fuso horário",
+    "startLocalHint": "Adiciona sua cidade local, além de Nova York e Londres.",
+    "presetFinance": "Relógio financeiro mundial",
+    "presetFinanceHint": "Nova York · Londres · Tóquio",
+    "searchHint": "…ou busque qualquer cidade na caixa acima.",
+    "dragHint": "Arraste pelas horas para escolher o horário da reunião — as cores mostram quem está acordado.",
+    "dragGotIt": "Entendi"
+  },
+  "Help": {
+    "label": "Dicas",
+    "title": "Primeiros passos",
+    "step1Title": "1. Adicione cidades",
+    "step1Body": "Use a busca para adicionar todos os lugares que quer coordenar.",
+    "step2Title": "2. Arraste para escolher o horário",
+    "step2Body": "Clique e arraste sobre a grade para escolher a janela da reunião. A seleção se alinha em todas as linhas.",
+    "step3Title": "3. Leia as cores",
+    "step3Body": "Cada coluna é colorida pela pessoa menos disponível: verde, todos em horário de trabalho; laranja, alguém fora dele; vermelho, alguém dormindo.",
+    "legendTitle": "Legenda das cores",
+    "shortcutsTitle": "Atalhos de teclado",
+    "shortcutDelete": "Excluir cidade de origem",
+    "shortcutEscape": "Limpar a seleção",
+    "shortcutEnter": "Levar o marcador ao início da seleção",
+    "close": "Fechar"
   }
 }

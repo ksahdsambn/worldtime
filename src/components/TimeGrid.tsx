@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
+import FirstUseEmptyState from "./FirstUseEmptyState";
 import { buildColumns, todayStartMs, isWeekendAt } from "@/lib/grid";
 import { prefers12Hour } from "@/lib/time";
 import { columnColor, type HeatColor } from "@/lib/heatmap";
@@ -28,7 +29,6 @@ import { clearGcalSession, requestSilentRefresh } from "@/lib/gcal-auth";
  * - 选区时长显示由 SelectionBar 承担（TC-12）。
  */
 export default function TimeGrid() {
-  const t = useTranslations("Grid");
   const locale = useLocale() as AppLocale;
   const places = useWorldTimeStore((s) => s.places);
   const homeId = useWorldTimeStore((s) => s.homeId);
@@ -202,9 +202,7 @@ export default function TimeGrid() {
   }
 
   if (!home || columns.length === 0) {
-    return (
-      <div className="p-6 text-sm text-muted">{t("empty")}</div>
-    );
+    return <FirstUseEmptyState />;
   }
 
   /**

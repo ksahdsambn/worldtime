@@ -239,5 +239,32 @@
         "a": "目前時間在瀏覽器中即時更新；時區轉換頁的對照表每小時刷新一次。"
       }
     ]
+  },
+  "Onboarding": {
+    "emptyHeadline": "找到一個大家都合適的會議時間",
+    "emptyBody": "新增幾座城市，並排查看每個人的工作和休息時段，再拖曳選出合適的時間。",
+    "startLocal": "從我的時區開始",
+    "startLocalHint": "自動新增你的本地城市，以及紐約和倫敦。",
+    "presetFinance": "世界金融時鐘",
+    "presetFinanceHint": "紐約 · 倫敦 · 東京",
+    "searchHint": "……或在上方搜尋框輸入任意城市。",
+    "dragHint": "在網格上橫向拖曳來選擇會議時間——顏色代表誰處於清醒時段。",
+    "dragGotIt": "知道了"
+  },
+  "Help": {
+    "label": "使用提示",
+    "title": "快速上手",
+    "step1Title": "1. 新增城市",
+    "step1Body": "在搜尋框中新增你要協調的每個地點。",
+    "step2Title": "2. 拖曳選擇時間",
+    "step2Body": "在網格上點擊並拖曳來選定會議時段，選區會在每一列同步對齊。",
+    "step3Title": "3. 看懂顏色",
+    "step3Body": "每一欄依「最不方便的人」著色：綠色表示都在工作時段，橙色表示有人在工作時段之外，紅色表示有人在睡眠。",
+    "legendTitle": "顏色圖例",
+    "shortcutsTitle": "鍵盤快捷鍵",
+    "shortcutDelete": "刪除主城市",
+    "shortcutEscape": "清除選區",
+    "shortcutEnter": "將時間標記對齊到選區起點",
+    "close": "關閉"
   }
 }

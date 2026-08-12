@@ -246,6 +246,15 @@
     @apply mx-1 h-5 w-px shrink-0;
     background-color: var(--border);
   }
+
+  /* —— 键帽（快捷键展示）—— */
+  .kbd {
+    @apply inline-flex shrink-0 items-center rounded-sm font-mono text-[11px] text-ink;
+    padding: 0.1rem 0.4rem;
+    background-color: var(--surface-inset);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
 }
 
 /* ============================================================================

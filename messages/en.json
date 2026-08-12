@@ -239,5 +239,32 @@
         "a": "The current time updates live in your browser. The converter pages refresh their tables hourly."
       }
     ]
+  },
+  "Onboarding": {
+    "emptyHeadline": "Find a meeting time that works for everyone",
+    "emptyBody": "Add a few cities to see everyone's working and sleeping hours side by side — then drag to pick a time that fits.",
+    "startLocal": "Start with my time zone",
+    "startLocalHint": "Adds your local city plus New York and London.",
+    "presetFinance": "World finance clock",
+    "presetFinanceHint": "New York · London · Tokyo",
+    "searchHint": "…or search for any city in the box above.",
+    "dragHint": "Drag across the hours to pick a meeting time — the colors show who's awake.",
+    "dragGotIt": "Got it"
+  },
+  "Help": {
+    "label": "Tips",
+    "title": "Getting started",
+    "step1Title": "1. Add cities",
+    "step1Body": "Use the search box to add every place you're coordinating across.",
+    "step2Title": "2. Drag to pick a time",
+    "step2Body": "Click and drag across the grid to choose a meeting window. The selection lines up across every row.",
+    "step3Title": "3. Read the colors",
+    "step3Body": "Each column is tinted by whoever is least available — green is all in work hours, orange is some outside them, red is someone asleep.",
+    "legendTitle": "Color legend",
+    "shortcutsTitle": "Keyboard shortcuts",
+    "shortcutDelete": "Delete home city",
+    "shortcutEscape": "Clear the selection",
+    "shortcutEnter": "Snap the time marker to the selection start",
+    "close": "Close"
   }
 }
