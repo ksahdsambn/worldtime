@@ -22,10 +22,12 @@
     --border: #e2e8f2;
     --border-strong: #ccd5e3;
 
-    /* —— 文字（带色调，避免纯黑/纯白）—— */
+    /* —— 文字（带色调，避免纯黑/纯白）——
+       faint 经对比度校准：在 #ffffff 抬升面上 ≥4.5:1（WCAG AA 正文），
+       旧值 #8a97ab 仅 2.96:1，未达 AA，已下沉至 slate-500 系。*/
     --text: #0f172a;
     --text-muted: #475569;
-    --text-faint: #8a97ab;
+    --text-faint: #64748b;
 
     /* —— 主色（蓝）—— */
     --accent: #2563eb;
@@ -88,7 +90,8 @@
 
     --text: #e6ebf2;
     --text-muted: #9faec4;
-    --text-faint: #64748b;
+    /* faint 校准：在 #131c2e 面上 ≥4.5:1（WCAG AA）；旧值 #64748b 仅 3.58:1。*/
+    --text-faint: #7c8aa3;
 
     --accent: #3b82f6;
     --accent-hover: #60a5fa;
@@ -146,11 +149,12 @@
     color: var(--accent-soft-fg);
   }
 
-  /* 统一可见焦点环（无障碍：键盘焦点始终可见）*/
+  /* 统一可见焦点环（无障碍：键盘焦点始终可见）。
+     不强制 border-radius：现代浏览器会让 outline 自然贴合元素自身的圆角
+     （圆钮 = 全圆环、方控件 = 微圆环），避免方框套圆钮的错位感。*/
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 4px;
   }
 
   /* 细滚动条，贴合主题 */

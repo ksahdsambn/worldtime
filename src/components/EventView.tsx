@@ -12,6 +12,10 @@ import type { AppLocale } from "@/i18n/routing";
 /**
  * 公开事件视图（MS-5）：解析 base64 状态，展示事件在各地时区的对应时间。
  * 城市名随页面 locale 切换（中文页显示中文名，其余语言显示英文名）。
+ *
+ * 视觉：事件时间是本页最关键的信息，用 ink + 等宽 tabular-nums 高对比呈现
+ * （旧实现把时间放在 text-faint，对比度不足 WCAG AA）。各地时间以卡片行列表
+ * 呈现，主地点（home）用暖色 ⌂ 标注，与主应用地点行保持一致语义。
  */
 export default function EventView({
   code,
@@ -37,39 +41,77 @@ export default function EventView({
   }, [code]);
 
   if (!data || !data.selection || data.places.length === 0) {
-    return <main className="p-6 text-sm text-muted">{t("invalid")}</main>;
+    return (
+      <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-20 text-center">
+        <div className="text-3xl" aria-hidden>
+          📅
+        </div>
+        <p className="text-sm text-muted">{t("invalid")}</p>
+      </main>
+    );
   }
 
-  return (
-    <main className="p-6">
-      <h1 className="text-lg font-bold text-ink">{t("title")}</h1>
-      <p className="mt-1 text-sm text-muted">{t("description")}</p>
+  const sel = data.selection;
+  // 为主地点排序到首位（基准）：未指定 homeId 时退回原顺序
+  const ordered = [...data.places].sort((a, b) => {
+    if (a.id === data.homeId) return -1;
+    if (b.id === data.homeId) return 1;
+    return 0;
+  });
 
-      <ul className="mt-4 space-y-2">
-        {data.places.map((p) => {
-          const s = DateTime.fromMillis(data.selection!.startMs, {
-            zone: p.timeZone,
-          }).toFormat("yyyy-MM-dd HH:mm (ZZZZ)");
-          const e = DateTime.fromMillis(data.selection!.endMs, {
-            zone: p.timeZone,
-          }).toFormat("HH:mm (ZZZZ)");
+  return (
+    <main className="mx-auto max-w-2xl px-4 py-10 sm:py-16">
+      <header className="mb-5 space-y-1.5">
+        <h1 className="text-lg font-bold text-ink">{t("title")}</h1>
+        <p className="text-sm text-muted">{t("description")}</p>
+      </header>
+
+      <ul className="surface overflow-hidden p-0">
+        {ordered.map((p) => {
+          const sDt = DateTime.fromMillis(sel.startMs, { zone: p.timeZone });
+          const eDt = DateTime.fromMillis(sel.endMs, { zone: p.timeZone });
+          const timeRange = `${sDt.toFormat("HH:mm")}–${eDt.toFormat("HH:mm")}`;
+          const dateStr = sDt.toFormat("ccc, dd LLL");
+          const tzAbbr = sDt.toFormat("ZZZZ");
+          const isHome = p.id === data.homeId;
           return (
-            <li key={p.id} className="flex items-center gap-2 text-sm">
-              <span className="text-lg">{p.flag}</span>
-              <span className="font-medium text-ink">{localCityName(locale, p)}</span>
-              <span className="text-faint">
-                {s} - {e}
+            <li
+              key={p.id}
+              className="flex items-center gap-3 px-4 py-3 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-line"
+            >
+              <span className="text-xl leading-none" aria-hidden>
+                {p.flag}
               </span>
+              <div className="min-w-0 flex-1">
+                <span className="flex items-center gap-1.5">
+                  {isHome && (
+                    <span className="text-warm-strong" aria-hidden>
+                      ⌂
+                    </span>
+                  )}
+                  <span className="truncate text-sm font-medium text-ink">
+                    {localCityName(locale, p)}
+                  </span>
+                </span>
+              </div>
+              <div className="flex shrink-0 flex-col items-end leading-tight">
+                <span className="font-mono text-sm font-semibold tabular-nums text-ink">
+                  {timeRange}
+                </span>
+                <span className="text-[11px] text-muted tabular-nums">
+                  {dateStr} · {tzAbbr}
+                </span>
+              </div>
             </li>
           );
         })}
       </ul>
 
       {(() => {
-        const q = encodeState(data.places, data.homeId, data.selection);
+        const q = encodeState(data.places, data.homeId, sel);
         // i18n Link 会自动补 locale 前缀；href 仅给 pathname + 查询串。
         return (
-          <Link href={q ? `/?${q}` : "/"} className="btn-ghost btn-sm mt-4">
+          <Link href={q ? `/?${q}` : "/"} className="btn-primary btn-sm mt-5">
             {t("openOriginal")}
           </Link>
         );

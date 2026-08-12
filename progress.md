@@ -1,5 +1,53 @@
 # 开发进度记录
 
+## 第 21 轮：上线前细节打磨（无障碍对比度 / 二级页面完成度 / 焦点细节）
+
+> 时间：2026-08-13
+> 范围：依据 `polish` 技能与 AGENTS.md 设计原则（「默认无障碍 WCAG 2.1 AA」「精炼 SaaS 质感」），在功能完整的前提下做最后一轮细节打磨，提高整体完成度。零功能/逻辑改动，仅呈现层。
+> 依据：系统核查发现三处「好与优秀之间」的细节——① `--text-faint` 令牌对比度未达 WCAG AA（浅色 `#8a97ab` 仅 **2.96:1**、深色 `#64748b` 仅 **3.58:1**，被广泛用于次级标签/提示/偏移/日出日落/图例注），违反项目自身「AA」原则；② 时差对照 SEO 着陆页用了 `prose` 类，但 `@tailwindcss/typography` **未安装**（`plugins: []`），h1/h2/表格退化为浏览器默认样式，在自然搜索入口页质感断层；③ 公开事件页把「事件时间」（本页最关键信息）放在低对比的 `text-faint`，且布局裸露。
+
+### 完成内容
+
+**① `src/app/globals.css` —— `--text-faint` 对比度校准（无障碍）**
+- 浅色 `#8a97ab`(2.96:1) → `#64748b`(**4.76:1**，slate-500)；深色 `#64748b`(3.58:1) → `#7c8aa3`(**4.88:1**)。两者在各自抬升面（`--surface`）上均达 AA 正文 4.5:1，并保留「ink > muted > faint」三级层次（muted 仍为 ~7.6:1，差距清晰）与蓝色调中性色基调。打印令牌 `#666666` 原已达标，未动。
+
+**② `src/app/globals.css` —— `:focus-visible` 焦点环贴合元素形状**
+- 移除原 `:focus-visible` 中强制的 `border-radius: 4px`（在圆角控件上套方框、在 `rounded-full` chip 上尤其错位），保留 2px accent 描边 + offset；现代浏览器会让 outline 自然跟随元素自身圆角。
+
+**③ `src/components/EventView.tsx` —— 事件页完成度**
+- 关键数据上移：事件时间由 `text-faint` 改为 `font-mono font-semibold tabular-nums text-ink`（高对比、可读）；日期 + 时区缩写作次级行（muted）。
+- 布局升级：列表包进 `surface` 卡片、行间发丝分隔；主地点（home）置顶并以暖色 ⌂ 标注（语义与主应用地点行一致）；无效态居中 + 图标；「打开原表」CTA 由 ghost 升为 primary。移除 ⌂ 上误导性的 `title`（原借用页面标题文案）。
+
+**④ `src/app/[locale]/time-converter/[slug]/page.tsx` —— 着陆页完成度（SEO）**
+- 去掉无效的 `prose` 类（插件未装，纯空转），改用令牌系统手写排版：h1 + eyebrow 小标签；时差作为视觉锚点的 surface 数字卡（大号等宽 + 说明句，非装饰性「hero metric」）；规范的对照表（表头 uppercase、`tabular-nums`、行间分隔、`scope="col"`）；FAQ 改 `divide-y` 列表。**全部 SEO 正文/结构/JSON-LD 原样保留**，仅替换呈现。
+
+### 涉及文件
+
+- `src/app/globals.css`
+- `src/components/EventView.tsx`
+- `src/app/[locale]/time-converter/[slug]/page.tsx`
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 通过 |
+| 单元测试（`vitest run`） | ✅ 172/172 通过 |
+| ESLint（`next lint`） | ✅ 无警告 |
+| 编译产物核验 | ✅ 抓取 `_next` CSS：确认 `--text-faint` 新值（浅 `#64748b` / 深 `#7c8aa3`）落地、`border-radius:4px` 已消失、`:focus-visible` outline 仍在 |
+| SSR 渲染核验 | ✅ 着陆页 HTTP 200（含 h1/diff 卡/对照表新类名）；事件页有效/无效码均 HTTP 200，卡片结构 SSR 正确 |
+
+### 设计说明
+
+- **对比度先于「氛围」**：faint 变深会略微削弱「轻盈感」，但项目原则 #4 明确「默认无障碍 AA」，可读性优先于氛围——这是合规修正而非风格偏好。
+- **未引入新依赖**：着陆页选择「手写令牌排版」而非安装 `@tailwindcss/typography`，保持零新增依赖并与全站令牌一致。
+
+### 未做（主动克制）
+
+- **emoji/unicode 图标体系替换**（💼🌤️🌙🖨️⌂✎ 等）：与「Linear/Notion 精炼质感」略有距离，但属较大改造（新依赖、全量重绘、11 语种风险），超出安全打磨范围；留待后续专题。
+
+---
+
 ## 第 20 轮：性能优化（渲染热路径缓存 / 派生计算 memo / 拖拽合帧）
 
 > 时间：2026-08-13
