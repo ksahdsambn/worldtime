@@ -97,6 +97,12 @@ export async function requestInteractiveAuth(): Promise<boolean> {
     const oauth2 = await waitForGis();
     const client = ensureTokenClient(oauth2, clientId);
     return await new Promise<boolean>((resolve) => {
+      // 并发保护：若上一次交互授权尚未回调，先按「取消」结算其 promise，
+      // 避免被覆盖后永悬（resolver 为模块级单例）。常见触发：用户连点「连接」。
+      if (connectResolver) {
+        connectResolver(false);
+        connectResolver = null;
+      }
       connectResolver = (v) => resolve(v);
       client.requestAccessToken();
     });
@@ -116,6 +122,11 @@ export async function requestSilentRefresh(): Promise<string | null> {
     const oauth2 = await waitForGis();
     const client = ensureTokenClient(oauth2, clientId);
     return await new Promise<string | null>((resolve) => {
+      // 并发保护：同 requestInteractiveAuth，先结算挂起的刷新 resolver。
+      if (silentRefreshResolver) {
+        silentRefreshResolver(null);
+        silentRefreshResolver = null;
+      }
       silentRefreshResolver = (token) => resolve(token);
       client.requestAccessToken({ prompt: "none" });
     });

@@ -11,7 +11,8 @@
     "settings": "設定",
     "cancel": "取消",
     "confirm": "確定",
-    "more": "更多"
+    "more": "更多",
+    "close": "關閉"
   },
   "LocaleSwitcher": {
     "label": "語言",
@@ -52,7 +53,10 @@
     "all": "全部",
     "dragHandle": "拖曳以重新排序",
     "confirmRemoveHome": "確定移除主要城市嗎？其他城市的時差以主要城市為基準，移除後將改用其他城市作為參考。",
-    "sunNone": "無"
+    "sunNone": "無",
+    "emptyFiltered": "沒有 #{tag} 標籤的城市。",
+    "clearFilter": "清除篩選",
+    "limitReached": "已達到 30 個城市的上限。"
   },
   "Selection": {
     "duration": "時長",
@@ -111,11 +115,17 @@
     "connected": "已連結",
     "disconnect": "解除連結 Google 行事曆",
     "loading": "連線中…",
-    "error": "無法連結 Google 行事曆，請重試。"
+    "error": "無法連結 Google 行事曆，請重試。",
+    "retry": "重試",
+    "disconnected": "Google 行事曆工作階段已失效，請重新連線。",
+    "overlayFailed": "無法載入行事曆空閒情況，請檢查網路連線。"
   },
   "PrintExport": {
     "print": "列印",
-    "image": "匯出圖片"
+    "image": "匯出圖片",
+    "exporting": "匯出中…",
+    "exportFailed": "圖片匯出失敗，請重試。",
+    "noTarget": "暫無可匯出的內容。"
   },
   "Grid": {
     "empty": "新增一個城市，即可檢視時間網格。"
@@ -267,5 +277,19 @@
     "shortcutEscape": "清除選區",
     "shortcutEnter": "將時間標記對齊到選區起點",
     "close": "關閉"
+  },
+  "Errors": {
+    "title": "發生錯誤",
+    "description": "渲染頁面時發生了未預期的錯誤。",
+    "retry": "重試",
+    "reload": "重新整理頁面"
+  },
+  "NotFound": {
+    "title": "頁面不存在",
+    "description": "您造訪的頁面不存在或已被移動。",
+    "home": "返回首頁"
+  },
+  "Loading": {
+    "label": "載入中…"
   }
 }

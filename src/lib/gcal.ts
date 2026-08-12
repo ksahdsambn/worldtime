@@ -28,6 +28,14 @@ const FREEBUSY_ENDPOINT = "https://www.googleapis.com/calendar/v3/freeBusy";
 /** 一小时窗口（毫秒），用于列 [c.ms, c.ms + 1h) 与 busy 区间的半开重叠判定。 */
 const HOUR_MS = 3_600_000;
 
+/** freebusy 请求超时：连接挂起时避免 loading 态永久卡死。 */
+const FREEBUSY_TIMEOUT_MS = 15_000;
+
+/** 判断异常是否为 AbortController 取消（调用方卸载/超时），这类不应视为真实错误。 */
+export function isAbortError(e: unknown): boolean {
+  return e instanceof Error && (e.name === "AbortError" || e.message === "Aborted");
+}
+
 /** busy 区间，绝对时刻，半开 [startMs, endMs)。 */
 export interface BusyRange {
   startMs: number;
@@ -74,41 +82,81 @@ export class GcalUnauthorizedError extends Error {
  * @param opts.timeMin RFC3339 起始
  * @param opts.timeMax RFC3339 结束
  * @param opts.timeZone 响应时间格式化时区（传主地点时区，便于排查）
+ * @param opts.signal   可选外部取消信号（调用方卸载时 abort，避免泄漏 + 卡 loading）
  * @throws GcalUnauthorizedError token 过期/无效（401），调用方静默刷新后重试
- * @throws Error                 其他网络或解析错误
+ * @throws Error                 其他网络、超时（15s）或解析错误
  */
 export async function fetchFreeBusy(
   accessToken: string,
-  opts: { timeMin: string; timeMax: string; timeZone: string },
+  opts: { timeMin: string; timeMax: string; timeZone: string; signal?: AbortSignal },
 ): Promise<BusyRange[]> {
-  const res = await fetch(FREEBUSY_ENDPOINT, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      timeMin: opts.timeMin,
-      timeMax: opts.timeMax,
-      timeZone: opts.timeZone,
-      // 仅查询主日历：需求是"空闲/忙碌"总览，主日历即用户默认日程。
-      // 后续如需聚合多日历，可改为先 list calendars 再并入 items。
-      items: [{ id: "primary" }],
-    }),
-  });
-  if (res.status === 401) throw new GcalUnauthorizedError();
-  if (!res.ok) {
-    throw new Error(`freebusy failed: ${res.status} ${res.statusText}`);
+  // 组合「外部取消」与「内部超时」两个中止源到同一 controller。
+  const controller = new AbortController();
+  // 区分「超时中止」与「外部取消」：超时是真实失败（应报错），外部取消是卸载（应静默）。
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, FREEBUSY_TIMEOUT_MS);
+  const onExternalAbort = () => controller.abort(opts.signal?.reason);
+  if (opts.signal) {
+    if (opts.signal.aborted) controller.abort(opts.signal.reason);
+    else opts.signal.addEventListener("abort", onExternalAbort, { once: true });
   }
-  const data = (await res.json()) as {
-    calendars?: Record<string, { busy?: Array<{ start: string; end: string }> }>;
-  };
-  const busy = data.calendars?.primary?.busy ?? [];
-  return busy.map((b) => ({
-    // freebusy 返回的 ISO 串是绝对时刻，Date.parse 后与 column c.ms 同坐标系。
-    startMs: Date.parse(b.start),
-    endMs: Date.parse(b.end),
-  }));
+  try {
+    const res = await fetch(FREEBUSY_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        timeMin: opts.timeMin,
+        timeMax: opts.timeMax,
+        timeZone: opts.timeZone,
+        // 仅查询主日历：需求是"空闲/忙碌"总览，主日历即用户默认日程。
+        // 后续如需聚合多日历，可改为先 list calendars 再并入 items。
+        items: [{ id: "primary" }],
+      }),
+      signal: controller.signal,
+    });
+    if (res.status === 401) throw new GcalUnauthorizedError();
+    if (!res.ok) {
+      throw new Error(`freebusy failed: ${res.status} ${res.statusText}`);
+    }
+    // 防 200 + HTML（代理/拦截页）导致 res.json() 抛未分类 SyntaxError
+    const ct = res.headers.get("content-type") || "";
+    if (!ct.toLowerCase().includes("application/json")) {
+      throw new Error("freebusy: unexpected non-JSON response");
+    }
+    let data: {
+      calendars?: Record<string, { busy?: Array<{ start: string; end: string }> }>;
+    };
+    try {
+      data = (await res.json()) as typeof data;
+    } catch {
+      throw new Error("freebusy: malformed JSON response");
+    }
+    const busy = data.calendars?.primary?.busy ?? [];
+    return busy
+      .map((b) => ({
+        // freebusy 返回的 ISO 串是绝对时刻，Date.parse 后与 column c.ms 同坐标系。
+        startMs: Date.parse(b.start),
+        endMs: Date.parse(b.end),
+      }))
+      .filter(
+        (r): r is BusyRange =>
+          !Number.isNaN(r.startMs) && !Number.isNaN(r.endMs) && r.startMs < r.endMs,
+      );
+  } catch (e) {
+    // 超时导致的 AbortError 转为描述性错误，使调用方能把它当真实失败处理
+    // （而非「卸载取消」静默吞掉，那样 UI 会卡在 loading）。
+    if (timedOut) throw new Error("freebusy timeout");
+    throw e;
+  } finally {
+    clearTimeout(timer);
+    if (opts.signal) opts.signal.removeEventListener("abort", onExternalAbort);
+  }
 }
 
 /**

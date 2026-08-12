@@ -8,6 +8,7 @@ import {
   restoreGcalToken,
   disconnectGcal,
 } from "@/lib/gcal-auth";
+import { toast } from "@/lib/toast";
 
 /**
  * Google 日历叠加（需求 6.1）—— 纯前端 Token Client 的 UI 入口。
@@ -24,7 +25,9 @@ import {
 export default function GoogleCalendarConnect() {
   const t = useTranslations("Gcal");
   const connected = useWorldTimeStore((s) => s.gcalConnected);
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  // busy 同时覆盖连接与断开两种操作，禁用按钮防连点（断开是异步：需等 GIS revoke）。
+  const [busy, setBusy] = useState(false);
+  const [errored, setErrored] = useState(false);
 
   // 挂载时从 sessionStorage 恢复 token（刷新页面后免重新点授权）。
   useEffect(() => {
@@ -32,14 +35,21 @@ export default function GoogleCalendarConnect() {
   }, []);
 
   async function connect() {
-    setStatus("loading");
+    setBusy(true);
+    setErrored(false);
     const ok = await requestInteractiveAuth();
-    setStatus(ok ? "idle" : "error");
+    setBusy(false);
+    if (!ok) {
+      setErrored(true);
+      toast.error(t("error"));
+    }
   }
 
   async function disconnect() {
+    if (busy) return;
+    setBusy(true);
     await disconnectGcal();
-    setStatus("idle");
+    setBusy(false);
   }
 
   if (connected) {
@@ -47,15 +57,17 @@ export default function GoogleCalendarConnect() {
       <button
         type="button"
         onClick={disconnect}
+        disabled={busy}
         data-testid="gcal-disconnect"
         className="btn-ghost btn-sm"
         title={t("disconnect")}
+        aria-busy={busy || undefined}
       >
         <span
           className="h-1.5 w-1.5 rounded-full bg-emerald-500"
           aria-hidden
         />
-        {t("connected")}
+        {busy ? t("loading") : t("connected")}
       </button>
     );
   }
@@ -65,14 +77,15 @@ export default function GoogleCalendarConnect() {
       <button
         type="button"
         onClick={connect}
-        disabled={status === "loading"}
+        disabled={busy}
         data-testid="gcal-connect"
         className="btn-ghost btn-sm"
         aria-label={t("label")}
+        aria-busy={busy || undefined}
       >
-        {status === "loading" ? t("loading") : t("connect")}
+        {busy ? t("loading") : t("connect")}
       </button>
-      {status === "error" && <span className="text-red-500">{t("error")}</span>}
+      {errored && <span className="text-red-500">{t("error")}</span>}
     </div>
   );
 }

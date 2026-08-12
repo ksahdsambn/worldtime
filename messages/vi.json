@@ -11,7 +11,8 @@
     "settings": "Cài đặt",
     "cancel": "Huỷ",
     "confirm": "OK",
-    "more": "Thêm"
+    "more": "Thêm",
+    "close": "Đóng"
   },
   "LocaleSwitcher": {
     "label": "Ngôn ngữ",
@@ -52,7 +53,10 @@
     "all": "Tất cả",
     "dragHandle": "Kéo để sắp xếp lại",
     "confirmRemoveHome": "Xoá thành phố chính? Các thành phố khác so sánh giờ với thành phố chính, nên một thành phố khác sẽ trở thành mốc tham chiếu.",
-    "sunNone": "không"
+    "sunNone": "không",
+    "emptyFiltered": "Không có thành phố với thẻ #{tag}.",
+    "clearFilter": "Xóa bộ lọc",
+    "limitReached": "Bạn đã đạt giới hạn 30 thành phố."
   },
   "Selection": {
     "duration": "Thời lượng",
@@ -111,11 +115,17 @@
     "connected": "Đã kết nối",
     "disconnect": "Ngắt kết nối Google Lịch",
     "loading": "Đang kết nối…",
-    "error": "Không thể kết nối với Google Lịch. Vui lòng thử lại."
+    "error": "Không thể kết nối với Google Lịch. Vui lòng thử lại.",
+    "retry": "Thử lại",
+    "disconnected": "Phiên Google Lịch đã hết hạn. Vui lòng kết nối lại.",
+    "overlayFailed": "Không thể tải tình trạng rảnh của lịch. Hãy kiểm tra kết nối."
   },
   "PrintExport": {
     "print": "In",
-    "image": "Xuất hình ảnh"
+    "image": "Xuất hình ảnh",
+    "exporting": "Đang xuất…",
+    "exportFailed": "Không thể xuất ảnh. Hãy thử lại.",
+    "noTarget": "Chưa có gì để xuất."
   },
   "Grid": {
     "empty": "Thêm thành phố để xem lưới thời gian."
@@ -267,5 +277,19 @@
     "shortcutEscape": "Xóa vùng chọn",
     "shortcutEnter": "Đưa điểm đánh dấu về đầu vùng chọn",
     "close": "Đóng"
+  },
+  "Errors": {
+    "title": "Đã xảy ra lỗi",
+    "description": "Đã có lỗi bất ngờ khi hiển thị trang này.",
+    "retry": "Thử lại",
+    "reload": "Tải lại trang"
+  },
+  "NotFound": {
+    "title": "Không tìm thấy trang",
+    "description": "Trang bạn tìm không tồn tại hoặc đã được chuyển.",
+    "home": "Về trang chủ"
+  },
+  "Loading": {
+    "label": "Đang tải…"
   }
 }

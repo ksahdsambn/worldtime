@@ -11,7 +11,8 @@
     "settings": "Settings",
     "cancel": "Cancel",
     "confirm": "OK",
-    "more": "More"
+    "more": "More",
+    "close": "Close"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -52,7 +53,10 @@
     "all": "All",
     "dragHandle": "Drag to reorder",
     "confirmRemoveHome": "Remove your home city? Other cities compare their time to home, so a different city will become the reference.",
-    "sunNone": "none"
+    "sunNone": "none",
+    "emptyFiltered": "No cities with the tag #{tag}.",
+    "clearFilter": "Clear filter",
+    "limitReached": "You've reached the limit of 30 cities."
   },
   "Selection": {
     "duration": "Duration",
@@ -111,11 +115,17 @@
     "connected": "Connected",
     "disconnect": "Disconnect Google Calendar",
     "loading": "Connecting…",
-    "error": "Couldn't connect to Google Calendar. Please try again."
+    "error": "Couldn't connect to Google Calendar. Please try again.",
+    "retry": "Retry",
+    "disconnected": "Google Calendar session expired. Please reconnect.",
+    "overlayFailed": "Couldn't load calendar availability. Check your connection."
   },
   "PrintExport": {
     "print": "Print",
-    "image": "Export image"
+    "image": "Export image",
+    "exporting": "Exporting…",
+    "exportFailed": "Couldn't export the image. Try again.",
+    "noTarget": "Nothing to export yet."
   },
   "Grid": {
     "empty": "Add a city to see the time grid."
@@ -267,5 +277,19 @@
     "shortcutEscape": "Clear the selection",
     "shortcutEnter": "Snap the time marker to the selection start",
     "close": "Close"
+  },
+  "Errors": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred while rendering this page.",
+    "retry": "Try again",
+    "reload": "Reload page"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you're looking for doesn't exist or may have moved.",
+    "home": "Back to home"
+  },
+  "Loading": {
+    "label": "Loading…"
   }
 }

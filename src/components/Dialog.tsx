@@ -51,6 +51,13 @@ export function useDialog(cancelLabel: string, confirmLabel: string) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   const open = useCallback((p: Pending) => {
+    // 堆叠保护：若已有挂起对话框，先按「取消」结算其 promise，避免被覆盖后永悬。
+    // （原实现会丢弃 pendingRef，导致前一个 await 永远不返回。）
+    if (pendingRef.current) {
+      const prev = pendingRef.current;
+      pendingRef.current = null;
+      prev.resolve(prev.kind === "prompt" ? null : false);
+    }
     // 在切换焦点前捕获当前焦点元素（通常是触发按钮）
     triggerRef.current = (document.activeElement as HTMLElement) ?? null;
     pendingRef.current = p;

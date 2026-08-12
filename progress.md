@@ -1,5 +1,86 @@
 # 开发进度记录
 
+## 第 19 轮：健壮性加固（错误处理 / 空状态 / 边界场景）
+
+> 时间：2026-08-12
+> 范围：依据 `harden` 技能与 AGENTS.md 设计原则，全站补齐页面错误处理、空状态与边界场景，让站点在生产现实中更稳健。
+> 依据：审计发现——无任何 Next.js 路由边界文件（error/loading/not-found/global-error 全缺，未捕获渲染错误落 Next 默认英文页）；Google 日历叠加**所有失败都静默**（401/500/超时/断网用户毫无感知，叠加直接消失）；`fetchFreeBusy` 无超时/无取消/未防 `res.json()` 解析异常；`gcal-auth` 的 resolver 为模块级单例，并发授权会互相覆盖致 promise 永悬/错路由；`PrintExport` 失败 catch 为空、无 loading/防连点/超时；`Dialog` 堆叠会丢弃前一个 promise；地点数无上限（addPlace / 分享解码 / 事件码解码三处都不设限，畸形链接可致 168 列 × N 行渲染爆炸）；`renamePlace`/标签无长度上限；标签筛选清空时是空白列表；回访用户每次刷新都闪一下完整引导空状态（localStorage/URL 在 effect 里才恢复）；`CitySearch` 输入无 `maxLength`；`WorldClockWidget` 后台标签页仍 1s 轮询。
+
+### 架构决策
+
+1. **路由边界分层**：`[locale]/error.tsx`（client，在 layout 的 NextIntlClientProvider 内，可 `useTranslations`）捕获页面渲染错误并给「重试 / 刷新」；`[locale]/not-found.tsx`、`[locale]/loading.tsx`（server，`getTranslations()` 取 layout `setRequestLocale` 的 locale）补本地化 404 与骨架；`global-error.tsx` 兜底根布局崩溃——**自包含**（自带 `<html><body>`、内联样式、11 语言最小内联本地化字典，从 URL 首段推断 locale），不依赖任何 provider/令牌。
+2. **极简 Toast（无依赖、无 Context）**：`src/lib/toast.ts` 模块级 pub/sub + `Toaster.tsx` 订阅渲染，在 `ThemeRegistry` 挂载一次。统一承接复制/导出/日历/上限等瞬时反馈，取代散落内联 flash；`role="alert"/"status"` 按类型播报、`prefers-reduced-motion` 友好、最多 4 条防刷屏。
+3. **超时 ≠ 取消的语义分离**：`fetchFreeBusy` 把「内部超时」与「外部取消」合到同一 `AbortController`，但用 `timedOut` 标志区分——超时把 `AbortError` 转为描述性 `Error`（→ 调用方当真实失败报错+重试），外部取消照常抛 `AbortError`（→ 调用方静默，因为是自己卸载）。这样 15s 超时不再被误当「卸载取消」静默吞掉（否则 UI 卡 loading）。
+4. **GCal 错误可见性**：`TimeGrid` 加 `gcalStatus`（idle/loading/error/disconnected）状态机——非 401 错误在网格上方显示**横幅 + 重试按钮**（重试计数器触发 effect 重跑），401 静默刷新失败则 `clearGcalSession` + toast 提示重连；不再「失败即静默消失」。
+5. **上限单一数据源**：地点上限只在两处入口强制——store `addPlace`（返回 boolean，达上限 no-op）与 `shareUrl.decodeState`（截断到 `MAX_PLACES`）。事件页/事件 widget 都走 `decodeState`，故天然受保护，无需在渲染层重复截断。
+6. **hydration 闪屏修复**：store 加 `restored` 标志，`useLocalPersist` 恢复完成（`finally`）置 true；`TimeGrid` 在 `!restored && places.length===0` 显示轻量骨架而非完整 `FirstUseEmptyState`。SSR 与首帧客户端都渲染骨架（初始态一致，无 hydration 不匹配），effect 跑完后一次性切到真实内容（React 18 批处理，无中间闪烁）。
+
+### 完成内容
+
+**① 路由边界（4 个新文件）**
+- `[locale]/error.tsx`：捕获渲染错误，「重试 / 刷新」+ 错误 digest 显示 + `console.error` 留痕。
+- `[locale]/loading.tsx`：路由切换骨架屏，`aria-busy`。
+- `[locale]/not-found.tsx`：本地化 404 + 回首页（i18n `Link`）。
+- `global-error.tsx`：根布局崩溃兜底，11 语言内联本地化、内联样式、自推断 locale。
+
+**② 异步 / 功能错误处理**
+- `gcal.ts`：`AbortController`+15s 超时、`content-type` 校验、`res.json()` try/catch、过滤 `NaN` 脏区间、可选 `signal`、`isAbortError()` 助手、超时转描述性错误。
+- `TimeGrid.tsx`：取消式请求、`gcalStatus` 状态机、错误横幅+重试、401 失效 toast、401 刷新成功靠 store token 变化驱动 effect 重跑（不递归）。
+- `gcal-auth.ts`：交互授权 / 静默刷新各加 in-flight 守卫——新请求先把挂起 resolver 按「取消」结算，杜绝并发覆盖致 promise 永悬/错路由。
+- `GoogleCalendarConnect.tsx`：断开按钮加 loading/禁用态（原可连点）；错误走 toast。
+- `PrintExport.tsx`：导出加 loading 态 + in-flight 防连点 + 12s 超时 + 成功/失败 toast（原 catch 为空）；超时用**手动 timer 控制**（成功/失败都 clearTimeout），避免 `Promise.race` 输家在已结算后再 reject 造成未处理拒绝。
+- `Dialog.tsx`：`open` 时若已有挂起对话框，先按「取消」结算旧的（null/false），不再丢弃致 promise 永悬。
+
+**③ 边界场景（上限与校验）**
+- store：导出 `MAX_PLACES=30` / `MAX_CUSTOM_NAME_LEN=40` / `MAX_TAGS=6` / `MAX_TAG_LEN=20`；`addPlace` 返回 `boolean`（达上限 no-op）；`renamePlace` 截断超长名；`setPlaceTags` 截断每项+限数量+过滤空串；`setPlaces` 校验 `homeId` 在列表内（否则回退首项，防悬挂主地点）。
+- `shareUrl.decodeState`：解码地点截断到 `MAX_PLACES`。
+- 事件页 `event/[code]/page.tsx`：服务端校验 `code` 格式（base64url 字符集 + 长度上限），非法 `notFound()` 走本地化 404（与 time-converter 页一致）。
+
+**④ 空状态 / 边缘态**
+- `PlacesPanel.tsx`：标签筛选清空时的明确空状态 + 「清除筛选」按钮（原是空白列表）。
+- `CitySearch.tsx`：`maxLength=60` + 达上限/重复时 toast 反馈。
+- hydration 闪屏修复（见架构决策 6）。
+
+**⑤ 韧性**
+- `WorldClockWidget.tsx`：`document.hidden` 时暂停 1s 轮询、回前台对齐 `Date.now()`；畸形 `cities` 列表截断到 30。
+
+**⑥ i18n（11 语言全量同步，键集一致）**
+- 新增 `Errors`(4) / `NotFound`(3) / `Loading`(1) 三个命名空间；`Gcal` +3（retry/disconnected/overlayFailed）；`Places` +3（emptyFiltered/clearFilter/limitReached）；`PrintExport` +3（exporting/exportFailed/noTarget）；`Common` +1（close，供 Toast 关闭按钮无障碍标签）。译文人工撰写、CJK/西里尔母语自然。
+
+### 审查与修复（提交前自审，纠正 3 项）
+
+1. **[关键] 超时被误当「卸载取消」**：`fetchFreeBusy` 15s 超时 `controller.abort()` 使 fetch 抛 `AbortError`，而 `TimeGrid` catch 用 `isAbortError(e)` 静默 return → 超时后 UI 永久卡在 loading、无反馈。修正：加 `timedOut` 标志，超时把 `AbortError` 转为描述性 `Error("freebusy timeout")`；TimeGrid 据此走错误分支（横幅+toast+重试）。外部取消（卸载）仍抛 `AbortError` + TimeGrid 自有 controller 已 abort → 静默。
+2. **[关键] PrintExport `Promise.race` 未处理拒绝**：`toPng` 先完成时，race 的超时 promise 仍会在 12s 后 reject 且无 handler → 控制台未处理拒绝。修正：改手动 timer 控制，成功/失败都 `clearTimeout`，杜绝迟到的拒绝。
+3. **[轻微] Toast 关闭按钮无障碍**：`aria-label="×"` 读屏会念「乘号」。新增 `Common.close`（11 语言），Toaster 改用 `tCom("close")`。
+
+### 涉及文件
+
+- 新增 `src/app/[locale]/error.tsx`、`loading.tsx`、`not-found.tsx`、`src/app/global-error.tsx`（4 个路由边界）
+- 新增 `src/lib/toast.ts`、`src/components/Toaster.tsx`（Toast 系统）
+- 改 `src/lib/gcal.ts`、`src/lib/gcal-auth.ts`、`src/lib/shareUrl.ts`、`src/lib/useLocalPersist.ts`
+- 改 `src/store/useWorldTimeStore.ts`（上限 + restored 标志）
+- 改 `src/components/TimeGrid.tsx`、`GoogleCalendarConnect.tsx`、`PrintExport.tsx`、`Dialog.tsx`、`PlacesPanel.tsx`、`CitySearch.tsx`、`WorldClockWidget.tsx`、`ThemeRegistry.tsx`
+- 改 `src/app/[locale]/event/[code]/page.tsx`（服务端 code 校验）
+- 改 `messages/*.json`（11 语言，新增 4 命名空间 + 现有命名空间扩键）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check`（tsc --noEmit） | ✅ 通过（0 错误） |
+| `npm test`（vitest） | ✅ 172/172 通过 |
+| `npm run lint`（next lint） | ✅ 无警告 / 错误 |
+| `npm run build` | ✅ 成功；路由边界文件全部通过 App Router 构建期约束（global-error 自包含 html/body、error 为 client 等） |
+| messages 键一致性 | ✅ 11 文件完全对齐（新增 Errors/NotFound/Loading + Gcal/Places/PrintExport/Common 扩键） |
+
+### 未实现（设计取舍，留作后续）
+
+- **ICS 导出 i18n 泄漏**（`lib/calendar.ts` 硬编码 "Meeting" + `nameEn`）：需把 locale 线程化注入 lib 并新增 key，属较大重构，单独处理风险更低。
+- **localStorage schema 迁移**（`:v1`）：当前结构稳定，风险低。
+- **localStorage / URL 写入防抖**：纯性能、低风险，非健壮性硬伤。
+
+---
+
 ## 第 18 轮：移动端 / 触屏适配（首页核心体验）
 
 > 时间：2026-08-12

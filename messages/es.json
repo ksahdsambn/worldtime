@@ -11,7 +11,8 @@
     "settings": "Ajustes",
     "cancel": "Cancelar",
     "confirm": "Aceptar",
-    "more": "Más"
+    "more": "Más",
+    "close": "Cerrar"
   },
   "LocaleSwitcher": {
     "label": "Idioma",
@@ -52,7 +53,10 @@
     "all": "Todas",
     "dragHandle": "Arrastrar para reordenar",
     "confirmRemoveHome": "¿Quitar tu ciudad principal? Otras ciudades comparan su hora con la principal, así que otra ciudad pasará a ser la referencia.",
-    "sunNone": "ninguno"
+    "sunNone": "ninguno",
+    "emptyFiltered": "No hay ciudades con la etiqueta #{tag}.",
+    "clearFilter": "Quitar filtro",
+    "limitReached": "Has alcanzado el límite de 30 ciudades."
   },
   "Selection": {
     "duration": "Duración",
@@ -111,11 +115,17 @@
     "connected": "Conectado",
     "disconnect": "Desconectar Google Calendar",
     "loading": "Conectando…",
-    "error": "No se pudo conectar con Google Calendar. Inténtalo de nuevo."
+    "error": "No se pudo conectar con Google Calendar. Inténtalo de nuevo.",
+    "retry": "Reintentar",
+    "disconnected": "La sesión de Google Calendar ha caducado. Vuelve a conectar.",
+    "overlayFailed": "No se pudo cargar la disponibilidad del calendario. Revisa tu conexión."
   },
   "PrintExport": {
     "print": "Imprimir",
-    "image": "Exportar imagen"
+    "image": "Exportar imagen",
+    "exporting": "Exportando…",
+    "exportFailed": "No se pudo exportar la imagen. Inténtalo de nuevo.",
+    "noTarget": "Aún no hay nada que exportar."
   },
   "Grid": {
     "empty": "Añade una ciudad para ver la cuadrícula horaria."
@@ -267,5 +277,19 @@
     "shortcutEscape": "Borrar la selección",
     "shortcutEnter": "Llevar el marcador al inicio de la selección",
     "close": "Cerrar"
+  },
+  "Errors": {
+    "title": "Algo salió mal",
+    "description": "Ocurrió un error inesperado al mostrar esta página.",
+    "retry": "Reintentar",
+    "reload": "Recargar página"
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o se ha movido.",
+    "home": "Volver al inicio"
+  },
+  "Loading": {
+    "label": "Cargando…"
   }
 }

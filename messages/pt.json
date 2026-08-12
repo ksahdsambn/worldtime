@@ -11,7 +11,8 @@
     "settings": "Configurações",
     "cancel": "Cancelar",
     "confirm": "OK",
-    "more": "Mais"
+    "more": "Mais",
+    "close": "Fechar"
   },
   "LocaleSwitcher": {
     "label": "Idioma",
@@ -52,7 +53,10 @@
     "all": "Todos",
     "dragHandle": "Arraste para reordenar",
     "confirmRemoveHome": "Remover sua cidade principal? Outras cidades comparam seu horário com a principal, então outra cidade passará a ser a referência.",
-    "sunNone": "nenhum"
+    "sunNone": "nenhum",
+    "emptyFiltered": "Nenhuma cidade com a etiqueta #{tag}.",
+    "clearFilter": "Limpar filtro",
+    "limitReached": "Você atingiu o limite de 30 cidades."
   },
   "Selection": {
     "duration": "Duração",
@@ -111,11 +115,17 @@
     "connected": "Conectado",
     "disconnect": "Desconectar Google Agenda",
     "loading": "Conectando…",
-    "error": "Não foi possível conectar ao Google Agenda. Tente novamente."
+    "error": "Não foi possível conectar ao Google Agenda. Tente novamente.",
+    "retry": "Tentar novamente",
+    "disconnected": "A sessão do Google Calendar expirou. Reconecte-se.",
+    "overlayFailed": "Não foi possível carregar a disponibilidade da agenda. Verifique sua conexão."
   },
   "PrintExport": {
     "print": "Imprimir",
-    "image": "Exportar imagem"
+    "image": "Exportar imagem",
+    "exporting": "Exportando…",
+    "exportFailed": "Não foi possível exportar a imagem. Tente novamente.",
+    "noTarget": "Nada para exportar ainda."
   },
   "Grid": {
     "empty": "Adicione uma cidade para ver a grade de horários."
@@ -267,5 +277,19 @@
     "shortcutEscape": "Limpar a seleção",
     "shortcutEnter": "Levar o marcador ao início da seleção",
     "close": "Fechar"
+  },
+  "Errors": {
+    "title": "Algo deu errado",
+    "description": "Ocorreu um erro inesperado ao renderizar esta página.",
+    "retry": "Tentar novamente",
+    "reload": "Recarregar página"
+  },
+  "NotFound": {
+    "title": "Página não encontrada",
+    "description": "A página que você procura não existe ou foi movida.",
+    "home": "Voltar ao início"
+  },
+  "Loading": {
+    "label": "Carregando…"
   }
 }
