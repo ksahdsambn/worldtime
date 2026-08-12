@@ -122,7 +122,7 @@ export default function PlacesPanel() {
   }
 
   return (
-    <aside className="flex w-full shrink-0 flex-col border-line bg-surface md:w-72 md:border-r">
+    <aside className="animate-fade-in flex w-full shrink-0 flex-col border-line bg-surface md:w-72 md:border-r">
       {/* 移动端折叠开关：桌面端面板常驻展开，手机端默认折叠，把视口让给网格 */}
       <button
         type="button"
@@ -224,7 +224,7 @@ export default function PlacesPanel() {
             items={visiblePlaces.map((p) => p.id)}
             strategy={verticalListSortingStrategy}
           >
-            <ul className="space-y-1.5">
+            <ul className="places-rows space-y-1.5">
               {visiblePlaces.map((p: PlaceItem) => (
                 <PlaceRow
                   key={p.id}
@@ -340,8 +340,13 @@ function PlaceRow({
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    // 保留 dnd-kit 的排序过渡；额外加上 scale/box-shadow 过渡用于拖拽抬升反馈
+    transition: `${transition ? transition + ", " : ""}scale var(--dur-fast) var(--ease-out-quint), box-shadow var(--dur-fast) var(--ease-out-quint)`,
     opacity: isDragging ? 0.5 : 1,
+    // 拖拽抬升：用独立的 scale 属性（与 dnd-kit 的 transform 叠加，不冲突）+ 加深阴影，
+    // 给「被拎起」的实体感。scale 属性旧浏览器忽略，退化为仅阴影。
+    scale: isDragging ? "1.02" : "1",
+    boxShadow: isDragging ? "var(--shadow-lg)" : undefined,
   };
 
   return (

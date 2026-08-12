@@ -770,3 +770,53 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 | `npm run type-check` | 通过 |
 | `npm test` | 164/164 通过 |
 | `npm run build` | 通过；140 个静态页面成功生成 |
+
+---
+
+## 第 14 轮：动效与过渡体系（全面铺开）
+
+> 时间：2026-08-13
+> 范围：为全站加入有目的的动画与微交互——进场编排、弹层/浮层进出场、主题切换平滑、反馈微交互。纯 CSS + Tailwind，零新依赖；遵循品牌基调「温暖但绝不拖泥带水」。核心英雄时刻 = 时间网格进场。
+
+### 完成内容
+
+**基础层（动效令牌 + 退场基础设施）**
+- 新增动效令牌：`--ease-out-quart/quint/expo`（指数级 ease-out）与 `--dur-fast/base/slow`（150/200/320ms），集中管理时长与缓动。
+- 主题切换平滑：`body` 与 `.surface/.surface-inset` 加 `background-color/border-color/color` 过渡，明暗切换由硬切变为 200ms 色彩 morph（首次渲染无 from 态变化，不闪）。
+- 选区单元格：`td[data-ms]` 的 transition 由 `background-color` 扩展为含 `box-shadow`，选区 inset 描边 ease-in。
+- 新增 `.motion-pop/-overlay/-sheet/-toast/-fade` 数据态驱动的进出场组件类（基态=隐藏、`[data-state="enter"]`=显示），退场期统一 `pointer-events:none` 防误点。
+- `@keyframes shimmer`（骨架扫光）与 `now-pulse`（现在指示呼吸）**直接定义于 globals.css**（不放在 tailwind.config——后者会被 Tailwind 按工具类使用情况 tree-shake，导致按名引用的动画无声失效）。
+- 新增 `src/lib/usePresence.ts`：零依赖「穷人版 AnimatePresence」。挂载与 `open` 同步（保留既有焦点管理），关闭时延迟 `exitMs` 卸载以播退场；双 rAF 触发进场过渡。
+
+**弹层/浮层进出场（9 处）**：Dialog（Promise 立即 resolve、卸载延迟、退场后归还焦点）、Toaster（逐条滑出，自动到期/手动关闭均走退场）、SelectionBar（清除时下滑）、CitySearch 下拉、SettingsPanel、HelpPopover、HeaderActions 移动菜单（含遮罩）、DragHintCoachmark、FirstUseEmptyState。
+
+**进场编排**：header 淡入 → PlacesPanel 淡入 + 地点行 `nth-child` 错落级联 → 时间网格英雄进场（淡入 + 极轻微缩放 `grid-in`）→ 路由加载态由单调 `animate-pulse` 升级为 `.shimmer` 扫光。
+
+**反馈微交互**：ThemeToggle 日月 emoji 交叉淡入 + 旋转；「现在」琥珀指示由 `background-image` 改为 `::before` 伪元素并附 2.4s 呼吸；地点行拖拽抬升（用独立 `scale` 属性与 dnd-kit 的 `transform` 叠加，不冲突，加深阴影）。
+
+### 涉及文件
+
+- 新增：`src/lib/usePresence.ts`
+- `tailwind.config.ts`、`src/app/globals.css`
+- `src/app/[locale]/page.tsx`、`src/app/[locale]/loading.tsx`
+- `src/components/{Dialog,Toaster,SelectionBar,CitySearch,SettingsPanel,HelpPopover,HeaderActions,DragHintCoachmark,FirstUseEmptyState,ThemeToggle,TimeGrid,PlacesPanel}.tsx`
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript 类型检查（`tsc --noEmit`） | ✅ 通过 |
+| 单元测试（`vitest`） | ✅ 172/172 通过 |
+| ESLint（`next lint`） | ✅ 无警告 |
+| 生产构建（`next build`） | ✅ 成功，305 个静态页面 |
+| 编译产物关键帧核验 | ✅ 抓取 `.next/static/css`，确认 `@keyframes shimmer/now-pulse/grid-in/fade-up/fade-in` 与全部 `.motion-*` 类均落地 |
+| 客户端水合 | ✅ 浏览器确认正常水合（主题按钮渲染、store 恢复），`usePresence` 未引入水合错误 |
+
+### 设计说明
+
+- **克制纪律**：仅动 transform/opacity（高度变化本可用 `grid-template-rows`，但本轮未做列表删除退场）；不用 bounce/elastic；反馈类 ≤200ms、进场 ≤500ms；全部动效被既有全局 `prefers-reduced-motion` 开关覆盖。
+- **抓到并修复的真实 bug**：`shimmer`/`now-pulse` 关键帧原放 tailwind.config，因被原始 CSS 按名引用（非 `animate-*` 工具类）被 tree-shake 掉——骨架不扫光、现在指示不呼吸。已移至 globals.css 直接定义并复查编译产物。
+
+### 未做（主动克制）
+
+- **地点行删除退场** 与 **Google 日历忙碌斜纹淡入**：前者与 dnd-kit 内联 `transform/transition`、`animate-fade-in` 的 `fill:both` 冲突；后者受限于网格逐格 `data-busy` 属性系统。两者都会给核心组件引入脆弱性而价值有限，故未强行加入。

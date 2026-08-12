@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useWorldTimeStore, type HourFormat } from "@/store/useWorldTimeStore";
+import { usePresence } from "@/lib/usePresence";
 
 /**
  * 设置面板（小时格式等）。
@@ -19,6 +20,8 @@ export default function SettingsPanel() {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  // 弹层进出过渡（关闭时多挂载一帧播放退出）
+  const presence = usePresence(open, 200);
 
   const options: Array<{ value: HourFormat; label: string }> = [
     { value: "12", label: t("fmt12") },
@@ -59,11 +62,12 @@ export default function SettingsPanel() {
       >
         {tCom("settings")}
       </button>
-      {open && (
+      {presence.mounted && (
         <div
+          data-state={presence.state}
           role="menu"
           aria-label={t("hourFormat")}
-          className="surface absolute right-0 z-30 mt-1 w-56 p-3 shadow-lg"
+          className="motion-pop surface absolute right-0 z-30 mt-1 w-56 p-3 shadow-lg"
         >
           <p className="mb-2 text-xs font-semibold text-ink">
             {t("hourFormat")}

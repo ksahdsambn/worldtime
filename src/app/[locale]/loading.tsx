@@ -14,7 +14,7 @@ export default async function Loading() {
     >
       <span className="text-sm text-muted">
         <span
-          className="mr-2 inline-block h-3 w-3 animate-pulse rounded-full bg-accent align-middle"
+          className="shimmer mr-2 inline-block h-3 w-8 rounded-full bg-surface-hover align-middle"
           aria-hidden
         />
         {t("label")}

@@ -99,10 +99,22 @@ const config: Config = {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
+        // 时间网格英雄进场：淡入 + 极轻微缩放（grid 作为核心视觉的锚点）。
+        // 注意：shimmer / now-pulse 的 @keyframes 定义在 globals.css 中——它们被
+        // 原始 CSS 按名引用、而非 animate-* 工具类；若放此处会被 Tailwind 按工具
+        // 类使用情况 tree-shake，导致动画失效。
+        "grid-in": {
+          from: { opacity: "0", transform: "scale(0.99)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "fade-up": "fade-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) both",
         "fade-in": "fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both",
+        // 注意：shimmer / now-pulse 的 @keyframes 定义在 globals.css 中
+        // （它们被原始 CSS 按名引用，而非 animate-* 工具类；若在此定义会被
+        //  Tailwind 按工具类使用情况 tree-shake 掉，导致动画失效）。
+        "grid-in": "grid-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both",
       },
     },
   },

@@ -64,6 +64,16 @@
     --radius: 10px;
     --radius-lg: 14px;
 
+    /* —— 动效令牌（与主题无关；.dark 继承）—— */
+    /* 指数级 ease-out：自然减速，避免 bounce/elastic 的廉价感 */
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    /* 时长尺度：反馈 ≤200ms，进场/布局 ≤500ms */
+    --dur-fast: 150ms; /* 微反馈：按压、悬停、单元描边 */
+    --dur-base: 200ms; /* 弹层进出、状态切换 */
+    --dur-slow: 320ms; /* 抽屉、大块进场 */
+
     color-scheme: light;
   }
 
@@ -125,6 +135,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    /* 主题切换：画布与正文颜色平滑 morph。首次渲染无「from」状态变化，
+       不会触发过渡，故无首屏闪烁。reduced-motion 全局开关会将其归零。*/
+    transition: background-color var(--dur-base) var(--ease-out-quint),
+      color var(--dur-base) var(--ease-out-quint);
   }
 
   ::selection {
@@ -229,11 +243,16 @@
     background-color: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
+    transition: background-color var(--dur-base) var(--ease-out-quint),
+      border-color var(--dur-base) var(--ease-out-quint),
+      color var(--dur-base) var(--ease-out-quint);
   }
   .surface-inset {
     background-color: var(--surface-inset);
     border: 1px solid var(--border);
     border-radius: var(--radius);
+    transition: background-color var(--dur-base) var(--ease-out-quint),
+      border-color var(--dur-base) var(--ease-out-quint);
   }
 
   /* —— 标签 / 徽章 —— */
@@ -276,6 +295,94 @@
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
   }
+
+  /* —— 动效（data-state 驱动的进/出过渡；配合 usePresence hook 使用）——
+     基态 = 隐藏；[data-state="enter"] = 显示。退出时 state 回到 "leave"
+     （等价基态），过渡天然反向播放。仅动 transform/opacity。
+     退出期间关闭 pointer-events，避免淡出中的浮层拦截点击。*/
+  .motion-pop,
+  .motion-overlay,
+  .motion-sheet,
+  .motion-toast {
+    pointer-events: none;
+  }
+  .motion-pop[data-state="enter"],
+  .motion-overlay[data-state="enter"],
+  .motion-sheet[data-state="enter"],
+  .motion-toast[data-state="enter"] {
+    pointer-events: auto;
+  }
+  /* 弹层 / 下拉 / 菜单：轻微上浮 + 缩放 */
+  .motion-pop {
+    transition: opacity var(--dur-base) var(--ease-out-quint),
+      transform var(--dur-base) var(--ease-out-quint);
+    opacity: 0;
+    transform: translateY(-4px) scale(0.985);
+    transform-origin: top right;
+  }
+  .motion-pop[data-state="enter"] {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  /* 左对齐弹层（如城市搜索下拉，origin 左）*/
+  .motion-pop-left {
+    transform-origin: top left;
+  }
+  /* 遮罩：纯淡入淡出 */
+  .motion-overlay {
+    transition: opacity var(--dur-base) var(--ease-out-quint);
+    opacity: 0;
+  }
+  .motion-overlay[data-state="enter"] {
+    opacity: 1;
+  }
+  /* 底部抽屉（移动端对话框/浮栏）：上滑 + 淡入 */
+  .motion-sheet {
+    transition: opacity var(--dur-slow) var(--ease-out-quint),
+      transform var(--dur-slow) var(--ease-out-quint);
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .motion-sheet[data-state="enter"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Toast：从右侧滑入 / 滑出 */
+  .motion-toast {
+    transition: opacity var(--dur-base) var(--ease-out-quint),
+      transform var(--dur-base) var(--ease-out-quint);
+    opacity: 0;
+    transform: translateX(12px);
+    pointer-events: none;
+  }
+  .motion-toast[data-state="enter"] {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  /* 纯淡入淡出：用于已用 transform 定位的元素（如居中提示 -translate-x-1/2），
+     避免与 motion-* 的 transform 冲突。*/
+  .motion-fade {
+    transition: opacity var(--dur-base) var(--ease-out-quint);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .motion-fade[data-state="enter"] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* —— 骨架扫光（替代单调 pulse）：高光带横向掠过 —— */
+  .shimmer {
+    background-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--surface-hover) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
 }
 
 /* ============================================================================
@@ -307,12 +414,14 @@
 
 /* 单元格基底 */
 .wt-grid td[data-ms] {
+  position: relative; /* 为「现在」::before 提供定位上下文 */
   min-width: 2.5rem;
   background-color: transparent;
   color: var(--text-muted);
   border-right: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  transition: background-color 0.12s ease;
+  /* 含 box-shadow：选区 inset 描边 ease-in，而非硬切 */
+  transition: background-color 0.12s ease, box-shadow var(--dur-fast) var(--ease-out-quint);
   font-variant-numeric: tabular-nums;
 }
 .wt-grid td[data-ms]:hover {
@@ -352,20 +461,64 @@
   );
 }
 
-/* 「现在」：暖色（琥珀）左侧条，经 background-image 绘制以与选区的 box-shadow
-   共存；同一列各行的左侧条拼成一条纵向「当前时刻」指示线。*/
-.wt-grid td[data-now="1"] {
-  background-image: linear-gradient(
-    to right,
-    var(--warm) 0,
-    var(--warm) 3px,
-    transparent 3px
-  );
+/* 「现在」：暖色（琥珀）左侧条，同一列各行拼成一条纵向「当前时刻」指示线。
+   用 ::before 绘制（独立于 background-color 热力/选区与 background-image 忙碌
+   斜纹，天然分层共存），并附极轻呼吸以牵引视线；reduced-motion 下归零即静止。*/
+.wt-grid td[data-now="1"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--warm);
+  animation: now-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
 }
+
+/* ============================================================================
+   地点列表错落进场：配合 .animate-fade-in，每行递增 animation-delay，
+   封顶第 8 行避免长列表末尾过慢。仅挂载时播放一次（重排/筛选不重播）。
+   ========================================================================== */
+.places-rows > li:nth-child(1) { animation-delay: 0ms; }
+.places-rows > li:nth-child(2) { animation-delay: 40ms; }
+.places-rows > li:nth-child(3) { animation-delay: 80ms; }
+.places-rows > li:nth-child(4) { animation-delay: 120ms; }
+.places-rows > li:nth-child(5) { animation-delay: 160ms; }
+.places-rows > li:nth-child(6) { animation-delay: 200ms; }
+.places-rows > li:nth-child(7) { animation-delay: 240ms; }
+.places-rows > li:nth-child(8) { animation-delay: 280ms; }
+.places-rows > li:nth-child(n + 9) { animation-delay: 280ms; }
 
 /* ============================================================================
    动效 —— 仅一次编排好的进场；transform/opacity only
    ========================================================================== */
+
+/* 以下两个 @keyframes 直接定义于此（而非 tailwind.config），因为它们被原始 CSS
+   按名引用（.shimmer、td[data-now]::before），并非 animate-* 工具类；放在配置里
+   会被 Tailwind 按工具类使用情况 tree-shake 掉，导致动画无声失效。*/
+
+/* 骨架扫光：高光带横向掠过 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 「现在」琥珀指示的轻微呼吸（opacity 往复，不动 layout）*/
+@keyframes now-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
