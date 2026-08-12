@@ -48,7 +48,7 @@ export default function NowButton() {
       type="button"
       onClick={backToNow}
       data-testid="now-button"
-      className="rounded border bg-blue-600 px-3 py-1 text-xs text-white hover:bg-blue-700"
+      className="btn-primary btn-sm"
     >
       {t("backToNow")}
     </button>

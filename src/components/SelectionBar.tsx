@@ -77,72 +77,82 @@ export default function SelectionBar() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-t bg-gray-50 px-4 py-2 text-sm">
-      <span className="text-gray-600">{t("duration")}：</span>
-      <span className="font-semibold text-gray-900" data-testid="selection-duration">
-        {formatDuration(ms, durationWords)}
-      </span>
+    <div className="sticky bottom-3 z-30 px-3 no-print">
+      <div className="surface animate-fade-up mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 shadow-lg">
+        <div className="flex items-baseline gap-2">
+          <span className="text-[11px] uppercase tracking-wide text-faint">
+            {t("duration")}
+          </span>
+          <span
+            className="text-base font-semibold tabular-nums text-ink"
+            data-testid="selection-duration"
+          >
+            {formatDuration(ms, durationWords)}
+          </span>
+        </div>
 
-      <div className="ml-auto flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => downloadIcs("worldtime-meeting", buildIcs(sel, places))}
-          data-testid="export-ics"
-          className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
-        >
-          {tExp("ics")}
-        </button>
-        <a
-          href={googleCalendarUrl(sel, places)}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-testid="export-google"
-          className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
-        >
-          {tExp("google")}
-        </a>
-        <a
-          href={mailtoUrl(sel, places)}
-          data-testid="export-email"
-          className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
-        >
-          {tExp("email")}
-        </a>
-        <a
-          href={eventUrl || undefined}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-disabled={eventUrl ? undefined : true}
-          data-testid="event-page"
-          className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
-        >
-          {tExp("eventPage")}
-        </a>
-        <button
-          type="button"
-          onClick={onCopySummary}
-          data-testid="copy-summary"
-          className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
-        >
-          {flash === "summary" ? tExp("copied") : tExp("copySummary")}
-        </button>
-        <button
-          type="button"
-          onClick={onCopyShare}
-          data-testid="copy-share"
-          className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
-        >
-          {flash === "share" ? tExp("copied") : tExp("shareLink")}
-        </button>
+        <div className="ml-auto flex flex-wrap items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => downloadIcs("worldtime-meeting", buildIcs(sel, places))}
+            data-testid="export-ics"
+            className="btn-primary btn-sm"
+          >
+            {tExp("ics")}
+          </button>
+          <a
+            href={googleCalendarUrl(sel, places)}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="export-google"
+            className="btn-ghost btn-sm"
+          >
+            {tExp("google")}
+          </a>
+          <a
+            href={mailtoUrl(sel, places)}
+            data-testid="export-email"
+            className="btn-ghost btn-sm"
+          >
+            {tExp("email")}
+          </a>
+          <a
+            href={eventUrl || undefined}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-disabled={eventUrl ? undefined : true}
+            data-testid="event-page"
+            className="btn-ghost btn-sm"
+          >
+            {tExp("eventPage")}
+          </a>
+          <span className="divider" />
+          <button
+            type="button"
+            onClick={onCopySummary}
+            data-testid="copy-summary"
+            className="btn-ghost btn-sm"
+          >
+            {flash === "summary" ? tExp("copied") : tExp("copySummary")}
+          </button>
+          <button
+            type="button"
+            onClick={onCopyShare}
+            data-testid="copy-share"
+            className="btn-ghost btn-sm"
+          >
+            {flash === "share" ? tExp("copied") : tExp("shareLink")}
+          </button>
+          <span className="divider" />
+          <button
+            type="button"
+            onClick={() => setSelection(null)}
+            className="btn-ghost btn-sm"
+          >
+            {t("clear")}
+          </button>
+        </div>
       </div>
-
-      <button
-        type="button"
-        onClick={() => setSelection(null)}
-        className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
-      >
-        {t("clear")}
-      </button>
     </div>
   );
 }

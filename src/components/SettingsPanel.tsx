@@ -53,7 +53,7 @@ export default function SettingsPanel() {
         ref={buttonRef}
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
+        className="btn-ghost btn-sm"
         aria-haspopup="menu"
         aria-expanded={open}
       >
@@ -63,9 +63,9 @@ export default function SettingsPanel() {
         <div
           role="menu"
           aria-label={t("hourFormat")}
-          className="absolute right-0 z-30 mt-1 w-56 rounded border bg-white p-3 shadow-lg"
+          className="surface absolute right-0 z-30 mt-1 w-56 p-3 shadow-lg"
         >
-          <p className="mb-2 text-xs font-semibold text-gray-700">
+          <p className="mb-2 text-xs font-semibold text-ink">
             {t("hourFormat")}
           </p>
           <div role="group" className="space-y-1">

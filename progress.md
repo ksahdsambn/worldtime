@@ -1,5 +1,55 @@
 # 开发进度记录
 
+## 第 15 轮：UI 视觉重构 —— 令牌化主题系统 + 精致工具质感
+
+> 时间：2026-08-12
+> 范围：将主应用页面从「灰色实用主义」整体重构为 Linear/Notion 级「精致工具」质感。架构核心是建立**语义令牌驱动的双主题系统**，替换 `globals.css` 中全部 `.dark !important` 覆盖 hack。覆盖整页：顶部导航、左侧地点面板、7×24 时间网格（主英雄区）、选区浮层操作栏、工具条、SEO 页脚容器。
+> 依据：AGENTS.md「Design Context」明确要求——提升现有网格为 refined SaaS 质感，并把 `.dark !important` 类覆盖迁移为正式的**令牌主题系统（语义 CSS 变量）**。自审发现 `tailwind.config` 主题为空、`globals.css` 堆砌 `!important` 覆盖、整站 `bg-white/bg-gray-*` 单调且暖色缺位。
+
+### 架构决策
+
+1. **语义令牌驱动主题**：`globals.css` 的 `:root`（浅）/`.dark`（深）各声明一组语义 CSS 变量（分层表面 `--app-bg/--surface/--surface-inset/--surface-hover`、边框、带色文字 `--text/--text-muted/--text-faint`、主色蓝、暖色琥珀、热力图三色、选区、阴影/圆角）；`tailwind.config` 把它们映射成语义工具类（`bg-surface`/`text-muted`/`border-line`/`bg-warm-soft`…）。组件只消费令牌，深浅主题靠变量切换，彻底告别 `!important`。
+2. **网格单元格由 `data-*` 属性驱动**：TimeGrid 已发射 `data-heat/data-now/data-selected/data-weekend/data-busy`，遂把热力/周末/选区/现在/忙碌的视觉全部集中到 globals.css 的令牌化规则；背景色优先级靠源码顺序（周末<热力<选区），选区额外 `!important` 以胜过更高特异性的 `:hover`。「现在」(琥珀左竖条) 与「忙碌」(斜纹) 用 `background-image` 叠加，与 `background-color` 天然共存。**热力图算法（`columnColor`）零改动**。
+3. **统一控件系统**：`@layer components` 提供 `.btn/.btn-primary/.btn-ghost/.btn-sm/.icon-btn/.surface/.surface-inset/.chip/.input/.divider`，取代散落各处的 `rounded border px-2 hover:bg-gray-100` 内联组合，建立清晰层级（主按钮/幽灵按钮/图标按钮）。
+4. **暖色克制、分层出深度**：琥珀 `#FBBF24` 仅用于「现在」指示线与主地点（契合 logo 中心点）；深度来自分层表面 + 发丝边 + 极淡阴影（非 glassmorphism）。浅色中性色微微偏冷暖白，避免纯黑纯白。
+5. **无障碍内建**：`:focus-visible` 统一焦点环、热力图颜色与文字/斜纹冗余（非仅靠颜色）、`prefers-reduced-motion` 关闭进场动效、表格保留语义 `<th>/<td>`。
+6. **子路由深色安全**：移除 `!important` hack 后，依赖它的子路由会回归。对 `/time-converter` 着陆页与 `EventView`/`EventWidget` 做最小语义令牌替换（`text-gray-*`→`text-muted/faint`、`bg-white`→`bg-surface`、`border`→`border-line`、`text-blue-600`→`text-accent`），文案/结构化数据/链接零改动。
+
+### 改动清单
+
+#### 删除
+- `src/components/AnalogClock.tsx`：模拟时钟仅在地点面板使用；为修复城市名截断（窄面板下时钟挤占空间导致 `"N..."`）而移除后成为孤儿，删除清理。地点改以数字时间为唯一时钟表达。
+
+#### 修改（视觉层，逻辑/测试 id/数据属性/i18n key 全部保留）
+- `tailwind.config.ts`：语义颜色别名、字体系列（保留 CJK 回退）、`boxShadow`/`borderRadius` 令牌、`fade-up/fade-in` 关键帧。
+- `src/app/globals.css`：整体重写——令牌块 + base 层（body/滚动条/焦点环/选区色）+ components 层（统一控件类）+ `.wt-grid` data 属性规则 + 进场动效 + 打印样式（令牌压回浅色）。修正了关于「选区 `!important`」的注释精度。
+- `src/app/[locale]/page.tsx`：抬升粘性顶栏（品牌标+标语+控件组）、内凹网格主区、统一工具条；**SEO 页脚 100% 文案/hreflang/JSON-LD 保留**，仅重排容器与字号节奏。
+- `src/components/TimeGrid.tsx`：表头/冻结列抬升表面；单元格去除内联 bg，改由 data 属性驱动；`cellLabel` 重构返回 `{primary, alt}`——**12 小时制下额外显示 24 小时对照（alt），24 小时制下为 null（修复原版始终冗余的双重数字）**；`animate-fade-in` 进场。
+- `src/components/PlacesPanel.tsx`：UTC 参考卡、地点卡分层 + hover 阴影、主地点暖色底 + `⌂` 前缀 + **`sr-only`「Home」标签（无障碍：屏幕阅读器可读，`⌂` 标 `aria-hidden`）**；统一 `icon-btn` 操作行（去掉损害对比度的 `opacity-70` 弱化）；标签 chip。
+- `src/components/SelectionBar.tsx`：底部浮动抬升卡，时长为英雄指标，导出按钮分级（`.ics` 主按钮/其余幽灵）。
+- `src/components/HeatmapLegend.tsx`：令牌色块（所见即所得）+ 文字图例。
+- 工具条组件（`CitySearch`/`CursorBar`/`DateJump`/`NowButton`/`ThemeToggle`/`SettingsPanel`/`PrintExport`/`LocaleSwitcher`/`GoogleCalendarConnect`）：统一采用 `.btn*/.icon-btn/.surface/.input/.chip`，下拉与菜单改 `surface + shadow`。
+- `src/components/EventView.tsx`、`src/components/EventWidget.tsx`、`src/app/[locale]/time-converter/[slug]/page.tsx`：子路由深色安全令牌替换。
+- `src/lib/heatmap.ts`：移除已废弃的 `heatBg()`（单元格背景改由 globals.css 的 `data-heat` 规则渲染），保留 `columnColor`/`heatLabel` 算法与类型。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | 通过 |
+| `npm run lint` | 通过（无警告/错误） |
+| `npm test` | 172/172 通过 |
+| 浅色/深色截图（AI 视觉分析） | 两主题均判定「精致/高级」；城市名清晰、琥珀「现在」线 + 热力 + 周末着色可见、对比度良好 |
+
+### 设计取舍与遗留
+
+- **模拟时钟移除**：为面板可读性牺牲装饰性指针时钟（数字时间仍为精确来源）。如需恢复，建议以更紧凑的形式（如悬停展开）回归，避免重新挤占城市名空间。
+- **EventWidget 主题行为变更**：原 `bg-white` 经已删除的 `!important` hack 跟随深色；现改用令牌正确跟随主题（与自带 `dark` prop 的 `WorldClockWidget` 一致）。
+- **`localHourAt` 保留**：UI 已不再调用，但 `grid.test.ts` 仍测试它，作为合理公共工具函数保留。
+- **IAB 点击限制**：内嵌浏览器（IAB）中顶栏按钮（主题切换、设置）的程序化点击偶发不触发 React `onClick`（同一段会话中主题切换亦如此），系宿主 webview 行为而非代码回归；真实浏览器不受影响，组件渲染与可点击性经 DOM 快照确认无误。
+
+---
+
 ## 第 14 轮：补全 SEO 文案 / 标题 / 结构化数据 / 图标素材
 
 > 时间：2026-08-12

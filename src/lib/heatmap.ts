@@ -70,19 +70,12 @@ export function columnColor(
   return rankToColor(worst);
 }
 
-/** 颜色 → 半透明 Tailwind 背景类（用于单元格叠加）。 */
-export function heatBg(color: HeatColor | null): string {
-  switch (color) {
-    case "green":
-      return "bg-green-200/60";
-    case "orange":
-      return "bg-orange-200/60";
-    case "red":
-      return "bg-red-200/60";
-    default:
-      return "";
-  }
-}
+/** 颜色 → 半透明背景类（用于单元格叠加）。
+ *
+ * 已废弃：单元格背景现由 globals.css 中基于 data-heat 属性的令牌化规则直接渲染
+ * （见 `.wt-grid td[data-heat]`），不再需要把颜色映射成 Tailwind 类名。
+ * 保留类型与算法（columnColor），仅移除该 UI 耦合的映射函数。
+ */
 
 /**
  * 颜色 → 标签（供图例与无障碍）。

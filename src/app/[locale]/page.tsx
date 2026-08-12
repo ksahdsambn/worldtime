@@ -65,114 +65,155 @@ export default async function Home({ params }: Props) {
   const faq = tSeo.raw("faq") as Array<{ q: string; a: string }>;
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-app text-ink">
       <UrlStateSync />
       <KeyboardShortcuts />
-      {/* 顶部导航栏：品牌、城市搜索、语言切换、设置（设置入口后续步骤补全） */}
-      <header className="flex flex-wrap items-center gap-3 border-b px-4 py-2 bg-white">
-        <h1 className="flex items-center gap-2 text-lg font-bold">
-          <Image src="/brand/worldtime-mark.svg" alt="" width={28} height={28} priority />
-          {t("title")}
-        </h1>
-        <span className="hidden sm:inline text-xs text-gray-500">{t("tagline")}</span>
-        <div className="ml-auto flex items-center gap-3">
-          <CitySearch />
-          <LocaleSwitcher />
-          <SettingsPanel />
-          <ThemeToggle />
-          <GoogleCalendarConnect />
+
+      {/* 顶部导航栏：品牌 · 城市搜索 · 语言/设置/主题/日历。
+          抬升表面（bg-surface）+ 发丝底边 + 极淡阴影，与内凹网格区形成层次。 */}
+      <header className="sticky top-0 z-30 border-b border-line bg-surface shadow-sm no-print">
+        <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5">
+          <h1 className="flex shrink-0 items-center gap-2.5">
+            <Image
+              src="/brand/worldtime-mark.svg"
+              alt=""
+              width={30}
+              height={30}
+              priority
+              className="drop-shadow-sm"
+            />
+            <span className="flex flex-col leading-tight">
+              <span className="text-[15px] font-semibold tracking-tight text-ink">
+                {t("title")}
+              </span>
+              <span className="hidden text-[11px] text-faint sm:block">
+                {t("tagline")}
+              </span>
+            </span>
+          </h1>
+
+          {/* 城市搜索：主操作，桌面端居中增长，移动端整行 */}
+          <div className="min-w-0 flex-1 md:max-w-sm">
+            <CitySearch />
+          </div>
+
+          <div className="ml-auto flex items-center gap-1.5">
+            <LocaleSwitcher />
+            <span className="divider" />
+            <SettingsPanel />
+            <ThemeToggle />
+            <GoogleCalendarConnect />
+          </div>
         </div>
       </header>
 
-      {/* 主体：左侧地点列表 + 右侧网格区域（网格在步骤 2.5 引入） */}
-      <div className="flex flex-1 flex-col md:flex-row">
+      {/* 主体：左侧地点列表面板 + 右侧网格工作区。
+          面板与表头为抬升表面，网格区为内凹表面，构成「分层」深度。 */}
+      <div className="mx-auto flex w-full max-w-[1680px] flex-1 flex-col md:flex-row">
         <PlacesPanel />
-        <main className="flex-1 overflow-hidden p-2">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+        <main className="flex min-w-0 flex-1 flex-col">
+          {/* 网格工具条：左图例，右控件分组 */}
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line bg-surface px-4 py-2.5 no-print">
             <HeatmapLegend />
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5">
               <DateJump />
+              <span className="divider" />
               <CursorBar />
               <NowButton />
+              <span className="divider" />
               <PrintExport />
             </div>
           </div>
-          <TimeGrid />
+
+          {/* 网格（内凹表面） */}
+          <div className="min-h-0 flex-1 overflow-auto bg-surface-inset p-3 md:p-4">
+            <TimeGrid />
+          </div>
         </main>
       </div>
 
-      {/* 选区操作栏：仅在有选区时出现 */}
+      {/* 选区操作栏：仅在有选区时出现（固定浮于底部，抬升表面） */}
       <SelectionBar />
 
       {/*
         SEO 介绍与内链区：服务端渲染，含功能 / 使用场景 / FAQ 关键词导向文案，
         以及到热门时差对照页的站内链接（增强可索引正文与链接权重传递）。
-        视觉上次要，对交互无影响。
+        视觉上次要，对交互无影响；文案与结构化数据完整保留。
       */}
-      <footer className="border-t bg-white px-4 py-8 text-sm text-gray-600">
-        <div className="mx-auto max-w-5xl">
-          <h2 className="text-base font-semibold text-gray-800 mb-2">
-            {tSeo("introTitle")}
-          </h2>
-          <p className="max-w-3xl leading-relaxed">{tSeo("introBody")}</p>
+      <footer className="border-t border-line bg-surface px-4 py-10 text-sm">
+        <div className="mx-auto max-w-5xl space-y-8">
+          <section>
+            <h2 className="mb-2 text-base font-semibold text-ink">
+              {tSeo("introTitle")}
+            </h2>
+            <p className="max-w-3xl leading-relaxed text-muted">{tSeo("introBody")}</p>
+          </section>
 
           {/* 核心功能 */}
-          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
-            {tSeo("featuresTitle")}
-          </h3>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
-            {features.map((f) => (
-              <li key={f.title}>
-                <span className="font-medium text-gray-800">{f.title}</span>
-                <span className="block text-gray-600">{f.desc}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* 使用场景 */}
-          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
-            {tSeo("useCasesTitle")}
-          </h3>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
-            {useCases.map((u) => (
-              <li key={u.title}>
-                <span className="font-medium text-gray-800">{u.title}</span>
-                <span className="block text-gray-600">{u.desc}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
-          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
-            {tSeo("faqTitle")}
-          </h3>
-          <ul className="max-w-3xl divide-y divide-gray-200">
-            {faq.map((item) => (
-              <li key={item.q} className="py-2">
-                <p className="font-medium text-gray-800">{item.q}</p>
-                <p className="text-gray-600">{item.a}</p>
-              </li>
-            ))}
-          </ul>
-
-          {/* 热门时区转换内链 */}
-          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
-            {tSeo("popularTitle")}
-          </h3>
-          <nav>
-            <ul className="flex flex-wrap gap-x-4 gap-y-1">
-              {popularConverterLinks().map((item) => (
-                <li key={item.slug}>
-                  <Link
-                    href={`/time-converter/${item.slug}`}
-                    className="text-blue-600 hover:underline"
-                  >
-                    {item.label}
-                  </Link>
+          <section>
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+              {tSeo("featuresTitle")}
+            </h3>
+            <ul className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((f) => (
+                <li key={f.title} className="border-l border-line pl-3">
+                  <span className="font-medium text-ink">{f.title}</span>
+                  <span className="mt-0.5 block text-muted">{f.desc}</span>
                 </li>
               ))}
             </ul>
-          </nav>
+          </section>
+
+          {/* 使用场景 */}
+          <section>
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+              {tSeo("useCasesTitle")}
+            </h3>
+            <ul className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
+              {useCases.map((u) => (
+                <li key={u.title} className="border-l border-line pl-3">
+                  <span className="font-medium text-ink">{u.title}</span>
+                  <span className="mt-0.5 block text-muted">{u.desc}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
+          <section>
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+              {tSeo("faqTitle")}
+            </h3>
+            <ul className="max-w-3xl divide-y divide-line">
+              {faq.map((item) => (
+                <li key={item.q} className="py-3">
+                  <p className="font-medium text-ink">{item.q}</p>
+                  <p className="mt-1 text-muted">{item.a}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* 热门时区转换内链 */}
+          <section>
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+              {tSeo("popularTitle")}
+            </h3>
+            <nav>
+              <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+                {popularConverterLinks().map((item) => (
+                  <li key={item.slug}>
+                    <Link
+                      href={`/time-converter/${item.slug}`}
+                      className="text-accent hover:underline"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </section>
         </div>
       </footer>
 

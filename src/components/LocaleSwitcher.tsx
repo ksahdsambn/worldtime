@@ -16,12 +16,12 @@ export default function LocaleSwitcher() {
   }
 
   return (
-    <label className="inline-flex items-center gap-2 text-sm">
-      <span>{t("label")}:</span>
+    <label className="inline-flex items-center gap-1.5">
+      <span className="hidden text-[11px] text-faint sm:inline">{t("label")}</span>
       <select
         value={locale}
         onChange={(e) => onChange(e.target.value as AppLocale)}
-        className="border rounded px-2 py-1 bg-white text-black"
+        className="input !w-auto !px-1.5 !py-1 text-xs"
         aria-label={t("label")}
       >
         {routing.locales.map((l) => (

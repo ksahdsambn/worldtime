@@ -12,8 +12,8 @@ export default function ThemeToggle() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    // 避免 SSR/CSR 不一致
-    return <span className="inline-block w-[3.5rem]" />;
+    // 避免 SSR/CSR 不一致：占位宽度与 icon-btn 一致，防布局抖动
+    return <span className="inline-block w-7" aria-hidden />;
   }
 
   const current = theme === "system" ? resolvedTheme : theme;
@@ -23,8 +23,9 @@ export default function ThemeToggle() {
       type="button"
       onClick={() => setTheme(current === "dark" ? "light" : "dark")}
       data-testid="theme-toggle"
-      className="rounded border px-2 py-1 text-xs hover:bg-gray-100"
+      className="icon-btn text-base"
       title={t("toggle")}
+      aria-label={t("toggle")}
     >
       {current === "dark" ? "☀️" : "🌙"}
     </button>

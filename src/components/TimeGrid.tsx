@@ -5,9 +5,9 @@ import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
-import { buildColumns, todayStartMs, localHourAt, isWeekendAt } from "@/lib/grid";
+import { buildColumns, todayStartMs, isWeekendAt } from "@/lib/grid";
 import { prefers12Hour } from "@/lib/time";
-import { columnColor, heatBg, type HeatColor } from "@/lib/heatmap";
+import { columnColor, type HeatColor } from "@/lib/heatmap";
 import { localCityName } from "@/lib/cityName";
 import type { AppLocale } from "@/i18n/routing";
 import {
@@ -203,19 +203,28 @@ export default function TimeGrid() {
 
   if (!home || columns.length === 0) {
     return (
-      <div className="p-4 text-sm text-gray-500">
-        {t("empty")}
-      </div>
+      <div className="p-6 text-sm text-muted">{t("empty")}</div>
     );
   }
 
-  /** 格式化某一列在目标时区的显示文字（按小时）。 */
-  function cellLabel(zone: string, countryCode: string, ms: number): string {
+  /**
+   * 格式化某一列在目标时区的显示文字（按小时）。
+   * 12 小时制下额外返回 24 小时对照（alt），便于跨时区心算；
+   * 24 小时制下 alt 为 null（与 primary 冗余，不重复显示）。
+   */
+  function cellLabel(
+    zone: string,
+    countryCode: string,
+    ms: number,
+  ): { primary: string; alt: string | null } {
     const dt = DateTime.fromMillis(ms, { zone });
     const use12 =
       hourFormat === "12" ||
       (hourFormat === "mixed" && prefers12Hour(countryCode));
-    return dt.toFormat(use12 ? "h a" : "HH");
+    return {
+      primary: dt.toFormat(use12 ? "h a" : "HH"),
+      alt: use12 ? dt.toFormat("HH") : null,
+    };
   }
 
   /** 判断某列是否在选区内。 */
@@ -226,16 +235,16 @@ export default function TimeGrid() {
 
   return (
     <div
-      className="overflow-x-auto select-none"
+      className="select-none overflow-x-auto"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      <table className="border-separate border-spacing-0 text-xs">
+      <table className="wt-grid animate-fade-in text-xs">
         <thead>
           <tr>
-            <th className="sticky left-0 z-10 bg-white px-2 py-1 text-left">
+            <th className="sticky-col sticky left-0 z-10 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-ink">
               {localCityName(locale, home)}
             </th>
             {dayGroups.map((g) => {
@@ -247,7 +256,7 @@ export default function TimeGrid() {
                 <th
                   key={g.dayIndex}
                   colSpan={g.count}
-                  className="border-b border-l border-gray-200 px-2 py-1 text-center font-semibold text-gray-700"
+                  className="border-l border-line px-2 py-2.5 text-center text-[11px] font-semibold"
                 >
                   {dt.toFormat("MM-dd EEE")}
                 </th>
@@ -303,36 +312,28 @@ function Row({
   countryCode: string;
   columns: ReturnType<typeof buildColumns>;
   colorByMs: Record<number, HeatColor>;
-  cellLabel: (ms: number) => string;
+  cellLabel: (ms: number) => { primary: string; alt: string | null };
   inHighlight: (ms: number) => boolean;
   now: number | null;
   busyMs: Set<number>;
 }) {
   return (
     <tr>
-      <td className="sticky left-0 z-10 whitespace-nowrap border-b bg-white px-2 py-1 font-medium text-gray-700">
+      <td className="sticky-col sticky left-0 z-10 whitespace-nowrap px-3 py-1.5 text-[13px] font-medium text-ink">
         {label}
       </td>
       {columns.map((c) => {
-        const h = localHourAt(zone, c.ms);
         const selected = inHighlight(c.ms);
         // UTC 行无国家归属，跳过周末判定（避免兜底 [6,7] 产生无意义高亮）
         const weekend = countryCode ? isWeekendAt(zone, countryCode, c.ms) : false;
         const busy = busyMs.has(c.ms);
-        // 当前小时标记（TC-5 视觉标识）：当前时刻落在该列所在的小时区间内。
-        // 用区间判定（c.ms <= now < c.ms + 1h）而非整点地板相等，
-        // 以正确支持半小时/45 分钟偏移时区（如 Asia/Kolkata、Asia/Kathmandu）——
-        // 这些时区的列 ms 不落在 UTC 整点上，地板相等会导致"现在"标记永不显示。
+        // 当前小时标记（TC-5）：当前时刻落在该列所在的小时区间内。
+        // 用区间判定（c.ms <= now < c.ms + 1h）以正确支持半小时/45 分钟偏移时区
+        // （Asia/Kolkata、Asia/Kathmandu 等列 ms 不落在 UTC 整点上）。
+        // 单元格的视觉状态（热力 / 周末 / 选区 / 现在 / 忙碌）全部由 data-* 属性
+        // 驱动 globals.css 的令牌化规则，优先级在那里靠源码顺序保证。
         const isNow = now ? c.ms <= now && now < c.ms + 3600_000 : false;
-        // 优先级：选区 > 热力图 > 周末；Google 日历忙碌叠加为顶部斜线纹理
-        const heat = heatBg(colorByMs[c.ms] ?? null);
-        const bg = selected
-          ? "bg-blue-300 text-blue-900"
-          : heat
-            ? `${heat} ${weekend ? "underline" : ""}`
-            : weekend
-              ? "bg-gray-100 text-gray-500"
-              : "hover:bg-blue-50";
+        const cl = cellLabel(c.ms);
         return (
           <td
             key={c.ms}
@@ -342,14 +343,15 @@ function Row({
             data-heat={colorByMs[c.ms] ?? ""}
             data-now={isNow ? "1" : "0"}
             data-busy={busy ? "1" : "0"}
-            className={`cursor-cell border-b border-l border-gray-100 px-1 py-1 text-center tabular-nums ${bg} ${
-              isNow ? "ring-2 ring-inset ring-pink-500" : ""
-            } ${busy ? "border-t-2 border-t-purple-500" : ""}`}
+            data-selected={selected ? "1" : "0"}
+            className="cursor-cell px-1 py-1.5 text-center"
           >
-            {cellLabel(c.ms)}
-            <span className="block text-[9px] text-gray-400">
-              {h.toString().padStart(2, "0")}
-            </span>
+            <span className="tabular-nums">{cl.primary}</span>
+            {cl.alt && (
+              <span className="block text-[9px] leading-none text-faint tabular-nums">
+                {cl.alt}
+              </span>
+            )}
           </td>
         );
       })}

@@ -22,7 +22,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useWorldTimeStore, type PlaceItem, type DayPeriods } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
-import AnalogClock from "@/components/AnalogClock";
 import { getLatLng } from "@/data/latlng";
 import { sunRiseSet } from "@/lib/sun";
 import { localCityName } from "@/lib/cityName";
@@ -116,24 +115,35 @@ export default function PlacesPanel() {
   }
 
   return (
-    <aside className="w-full md:w-72 shrink-0 border-r p-3">
+    <aside className="flex w-full shrink-0 flex-col border-line bg-surface p-3 md:w-72 md:border-r">
       {/* UTC 基准行（WC-7）：固定在列表顶部，仅作参考 */}
-      <div className="mb-2 flex items-center justify-between rounded border bg-gray-50 px-2 py-1 text-xs">
-        <span className="text-gray-600">UTC · {t("utcRow")}</span>
-        <span className="font-mono font-semibold text-gray-900 tabular-nums" data-testid="utc-clock">
+      <div className="surface mb-3 flex items-center justify-between px-3 py-2">
+        <span className="text-[11px] uppercase tracking-wide text-faint">
+          UTC · {t("utcRow")}
+        </span>
+        <span
+          className="font-mono text-sm font-semibold tabular-nums text-ink"
+          data-testid="utc-clock"
+        >
           {utcStr}
         </span>
       </div>
 
-      <h2 className="mb-2 text-sm font-semibold text-gray-700">{t("title")}</h2>
+      <h2 className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-faint">
+        {t("title")}
+      </h2>
 
       {/* 标签筛选（6.5） */}
       {allTags.length > 0 && (
-        <div className="mb-2 flex flex-wrap gap-1 text-[11px]">
+        <div className="mb-2 flex flex-wrap gap-1">
           <button
             type="button"
             onClick={() => setActiveTag(null)}
-            className={`rounded px-1.5 py-0.5 ${activeTag === null ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-600"}`}
+            className={`chip cursor-pointer transition-colors ${
+              activeTag === null
+                ? "!bg-ink !text-app"
+                : "hover:!bg-surface-hover"
+            }`}
           >
             {t("all")}
           </button>
@@ -142,7 +152,11 @@ export default function PlacesPanel() {
               key={tg}
               type="button"
               onClick={() => setActiveTag(activeTag === tg ? null : tg)}
-              className={`rounded px-1.5 py-0.5 ${activeTag === tg ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-600"}`}
+              className={`chip cursor-pointer transition-colors ${
+                activeTag === tg
+                  ? "!bg-accent !text-accent-fg !border-accent"
+                  : "hover:!bg-surface-hover"
+              }`}
             >
               #{tg}
             </button>
@@ -150,9 +164,7 @@ export default function PlacesPanel() {
         </div>
       )}
 
-      {places.length === 0 && (
-        <p className="text-xs text-gray-500">{t("empty")}</p>
-      )}
+      {places.length === 0 && <p className="px-1 text-xs text-faint">{t("empty")}</p>}
 
       <DndContext
         sensors={sensors}
@@ -163,7 +175,7 @@ export default function PlacesPanel() {
           items={visiblePlaces.map((p) => p.id)}
           strategy={verticalListSortingStrategy}
         >
-          <ul className="space-y-1">
+          <ul className="space-y-1.5">
             {visiblePlaces.map((p: PlaceItem) => (
               <PlaceRow
                 key={p.id}
@@ -270,153 +282,159 @@ function PlaceRow({
     <li
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 rounded border px-2 py-1.5 text-sm ${
-        isHome ? "border-blue-400 bg-blue-50" : "bg-white"
+      className={`surface group animate-fade-in overflow-hidden transition-shadow duration-150 hover:shadow-md ${
+        isHome ? "bg-warm-soft" : "bg-surface"
       }`}
     >
-      {/* 拖拽手柄（WC-6） */}
-      <button
-        type="button"
-        aria-label={t("dragHandle")}
-        className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 px-0.5"
-        {...attributes}
-        {...listeners}
-      >
-        ⠿
-      </button>
-      <span className="text-lg" aria-hidden>
-        {p.flag}
-      </span>
-      <AnalogClock timeZone={p.timeZone} now={now} size={36} />
-      <span className="flex-1">
-        <span className="font-medium text-black">
-          {p.customName || localCityName(locale, p)}
+      <div className="flex items-center gap-2 px-2.5 py-2">
+        {/* 拖拽手柄（WC-6） */}
+        <button
+          type="button"
+          aria-label={t("dragHandle")}
+          className="icon-btn cursor-grab text-faint active:cursor-grabbing"
+          {...attributes}
+          {...listeners}
+        >
+          ⠿
+        </button>
+        <span className="text-xl leading-none" aria-hidden>
+          {p.flag}
         </span>
-        {isHome && (
-          <span className="ml-1 rounded bg-blue-100 px-1 text-[10px] text-blue-700">
-            {t("home")}
-          </span>
-        )}
-        {p.tags.length > 0 && (
-          <span className="ml-1 text-[10px] text-gray-400">
-            {p.tags.map((tg) => `#${tg}`).join(" ")}
-          </span>
-        )}
-        <span className="block text-[11px] text-gray-500">
-          {p.countryZh} · {p.timeZone}
-        </span>
-        {sun && (sun.rise || sun.set) && (
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5">
+            {isHome && <span className="sr-only">{t("home")}</span>}
+            <span className="truncate text-[13px] font-medium text-ink">
+              {isHome && (
+                <span aria-hidden className="text-warm-strong">
+                  ⌂{" "}
+                </span>
+              )}
+              {p.customName || localCityName(locale, p)}
+            </span>
+          </div>
+          <div className="truncate text-[11px] text-faint">
+            {p.countryZh} · {p.timeZone}
+            {p.tags.length > 0 && (
+              <span className="ml-1">
+                {" "}
+                {p.tags.map((tg) => `#${tg}`).join(" ")}
+              </span>
+            )}
+          </div>
+          {sun && (sun.rise || sun.set) && (
+            <div className="text-[10px] text-faint" data-testid={`sun-${p.id}`}>
+              🌅 {sun.rise ? sun.rise.toFormat("HH:mm") : t("sunNone")} {" / "} 🌇{" "}
+              {sun.set ? sun.set.toFormat("HH:mm") : t("sunNone")}
+            </div>
+          )}
+        </div>
+        <div className="flex shrink-0 flex-col items-end leading-tight">
           <span
-            className="block text-[10px] text-gray-400"
-            data-testid={`sun-${p.id}`}
+            className="font-mono text-sm font-semibold tabular-nums text-ink"
+            data-testid={`clock-${p.id}`}
           >
-            🌅 {sun.rise ? sun.rise.toFormat("HH:mm") : t("sunNone")}
-            {" / "}
-            🌇 {sun.set ? sun.set.toFormat("HH:mm") : t("sunNone")}
+            {timeStr}
           </span>
-        )}
-      </span>
-      {(() => {
-        const dn = dayNightIcon(localHour, dayPeriods);
-        return (
-          <span
-            className="text-base"
-            title={dn.state}
-            aria-label={dn.state}
-          >
-            {dn.icon}
-          </span>
-        );
-      })()}
-      <div className="flex flex-col items-end leading-tight">
-        {offsetMin != null && (
-          <span
-            className="font-mono text-[11px] text-gray-600 cursor-help"
-            data-testid={`offset-${p.id}`}
-            title={hoverDetail}
-          >
-            {offsetMin === 0 ? "0" : formatOffset(offsetMin)}
-          </span>
-        )}
-        {abbr && (
-          <span
-            className={`text-[10px] ${dst ? "text-orange-600 font-semibold" : "text-gray-400"}`}
-            data-testid={`abbr-${p.id}`}
-            title={hoverDetail}
-          >
-            {abbr}
-          </span>
-        )}
-        {dstWarn && (
-          <span
-            className="text-[9px] rounded bg-yellow-200 text-yellow-800 px-1"
-            data-testid={`dst-warn-${p.id}`}
-            title={t("dstWarnSoon")}
-          >
-            DST!
-          </span>
-        )}
+          <div className="mt-0.5 flex items-center gap-1.5 text-[10px]">
+            {(() => {
+              const dn = dayNightIcon(localHour, dayPeriods);
+              return (
+                <span className="text-xs" title={dn.state} aria-label={dn.state}>
+                  {dn.icon}
+                </span>
+              );
+            })()}
+            {offsetMin != null && (
+              <span
+                className="cursor-help text-faint"
+                data-testid={`offset-${p.id}`}
+                title={hoverDetail}
+              >
+                {offsetMin === 0 ? "0" : formatOffset(offsetMin)}
+              </span>
+            )}
+            {abbr && (
+              <span
+                className={`font-medium ${dst ? "text-warm-strong" : "text-faint"}`}
+                data-testid={`abbr-${p.id}`}
+                title={hoverDetail}
+              >
+                {abbr}
+              </span>
+            )}
+            {dstWarn && (
+              <span
+                className="rounded-full bg-warm-soft px-1 text-[9px] font-semibold text-warm-strong"
+                data-testid={`dst-warn-${p.id}`}
+                title={t("dstWarnSoon")}
+              >
+                DST
+              </span>
+            )}
+          </div>
+        </div>
       </div>
-      <span
-        className="w-16 text-right font-mono font-semibold tabular-nums"
-        data-testid={`clock-${p.id}`}
-      >
-        {timeStr}
-      </span>
-      <button
-        type="button"
-        onClick={() => onSetHome(p.id)}
-        className="rounded px-1.5 py-0.5 text-[11px] text-gray-600 hover:bg-gray-100"
-        title={t("setHome")}
-        aria-label={t("setHome")}
-      >
-        ⌂
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          const name = window.prompt(t("renamePrompt"), p.customName || localCityName(locale, p));
-          if (name !== null) onRename(p.id, name);
-        }}
-        className="rounded px-1.5 py-0.5 text-[11px] text-gray-600 hover:bg-gray-100"
-        title={t("rename")}
-        aria-label={t("rename")}
-      >
-        ✎
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          const tagsStr = window.prompt(t("tagsPrompt"), p.tags.join(", "));
-          if (tagsStr !== null) {
-            onTags(
-              p.id,
-              tagsStr
-                .split(",")
-                .map((s) => s.trim())
-                .filter(Boolean),
+
+      {/* 操作行 */}
+      <div className="flex items-center justify-end gap-0.5 border-t border-line px-1.5 py-1">
+        <button
+          type="button"
+          onClick={() => onSetHome(p.id)}
+          className="icon-btn !h-6 !w-6 text-[12px]"
+          title={t("setHome")}
+          aria-label={t("setHome")}
+        >
+          ⌂
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const name = window.prompt(
+              t("renamePrompt"),
+              p.customName || localCityName(locale, p),
             );
-          }
-        }}
-        className="rounded px-1.5 py-0.5 text-[11px] text-gray-600 hover:bg-gray-100"
-        title={t("tags")}
-        aria-label={t("tags")}
-      >
-        #
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          // 删除主地点前二次确认，避免误删基准地点
-          if (isHome && !window.confirm(t("confirmRemoveHome"))) return;
-          onRemove(p.id);
-        }}
-        className="rounded px-1.5 py-0.5 text-[11px] text-red-600 hover:bg-red-50"
-        title={tCom("delete")}
-        aria-label={tCom("delete")}
-      >
-        ✕
-      </button>
+            if (name !== null) onRename(p.id, name);
+          }}
+          className="icon-btn !h-6 !w-6 text-[12px]"
+          title={t("rename")}
+          aria-label={t("rename")}
+        >
+          ✎
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const tagsStr = window.prompt(t("tagsPrompt"), p.tags.join(", "));
+            if (tagsStr !== null) {
+              onTags(
+                p.id,
+                tagsStr
+                  .split(",")
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+              );
+            }
+          }}
+          className="icon-btn !h-6 !w-6 text-[12px]"
+          title={t("tags")}
+          aria-label={t("tags")}
+        >
+          #
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            // 删除主地点前二次确认，避免误删基准地点
+            if (isHome && !window.confirm(t("confirmRemoveHome"))) return;
+            onRemove(p.id);
+          }}
+          className="icon-btn !h-6 !w-6 text-[12px] hover:!text-red-500"
+          title={tCom("delete")}
+          aria-label={tCom("delete")}
+        >
+          ✕
+        </button>
+      </div>
     </li>
   );
 }

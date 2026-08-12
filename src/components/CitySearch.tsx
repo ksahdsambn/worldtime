@@ -140,45 +140,43 @@ export default function CitySearch() {
           blurTimer.current = setTimeout(() => setOpen(false), 150);
         }}
         onKeyDown={onKeyDown}
-        className="w-full border rounded px-3 py-2 text-sm bg-white text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="input w-full"
       />
       {open && query.trim() && (
         <ul
-          id={listboxId}
-          role="listbox"
-          className="absolute z-20 mt-1 max-h-72 w-full overflow-auto rounded border bg-white shadow-lg"
-        >
-          {results.length === 0 && (
-            <li className="px-3 py-2 text-sm text-gray-500">{t("noResults")}</li>
-          )}
-          {results.map((c, i) => (
-            <li
-              key={c.id}
-              id={`${listboxId}-opt-${i}`}
-              role="option"
-              aria-selected={i === highlight}
+              id={listboxId}
+              role="listbox"
+              className="surface absolute z-20 mt-1 max-h-72 w-full overflow-auto p-1 shadow-lg"
             >
-              <button
-                type="button"
-                onMouseEnter={() => setHighlight(i)}
-                onClick={() => handleSelect(c)}
-                className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-blue-50 ${
-                  i === highlight ? "bg-blue-50" : ""
-                }`}
-              >
-                <span className="text-lg" aria-hidden>
-                  {c.flag}
-                </span>
-                <span className="flex-1">
-                  <span className="font-medium text-black">{c.nameZh}</span>
-                  <span className="ml-1 text-gray-500">({c.nameEn})</span>
-                  <span className="block text-xs text-gray-500">
-                    {c.countryZh} · {c.timeZone}
-                  </span>
-                </span>
-                <span className="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-700">
-                  UTC{describeOffset(c)}
-                </span>
+              {results.length === 0 && (
+                <li className="px-2.5 py-1.5 text-sm text-faint">{t("noResults")}</li>
+              )}
+              {results.map((c, i) => (
+                <li
+                  key={c.id}
+                  id={`${listboxId}-opt-${i}`}
+                  role="option"
+                  aria-selected={i === highlight}
+                >
+                  <button
+                    type="button"
+                    onMouseEnter={() => setHighlight(i)}
+                    onClick={() => handleSelect(c)}
+                    className={`flex w-full items-center gap-2 rounded-sm px-2.5 py-1.5 text-left text-sm ${
+                      i === highlight ? "bg-surface-hover" : ""
+                    }`}
+                  >
+                    <span className="text-lg" aria-hidden>
+                      {c.flag}
+                    </span>
+                    <span className="flex-1">
+                      <span className="font-medium text-ink">{c.nameZh}</span>
+                      <span className="ml-1 text-faint">({c.nameEn})</span>
+                      <span className="block text-xs text-faint">
+                        {c.countryZh} · {c.timeZone}
+                      </span>
+                    </span>
+                    <span className="chip">UTC{describeOffset(c)}</span>
                 <span className="sr-only">{tCom("add")}</span>
               </button>
             </li>

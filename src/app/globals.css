@@ -2,94 +2,380 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+/* ============================================================================
+   WorldTime — Design Token System
+   ----------------------------------------------------------------------------
+   语义令牌驱动主题：:root（浅色）/ .dark（深色）各自声明一组 CSS 变量，
+   组件层只消费令牌，不再依赖 .dark !important 覆盖。令牌经 tailwind.config
+   映射为语义工具类（bg-surface / text-muted / border-line …）。
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* —— 分层表面（layered surfaces）—— */
+    --app-bg: #f5f7fb; /* 画布：偏冷的暖白，非纯白 */
+    --surface: #ffffff; /* 抬升面板 */
+    --surface-inset: #eef2f8; /* 内凹表面（网格底）*/
+    --surface-hover: #e8edf5;
+
+    /* —— 边框 —— */
+    --border: #e2e8f2;
+    --border-strong: #ccd5e3;
+
+    /* —— 文字（带色调，避免纯黑/纯白）—— */
+    --text: #0f172a;
+    --text-muted: #475569;
+    --text-faint: #8a97ab;
+
+    /* —— 主色（蓝）—— */
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: #dbe7ff; /* 选区底色（浅）*/
+    --accent-soft-fg: #1e40af;
+    --accent-fg: #ffffff;
+
+    /* —— 暖色（琥珀，logo 中心点；仅用于「现在」与主地点）—— */
+    --warm: #f59e0b;
+    --warm-strong: #d97706;
+    --warm-soft: #fef3c7;
+
+    /* —— 热力图三色（降低不透明度；与文字/图案冗余，非仅靠颜色）—— */
+    --heat-good: rgba(22, 163, 74, 0.16);
+    --heat-good-ink: #15803d;
+    --heat-caution: rgba(234, 138, 8, 0.18);
+    --heat-caution-ink: #b45309;
+    --heat-bad: rgba(220, 38, 38, 0.15);
+    --heat-bad-ink: #b91c1c;
+
+    /* —— 选区单元格 —— */
+    --cell-selected-bg: #dbeafe;
+    --cell-selected-fg: #1e3a8a;
+
+    /* —— 日历忙碌条纹（紫调，与热力图三色区分）—— */
+    --busy-stripe: rgba(124, 58, 237, 0.55);
+
+    /* —— 阴影 / 圆角 —— */
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
+    --shadow-md: 0 4px 14px -4px rgba(15, 23, 42, 0.1),
+      0 2px 4px -2px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 12px 32px -8px rgba(15, 23, 42, 0.18),
+      0 4px 10px -4px rgba(15, 23, 42, 0.1);
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 14px;
+
+    color-scheme: light;
+  }
+
+  .dark {
+    --app-bg: #0b1120;
+    --surface: #131c2e;
+    --surface-inset: #0f172a;
+    --surface-hover: #1b2740;
+
+    --border: #283449;
+    --border-strong: #3a4963;
+
+    --text: #e6ebf2;
+    --text-muted: #9faec4;
+    --text-faint: #64748b;
+
+    --accent: #3b82f6;
+    --accent-hover: #60a5fa;
+    --accent-soft: rgba(37, 99, 235, 0.24);
+    --accent-soft-fg: #bfdbfe;
+    --accent-fg: #ffffff;
+
+    --warm: #fbbf24;
+    --warm-strong: #fcd34d;
+    --warm-soft: rgba(251, 191, 36, 0.16);
+
+    --heat-good: rgba(34, 197, 94, 0.2);
+    --heat-good-ink: #4ade80;
+    --heat-caution: rgba(249, 115, 22, 0.22);
+    --heat-caution-ink: #fb923c;
+    --heat-bad: rgba(239, 68, 68, 0.2);
+    --heat-bad-ink: #f87171;
+
+    --cell-selected-bg: rgba(59, 130, 246, 0.3);
+    --cell-selected-fg: #dbeafe;
+
+    --busy-stripe: rgba(167, 139, 250, 0.5);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
+
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+
+  body {
+    background-color: var(--app-bg);
+    color: var(--text);
+    font-family: theme("fontFamily.sans");
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+    color: var(--accent-soft-fg);
+  }
+
+  /* 统一可见焦点环（无障碍：键盘焦点始终可见）*/
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* 细滚动条，贴合主题 */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--border-strong);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
-/* 深色主题（6.8）—— 通过 .dark 类切换，覆盖常用语义颜色 */
-.dark {
-  background-color: #0f172a;
-  color: #e5e7eb;
-}
-.dark .bg-white {
-  background-color: #1e293b !important;
-  color: #e5e7eb;
-}
-.dark .text-black {
-  color: #f1f5f9 !important;
-}
-.dark .text-gray-700,
-.dark .text-gray-600,
-.dark .text-gray-500 {
-  color: #cbd5e1 !important;
-}
-.dark .text-gray-400 {
-  color: #94a3b8 !important;
-}
-.dark .border,
-.dark .border-b,
-.dark .border-l,
-.dark .border-r,
-.dark .border-t {
-  border-color: #334155 !important;
-}
-.dark .border-gray-100,
-.dark .border-gray-200 {
-  border-color: #334155 !important;
-}
-.dark .bg-gray-50,
-.dark .bg-gray-100 {
-  background-color: #1e293b !important;
-  color: #e5e7eb;
-}
-.dark .hover\:bg-gray-100:hover {
-  background-color: #334155 !important;
-}
-.dark .hover\:bg-blue-50:hover {
-  background-color: #1e3a5f !important;
-}
-.dark .bg-blue-50 {
-  background-color: #1e3a5f !important;
-}
-.dark .bg-blue-100 {
-  background-color: #1e40af !important;
+/* ============================================================================
+   组件类（@layer components）—— 统一控件系统，取代散落的内联 className 组合
+   ========================================================================== */
+@layer components {
+  /* —— 按钮 —— */
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-sm text-sm font-medium
+      transition-[background-color,border-color,color,box-shadow,transform] duration-150
+      select-none disabled:cursor-not-allowed disabled:opacity-50;
+    padding: 0.4rem 0.7rem;
+  }
+  .btn-primary {
+    @apply btn;
+    background-color: var(--accent);
+    color: var(--accent-fg);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:hover {
+    background-color: var(--accent-hover);
+  }
+  .btn-ghost {
+    @apply btn;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover {
+    background-color: var(--surface-hover);
+    color: var(--text);
+  }
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+
+  /* —— 图标按钮（方形 ghost）—— */
+  .icon-btn {
+    @apply inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-sm
+      text-muted transition-colors duration-150;
+  }
+  .icon-btn:hover {
+    background-color: var(--surface-hover);
+    color: var(--text);
+  }
+
+  /* —— 表面 —— */
+  .surface {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .surface-inset {
+    background-color: var(--surface-inset);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  /* —— 标签 / 徽章 —— */
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full text-[11px] font-medium leading-none;
+    padding: 0.28rem 0.55rem;
+    background-color: var(--surface-hover);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* —— 文本输入 —— */
+  .input {
+    @apply rounded-sm text-sm transition-colors duration-150;
+    background-color: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.6rem;
+  }
+  .input::placeholder {
+    color: var(--text-faint);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  /* —— 工具栏分隔线 —— */
+  .divider {
+    @apply mx-1 h-5 w-px shrink-0;
+    background-color: var(--border);
+  }
 }
 
-/* 深色模式热力图配色（审查报告 P2）：浅色热力底（bg-green-200/60 等）叠加在
-   深色背景上刺眼且与主题割裂；此处改为深色半透明底，文字保持高对比。
-   覆盖 heatBg() 输出的三类背景 + TimeGrid 选区/周末单元格。 */
-.dark .bg-green-200\/60 {
-  background-color: rgba(34, 197, 94, 0.25) !important;
-}
-.dark .bg-orange-200\/60 {
-  background-color: rgba(249, 115, 22, 0.25) !important;
-}
-.dark .bg-red-200\/60 {
-  background-color: rgba(239, 68, 68, 0.25) !important;
-}
-.dark .bg-blue-300 {
-  background-color: #1e40af !important;
-  color: #dbeafe !important;
-}
-.dark .bg-blue-300.text-blue-900,
-.dark .bg-blue-300 .text-blue-900 {
-  color: #dbeafe !important;
+/* ============================================================================
+   时间网格（.wt-grid）—— 单元格视觉由 data-* 属性驱动，集中于此令牌化。
+   背景色优先级（同特异性，靠源码顺序）：周末 < 热力 < 选区；
+     选区额外用 !important 以胜过更高特异性的 td[data-ms]:hover 规则。
+   「现在」与「忙碌」均用 background-image 叠加：与 background-color（热力/选区）天然共存；
+   两者互斥时（当前小时恰好忙碌）以「现在」为准（源码顺序在后）。
+   ========================================================================== */
+.wt-grid {
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-/* 打印样式（6.9）：隐藏不需要的控件，确保网格、地点、选区信息完整可读 */
+/* 表头 / 冻结列：抬升表面 + 发丝边，滚动时遮住下层内容 */
+.wt-grid thead th {
+  background-color: var(--surface);
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-strong);
+}
+.wt-grid th.sticky-col,
+.wt-grid td.sticky-col {
+  background-color: var(--surface);
+}
+.wt-grid td.sticky-col {
+  border-right: 1px solid var(--border);
+}
+
+/* 单元格基底 */
+.wt-grid td[data-ms] {
+  min-width: 2.5rem;
+  background-color: transparent;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.12s ease;
+  font-variant-numeric: tabular-nums;
+}
+.wt-grid td[data-ms]:hover {
+  background-color: var(--surface-hover);
+}
+
+/* 周末（内凹表面，弱化）—— 日期列头已显示 Sat/Sun，非仅靠颜色 */
+.wt-grid td[data-weekend="1"] {
+  background-color: var(--surface-inset);
+}
+
+/* 热力图三色（覆盖周末）*/
+.wt-grid td[data-heat="green"] {
+  background-color: var(--heat-good);
+}
+.wt-grid td[data-heat="orange"] {
+  background-color: var(--heat-caution);
+}
+.wt-grid td[data-heat="red"] {
+  background-color: var(--heat-bad);
+}
+
+/* 选区（覆盖热力/周末与 :hover）—— !important 用于胜过更高特异性的 td[data-ms]:hover；
+   background-color 与「现在」的 background-image 可共存。*/
+.wt-grid td[data-selected="1"] {
+  background-color: var(--cell-selected-bg) !important;
+  color: var(--cell-selected-fg);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+/* 日历忙碌：斜纹叠加（background-image，不擦除底色；与选区共存，非仅靠颜色）*/
+.wt-grid td[data-busy="1"] {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--busy-stripe) 0 1px,
+    transparent 1px 6px
+  );
+}
+
+/* 「现在」：暖色（琥珀）左侧条，经 background-image 绘制以与选区的 box-shadow
+   共存；同一列各行的左侧条拼成一条纵向「当前时刻」指示线。*/
+.wt-grid td[data-now="1"] {
+  background-image: linear-gradient(
+    to right,
+    var(--warm) 0,
+    var(--warm) 3px,
+    transparent 3px
+  );
+}
+
+/* ============================================================================
+   动效 —— 仅一次编排好的进场；transform/opacity only
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   打印（6.9）：隐藏控件，强制浅色，网格/选区可读
+   ========================================================================== */
 @media print {
   .no-print {
     display: none !important;
   }
   body {
-    background: white !important;
-    color: black !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  /* 打印时把令牌压回浅色，避免深色主题下打印全黑 */
+  :root {
+    --app-bg: #ffffff;
+    --surface: #ffffff;
+    --surface-inset: #f5f5f5;
+    --border: #cccccc;
+    --border-strong: #999999;
+    --text: #000000;
+    --text-muted: #333333;
+    --text-faint: #666666;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
   }
   main {
     overflow: visible !important;
+  }
+  .wt-grid td[data-selected="1"] {
+    background-color: #dbeafe !important;
   }
 }

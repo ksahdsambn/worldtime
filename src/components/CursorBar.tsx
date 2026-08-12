@@ -68,30 +68,33 @@ export default function CursorBar() {
       : null;
 
   return (
-    <div className="flex items-center gap-2 px-2 py-1 text-xs text-gray-600">
+    <div className="flex items-center gap-2 px-1 py-0.5 text-xs text-muted">
       <span>{t("cursor")}：</span>
       {cursorMs == null ? (
         <button
           type="button"
           onClick={enableCursor}
           data-testid="enable-cursor"
-          className="rounded border px-2 py-0.5 hover:bg-gray-100"
+          className="btn-ghost btn-sm"
         >
           {t("enable")}
         </button>
       ) : (
         <>
-          <span className="font-mono font-semibold" data-testid="cursor-time">
+          <span
+            className="font-mono font-semibold tabular-nums text-ink"
+            data-testid="cursor-time"
+          >
             {label}
           </span>
-          <span className="text-gray-400">
+          <span className="hidden text-faint sm:inline">
             · ←/→ {t("move")} · Shift+←/→ {t("resize")}
           </span>
           <button
             type="button"
             onClick={() => setCursor(null)}
             data-testid="disable-cursor"
-            className="rounded border px-2 py-0.5 hover:bg-gray-100"
+            className="btn-ghost btn-sm"
             title={t("disable")}
           >
             {t("disable")}

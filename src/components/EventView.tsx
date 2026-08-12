@@ -37,17 +37,13 @@ export default function EventView({
   }, [code]);
 
   if (!data || !data.selection || data.places.length === 0) {
-    return (
-      <main className="p-6 text-sm text-gray-600">
-        {t("description")}
-      </main>
-    );
+    return <main className="p-6 text-sm text-muted">{t("description")}</main>;
   }
 
   return (
     <main className="p-6">
-      <h1 className="text-lg font-bold">{t("title")}</h1>
-      <p className="mt-1 text-sm text-gray-600">{t("description")}</p>
+      <h1 className="text-lg font-bold text-ink">{t("title")}</h1>
+      <p className="mt-1 text-sm text-muted">{t("description")}</p>
 
       <ul className="mt-4 space-y-2">
         {data.places.map((p) => {
@@ -60,8 +56,8 @@ export default function EventView({
           return (
             <li key={p.id} className="flex items-center gap-2 text-sm">
               <span className="text-lg">{p.flag}</span>
-              <span className="font-medium">{localCityName(locale, p)}</span>
-              <span className="text-gray-500">
+              <span className="font-medium text-ink">{localCityName(locale, p)}</span>
+              <span className="text-faint">
                 {s} - {e}
               </span>
             </li>
@@ -73,10 +69,7 @@ export default function EventView({
         const q = encodeState(data.places, data.homeId, data.selection);
         // i18n Link 会自动补 locale 前缀；href 仅给 pathname + 查询串。
         return (
-          <Link
-            href={q ? `/?${q}` : "/"}
-            className="mt-4 inline-block rounded border px-3 py-1 text-xs hover:bg-gray-100"
-          >
+          <Link href={q ? `/?${q}` : "/"} className="btn-ghost btn-sm mt-4">
             {t("openOriginal")}
           </Link>
         );

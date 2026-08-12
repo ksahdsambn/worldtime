@@ -188,39 +188,39 @@ export default async function LandingPage({ params }: Props) {
         <strong>
           {info.bLabel} {bAhead ? t("isAhead") : t("lags")} {diffLabel} {t("vs")} {info.aLabel}
         </strong>{" "}
-        <span className="text-xs text-gray-500">{t("currentOffsetNote")}</span>
+        <span className="text-xs text-faint">{t("currentOffsetNote")}</span>
       </p>
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-muted">
         {t("bNote", { b: info.bLabel, a: info.aLabel, dir: t(bAhead ? "aheadNote" : "behindNote") })}
       </p>
       {/* 关键词导向引言段（含 {a}/{b}） */}
       <p>{t("intro", { a: info.aLabel, b: info.bLabel })}</p>
 
       <h2>{t("timeComparison")}</h2>
-      <p className="text-xs text-gray-500 mb-1">{t("comparisonNote")}</p>
+      <p className="text-xs text-faint mb-1">{t("comparisonNote")}</p>
       <table className="border-collapse">
         <thead>
           <tr>
-            <th className="border px-2 py-1">{info.aLabel}</th>
-            <th className="border px-2 py-1">{info.bLabel}</th>
+            <th className="border border-line px-2 py-1">{info.aLabel}</th>
+            <th className="border border-line px-2 py-1">{info.bLabel}</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r, i) => (
             <tr key={i}>
-              <td className="border px-2 py-1 tabular-nums">{r.aHour}</td>
-              <td className="border px-2 py-1 tabular-nums">
-                {r.bHour} <span className="text-gray-500">({r.bDay})</span>
+              <td className="border border-line px-2 py-1 tabular-nums">{r.aHour}</td>
+              <td className="border border-line px-2 py-1 tabular-nums">
+                {r.bHour} <span className="text-faint">({r.bDay})</span>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <p className="text-xs text-gray-400">{t("updatedAt", { time: updatedAt })}</p>
+      <p className="text-xs text-faint">{t("updatedAt", { time: updatedAt })}</p>
 
       {info.kind === "tz" && (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted">
           {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
         </p>
       )}
@@ -230,8 +230,8 @@ export default async function LandingPage({ params }: Props) {
       <ul className="list-none pl-0">
         {faqItems.map((item) => (
           <li key={item.q} className="mb-3">
-            <p className="font-semibold">{item.q}</p>
-            <p className="text-sm text-gray-600">{item.a}</p>
+            <p className="text-ink font-semibold">{item.q}</p>
+            <p className="text-sm text-muted">{item.a}</p>
           </li>
         ))}
       </ul>
@@ -244,7 +244,7 @@ export default async function LandingPage({ params }: Props) {
             <li key={item.slug}>
               <Link
                 href={`/time-converter/${item.slug}`}
-                className="text-blue-600 hover:underline"
+                className="text-accent hover:underline"
               >
                 {item.label}
               </Link>

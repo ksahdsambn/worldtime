@@ -48,28 +48,31 @@ export default function GoogleCalendarConnect() {
         type="button"
         onClick={disconnect}
         data-testid="gcal-disconnect"
-        className="rounded border px-2 py-0.5 text-green-700 hover:bg-gray-100"
+        className="btn-ghost btn-sm"
+        title={t("connected")}
       >
+        <span
+          className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+          aria-hidden
+        />
         {t("connected")}
       </button>
     );
   }
 
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="text-gray-600">{t("label")}：</span>
+    <div className="flex items-center gap-1.5 text-xs">
       <button
         type="button"
         onClick={connect}
         disabled={status === "loading"}
         data-testid="gcal-connect"
-        className="rounded border px-2 py-0.5 text-blue-700 hover:bg-gray-100 disabled:opacity-50"
+        className="btn-ghost btn-sm"
+        aria-label={t("label")}
       >
         {status === "loading" ? t("loading") : t("connect")}
       </button>
-      {status === "error" && (
-        <span className="text-red-600">{t("error")}</span>
-      )}
+      {status === "error" && <span className="text-red-500">{t("error")}</span>}
     </div>
   );
 }

@@ -37,7 +37,7 @@ export default function PrintExport() {
         type="button"
         onClick={onPrint}
         data-testid="btn-print"
-        className="rounded border px-2 py-0.5 hover:bg-gray-100"
+        className="btn-ghost btn-sm"
       >
         🖨️ {t("print")}
       </button>
@@ -45,7 +45,7 @@ export default function PrintExport() {
         type="button"
         onClick={onExportImage}
         data-testid="btn-export-image"
-        className="rounded border px-2 py-0.5 hover:bg-gray-100"
+        className="btn-ghost btn-sm"
       >
         🖼️ {t("image")}
       </button>

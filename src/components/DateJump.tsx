@@ -46,7 +46,7 @@ export default function DateJump() {
   const disabled = !home;
 
   return (
-    <label className="flex items-center gap-1 text-xs text-gray-600">
+    <label className="flex items-center gap-1.5 text-xs text-muted">
       <span>{t("jumpTo")}：</span>
       <input
         type="date"
@@ -55,13 +55,9 @@ export default function DateJump() {
         disabled={disabled}
         aria-disabled={disabled}
         data-testid="date-jump"
-        className="border rounded px-1 py-0.5 text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+        className="input !w-auto !px-1.5 !py-0.5 text-xs disabled:cursor-not-allowed disabled:opacity-50"
       />
-      <button
-        type="button"
-        onClick={reset}
-        className="rounded border px-1.5 py-0.5 text-xs hover:bg-gray-100"
-      >
+      <button type="button" onClick={reset} className="btn-ghost btn-sm">
         {t("today")}
       </button>
     </label>
