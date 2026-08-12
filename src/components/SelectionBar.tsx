@@ -77,9 +77,9 @@ export default function SelectionBar() {
   }
 
   return (
-    <div className="sticky bottom-3 z-30 px-3 no-print">
-      <div className="surface animate-fade-up mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 shadow-lg">
-        <div className="flex items-baseline gap-2">
+    <div className="safe-bottom sticky bottom-3 z-30 px-3 no-print">
+      <div className="surface animate-fade-up mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 shadow-lg md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2">
+        <div className="flex shrink-0 items-baseline gap-2">
           <span className="text-[11px] uppercase tracking-wide text-faint">
             {t("duration")}
           </span>
@@ -91,12 +91,16 @@ export default function SelectionBar() {
           </span>
         </div>
 
-        <div className="ml-auto flex flex-wrap items-center gap-1.5">
+        {/*
+          操作组：手机端单行横向滚动（overflow-x-auto + nowrap），避免 7 个动作
+          换行成高块霸占视口；桌面端恢复右对齐换行。滚动条藏起保持视觉干净。
+        */}
+        <div className="-mx-1 flex items-center gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] md:ml-auto md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
           <button
             type="button"
             onClick={() => downloadIcs("worldtime-meeting", buildIcs(sel, places))}
             data-testid="export-ics"
-            className="btn-primary btn-sm"
+            className="btn-primary btn-sm shrink-0"
           >
             {tExp("ics")}
           </button>
@@ -105,14 +109,14 @@ export default function SelectionBar() {
             target="_blank"
             rel="noopener noreferrer"
             data-testid="export-google"
-            className="btn-ghost btn-sm"
+            className="btn-ghost btn-sm shrink-0"
           >
             {tExp("google")}
           </a>
           <a
             href={mailtoUrl(sel, places)}
             data-testid="export-email"
-            className="btn-ghost btn-sm"
+            className="btn-ghost btn-sm shrink-0"
           >
             {tExp("email")}
           </a>
@@ -122,16 +126,16 @@ export default function SelectionBar() {
             rel="noopener noreferrer"
             aria-disabled={eventUrl ? undefined : true}
             data-testid="event-page"
-            className="btn-ghost btn-sm"
+            className="btn-ghost btn-sm shrink-0"
           >
             {tExp("eventPage")}
           </a>
-          <span className="divider" />
+          <span className="divider shrink-0" />
           <button
             type="button"
             onClick={onCopySummary}
             data-testid="copy-summary"
-            className="btn-ghost btn-sm"
+            className="btn-ghost btn-sm shrink-0"
           >
             {flash === "summary" ? tExp("copied") : tExp("copySummary")}
           </button>
@@ -139,15 +143,15 @@ export default function SelectionBar() {
             type="button"
             onClick={onCopyShare}
             data-testid="copy-share"
-            className="btn-ghost btn-sm"
+            className="btn-ghost btn-sm shrink-0"
           >
             {flash === "share" ? tExp("copied") : tExp("shareLink")}
           </button>
-          <span className="divider" />
+          <span className="divider shrink-0" />
           <button
             type="button"
             onClick={() => setSelection(null)}
-            className="btn-ghost btn-sm"
+            className="btn-ghost btn-sm shrink-0"
           >
             {t("clear")}
           </button>

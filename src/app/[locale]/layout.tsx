@@ -24,6 +24,9 @@ type Props = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // viewport-fit=cover：让 env(safe-area-inset-*) 在 notched / 全面屏生效，
+  // 配合 .safe-top / .safe-bottom 避免 sticky 顶栏与底部浮栏被遮挡。
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
     { media: "(prefers-color-scheme: dark)", color: "#0f172a" },

@@ -1,5 +1,66 @@
 # 开发进度记录
 
+## 第 18 轮：移动端 / 触屏适配（首页核心体验）
+
+> 时间：2026-08-12
+> 范围：依据 `adapt` 技能与 AGENTS.md 设计上下文，对首页（核心体验）做移动端优先的响应式改造，并完成 3 轮自审修复。
+> 依据：响应式成熟度审计——全站仅 12 处断点工具、零屏幕宽度媒体查询；核心网格仅横向滚动、地点列表面板手机端整宽常驻霸占视口、顶栏次要操作挤成一团、`SelectionBar` 7 个动作换行成高块、触控目标 24–28px（远低于 44px 建议）、`window.prompt/confirm` 在触屏 WebView 体验差、无 `pointer:coarse` / 安全区处理。
+
+### 完成内容
+
+**① 布局重排（手机端释放视口）**
+- `PlacesPanel`：手机端改为可折叠手风琴，默认收起，把视口让给网格；带「地点 · N」计数与 ▾ 指示，`aria-expanded`/`aria-controls` 完整。桌面端仍是常驻 288px 侧栏，无任何变化（`md:flex` 保证）。
+- 新增 `HeaderActions`：顶栏次要操作（语言/帮助/设置/主题/Google 日历）手机端折叠进「⋯」溢出菜单，桌面端内联不变。SSR 按桌面渲染避免 hydration 闪烁，挂载后用 `matchMedia` 切到对应外壳；操作只挂载一份，避免 `GoogleCalendarConnect` 等带状态组件重复挂载。
+- `SelectionBar`：手机端时长独占一行 + 操作区单行横向滚动（7 个动作不再换行成高块），加底部安全区；桌面端右对齐换行不变。
+
+**② 触控与可达性基底**
+- `globals.css`：手机端 `.icon-btn` 放大到 40px、`.btn-sm` 放大到 ≈36px；全局去除 `-webkit-tap-highlight-color`、加 `:active` 按压反馈（缩放/下沉）；`(hover: none)` 下清除网格点击残留灰底；新增 `.safe-top/.safe-bottom/.safe-x` 与 `.btn-danger`。
+- `layout.tsx`：开启 `viewportFit: "cover"`，让 `env(safe-area-inset-*)` 在全面屏生效。
+
+**③ 应用内对话框替代原生 prompt（新增 `Dialog.tsx` + `useDialog` hook）**
+- `window.prompt/confirm`（重命名/打标签/删除主城市）替换为令牌化对话框：手机端贴底抽屉、桌面端居中，`role="dialog" aria-modal`，遮罩/Esc/回车/自动聚焦预选。
+- 复用已有 `Common.cancel/confirm`，仅新增 `Common.more`（11 语言全量翻译）。
+
+**④ 网格可读性（`TimeGrid.tsx`）**
+- 冻结城市名列在手机端最宽 38vw 并截断（包裹 `<span class="truncate">`，跨浏览器稳健），给小时格让空间；小时对照数字 9px→10px；横向滚动加 `overscroll-x-contain` 防滚动链。
+
+### 三轮审查与修复
+
+**第 1 轮（正确性）**：发现 `useDialog.close` 在 `setPending` updater 内调用副作用（StrictMode 下双调用隐患）、confirm 模式缺回车提交 → 已用 ref 镜像 pending 重写 close、整体包裹 `<form>` 使两种模式都支持回车提交。
+**第 2 轮（无障碍）**：发现对话框缺焦点管理、`HeaderActions` 用 `role="menu"` 但子元素非 `menuitem` → 已实现「打开移入焦点 / 关闭归还触发元素焦点」、`role="menu"` 改为 `role="group"` + `aria-controls`/`aria-label`。
+**第 3 轮（质量/边界）**：confirm 模式打开时焦点应落主按钮 → 用 `data-autofocus` 在 confirm 模式聚焦主按钮；移除冗余 `DialogActions` 子组件内联简化。
+
+### 涉及文件
+
+- 新增 `src/components/HeaderActions.tsx`（顶栏次要操作的响应式外壳）
+- 新增 `src/components/Dialog.tsx`（`useDialog`：应用内 prompt/confirm）
+- 改 `src/components/PlacesPanel.tsx`（手机端折叠手风琴 + 触控目标 + 接入对话框）
+- 改 `src/components/SelectionBar.tsx`（手机端单行横滚 + 安全区）
+- 改 `src/components/TimeGrid.tsx`（冻结列截断 + 滚动容纳 + 字号）
+- 改 `src/app/[locale]/page.tsx`（接入 `HeaderActions`、顶栏 `safe-top`、清理失效 import）
+- 改 `src/app/[locale]/layout.tsx`（`viewportFit: cover`）
+- 改 `src/app/globals.css`（移动端/触屏适配段、`.btn-danger`、按压反馈、安全区工具类）
+- 改 `messages/*.json`（11 语言，`Common.more`）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | 通过（0 错误） |
+| `npm run lint` | 通过（0 警告/错误） |
+| `npm test` | 172/172 通过 |
+| `npm run build` | 通过；305 个静态页面成功生成 |
+| 浏览器实测（390px 手机） | 顶栏「⋯ 更多」溢出菜单正常开合（`aria-expanded`）；`PlacesPanel` 折叠/展开；重命名/删除对话框 `role=dialog`、输入框预填聚焦全选、回车提交、Esc 取消、关闭后焦点归还触发按钮 |
+| 浏览器实测（1280px 桌面） | 侧栏 + 内联操作恢复，无「⋯」、无折叠开关，布局与改造前一致 |
+| 多语言（`/zh` CJK、`/ru` Cyrillic） | 「更多 / Ещё」「地点 / Места」本地化正确，长西里尔文本不破版 |
+| 控制台 | 0 错误 0 警告（含无 hydration 不匹配） |
+
+### 未实现（设计取舍，非 Bug）
+
+- **网格横向滚动模型保持不变**：7×24 高密度时间网格用「冻结首列 + 横向滚动」是日历类应用的标准移动做法（AGENTS.md「clarity over cleverness」），仅提升可读性，未强行改成竖排列破坏心智模型。
+- **`title` 悬浮提示**（UTC 偏移/DST 详情）触屏不可见，但关键信息（当前时间、偏移、缩写）本就内联可见，构建纯触屏 tooltip 基础设施性价比低，留作后续。
+- **对话框焦点陷阱（Tab 循环）**：当前为「焦点移入 + 归还 + Esc + 遮罩 + aria-modal」，已满足主要无障碍需求；完整 Tab 循环陷阱未实现，留作后续增强。
+
 ## 第 17 轮：首次使用体验（Onboarding）优化
 
 > 时间：2026-08-12

@@ -233,7 +233,7 @@ export default function TimeGrid() {
 
   return (
     <div
-      className="select-none overflow-x-auto"
+      className="select-none overflow-x-auto overscroll-x-contain"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -243,7 +243,9 @@ export default function TimeGrid() {
         <thead>
           <tr>
             <th className="sticky-col sticky left-0 z-10 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-ink">
-              {localCityName(locale, home)}
+              <span className="block max-w-[38vw] truncate md:max-w-none">
+                {localCityName(locale, home)}
+              </span>
             </th>
             {dayGroups.map((g) => {
               const dt = DateTime.fromMillis(
@@ -317,8 +319,8 @@ function Row({
 }) {
   return (
     <tr>
-      <td className="sticky-col sticky left-0 z-10 whitespace-nowrap px-3 py-1.5 text-[13px] font-medium text-ink">
-        {label}
+      <td className="sticky-col sticky left-0 z-10 px-3 py-1.5 text-[13px] font-medium text-ink">
+        <span className="block max-w-[38vw] truncate md:max-w-none">{label}</span>
       </td>
       {columns.map((c) => {
         const selected = inHighlight(c.ms);
@@ -346,7 +348,7 @@ function Row({
           >
             <span className="tabular-nums">{cl.primary}</span>
             {cl.alt && (
-              <span className="block text-[9px] leading-none text-faint tabular-nums">
+              <span className="block text-[10px] leading-none text-faint tabular-nums">
                 {cl.alt}
               </span>
             )}

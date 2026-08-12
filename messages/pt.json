@@ -10,7 +10,8 @@
     "delete": "Excluir",
     "settings": "Configurações",
     "cancel": "Cancelar",
-    "confirm": "OK"
+    "confirm": "OK",
+    "more": "Mais"
   },
   "LocaleSwitcher": {
     "label": "Idioma",

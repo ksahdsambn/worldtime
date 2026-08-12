@@ -10,7 +10,8 @@
     "delete": "Xoá",
     "settings": "Cài đặt",
     "cancel": "Huỷ",
-    "confirm": "OK"
+    "confirm": "OK",
+    "more": "Thêm"
   },
   "LocaleSwitcher": {
     "label": "Ngôn ngữ",

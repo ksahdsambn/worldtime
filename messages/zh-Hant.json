@@ -10,7 +10,8 @@
     "delete": "刪除",
     "settings": "設定",
     "cancel": "取消",
-    "confirm": "確定"
+    "confirm": "確定",
+    "more": "更多"
   },
   "LocaleSwitcher": {
     "label": "語言",
