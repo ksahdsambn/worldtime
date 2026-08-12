@@ -114,6 +114,8 @@
     margin: 0;
     padding: 0;
     min-height: 100%;
+    /* 触屏：去除 iOS/Android 默认点击高亮，改由 :active 状态提供按压反馈 */
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -177,6 +179,16 @@
   .btn-primary:hover {
     background-color: var(--accent-hover);
   }
+  /* 危险/破坏性操作（如删除主地点确认）*/
+  .btn-danger {
+    @apply btn;
+    background-color: #dc2626;
+    color: #ffffff;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-danger:hover {
+    background-color: #b91c1c;
+  }
   .btn-ghost {
     @apply btn;
     background-color: transparent;
@@ -201,6 +213,15 @@
   .icon-btn:hover {
     background-color: var(--surface-hover);
     color: var(--text);
+  }
+  /* 按压反馈：触屏可感知的实体感（缩放），桌面端轻下沉 */
+  .icon-btn:active {
+    background-color: var(--surface-hover);
+    color: var(--text);
+    transform: scale(0.94);
+  }
+  .btn:active {
+    transform: translateY(1px);
   }
 
   /* —— 表面 —— */
@@ -387,4 +408,48 @@
   .wt-grid td[data-selected="1"] {
     background-color: #dbeafe !important;
   }
+}
+
+/* ============================================================================
+   移动端 / 触屏适配
+   ----------------------------------------------------------------------------
+   - 手机端（< md）放大触控目标至 40px、限制网格冻结标签列宽，避免长城市名
+     霸占视口；
+   - 触屏（hover: none）去除点击后残留的 :hover 灰底，避免误以为已选中；
+   - 安全区（notch / 底部 home indicator）通过 env(safe-area-inset-*) 让
+     sticky 顶栏与底部浮栏不被遮挡。
+   ========================================================================== */
+@media (max-width: 767px) {
+  /* 触控目标：手机端图标按钮统一 40×40（WCAG 2.1 / Apple HIG 推荐 ≥44，此处
+     兼顾密度取 40；行内 !important 覆盖仍可按需自行收紧）*/
+  .icon-btn {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  /* 手机端小按钮加大到 ≈36px 高，便于点按；桌面端恢复 btn-sm 紧凑尺寸 */
+  .btn-sm {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+  }
+}
+
+@media (hover: none) {
+  /* 触屏点击会残留 :hover；网格单元的灰底移除，热力/周末/选区色照常显示 */
+  .wt-grid td[data-ms]:hover {
+    background-color: transparent;
+  }
+}
+
+/* 安全区工具类：仅在 viewport-fit=cover（PWA standalone / 全面屏）生效，
+   非 notched 设备 env() 解析为 0，等价于无操作。 */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-x {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }

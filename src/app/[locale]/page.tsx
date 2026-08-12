@@ -1,16 +1,12 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
-import LocaleSwitcher from "@/components/LocaleSwitcher";
 import CitySearch from "@/components/CitySearch";
 import PlacesPanel from "@/components/PlacesPanel";
 import TimeGrid from "@/components/TimeGrid";
 import SelectionBar from "@/components/SelectionBar";
-import SettingsPanel from "@/components/SettingsPanel";
-import ThemeToggle from "@/components/ThemeToggle";
-import GoogleCalendarConnect from "@/components/GoogleCalendarConnect";
+import HeaderActions from "@/components/HeaderActions";
 import GridToolbar from "@/components/GridToolbar";
 import DragHintCoachmark from "@/components/DragHintCoachmark";
-import HelpPopover from "@/components/HelpPopover";
 import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import { JsonLd } from "@/components/JsonLd";
@@ -68,8 +64,9 @@ export default async function Home({ params }: Props) {
       <KeyboardShortcuts />
 
       {/* 顶部导航栏：品牌 · 城市搜索 · 语言/设置/主题/日历。
-          抬升表面（bg-surface）+ 发丝底边 + 极淡阴影，与内凹网格区形成层次。 */}
-      <header className="sticky top-0 z-30 border-b border-line bg-surface shadow-sm no-print">
+          抬升表面（bg-surface）+ 发丝底边 + 极淡阴影，与内凹网格区形成层次。
+          safe-top：notched / 全面屏下避开顶部安全区。 */}
+      <header className="safe-top sticky top-0 z-30 border-b border-line bg-surface shadow-sm no-print">
         <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5">
           <h1 className="flex shrink-0 items-center gap-2.5">
             <Image
@@ -95,14 +92,8 @@ export default async function Home({ params }: Props) {
             <CitySearch />
           </div>
 
-          <div className="ml-auto flex items-center gap-1.5">
-            <LocaleSwitcher />
-            <span className="divider" />
-            <HelpPopover />
-            <SettingsPanel />
-            <ThemeToggle />
-            <GoogleCalendarConnect />
-          </div>
+          {/* 次要操作：桌面内联，手机折叠进 ⋯ 菜单（见 HeaderActions）*/}
+          <HeaderActions />
         </div>
       </header>
 

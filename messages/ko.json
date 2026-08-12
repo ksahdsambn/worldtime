@@ -10,7 +10,8 @@
     "delete": "삭제",
     "settings": "설정",
     "cancel": "취소",
-    "confirm": "확인"
+    "confirm": "확인",
+    "more": "더보기"
   },
   "LocaleSwitcher": {
     "label": "언어",
