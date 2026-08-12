@@ -239,5 +239,32 @@
         "a": "Die aktuelle Zeit aktualisiert sich live im Browser. Die Konverterseiten aktualisieren ihre Tabellen stündlich."
       }
     ]
+  },
+  "Onboarding": {
+    "emptyHeadline": "Finde eine Uhrzeit, die für alle passt",
+    "emptyBody": "Füge ein paar Städte hinzu, um Arbeits- und Schlafzeiten aller side by side zu sehen – ziehe dann, um eine Zeit zu wählen.",
+    "startLocal": "Mit meiner Zeitzone starten",
+    "startLocalHint": "Fügt deine Ortsstadt sowie New York und London hinzu.",
+    "presetFinance": "Welt-Finanzuhr",
+    "presetFinanceHint": "New York · London · Tokio",
+    "searchHint": "…oder suche oben nach einer beliebigen Stadt.",
+    "dragHint": "Ziehe über die Stunden, um eine Besprechungszeit zu wählen – die Farben zeigen, wer wach ist.",
+    "dragGotIt": "Alles klar"
+  },
+  "Help": {
+    "label": "Tipps",
+    "title": "Erste Schritte",
+    "step1Title": "1. Städte hinzufügen",
+    "step1Body": "Nutze das Suchfeld, um jeden Ort hinzuzufügen, den du abstimmen möchtest.",
+    "step2Title": "2. Zeit durch Ziehen wählen",
+    "step2Body": "Klicke und ziehe über das Raster, um ein Besprechungsfenster zu wählen. Die Auswahl wird in jeder Zeile synchronisiert.",
+    "step3Title": "3. Farben lesen",
+    "step3Body": "Jede Spalte wird nach der am wenigsten verfügbaren Person eingefärbt – Grün: alle in Arbeitszeit, Orange: jemand außerhalb, Rot: jemand schläft.",
+    "legendTitle": "Farblegende",
+    "shortcutsTitle": "Tastaturkurzbefehle",
+    "shortcutDelete": "Heimatstadt löschen",
+    "shortcutEscape": "Auswahl löschen",
+    "shortcutEnter": "Zeitmarkierung an den Auswahlstart setzen",
+    "close": "Schließen"
   }
 }

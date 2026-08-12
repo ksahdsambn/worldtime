@@ -1,5 +1,64 @@
 # 开发进度记录
 
+## 第 17 轮：首次使用体验（Onboarding）优化
+
+> 时间：2026-08-12
+> 范围：依据 onboard 技能与 AGENTS.md 设计上下文，为空白首屏补上价值引导与首步路径，并补齐渐进式发现与应用内帮助。全程不阻塞、可跳过、11 语言同步。
+> 依据：审计发现——首次访客落到完全空白的工具：无价值主张、无首步指引，仅两行淡灰空状态文案（`Places.empty` / `Grid.empty`）；核心「加城市→看热力图→拖拽找重叠」机制不可发现；快捷键已实现但不可见（`KeyboardShortcuts` 渲染 null）；无任何应用内帮助。需在「温暖但不拖慢」前提下尽快把访客送到价值点。
+
+### 完成内容
+
+**① 首屏富空状态（核心）**
+- 替换 TimeGrid 原一行 `Grid.empty` 文案，改为首屏教学 + 一步到位 CTA：温暖主标题 + 一行价值说明 + 一键起始预设 + 指向搜索框的轻提示。
+- 「从我的时区开始」：用 `Intl.DateTimeFormat().resolvedOptions().timeZone` 探测访客时区 → 匹配数据集城市 → 配上纽约/伦敦（去重取前 3），一点即填入，网格/热力图/拖拽立刻全亮；时区不在数据集时回退纯三巨头。
+- 「世界金融时钟」：纽约·伦敦·东京（follow-the-sun 三件套）。
+
+**② 失效工具条自动隐藏**
+- 无城市时图例/日期跳转/游标/打印工具条整体隐藏（抽出 client 组件 `GridToolbar` 自管理），首城加入即恢复，让首屏 CTA 聚焦。
+
+**③ 拖拽选区上下文提示（渐进式发现）**
+- 有城市、但用户从未做过选区时浮现一次「横向拖动选会议时间」；localStorage 记忆已看（`worldtime:onboarding.dragHintSeen`），只出现一次；首次做出选区后自动消失；可手动「知道了」关闭。
+
+**④ 应用内「? 提示」帮助浮层（常驻）**
+- 顶栏新增 `?` 入口，紧凑无障碍浮层：三步上手 + 颜色图例（复用 `HeatmapLegend`）+ 键盘快捷键（显式呈现此前不可见的 Delete / Esc / Ctrl+Enter）。ESC / 外部点击关闭、焦点可见。
+
+**⑤ 11 语言同步（i18n）**
+- 新增 `Onboarding`（9 键）+ `Help`（14 键）命名空间，11 文件键集一致；CJK / 西里尔母语自然表达，容器弹性容文本膨胀。
+
+### 涉及文件
+
+- 新增 `src/lib/onboardingFlags.ts`（轻量 typed localStorage 记忆，独立 key `worldtime:onboarding`）
+- 新增 `src/data/starterSets.ts`（起始城市预设，按 `CITY_BY_ID` 解析、缺失自动跳过）
+- 新增 `src/components/FirstUseEmptyState.tsx`（首屏富空状态 + 时区探测）
+- 新增 `src/components/DragHintCoachmark.tsx`（一次性拖拽上下文提示）
+- 新增 `src/components/HelpPopover.tsx`（帮助 / 快捷键 / 图例浮层）
+- 新增 `src/components/GridToolbar.tsx`（空状态自隐藏工具条）
+- 改 `src/components/TimeGrid.tsx`（空状态分支接入 `FirstUseEmptyState`，移除已无用的 `Grid` 命名空间 use）
+- 改 `src/app/[locale]/page.tsx`（顶栏加 `HelpPopover`；主区换 `GridToolbar` + 相对容器包裹 `TimeGrid` 与 `DragHintCoachmark`）
+- 改 `src/app/globals.css`（新增 `.kbd` 键帽组件类）
+- 改 `messages/*.json`（11 语言，新增 `Onboarding` + `Help` 命名空间）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| JSON 合法性 | ✅ 11 文件全部合法 |
+| 键集一致性 | ✅ `Onboarding` 9 键 + `Help` 14 键，11 语言与 en 完全对齐 |
+| 起始城市 id | ✅ `us-new-york` / `gb-london` / `jp-tokyo` 唯一存在，可解析 |
+| `npm run type-check`（tsc --noEmit） | ✅ 通过 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest`） | ✅ 172/172 通过 |
+| 生产构建（`next build`） | ✅ 成功，305 个静态页面（11 语言全覆盖） |
+
+### 设计说明
+
+- **刻意选渐进式发现而非强制多步教学遮罩**：AGENTS.md「温暖但不拖慢」——强制 tour 会阻塞专家、违背 calm density。改用「富空状态 + 恰好可用时的一次性提示 + 常驻帮助」三层，零阻塞。
+- **全程可跳过、永不重复打扰**：一次性提示由 localStorage 记忆，尊重已关闭选择；SSR 默认不显示，挂载后判定，避免水合不一致。
+- **只用现有语义令牌**（`surface` / `accent` / `chip` / `btn` / `icon-btn` / `text-muted` 等），不引入新设计系统；无障碍：语义按钮、ARIA、浮层 ESC / 焦点、尊重 `prefers-reduced-motion`。
+- **`Grid.empty` 键保留未删**：虽不再渲染，留在 messages 中无害（`Places.empty` 仍在用），避免影响其他潜在引用。
+
+---
+
 ## 第 16 轮：界面文案清晰度优化（按钮 / 提示 / 错误信息）
 
 > 时间：2026-08-12

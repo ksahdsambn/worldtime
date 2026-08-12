@@ -239,5 +239,32 @@
         "a": "当前时间在浏览器中实时更新；时区转换页的对照表每小时刷新一次。"
       }
     ]
+  },
+  "Onboarding": {
+    "emptyHeadline": "找到一个大家都合适的会议时间",
+    "emptyBody": "添加几座城市，并排查看每个人的工作和休息时段，再拖动选出合适的时间。",
+    "startLocal": "从我的时区开始",
+    "startLocalHint": "自动添加你的本地城市，以及纽约和伦敦。",
+    "presetFinance": "世界金融时钟",
+    "presetFinanceHint": "纽约 · 伦敦 · 东京",
+    "searchHint": "……或在上方搜索框输入任意城市。",
+    "dragHint": "在网格上横向拖动来选择会议时间——颜色代表谁处于清醒时段。",
+    "dragGotIt": "知道了"
+  },
+  "Help": {
+    "label": "使用提示",
+    "title": "快速上手",
+    "step1Title": "1. 添加城市",
+    "step1Body": "在搜索框中添加你要协调的每个地点。",
+    "step2Title": "2. 拖动选择时间",
+    "step2Body": "在网格上点击并拖动来选定会议时段，选区会在每一行同步对齐。",
+    "step3Title": "3. 看懂颜色",
+    "step3Body": "每一列按「最不方便的人」着色：绿色表示都在工作时段，橙色表示有人在工作时段之外，红色表示有人在睡眠。",
+    "legendTitle": "颜色图例",
+    "shortcutsTitle": "键盘快捷键",
+    "shortcutDelete": "删除主城市",
+    "shortcutEscape": "清除选区",
+    "shortcutEnter": "将时间标记对齐到选区起点",
+    "close": "关闭"
   }
 }

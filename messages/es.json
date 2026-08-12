@@ -239,5 +239,32 @@
         "a": "La hora actual se actualiza en vivo en tu navegador. Las páginas de conversión actualizan sus tablas cada hora."
       }
     ]
+  },
+  "Onboarding": {
+    "emptyHeadline": "Encuentra una hora que funcione para todos",
+    "emptyBody": "Añade unas ciudades para ver las horas de trabajo y de sueño de cada uno y luego arrastra para elegir una hora.",
+    "startLocal": "Empezar con mi zona horaria",
+    "startLocalHint": "Añade tu ciudad local más Nueva York y Londres.",
+    "presetFinance": "Reloj financiero mundial",
+    "presetFinanceHint": "Nueva York · Londres · Tokio",
+    "searchHint": "…o busca cualquier ciudad en el cuadro de arriba.",
+    "dragHint": "Arrastra por las horas para elegir una hora de reunión: los colores muestran quién está despierto.",
+    "dragGotIt": "Entendido"
+  },
+  "Help": {
+    "label": "Consejos",
+    "title": "Primeros pasos",
+    "step1Title": "1. Añade ciudades",
+    "step1Body": "Usa el buscador para añadir todos los lugares que quieres coordinar.",
+    "step2Title": "2. Arrastra para elegir la hora",
+    "step2Body": "Haz clic y arrastra sobre la cuadrícula para elegir la ventana de la reunión. La selección se alinea en todas las filas.",
+    "step3Title": "3. Lee los colores",
+    "step3Body": "Cada columna se tinta según quien esté menos disponible: verde, todos en horario laboral; naranja, alguien fuera de él; rojo, alguien durmiendo.",
+    "legendTitle": "Leyenda de colores",
+    "shortcutsTitle": "Atajos de teclado",
+    "shortcutDelete": "Eliminar ciudad de origen",
+    "shortcutEscape": "Borrar la selección",
+    "shortcutEnter": "Llevar el marcador al inicio de la selección",
+    "close": "Cerrar"
   }
 }

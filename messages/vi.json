@@ -239,5 +239,32 @@
         "a": "Giờ hiện tại cập nhật trực tiếp trong trình duyệt. Các trang chuyển đổi làm mới bảng mỗi giờ."
       }
     ]
+  },
+  "Onboarding": {
+    "emptyHeadline": "Tìm giờ họp phù hợp với mọi người",
+    "emptyBody": "Thêm vài thành phố để xem giờ làm việc và giờ ngủ của từng người, sau đó kéo để chọn thời gian.",
+    "startLocal": "Bắt đầu với múi giờ của tôi",
+    "startLocalHint": "Thêm thành phố của bạn cùng New York và London.",
+    "presetFinance": "Đồng hồ tài chính thế giới",
+    "presetFinanceHint": "New York · London · Tokyo",
+    "searchHint": "…hoặc tìm bất kỳ thành phố nào trong ô phía trên.",
+    "dragHint": "Kéo qua các giờ để chọn thời gian họp — màu sắc cho biết ai đang thức.",
+    "dragGotIt": "Đã rõ"
+  },
+  "Help": {
+    "label": "Mẹo",
+    "title": "Bắt đầu",
+    "step1Title": "1. Thêm thành phố",
+    "step1Body": "Dùng ô tìm kiếm để thêm mọi nơi bạn muốn phối hợp.",
+    "step2Title": "2. Kéo để chọn giờ",
+    "step2Body": "Nhấp và kéo trên lưới để chọn khung giờ họp. Vùng chọn được căn hàng trên mọi dòng.",
+    "step3Title": "3. Đọc màu sắc",
+    "step3Body": "Mỗi cột được tô theo người bất tiện nhất: xanh lá là tất cả trong giờ làm, cam là có người ngoài giờ làm, đỏ là có người đang ngủ.",
+    "legendTitle": "Chú giải màu",
+    "shortcutsTitle": "Phím tắt",
+    "shortcutDelete": "Xóa thành phố gốc",
+    "shortcutEscape": "Xóa vùng chọn",
+    "shortcutEnter": "Đưa điểm đánh dấu về đầu vùng chọn",
+    "close": "Đóng"
   }
 }

@@ -8,11 +8,9 @@ import SelectionBar from "@/components/SelectionBar";
 import SettingsPanel from "@/components/SettingsPanel";
 import ThemeToggle from "@/components/ThemeToggle";
 import GoogleCalendarConnect from "@/components/GoogleCalendarConnect";
-import PrintExport from "@/components/PrintExport";
-import HeatmapLegend from "@/components/HeatmapLegend";
-import NowButton from "@/components/NowButton";
-import CursorBar from "@/components/CursorBar";
-import DateJump from "@/components/DateJump";
+import GridToolbar from "@/components/GridToolbar";
+import DragHintCoachmark from "@/components/DragHintCoachmark";
+import HelpPopover from "@/components/HelpPopover";
 import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import { JsonLd } from "@/components/JsonLd";
@@ -100,6 +98,7 @@ export default async function Home({ params }: Props) {
           <div className="ml-auto flex items-center gap-1.5">
             <LocaleSwitcher />
             <span className="divider" />
+            <HelpPopover />
             <SettingsPanel />
             <ThemeToggle />
             <GoogleCalendarConnect />
@@ -112,22 +111,15 @@ export default async function Home({ params }: Props) {
       <div className="mx-auto flex w-full max-w-[1680px] flex-1 flex-col md:flex-row">
         <PlacesPanel />
         <main className="flex min-w-0 flex-1 flex-col">
-          {/* 网格工具条：左图例，右控件分组 */}
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line bg-surface px-4 py-2.5 no-print">
-            <HeatmapLegend />
-            <div className="flex flex-wrap items-center gap-1.5">
-              <DateJump />
-              <span className="divider" />
-              <CursorBar />
-              <NowButton />
-              <span className="divider" />
-              <PrintExport />
-            </div>
-          </div>
+          {/* 网格工具条：空状态（无城市）时自隐藏，见 GridToolbar */}
+          <GridToolbar />
 
-          {/* 网格（内凹表面） */}
-          <div className="min-h-0 flex-1 overflow-auto bg-surface-inset p-3 md:p-4">
-            <TimeGrid />
+          {/* 网格（内凹表面）+ 首次拖拽上下文提示（浮于可见顶部，不随滚动） */}
+          <div className="relative min-h-0 flex-1">
+            <DragHintCoachmark />
+            <div className="h-full overflow-auto bg-surface-inset p-3 md:p-4">
+              <TimeGrid />
+            </div>
           </div>
         </main>
       </div>
