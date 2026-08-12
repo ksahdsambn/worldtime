@@ -201,6 +201,20 @@ export default function PlacesPanel() {
 
         {places.length === 0 && <p className="px-1 text-xs text-faint">{t("empty")}</p>}
 
+        {/* 标签筛选把所有城市过滤掉了：给明确空状态 + 清除筛选，避免空白列表 */}
+        {places.length > 0 && visiblePlaces.length === 0 && activeTag && (
+          <div className="px-1 py-2 text-xs text-muted">
+            <p className="mb-1.5">{t("emptyFiltered", { tag: activeTag })}</p>
+            <button
+              type="button"
+              onClick={() => setActiveTag(null)}
+              className="btn-ghost btn-sm"
+            >
+              {t("clearFilter")}
+            </button>
+          </div>
+        )}
+
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}

@@ -11,7 +11,8 @@
     "settings": "设置",
     "cancel": "取消",
     "confirm": "确定",
-    "more": "更多"
+    "more": "更多",
+    "close": "关闭"
   },
   "LocaleSwitcher": {
     "label": "语言",
@@ -52,7 +53,10 @@
     "all": "全部",
     "dragHandle": "拖拽排序",
     "confirmRemoveHome": "确定删除主地点吗？其他城市的时间差以主地点为基准，删除后将改用其他城市作为参考。",
-    "sunNone": "无"
+    "sunNone": "无",
+    "emptyFiltered": "没有 #{tag} 标签的城市。",
+    "clearFilter": "清除筛选",
+    "limitReached": "已达到 30 个城市的上限。"
   },
   "Selection": {
     "duration": "时长",
@@ -111,11 +115,17 @@
     "connected": "已连接",
     "disconnect": "断开 Google 日历",
     "loading": "连接中…",
-    "error": "无法连接 Google 日历，请重试。"
+    "error": "无法连接 Google 日历，请重试。",
+    "retry": "重试",
+    "disconnected": "Google 日历会话已失效，请重新连接。",
+    "overlayFailed": "无法加载日历空闲情况，请检查网络连接。"
   },
   "PrintExport": {
     "print": "打印",
-    "image": "导出图片"
+    "image": "导出图片",
+    "exporting": "导出中…",
+    "exportFailed": "图片导出失败，请重试。",
+    "noTarget": "暂无可导出的内容。"
   },
   "Grid": {
     "empty": "添加一个城市，即可查看时间网格。"
@@ -267,5 +277,19 @@
     "shortcutEscape": "清除选区",
     "shortcutEnter": "将时间标记对齐到选区起点",
     "close": "关闭"
+  },
+  "Errors": {
+    "title": "出错了",
+    "description": "渲染页面时发生了意外错误。",
+    "retry": "重试",
+    "reload": "刷新页面"
+  },
+  "NotFound": {
+    "title": "页面不存在",
+    "description": "您访问的页面不存在或已被移动。",
+    "home": "返回首页"
+  },
+  "Loading": {
+    "label": "加载中…"
   }
 }

@@ -11,7 +11,8 @@
     "settings": "Einstellungen",
     "cancel": "Abbrechen",
     "confirm": "OK",
-    "more": "Mehr"
+    "more": "Mehr",
+    "close": "Schließen"
   },
   "LocaleSwitcher": {
     "label": "Sprache",
@@ -52,7 +53,10 @@
     "all": "Alle",
     "dragHandle": "Ziehen zum Sortieren",
     "confirmRemoveHome": "Hauptort entfernen? Andere Städte vergleichen ihre Zeit mit dem Hauptort, daher wird eine andere Stadt zur Referenz.",
-    "sunNone": "keine"
+    "sunNone": "keine",
+    "emptyFiltered": "Keine Städte mit dem Tag #{tag}.",
+    "clearFilter": "Filter löschen",
+    "limitReached": "Du hast das Limit von 30 Städten erreicht."
   },
   "Selection": {
     "duration": "Dauer",
@@ -111,11 +115,17 @@
     "connected": "Verbunden",
     "disconnect": "Google Calendar trennen",
     "loading": "Verbinden…",
-    "error": "Verbindung zu Google Calendar fehlgeschlagen. Bitte erneut versuchen."
+    "error": "Verbindung zu Google Calendar fehlgeschlagen. Bitte erneut versuchen.",
+    "retry": "Erneut versuchen",
+    "disconnected": "Die Google Calendar-Sitzung ist abgelaufen. Bitte erneut verbinden.",
+    "overlayFailed": "Kalender-Verfügbarkeit konnte nicht geladen werden. Verbindung prüfen."
   },
   "PrintExport": {
     "print": "Drucken",
-    "image": "Bild exportieren"
+    "image": "Bild exportieren",
+    "exporting": "Wird exportiert…",
+    "exportFailed": "Bild konnte nicht exportiert werden. Erneut versuchen.",
+    "noTarget": "Noch nichts zu exportieren."
   },
   "Grid": {
     "empty": "Stadt hinzufügen, um das Zeitraster zu sehen."
@@ -267,5 +277,19 @@
     "shortcutEscape": "Auswahl löschen",
     "shortcutEnter": "Zeitmarkierung an den Auswahlstart setzen",
     "close": "Schließen"
+  },
+  "Errors": {
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Beim Darstellen dieser Seite ist ein unerwarteter Fehler aufgetreten.",
+    "retry": "Erneut versuchen",
+    "reload": "Seite neu laden"
+  },
+  "NotFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "home": "Zurück zur Startseite"
+  },
+  "Loading": {
+    "label": "Wird geladen…"
   }
 }

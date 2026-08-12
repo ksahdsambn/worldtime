@@ -11,7 +11,8 @@
     "settings": "Paramètres",
     "cancel": "Annuler",
     "confirm": "OK",
-    "more": "Plus"
+    "more": "Plus",
+    "close": "Fermer"
   },
   "LocaleSwitcher": {
     "label": "Langue",
@@ -52,7 +53,10 @@
     "all": "Toutes",
     "dragHandle": "Glisser pour réordonner",
     "confirmRemoveHome": "Retirer votre ville principale ? Les autres villes comparent leur heure à la ville principale, une autre ville deviendra donc la référence.",
-    "sunNone": "aucun"
+    "sunNone": "aucun",
+    "emptyFiltered": "Aucune ville avec l'étiquette #{tag}.",
+    "clearFilter": "Effacer le filtre",
+    "limitReached": "Vous avez atteint la limite de 30 villes."
   },
   "Selection": {
     "duration": "Durée",
@@ -111,11 +115,17 @@
     "connected": "Connecté",
     "disconnect": "Déconnecter Google Calendar",
     "loading": "Connexion…",
-    "error": "Impossible de se connecter à Google Calendar. Veuillez réessayer."
+    "error": "Impossible de se connecter à Google Calendar. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "disconnected": "La session Google Calendar a expiré. Veuillez vous reconnecter.",
+    "overlayFailed": "Impossible de charger les disponibilités du calendrier. Vérifiez votre connexion."
   },
   "PrintExport": {
     "print": "Imprimer",
-    "image": "Exporter l'image"
+    "image": "Exporter l'image",
+    "exporting": "Exportation…",
+    "exportFailed": "Impossible d'exporter l'image. Réessayez.",
+    "noTarget": "Rien à exporter pour le moment."
   },
   "Grid": {
     "empty": "Ajoutez une ville pour afficher la grille horaire."
@@ -267,5 +277,19 @@
     "shortcutEscape": "Effacer la sélection",
     "shortcutEnter": "Placer le repère sur le début de la sélection",
     "close": "Fermer"
+  },
+  "Errors": {
+    "title": "Une erreur est survenue",
+    "description": "Une erreur inattendue s'est produite lors de l'affichage de cette page.",
+    "retry": "Réessayer",
+    "reload": "Recharger la page"
+  },
+  "NotFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "home": "Retour à l'accueil"
+  },
+  "Loading": {
+    "label": "Chargement…"
   }
 }

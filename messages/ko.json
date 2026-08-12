@@ -11,7 +11,8 @@
     "settings": "설정",
     "cancel": "취소",
     "confirm": "확인",
-    "more": "더보기"
+    "more": "더보기",
+    "close": "닫기"
   },
   "LocaleSwitcher": {
     "label": "언어",
@@ -52,7 +53,10 @@
     "all": "전체",
     "dragHandle": "드래그하여 재정렬",
     "confirmRemoveHome": "기준 도시를 제거하시겠습니까? 다른 도시의 시간은 기준과의 시차로 표시되므로 다른 도시가 기준이 됩니다.",
-    "sunNone": "없음"
+    "sunNone": "없음",
+    "emptyFiltered": "#{tag} 태그의 도시가 없습니다.",
+    "clearFilter": "필터 해제",
+    "limitReached": "도시는 최대 30개까지 추가할 수 있습니다."
   },
   "Selection": {
     "duration": "기간",
@@ -111,11 +115,17 @@
     "connected": "연결됨",
     "disconnect": "Google 캘린더 연결 해제",
     "loading": "연결 중…",
-    "error": "Google 캘린더에 연결하지 못했습니다. 다시 시도해 주세요."
+    "error": "Google 캘린더에 연결하지 못했습니다. 다시 시도해 주세요.",
+    "retry": "다시 시도",
+    "disconnected": "Google 캘린더 세션이 만료되었습니다. 다시 연결해 주세요.",
+    "overlayFailed": "캘린더 일정을 불러오지 못했습니다. 연결을 확인해 주세요."
   },
   "PrintExport": {
     "print": "인쇄",
-    "image": "이미지 내보내기"
+    "image": "이미지 내보내기",
+    "exporting": "내보내는 중…",
+    "exportFailed": "이미지를 내보낼 수 없습니다. 다시 시도해 주세요.",
+    "noTarget": "내보낼 항목이 아직 없습니다."
   },
   "Grid": {
     "empty": "도시를 추가하면 시간 격자가 표시됩니다."
@@ -267,5 +277,19 @@
     "shortcutEscape": "선택 해제",
     "shortcutEnter": "시간 표시를 선택 시작점으로 이동",
     "close": "닫기"
+  },
+  "Errors": {
+    "title": "문제가 발생했습니다",
+    "description": "페이지를 표시하는 중 예기치 않은 오류가 발생했습니다.",
+    "retry": "다시 시도",
+    "reload": "페이지 새로고침"
+  },
+  "NotFound": {
+    "title": "페이지를 찾을 수 없습니다",
+    "description": "찾으시는 페이지가 존재하지 않거나 이동되었을 수 있습니다.",
+    "home": "홈으로"
+  },
+  "Loading": {
+    "label": "불러오는 중…"
   }
 }

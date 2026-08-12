@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { CITIES } from "@/data/cities";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import type { CityRecord } from "@/lib/types";
+import { toast } from "@/lib/toast";
 
 /**
  * 将时区与城市偏移（相对 UTC）格式化为 "+8 / -5" 风格。
@@ -36,6 +37,7 @@ function describeOffset(city: CityRecord): string {
 export default function CitySearch() {
   const t = useTranslations("CitySearch");
   const tCom = useTranslations("Common");
+  const tPlaces = useTranslations("Places");
   const addPlace = useWorldTimeStore((s) => s.addPlace);
   const places = useWorldTimeStore((s) => s.places);
   const [query, setQuery] = useState("");
@@ -90,7 +92,11 @@ export default function CitySearch() {
   }, [query, places]);
 
   function handleSelect(city: CityRecord) {
-    addPlace(city);
+    const added = addPlace(city);
+    if (!added) {
+      // 达到上限或重复：给出明确反馈（addPlace 在这两种情况返回 false）
+      toast.error(tPlaces("limitReached"));
+    }
     setQuery("");
     setOpen(false);
     setHighlight(0);
@@ -117,6 +123,7 @@ export default function CitySearch() {
       <input
         type="text"
         role="combobox"
+        maxLength={60}
         aria-expanded={open && query.trim().length > 0}
         aria-controls={listboxId}
         aria-autocomplete="list"

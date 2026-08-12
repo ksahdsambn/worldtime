@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
@@ -10,12 +10,14 @@ import { buildColumns, todayStartMs, isWeekendAt } from "@/lib/grid";
 import { prefers12Hour } from "@/lib/time";
 import { columnColor, type HeatColor } from "@/lib/heatmap";
 import { localCityName } from "@/lib/cityName";
+import { toast } from "@/lib/toast";
 import type { AppLocale } from "@/i18n/routing";
 import {
   busyRangesToMs,
   fetchFreeBusy,
   freeBusyWindow,
   GcalUnauthorizedError,
+  isAbortError,
   type BusyRange,
 } from "@/lib/gcal";
 import { clearGcalSession, requestSilentRefresh } from "@/lib/gcal-auth";
@@ -30,12 +32,15 @@ import { clearGcalSession, requestSilentRefresh } from "@/lib/gcal-auth";
  */
 export default function TimeGrid() {
   const locale = useLocale() as AppLocale;
+  const tGcal = useTranslations("Gcal");
+  const tLoad = useTranslations("Loading");
   const places = useWorldTimeStore((s) => s.places);
   const homeId = useWorldTimeStore((s) => s.homeId);
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
   const dayPeriods = useWorldTimeStore((s) => s.dayPeriods);
   const selection = useWorldTimeStore((s) => s.selection);
   const setSelection = useWorldTimeStore((s) => s.setSelection);
+  const restored = useWorldTimeStore((s) => s.restored);
   const nowRaw = useNow(60_000);
 
   const home = useMemo(
@@ -71,52 +76,80 @@ export default function TimeGrid() {
 
   // Google 日历叠加（6.1）：授权后调 freebusy 拉真实忙碌区间。
   const [busyRanges, setBusyRanges] = useState<BusyRange[]>([]);
+  // 叠加态：idle 正常 / loading 拉取中 / error 可重试错误 / disconnected 会话失效需重连。
+  const [gcalStatus, setGcalStatus] = useState<
+    "idle" | "loading" | "error" | "disconnected"
+  >("idle");
+  // 重试计数器：点击「重试」时自增，触发 effect 重跑。
+  const [gcalRetryKey, setGcalRetryKey] = useState(0);
   const homeTimeZone = home?.timeZone ?? null;
+  // 把文案放进 ref，避免 locale 切换导致 freebusy 重拉（deps 不含 tGcal）。
+  const tGcalRef = useRef(tGcal);
+  tGcalRef.current = tGcal;
   useEffect(() => {
     // 未授权或无主地点：清空，不请求
     if (!gcalAccessToken || !homeTimeZone) {
       setBusyRanges([]);
+      setGcalStatus("idle");
       return;
     }
     // 窗口 = 当前视图起始日 + 7 天。刻意不依赖 nowRaw（每分钟 tick），避免每分钟重拉；
     // 跨午夜后窗口不会自动推进，用户交互或刷新页面时会重算（会议排期场景可接受）。
     const start = viewStartDateMs ?? todayStartMs(homeTimeZone, Date.now());
     const win = freeBusyWindow(start, 7);
-    let cancelled = false;
+    // 由本 effect 持有 controller：卸载 / 依赖变化时取消进行中的请求，避免泄漏 + 卡 loading。
+    const controller = new AbortController();
     let refreshed = false;
+    setGcalStatus("loading");
     async function run(token: string) {
       try {
         const ranges = await fetchFreeBusy(token, {
           timeMin: win.timeMin,
           timeMax: win.timeMax,
           timeZone: homeTimeZone,
+          signal: controller.signal,
         });
-        if (!cancelled) setBusyRanges(ranges);
+        if (controller.signal.aborted) return;
+        setBusyRanges(ranges);
+        setGcalStatus("idle");
       } catch (e) {
-        if (cancelled) return;
-        if (e instanceof GcalUnauthorizedError && !refreshed) {
-          // token 过期：静默刷新后用新 token 重试一次
-          refreshed = true;
-          const fresh = await requestSilentRefresh();
-          if (cancelled) return;
-          if (!fresh) {
-            // Google 会话已失效：断开，提示用户重新连接
+        if (controller.signal.aborted || isAbortError(e)) return;
+        if (e instanceof GcalUnauthorizedError) {
+          if (!refreshed) {
+            // token 过期：静默刷新后用新 token 重试一次
+            refreshed = true;
+            const fresh = await requestSilentRefresh();
+            if (controller.signal.aborted) return;
+            if (!fresh) {
+              // Google 会话已失效：断开，提示用户重新连接
+              clearGcalSession();
+              setBusyRanges([]);
+              setGcalStatus("disconnected");
+              toast.error(tGcalRef.current("disconnected"));
+            }
+            // 成功则 callback 已更新 store.gcalAccessToken，本 effect 会因依赖变化自动
+            // 重跑拉取，无需在此递归——否则与 effect 重跑会重复发起一次 freebusy 请求
+          } else {
+            // 已刷新仍 401：会话失效
             clearGcalSession();
             setBusyRanges([]);
+            setGcalStatus("disconnected");
+            toast.error(tGcalRef.current("disconnected"));
           }
-          // 成功则 callback 已更新 store.gcalAccessToken，本 effect 会因依赖变化自动
-          // 重跑拉取，无需在此递归——否则与 effect 重跑会重复发起一次 freebusy 请求
         } else {
-          // 其他错误：保留空叠加，不打断核心功能
+          // 其他错误（网络 / 5xx / 超时 / 解析）：保留空叠加，不打断核心功能，
+          // 但用横幅 + toast 显式提示，并提供重试。
           setBusyRanges([]);
+          setGcalStatus("error");
+          toast.error(tGcalRef.current("overlayFailed"));
         }
       }
     }
     run(gcalAccessToken);
     return () => {
-      cancelled = true;
+      controller.abort();
     };
-  }, [gcalAccessToken, viewStartDateMs, homeTimeZone]);
+  }, [gcalAccessToken, viewStartDateMs, homeTimeZone, gcalRetryKey]);
 
   // 把忙碌区间投影到当前列（只含真实存在的 column ms，与 Row 的 has() 语义对齐）
   const gcalBusyMs = useMemo(
@@ -202,6 +235,21 @@ export default function TimeGrid() {
   }
 
   if (!home || columns.length === 0) {
+    // 恢复完成前（localStorage/URL 尚未 hydrate）显示轻量骨架，避免回访用户每次刷新
+    // 都闪一下完整引导空状态；恢复后若无城市再显示真正的 FirstUseEmptyState。
+    if (!restored) {
+      return (
+        <div className="flex min-h-[40vh] items-center justify-center" aria-busy="true">
+          <span className="text-sm text-muted">
+            <span
+              className="mr-2 inline-block h-3 w-3 animate-pulse rounded-full bg-accent align-middle"
+              aria-hidden
+            />
+            {tLoad("label")}
+          </span>
+        </div>
+      );
+    }
     return <FirstUseEmptyState />;
   }
 
@@ -239,6 +287,26 @@ export default function TimeGrid() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
+      {gcalStatus === "error" && (
+        <div
+          role="alert"
+          className="mb-2 flex flex-wrap items-center gap-2 rounded-md border px-3 py-2 text-xs"
+          style={{
+            borderColor: "var(--heat-caution-ink)",
+            backgroundColor: "var(--heat-caution)",
+            color: "var(--text)",
+          }}
+        >
+          <span className="flex-1">{tGcal("overlayFailed")}</span>
+          <button
+            type="button"
+            onClick={() => setGcalRetryKey((k) => k + 1)}
+            className="btn btn-ghost btn-sm"
+          >
+            {tGcal("retry")}
+          </button>
+        </div>
+      )}
       <table className="wt-grid animate-fade-in text-xs">
         <thead>
           <tr>

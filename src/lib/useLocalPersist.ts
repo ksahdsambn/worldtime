@@ -55,6 +55,7 @@ export function useLocalPersist() {
   const setDayPeriods = useWorldTimeStore((s) => s.setDayPeriods);
   const setSelection = useWorldTimeStore((s) => s.setSelection);
   const setCursor = useWorldTimeStore((s) => s.setCursor);
+  const markRestored = useWorldTimeStore((s) => s.markRestored);
 
   const restored = useRef(false);
 
@@ -62,7 +63,10 @@ export function useLocalPersist() {
   useEffect(() => {
     if (restored.current) return;
     restored.current = true;
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      markRestored();
+      return;
+    }
 
     // URL 编码的字段优先：p（地点）、s（选区）、c（游标）。
     // URL 未覆盖的字段（hourFormat、dayPeriods，以及无 p/s/c 时的地点/选区/游标）从本地恢复。
@@ -121,8 +125,11 @@ export function useLocalPersist() {
       }
     } catch {
       // 损坏数据忽略
+    } finally {
+      // 无论恢复成功与否，都标记「已完成」，让 UI 退出轻量骨架、显示真实空状态。
+      markRestored();
     }
-  }, [setPlaces, setHourFormat, setDayPeriods, setSelection, setCursor]);
+  }, [setPlaces, setHourFormat, setDayPeriods, setSelection, setCursor, markRestored]);
 
   // 2) 状态变化时回写
   //    注意：直接读取闭包变量会在"恢复"当次渲染读到旧值（React 闭包），

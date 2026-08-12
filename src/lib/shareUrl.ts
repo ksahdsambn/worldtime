@@ -1,4 +1,5 @@
 import type { PlaceItem, TimeSelection } from "@/store/useWorldTimeStore";
+import { MAX_PLACES } from "@/store/useWorldTimeStore";
 import { CITY_BY_ID } from "@/data/cities";
 
 /**
@@ -63,7 +64,8 @@ export function decodeState(
   if (p) {
     // URLSearchParams.get 已做一次 URL 解码；此处不再重复解码，
     // 避免含 % 的 id 被二次误解码（如 %2C 被错解为逗号）。
-    const ids = p.split(",").filter(Boolean);
+    // 上限保护：畸形/超长链接最多解析 MAX_PLACES 个，防止渲染爆炸（与 store.addPlace 一致）。
+    const ids = p.split(",").filter(Boolean).slice(0, MAX_PLACES);
     let homeId: string | null = null;
     const places: PlaceItem[] = [];
     for (const raw of ids) {

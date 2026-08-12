@@ -30,8 +30,29 @@ export default function WorldClockWidget() {
       hours: p.get("hours") || "24",
     });
     setNow(Date.now());
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
+    let id: ReturnType<typeof setInterval> | null = null;
+    const stop = () => {
+      if (id !== null) {
+        clearInterval(id);
+        id = null;
+      }
+    };
+    const start = () => {
+      if (id !== null) return;
+      setNow(Date.now()); // 回前台时立刻重新对齐，避免显示陈旧秒数
+      id = setInterval(() => setNow(Date.now()), 1000);
+    };
+    // 页面切到后台时暂停 1s 轮询节电；回到前台恢复（Date.now 自校验，正确性不受影响）
+    const onVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+    start();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      stop();
+    };
   }, []);
 
   const cities = params.cities
@@ -39,7 +60,8 @@ export default function WorldClockWidget() {
     .map((s) => s.trim())
     .filter(Boolean)
     .map((id) => CITY_BY_ID[id])
-    .filter(Boolean);
+    .filter(Boolean)
+    .slice(0, 30); // 防御：畸形超长 cities 列表不至于渲染爆炸
 
   const dark = params.theme === "dark";
   const fmt = params.hours === "12" ? "h:mm:ss a" : "HH:mm:ss";

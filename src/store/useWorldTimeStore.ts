@@ -35,6 +35,18 @@ export const DEFAULT_DAY_PERIODS: DayPeriods = {
 };
 
 /**
+ * 边界上限（防御性）：避免无上限渲染导致网格 168 列 × N 行爆炸。
+ * 分享链接 / 事件码解码同样遵守此上限（见 shareUrl.decodeState）。
+ */
+export const MAX_PLACES = 30;
+/** 自定义显示名最大字符数。 */
+export const MAX_CUSTOM_NAME_LEN = 40;
+/** 单个地点最多标签数。 */
+export const MAX_TAGS = 6;
+/** 单个标签最大字符数。 */
+export const MAX_TAG_LEN = 20;
+
+/**
  * 地点条目。
  * placeId 为稳定唯一 id（用于排序、URL 序列化、主地点标记）；
  * 其余字段来自城市记录。
@@ -86,8 +98,11 @@ interface WorldTimeState {
   gcalAccessToken: string | null;
 
   // ---- 地点操作 ----
-  /** 添加地点；若列表为空则自动设为主地点（步骤 2.3 要求） */
-  addPlace: (city: CityRecord) => void;
+  /**
+   * 添加地点；若列表为空则自动设为主地点（步骤 2.3 要求）。
+   * 返回 false 表示未添加（重复或已达 MAX_PLACES 上限），调用方可据此提示。
+   */
+  addPlace: (city: CityRecord) => boolean;
   /** 按 id 删除地点；若删除的是主地点，则把剩余首项设为主地点 */
   removePlace: (placeId: string) => void;
   /** 设置主地点 */
@@ -127,6 +142,11 @@ interface WorldTimeState {
   /** 当前激活的标签筛选；null 表示显示全部 */
   activeTag: string | null;
   setActiveTag: (tag: string | null) => void;
+
+  // ---- 持久化恢复（避免回访首屏闪一下引导空状态）----
+  /** localStorage/URL 状态是否已恢复完毕。恢复前为 false，UI 据此显示轻量骨架。 */
+  restored: boolean;
+  markRestored: () => void;
 }
 
 export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
@@ -140,17 +160,24 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   gcalConnected: false,
   gcalAccessToken: null,
   activeTag: null,
+  restored: false,
 
-  addPlace: (city) =>
+  addPlace: (city) => {
+    let added = false;
     set((state) => {
       // 去重：同一城市仅保留一条
       if (state.places.some((p) => p.id === city.id)) return state;
+      // 上限保护：超过 MAX_PLACES 不再添加（分享/事件码解码同样受此约束）
+      if (state.places.length >= MAX_PLACES) return state;
+      added = true;
       const place: PlaceItem = { ...city, tags: [] };
       const places = [...state.places, place];
       // 列表为空（加入前）时自动设为主地点
       const homeId = state.places.length === 0 ? place.id : state.homeId;
       return { places, homeId };
-    }),
+    });
+    return added;
+  },
 
   removePlace: (placeId) =>
     set((state) => {
@@ -203,11 +230,26 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   renamePlace: (placeId, customName) =>
     set((state) => ({
       places: state.places.map((p) =>
-        p.id === placeId ? { ...p, customName: customName.trim() || undefined } : p,
+        p.id === placeId
+          ? {
+              ...p,
+              // 截断超长名 + trim；空串回落到 undefined（显示城市原名）
+              customName:
+                customName.trim().slice(0, MAX_CUSTOM_NAME_LEN) || undefined,
+            }
+          : p,
       ),
     })),
 
-  setPlaces: (places, homeId) => set({ places, homeId }),
+  setPlaces: (places, homeId) =>
+    set({
+      // 防御：上限截断；homeId 不在列表则回退首项，避免悬挂主地点
+      places: places.slice(0, MAX_PLACES),
+      homeId:
+        homeId && places.some((p) => p.id === homeId)
+          ? homeId
+          : (places[0]?.id ?? null),
+    }),
 
   setHourFormat: (fmt) => set({ hourFormat: fmt }),
   setDayPeriods: (dp) => set({ dayPeriods: dp }),
@@ -237,8 +279,19 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   setPlaceTags: (placeId, tags) =>
     set((state) => ({
       places: state.places.map((p) =>
-        p.id === placeId ? { ...p, tags: Array.from(new Set(tags)) } : p,
+        p.id === placeId
+          ? {
+              ...p,
+              // 去重 + 截断每项长度 + 上限标签数；空串过滤
+              tags: Array.from(new Set(tags))
+                .map((tg) => tg.trim().slice(0, MAX_TAG_LEN))
+                .filter(Boolean)
+                .slice(0, MAX_TAGS),
+            }
+          : p,
       ),
     })),
   setActiveTag: (tag) => set({ activeTag: tag }),
+
+  markRestored: () => set({ restored: true }),
 }));
