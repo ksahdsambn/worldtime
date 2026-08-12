@@ -64,7 +64,7 @@ export default function GoogleCalendarConnect() {
         aria-busy={busy || undefined}
       >
         <span
-          className="h-1.5 w-1.5 rounded-full bg-emerald-500"
+          className="h-1.5 w-1.5 rounded-full bg-success"
           aria-hidden
         />
         {busy ? t("loading") : t("connected")}
@@ -85,7 +85,7 @@ export default function GoogleCalendarConnect() {
       >
         {busy ? t("loading") : t("connect")}
       </button>
-      {errored && <span className="text-red-500">{t("error")}</span>}
+      {errored && <span className="text-danger">{t("error")}</span>}
     </div>
   );
 }

@@ -56,7 +56,10 @@
     "sunNone": "không",
     "emptyFiltered": "Không có thành phố với thẻ #{tag}.",
     "clearFilter": "Xóa bộ lọc",
-    "limitReached": "Bạn đã đạt giới hạn 30 thành phố."
+    "limitReached": "Bạn đã đạt giới hạn 30 thành phố.",
+    "periodWork": "Giờ làm việc",
+    "periodContact": "Giờ liên lạc được",
+    "periodRest": "Giờ nghỉ ngơi"
   },
   "Selection": {
     "duration": "Thời lượng",
@@ -100,7 +103,8 @@
     "enable": "Hiện đánh dấu thời gian",
     "move": "di chuyển",
     "resize": "chỉnh biên",
-    "disable": "Ẩn đánh dấu thời gian"
+    "disable": "Ẩn đánh dấu thời gian",
+    "select": "chọn"
   },
   "DateJump": {
     "jumpTo": "Chuyển đến:",
@@ -276,7 +280,9 @@
     "shortcutDelete": "Xóa thành phố gốc",
     "shortcutEscape": "Xóa vùng chọn",
     "shortcutEnter": "Đưa điểm đánh dấu về đầu vùng chọn",
-    "close": "Đóng"
+    "close": "Đóng",
+    "shortcutSelect": "Bắt đầu chọn tại điểm đánh dấu thời gian",
+    "shortcutResize": "Mở rộng hoặc thu nhỏ vùng chọn"
   },
   "Errors": {
     "title": "Đã xảy ra lỗi",

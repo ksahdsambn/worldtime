@@ -20,6 +20,7 @@ export default function CursorBar() {
   const cursorMs = useWorldTimeStore((s) => s.cursorMs);
   const setCursor = useWorldTimeStore((s) => s.setCursor);
   const selection = useWorldTimeStore((s) => s.selection);
+  const setSelection = useWorldTimeStore((s) => s.setSelection);
   const resizeSelection = useWorldTimeStore((s) => s.resizeSelection);
   const places = useWorldTimeStore((s) => s.places);
   // 通过 hook 订阅 homeId，确保主地点变更时组件重渲染
@@ -28,12 +29,25 @@ export default function CursorBar() {
   const home: PlaceItem | undefined =
     places.find((p) => p.id === homeId) ?? places[0];
 
-  // 键盘快捷键
+  // 键盘快捷键（C1 无障碍修复：选区可通过键盘完成）
+  //  - Enter / Space：在游标处开始一个 1 小时选区（随后用 Shift+←/→ 扩展）
+  //  - ←/→：移动游标（Shift = 5 分钟步进）
+  //  - Shift+←/→：微调已有选区边缘
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       // 输入框中不触发
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+      // Enter / Space：在游标处开始选区。焦点在按钮/链接上时放行，避免拦截其原生激活/导航。
+      if (e.key === "Enter" || e.key === " ") {
+        if (tag === "BUTTON" || tag === "A") return;
+        if (cursorMs == null) return;
+        e.preventDefault();
+        setSelection({ startMs: cursorMs, endMs: cursorMs + 3600_000 });
+        return;
+      }
+
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
 
       const stepMs = e.shiftKey ? 5 * 60_000 : 60 * 60_000;
@@ -54,7 +68,7 @@ export default function CursorBar() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [cursorMs, selection, resizeSelection, setCursor]);
+  }, [cursorMs, selection, setSelection, resizeSelection, setCursor]);
 
   function enableCursor() {
     setCursor(Date.now());
@@ -88,7 +102,7 @@ export default function CursorBar() {
             {label}
           </span>
           <span className="hidden text-faint sm:inline">
-            · ←/→ {t("move")} · Shift+←/→ {t("resize")}
+            · ←/→ {t("move")} · Enter {t("select")} · Shift+←/→ {t("resize")}
           </span>
           <button
             type="button"

@@ -69,11 +69,14 @@ export default async function Home({ params }: Props) {
       <header className="safe-top animate-fade-in sticky top-0 z-30 border-b border-line bg-surface shadow-sm no-print">
         <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5">
           <h1 className="flex shrink-0 items-center gap-2.5">
+            {/* 品牌 mark：unoptimized 跳过优化器——SVG 经优化器会被拒
+                （dangerouslyAllowSVG 未启用，返回 400），并修复此前首屏 logo 静默 404。*/}
             <Image
               src="/brand/worldtime-mark.svg"
               alt=""
               width={30}
               height={30}
+              unoptimized
               priority
               className="drop-shadow-sm"
             />
@@ -188,7 +191,7 @@ export default async function Home({ params }: Props) {
                   <li key={item.slug}>
                     <Link
                       href={`/time-converter/${item.slug}`}
-                      className="text-accent hover:underline"
+                      className="text-accent underline underline-offset-2 hover:text-accent-hover"
                     >
                       {item.label}
                     </Link>

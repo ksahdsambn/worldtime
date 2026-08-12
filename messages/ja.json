@@ -56,7 +56,10 @@
     "sunNone": "なし",
     "emptyFiltered": "#{tag} タグの都市がありません。",
     "clearFilter": "フィルターを解除",
-    "limitReached": "都市は 30 件までです。"
+    "limitReached": "都市は 30 件までです。",
+    "periodWork": "勤務時間",
+    "periodContact": "連絡可能時間",
+    "periodRest": "休息時間"
   },
   "Selection": {
     "duration": "時間",
@@ -100,7 +103,8 @@
     "enable": "タイムマーカーを表示",
     "move": "移動",
     "resize": "端を調整",
-    "disable": "タイムマーカーを非表示"
+    "disable": "タイムマーカーを非表示",
+    "select": "選択"
   },
   "DateJump": {
     "jumpTo": "移動：",
@@ -276,7 +280,9 @@
     "shortcutDelete": "基準都市を削除",
     "shortcutEscape": "選択をクリア",
     "shortcutEnter": "時間マーカーを選択開始位置に合わせる",
-    "close": "閉じる"
+    "close": "閉じる",
+    "shortcutSelect": "タイムマーカーで選択を開始",
+    "shortcutResize": "選択範囲を広げる／縮める"
   },
   "Errors": {
     "title": "エラーが発生しました",

@@ -56,7 +56,10 @@
     "sunNone": "none",
     "emptyFiltered": "No cities with the tag #{tag}.",
     "clearFilter": "Clear filter",
-    "limitReached": "You've reached the limit of 30 cities."
+    "limitReached": "You've reached the limit of 30 cities.",
+    "periodWork": "Work hours",
+    "periodContact": "Contact hours",
+    "periodRest": "Rest hours"
   },
   "Selection": {
     "duration": "Duration",
@@ -100,7 +103,8 @@
     "enable": "Show time marker",
     "move": "move",
     "resize": "adjust edges",
-    "disable": "Hide time marker"
+    "disable": "Hide time marker",
+    "select": "select"
   },
   "DateJump": {
     "jumpTo": "Jump to:",
@@ -276,7 +280,9 @@
     "shortcutDelete": "Delete home city",
     "shortcutEscape": "Clear the selection",
     "shortcutEnter": "Snap the time marker to the selection start",
-    "close": "Close"
+    "close": "Close",
+    "shortcutSelect": "Start a selection at the time marker",
+    "shortcutResize": "Grow or shrink the selection"
   },
   "Errors": {
     "title": "Something went wrong",

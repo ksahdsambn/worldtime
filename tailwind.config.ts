@@ -11,6 +11,7 @@ import type { Config } from "tailwindcss";
  *   text-ink / text-muted / text-faint
  *   bg-accent / text-accent / bg-accent-soft / text-accent-soft / text-accent-fg
  *   bg-warm / text-warm / bg-warm-soft
+ *   bg-success / text-success-fg · bg-danger / text-danger / text-danger-fg
  *
  * 半透明态（热力图三色、accent-soft 等）均以独立变量提供，不依赖 Tailwind
  * 的 /opacity 修饰符（var() 形式的颜色无法被解析拆分）。
@@ -48,6 +49,15 @@ const config: Config = {
           DEFAULT: "var(--warm)",
           strong: "var(--warm-strong)",
           soft: "var(--warm-soft)",
+        },
+        success: {
+          DEFAULT: "var(--success)",
+          fg: "var(--success-fg)",
+        },
+        danger: {
+          DEFAULT: "var(--danger)",
+          hover: "var(--danger-hover)",
+          fg: "var(--danger-fg)",
         },
       },
       fontFamily: {

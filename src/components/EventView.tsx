@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { decodeState, encodeState } from "@/lib/shareUrl";
 import { decodeEventCode } from "@/lib/calendar";
 import { localCityName } from "@/lib/cityName";
+import { IconHome } from "./icons";
 import type { AppLocale } from "@/i18n/routing";
 
 /**
@@ -85,9 +86,7 @@ export default function EventView({
               <div className="min-w-0 flex-1">
                 <span className="flex items-center gap-1.5">
                   {isHome && (
-                    <span className="text-warm-strong" aria-hidden>
-                      ⌂
-                    </span>
+                    <IconHome aria-hidden className="h-3.5 w-3.5 shrink-0 text-warm-strong" />
                   )}
                   <span className="truncate text-sm font-medium text-ink">
                     {localCityName(locale, p)}

@@ -280,7 +280,7 @@ export default async function LandingPage({ params }: Props) {
               <li key={item.slug}>
                 <Link
                   href={`/time-converter/${item.slug}`}
-                  className="text-accent hover:underline"
+                  className="text-accent underline underline-offset-2 hover:text-accent-hover"
                 >
                   {item.label}
                 </Link>
