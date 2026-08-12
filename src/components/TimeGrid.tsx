@@ -307,7 +307,7 @@ export default function TimeGrid() {
           </button>
         </div>
       )}
-      <table className="wt-grid animate-fade-in text-xs">
+      <table className="wt-grid animate-grid-in text-xs">
         <thead>
           <tr>
             <th className="sticky-col sticky left-0 z-10 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-ink">

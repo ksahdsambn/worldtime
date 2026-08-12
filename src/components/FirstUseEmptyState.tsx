@@ -25,7 +25,7 @@ export default function FirstUseEmptyState() {
 
   return (
     <div className="flex min-h-[340px] flex-col items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md space-y-6 text-center">
+      <div className="animate-fade-up w-full max-w-md space-y-6 text-center">
         <div className="space-y-2">
           <div className="text-3xl leading-none" aria-hidden>
             🌐

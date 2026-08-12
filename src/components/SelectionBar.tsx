@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { formatDuration, defaultSep } from "@/lib/duration";
 import { buildIcs, downloadIcs, googleCalendarUrl, mailtoUrl, encodeEventCode } from "@/lib/calendar";
 import { summaryText } from "@/lib/summary";
 import { encodeState, copyText } from "@/lib/shareUrl";
+import { usePresence } from "@/lib/usePresence";
 import type { AppLocale } from "@/i18n/routing";
 
 /**
@@ -31,8 +32,13 @@ export default function SelectionBar() {
     setOrigin(window.location.origin);
   }, []);
 
-  if (!selection) return null;
-  const sel = selection;
+  // 选区清除时延迟卸载，播放退出（下滑 + 淡出）。退出期间仍引用上一次的选区渲染。
+  const presence = usePresence(!!selection, 320);
+  const lastSel = useRef(selection);
+  if (selection) lastSel.current = selection;
+
+  if (!presence.mounted || !lastSel.current) return null;
+  const sel = lastSel.current;
   const eventCode = encodeEventCode(encodeState(places, homeId, sel));
   // origin 在客户端挂载后才有值；未就绪时 eventUrl 为空，事件链接暂不导航
   const eventUrl = origin ? `${origin}/${locale}/event/${eventCode}` : "";
@@ -78,7 +84,10 @@ export default function SelectionBar() {
 
   return (
     <div className="safe-bottom sticky bottom-3 z-30 px-3 no-print">
-      <div className="surface animate-fade-up mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 shadow-lg md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2">
+      <div
+        data-state={presence.state}
+        className="motion-sheet surface mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 shadow-lg md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
+      >
         <div className="flex shrink-0 items-baseline gap-2">
           <span className="text-[11px] uppercase tracking-wide text-faint">
             {t("duration")}

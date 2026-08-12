@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { isDragHintSeen, markDragHintSeen } from "@/lib/onboardingFlags";
+import { usePresence } from "@/lib/usePresence";
 
 /**
  * 拖拽选区上下文提示（渐进式发现）。
@@ -20,6 +21,9 @@ export default function DragHintCoachmark() {
   const places = useWorldTimeStore((s) => s.places);
   const selection = useWorldTimeStore((s) => s.selection);
   const [show, setShow] = useState(false);
+  // 可见 = 未看过且有城市；进出淡入淡出（首次出现更柔和，消失不突兀）
+  const visible = show && places.length > 0;
+  const presence = usePresence(visible, 200);
 
   useEffect(() => {
     if (!isDragHintSeen()) setShow(true);
@@ -33,12 +37,13 @@ export default function DragHintCoachmark() {
     }
   }, [selection]);
 
-  if (!show || places.length === 0) return null;
+  if (!presence.mounted) return null;
 
   return (
     <div
       role="status"
-      className="surface absolute left-1/2 top-3 z-20 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center gap-3 px-3.5 py-2 shadow-md no-print"
+      data-state={presence.state}
+      className="motion-fade surface absolute left-1/2 top-3 z-20 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center gap-3 px-3.5 py-2 shadow-md no-print"
     >
       <span className="text-left text-sm text-ink">{t("dragHint")}</span>
       <button

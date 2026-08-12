@@ -7,6 +7,7 @@ import HelpPopover from "./HelpPopover";
 import SettingsPanel from "./SettingsPanel";
 import ThemeToggle from "./ThemeToggle";
 import GoogleCalendarConnect from "./GoogleCalendarConnect";
+import { usePresence } from "@/lib/usePresence";
 
 /**
  * 顶栏次要操作簇：语言 · 帮助 · 设置 · 主题 · Google 日历。
@@ -23,6 +24,8 @@ export default function HeaderActions() {
   const t = useTranslations("Common");
   const [isDesktop, setIsDesktop] = useState(true);
   const [open, setOpen] = useState(false);
+  // 移动端「⋯」菜单进/出过渡（桌面端不渲染此分支）
+  const presence = usePresence(open, 200);
 
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 768px)");
@@ -67,11 +70,12 @@ export default function HeaderActions() {
       >
         ⋯
       </button>
-      {open && (
+      {presence.mounted && (
         <>
           {/* 遮罩：点击关闭 */}
           <div
-            className="fixed inset-0 z-40"
+            data-state={presence.state}
+            className="motion-overlay fixed inset-0 z-40 bg-black/30"
             onClick={() => setOpen(false)}
             aria-hidden
           />
@@ -81,9 +85,10 @@ export default function HeaderActions() {
           */}
           <div
             id="header-actions-menu"
+            data-state={presence.state}
             role="group"
             aria-label={t("more")}
-            className="surface absolute right-0 top-full z-50 mt-1 w-56 p-3 shadow-lg"
+            className="motion-pop surface absolute right-0 top-full z-50 mt-1 w-56 p-3 shadow-lg"
           >
             <div className="flex flex-col gap-3">
               <LocaleSwitcher />

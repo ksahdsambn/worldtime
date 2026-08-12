@@ -6,6 +6,7 @@ import { CITIES } from "@/data/cities";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import type { CityRecord } from "@/lib/types";
 import { toast } from "@/lib/toast";
+import { usePresence } from "@/lib/usePresence";
 
 /**
  * 将时区与城市偏移（相对 UTC）格式化为 "+8 / -5" 风格。
@@ -45,6 +46,9 @@ export default function CitySearch() {
   const [highlight, setHighlight] = useState(0);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const listboxId = "city-search-listbox";
+  // 下拉可见 = 聚焦/输入且非空查询；进出过渡由 presence 驱动
+  const dropdownVisible = open && query.trim().length > 0;
+  const presence = usePresence(dropdownVisible, 200);
 
   // 卸载时清理 blur 定时器，避免对已卸载组件 setState
   useEffect(() => () => {
@@ -149,11 +153,12 @@ export default function CitySearch() {
         onKeyDown={onKeyDown}
         className="input w-full"
       />
-      {open && query.trim() && (
+      {presence.mounted && (
         <ul
               id={listboxId}
               role="listbox"
-              className="surface absolute z-20 mt-1 max-h-72 w-full overflow-auto p-1 shadow-lg"
+              data-state={presence.state}
+              className="motion-pop motion-pop-left surface absolute z-20 mt-1 max-h-72 w-full overflow-auto p-1 shadow-lg"
             >
               {results.length === 0 && (
                 <li className="px-2.5 py-1.5 text-sm text-faint">{t("noResults")}</li>

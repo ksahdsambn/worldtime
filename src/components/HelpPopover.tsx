@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import HeatmapLegend from "./HeatmapLegend";
+import { usePresence } from "@/lib/usePresence";
 
 /**
  * 应用内「提示」帮助浮层（新访客自助 + 老用户常驻）。
@@ -19,6 +20,8 @@ export default function HelpPopover() {
   const btnRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  // 浮层进/出过渡
+  const presence = usePresence(open, 200);
 
   useEffect(() => {
     if (!open) return;
@@ -74,13 +77,14 @@ export default function HelpPopover() {
         <span aria-hidden>?</span>
       </button>
 
-      {open && (
+      {presence.mounted && (
         <div
           ref={panelRef}
+          data-state={presence.state}
           role="dialog"
           aria-modal="false"
           aria-label={t("title")}
-          className="surface absolute right-0 top-full z-40 mt-1 w-80 max-w-[calc(100vw-1.5rem)] p-4 shadow-lg no-print"
+          className="motion-pop surface absolute right-0 top-full z-40 mt-1 w-80 max-w-[calc(100vw-1.5rem)] p-4 shadow-lg no-print"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-sm font-semibold text-ink">{t("title")}</h2>
