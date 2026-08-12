@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import {
@@ -256,8 +256,12 @@ export default function PlacesPanel() {
   );
 }
 
-/** 可拖拽的地点行（WC-6 拖拽排序）。 */
-function PlaceRow({
+/** 可拖拽的地点行（WC-6 拖拽排序）。
+ *
+ * 用 memo 包裹：父级 places 数组任一变更（如重命名/打标签某行）会触发整个列表
+ * 重渲染，memo 使仅 props 实际变化的行重渲染。传入的 store action、next-intl 的
+ * t/tCom、useDialog 的 prompt/confirm 均为稳定引用，默认浅比较即可正确跳过。 */
+const PlaceRow = memo(function PlaceRow({
   place,
   isHome,
   now,
@@ -310,33 +314,49 @@ function PlaceRow({
   } = useSortable({ id: place.id });
 
   const p = place;
-  const dt = DateTime.fromMillis(now, { zone: p.timeZone });
-  const localHour = dt.hour;
-  const timeStr = nowRaw
-    ? formatClock(p.timeZone, nowRaw, hourFormat, p.countryCode)
-    : "--:--";
-  // 与主地点的偏移（分钟），仅当存在主地点且非主地点自身时计算（TC-7）
-  const offsetMin =
-    home && p.id !== home.id
-      ? diffOffsetMinutes(home.timeZone, p.timeZone, now)
-      : null;
-  const dst = isDST(p.timeZone, now); // TC-8
-  const abbr = timeZoneAbbrev(p.timeZone, now);
-  // DST 预警（6.3）：7 天内将切换则提示
-  const dstWarn = dstChangeWithinDays(p.timeZone, 7, now);
-  // 详情悬浮（6.4）：UTC 偏移、当前是否夏令时、下次切换日期
-  const utcOffset = offsetMinutes(p.timeZone, now);
-  const nextChange = nextDSTChange(p.timeZone, now);
-  const hoverDetail = [
-    `UTC${formatOffset(utcOffset)}`,
-    `${t("dst")}: ${dst ? t("yes") : t("no")}`,
-    nextChange
-      ? `${t("nextChange")}: ${DateTime.fromMillis(nextChange, { zone: p.timeZone }).toFormat("yyyy-MM-dd")}`
-      : t("noUpcoming"),
-  ].join("\n");
-  // 日出日落（6.7）：仅对收录经纬度的城市计算
-  const ll = getLatLng(p.id);
-  const sun = nowRaw && ll ? sunRiseSet(ll.lat, ll.lng, p.timeZone, nowRaw) : null;
+  // 派生时间信息集中 memo：避免兄弟行变动（如重命名其一）导致本行无谓重算
+  // 所有 Luxon / DST / 日出日落计算。昂贵项（nextDSTChange / timeZoneAbbrev）
+  // 已在 lib/time 内部缓存，此处 memo 进一步消除无关重渲染的重复调用。
+  const {
+    localHour,
+    timeStr,
+    offsetMin,
+    dst,
+    abbr,
+    dstWarn,
+    hoverDetail,
+    sun,
+  } = useMemo(() => {
+    const dt = DateTime.fromMillis(now, { zone: p.timeZone });
+    const localHour = dt.hour;
+    const timeStr = nowRaw
+      ? formatClock(p.timeZone, nowRaw, hourFormat, p.countryCode)
+      : "--:--";
+    // 与主地点的偏移（分钟），仅当存在主地点且非主地点自身时计算（TC-7）
+    const offsetMin =
+      home && p.id !== home.id
+        ? diffOffsetMinutes(home.timeZone, p.timeZone, now)
+        : null;
+    const dst = isDST(p.timeZone, now); // TC-8
+    const abbr = timeZoneAbbrev(p.timeZone, now);
+    // DST 预警（6.3）：7 天内将切换则提示
+    const dstWarn = dstChangeWithinDays(p.timeZone, 7, now);
+    // 详情悬浮（6.4）：UTC 偏移、当前是否夏令时、下次切换日期
+    const utcOffset = offsetMinutes(p.timeZone, now);
+    const nextChange = nextDSTChange(p.timeZone, now);
+    const hoverDetail = [
+      `UTC${formatOffset(utcOffset)}`,
+      `${t("dst")}: ${dst ? t("yes") : t("no")}`,
+      nextChange
+        ? `${t("nextChange")}: ${DateTime.fromMillis(nextChange, { zone: p.timeZone }).toFormat("yyyy-MM-dd")}`
+        : t("noUpcoming"),
+    ].join("\n");
+    // 日出日落（6.7）：仅对收录经纬度的城市计算
+    const ll = getLatLng(p.id);
+    const sun = nowRaw && ll ? sunRiseSet(ll.lat, ll.lng, p.timeZone, nowRaw) : null;
+    return { localHour, timeStr, offsetMin, dst, abbr, dstWarn, hoverDetail, sun };
+    // t 入 next-intl 稳定；place/home 为引用，变更时本行确需重算
+  }, [now, nowRaw, p, hourFormat, home, t]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -519,4 +539,4 @@ function PlaceRow({
       </div>
     </li>
   );
-}
+});

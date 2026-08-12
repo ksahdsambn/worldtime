@@ -23,11 +23,20 @@ export function isDST(timeZone: string, ms: number = Date.now()): boolean {
  * 注意：DST 切换发生在本地凌晨 02:00 前后（春进 02:00→03:00、秋退 02:00→01:00），
  * 若以本地午夜（00:00）探测 isInDST，切换日午夜尚未翻转，会误判为「次日」。
  * 故逐日探测固定取当日 12:00（午后，必在切换之后），确保返回切换发生日。
+ *
+ * 性能：纯计算见 nextDSTChangeUncached（逐月×逐日探测，多达 ~360 次 DateTime 构造）；
+ * 本函数在其上做「时区 + fromMs 所在本地日 + maxMonths」的日级结果缓存。DST 切换每年
+ * 至多两次，「now 之后下一次切换」在同一自然日内恒定，按本地日期键缓存安全且命中极高。
+ * 动机：PlacesPanel 每个地点行每 30s 重渲染都调用一次，30 个地点即上万次 DateTime
+ * 分配/分钟——缓存后降为每个时区每日一次真实计算。
  */
-export function nextDSTChange(
+const nextDstCache = new Map<string, number | null>();
+const NEXT_DST_CACHE_MAX = 1000;
+
+function nextDSTChangeUncached(
   timeZone: string,
-  fromMs: number = Date.now(),
-  maxMonths: number = 12,
+  fromMs: number,
+  maxMonths: number,
 ): number | null {
   const start = DateTime.fromMillis(fromMs, { zone: timeZone });
   let dt = start.startOf("month");
@@ -50,6 +59,21 @@ export function nextDSTChange(
     dt = next;
   }
   return null;
+}
+
+export function nextDSTChange(
+  timeZone: string,
+  fromMs: number = Date.now(),
+  maxMonths: number = 12,
+): number | null {
+  const dayKey = DateTime.fromMillis(fromMs, { zone: timeZone }).toISODate();
+  const key = `${timeZone}|${dayKey}|${maxMonths}`;
+  const cached = nextDstCache.get(key);
+  if (cached !== undefined) return cached;
+  const result = nextDSTChangeUncached(timeZone, fromMs, maxMonths);
+  if (nextDstCache.size > NEXT_DST_CACHE_MAX) nextDstCache.clear();
+  nextDstCache.set(key, result);
+  return result;
 }
 
 /** 下一次 DST 切换是否在 days 天内（用于 DST 预警 6.3）。返回切换时刻或 null。 */
@@ -164,15 +188,37 @@ export function formatClock(
   const use12 = fmt === "12" || (fmt === "mixed" && prefers12Hour(countryCode));
   return dt.toFormat(use12 ? "h:mm a" : "HH:mm");
 }
+/**
+ * 时区缩写格式化器缓存。
+ *
+ * Intl.DateTimeFormat 构造昂贵（解析 locale/选项、内部建表），而 timeZoneAbbrev
+ * 在每个地点行每次渲染都被调用。格式化器对同一 (locale, timeZone) 可复用于任意
+ * 日期（缩写随日期变化由 formatToParts 自行处理），故按 locale|timeZone 缓存对象，
+ * 仅保留廉价的 formatToParts 调用。
+ */
+const tzAbbrevFormatterCache = new Map<string, Intl.DateTimeFormat | null>();
+const TZ_ABBREV_LOCALES = ["en-GB", "en-US"];
+
+function tzAbbrevFormatter(locale: string, timeZone: string): Intl.DateTimeFormat | null {
+  const key = locale + "|" + timeZone;
+  if (tzAbbrevFormatterCache.has(key)) return tzAbbrevFormatterCache.get(key)!;
+  let fmt: Intl.DateTimeFormat | null = null;
+  try {
+    fmt = new Intl.DateTimeFormat(locale, { timeZone, timeZoneName: "short" });
+  } catch {
+    fmt = null; // 非法时区 / locale 不可用
+  }
+  tzAbbrevFormatterCache.set(key, fmt);
+  return fmt;
+}
+
 export function timeZoneAbbrev(timeZone: string, ms: number = Date.now()): string | null {
   const date = new Date(ms);
-  const locales = ["en-GB", "en-US"];
-  for (const loc of locales) {
+  for (const loc of TZ_ABBREV_LOCALES) {
+    const fmt = tzAbbrevFormatter(loc, timeZone);
+    if (!fmt) continue;
     try {
-      const parts = new Intl.DateTimeFormat(loc, {
-        timeZone,
-        timeZoneName: "short",
-      }).formatToParts(date);
+      const parts = fmt.formatToParts(date);
       const name = parts.find((p) => p.type === "timeZoneName")?.value;
       if (name && !/^(GMT|UTC)[+-]?/.test(name)) {
         return name;
@@ -185,14 +231,21 @@ export function timeZoneAbbrev(timeZone: string, ms: number = Date.now()): strin
 }
 
 /**
- * 判定某国家是否更倾向十二小时制（用于 mixed 模式）。
+ * 十二小时制国家集合（用于 mixed 模式）。
  * 美国、英国、澳大利亚、加拿大、新西兰、菲律宾、印度、巴基斯坦、孟加拉、埃及
  * 等日常使用十二小时制；其余视为二十四小时制。
+ *
+ * 提升为模块级常量：原实现每次调用都新建 Set，而该函数在网格/列表渲染热路径上
+ * 被频繁调用（每个单元格、每个地点行）。
+ */
+const PREFERS_12HOUR_COUNTRIES = new Set([
+  "US", "GB", "AU", "CA", "NZ", "PH", "IN", "PK", "BD", "EG",
+  "IE", "JM", "TT", "CO", "MY", "NG", "ZA",
+]);
+
+/**
+ * 判定某国家是否更倾向十二小时制（用于 mixed 模式）。
  */
 export function prefers12Hour(countryCode: string): boolean {
-  const set = new Set([
-    "US", "GB", "AU", "CA", "NZ", "PH", "IN", "PK", "BD", "EG",
-    "IE", "JM", "TT", "CO", "MY", "NG", "ZA",
-  ]);
-  return set.has(countryCode.toUpperCase());
+  return PREFERS_12HOUR_COUNTRIES.has(countryCode.toUpperCase());
 }

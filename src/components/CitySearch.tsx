@@ -9,17 +9,37 @@ import { toast } from "@/lib/toast";
 import { usePresence } from "@/lib/usePresence";
 
 /**
+ * 偏移量格式化器缓存。
+ *
+ * Intl.DateTimeFormat 构造昂贵（解析 locale/选项、内部建表），而搜索结果列表每条
+ * 都会调用一次 describeOffset（最多 50 条）。格式化器对同一 timeZone 可复用于任意
+ * 日期（偏移随日期变化由 formatToParts 自行处理），故按 timeZone 缓存对象。
+ */
+const offsetFormatterCache = new Map<string, Intl.DateTimeFormat | null>();
+function getOffsetFormatter(timeZone: string): Intl.DateTimeFormat | null {
+  let f = offsetFormatterCache.get(timeZone);
+  if (f !== undefined) return f;
+  try {
+    f = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      timeZoneName: "shortOffset",
+    });
+  } catch {
+    f = null;
+  }
+  offsetFormatterCache.set(timeZone, f);
+  return f;
+}
+
+/**
  * 将时区与城市偏移（相对 UTC）格式化为 "+8 / -5" 风格。
  * 仅用于搜索结果展示，运行时偏移量计算在步骤 2.7。
  */
 function describeOffset(city: CityRecord): string {
+  const f = getOffsetFormatter(city.timeZone);
+  if (!f) return "";
   try {
-    const now = new Date();
-    const local = new Intl.DateTimeFormat("en-US", {
-      timeZone: city.timeZone,
-      timeZoneName: "shortOffset",
-    });
-    const parts = local.formatToParts(now);
+    const parts = f.formatToParts(new Date());
     const tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
     // tz 形如 "GMT+8" / "GMT-05"
     const m = tz.match(/GMT([+-]\d{1,2})(?::(\d{2}))?/);
@@ -34,6 +54,30 @@ function describeOffset(city: CityRecord): string {
     return "";
   }
 }
+
+/**
+ * 搜索索引：预计算每座城市的「小写字段串」，避免每次按键都对全部 1200+ 城市
+ * 反复 .toLowerCase()（原实现每次查询 ~7200 次字符串小写化 + 两趟 filter/map）。
+ * 模块加载时一次性构建，查询时仅做 includes 与单趟遍历。
+ */
+interface SearchEntry {
+  c: CityRecord;
+  nameZh: string;
+  nameEn: string;
+  countryZh: string;
+  countryEn: string;
+  timeZone: string;
+  id: string;
+}
+const SEARCH_INDEX: SearchEntry[] = CITIES.map((c) => ({
+  c,
+  nameZh: c.nameZh.toLowerCase(),
+  nameEn: c.nameEn.toLowerCase(),
+  countryZh: c.countryZh.toLowerCase(),
+  countryEn: c.countryEn.toLowerCase(),
+  timeZone: c.timeZone.toLowerCase(),
+  id: c.id.toLowerCase(),
+}));
 
 export default function CitySearch() {
   const t = useTranslations("CitySearch");
@@ -64,30 +108,20 @@ export default function CitySearch() {
     // includes，结果按 nameEn 字母序排列，名字命中与国家/时区命中并列，相关性差——
     // 搜 "东京/Tokyo" 时名字匹配的城市应优先于时区里含这些字母的城市）。
     // 现按「字段优先级」排序：名字命中 < 国家命中 < 时区/id 命中；同级按 nameEn 字母序。
-    const ranked = CITIES.filter((c) => {
-      if (added.has(c.id)) return false;
-      const nameHit =
-        c.nameZh.toLowerCase().includes(q) ||
-        c.nameEn.toLowerCase().includes(q);
-      const countryHit =
-        c.countryZh.toLowerCase().includes(q) ||
-        c.countryEn.toLowerCase().includes(q);
-      const zoneHit =
-        c.timeZone.toLowerCase().includes(q) ||
-        c.id.toLowerCase().includes(q);
-      return nameHit || countryHit || zoneHit;
-    }).map((c) => {
-      const nameHit =
-        c.nameZh.toLowerCase().includes(q) ||
-        c.nameEn.toLowerCase().includes(q);
-      const countryHit =
-        c.countryZh.toLowerCase().includes(q) ||
-        c.countryEn.toLowerCase().includes(q);
-      // 优先级数值：0=名字命中，1=国家命中，2=仅时区/id 命中
-      const rank = nameHit ? 0 : countryHit ? 1 : 2;
-      return { c, rank };
-    });
-
+    // 单趟遍历预构建的小写索引，避免重复 toLowerCase 与 filter+map 双趟。
+    const ranked: Array<{ c: CityRecord; rank: number }> = [];
+    for (const e of SEARCH_INDEX) {
+      if (added.has(e.c.id)) continue;
+      const nameHit = e.nameZh.includes(q) || e.nameEn.includes(q);
+      const countryHit = e.countryZh.includes(q) || e.countryEn.includes(q);
+      if (nameHit) {
+        ranked.push({ c: e.c, rank: 0 });
+      } else if (countryHit) {
+        ranked.push({ c: e.c, rank: 1 });
+      } else if (e.timeZone.includes(q) || e.id.includes(q)) {
+        ranked.push({ c: e.c, rank: 2 });
+      }
+    }
     ranked.sort((a, b) => {
       if (a.rank !== b.rank) return a.rank - b.rank;
       return a.c.nameEn.localeCompare(b.c.nameEn);
