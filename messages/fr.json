@@ -1,7 +1,9 @@
 {
   "App": {
     "title": "WorldTime",
-    "tagline": "Horloge mondiale / convertisseur de fuseaux horaires / planificateur de réunions"
+    "tagline": "Horloge mondiale / convertisseur de fuseaux horaires / planificateur de réunions",
+    "homeTitle": "WorldTime — Horloge mondiale, convertisseur de fuseaux horaires et planificateur de réunions",
+    "homeDescription": "Horloge mondiale et convertisseur de fuseaux horaires gratuits. Comparez l'heure locale entre villes, planifiez vos réunions internationales et organisez votre agenda entre fuseaux avec prise en charge automatique de l'heure d'été."
   },
   "Common": {
     "add": "Ajouter",
@@ -128,7 +130,27 @@
     "bNote": "{b} est {dir} par rapport à {a}.",
     "currentOffsetNote": "(décalage actuel ; peut différer les jours de passage à l'heure d'été)",
     "comparisonNote": "Comparaison typique des heures (décalage fixe).",
-    "updatedAt": "Généré à {time} (actualisé toutes les heures)."
+    "updatedAt": "Généré à {time} (actualisé toutes les heures).",
+    "metaDescription": "Décalage horaire entre {a} et {b} : décalage de fuseau en direct, tableau de comparaison heure par heure et planification de réunions avec heure d'été. Voyez quelle heure il est à {b} maintenant.",
+    "intro": "Convertir l'heure entre {a} et {b} : consultez le décalage horaire actuel, une comparaison complète heure par heure et l'application de l'heure d'été, pour organiser appels, réunions et déplacements entre les deux lieux.",
+    "dirAhead": "en avance sur",
+    "dirBehind": "en retard sur",
+    "faqTitle": "Questions fréquentes",
+    "faq": [
+      {
+        "q": "Quelle est la différence d'heure entre {a} et {b} ?",
+        "a": "{b} est {offset} heures {dir} {a}. C'est le décalage actuel ; les jours de passage à l'heure d'été, certaines heures peuvent différer d'une heure."
+      },
+      {
+        "q": "{a} ou {b} appliquent-ils l'heure d'été ?",
+        "a": "WorldTime détecte l'heure d'été automatiquement pour chaque ville. Le tableau de comparaison reflète déjà le décalage réel de chaque jour."
+      },
+      {
+        "q": "Quelle est la meilleure heure pour une réunion entre {a} et {b} ?",
+        "a": "Ouvrez la page d'accueil, ajoutez les deux villes et utilisez la carte de chaleur pour trouver les heures de travail communes, puis exportez la plage vers votre calendrier."
+      }
+    ],
+    "relatedTitle": "Convertisseurs de fuseau horaire associés"
   },
   "Widget": {
     "eventTitle": "Widget d'événement WorldTime",
@@ -140,6 +162,79 @@
   "Seo": {
     "introTitle": "Horloge mondiale et convertisseur de fuseaux horaires",
     "introBody": "WorldTime est une horloge mondiale, un convertisseur de fuseaux horaires et un planificateur de réunions gratuit. Comparez l'heure locale entre villes et fuseaux horaires, trouvez les meilleures plages pour vos réunions internationales et partagez vos sélections horaires avec prise en charge automatique de l'heure d'été (DST).",
-    "popularTitle": "Convertisseurs de fuseau horaire populaires"
+    "popularTitle": "Convertisseurs de fuseau horaire populaires",
+    "featuresTitle": "Fonctionnalités principales",
+    "features": [
+      {
+        "title": "Horloge mondiale",
+        "desc": "Affichez l'heure locale actuelle des villes et fuseaux horaires du monde entier, côte à côte."
+      },
+      {
+        "title": "Convertisseur de fuseaux horaires",
+        "desc": "Convertit n'importe quelle heure entre deux villes ou fuseaux et donne le décalage en temps réel."
+      },
+      {
+        "title": "Planificateur de réunions",
+        "desc": "Choisissez une heure une fois et voyez instantanément les heures locales de chaque participant."
+      },
+      {
+        "title": "Compatible heure d'été",
+        "desc": "Les passages à l'heure d'été sont détectés automatiquement, le décalage reste correct toute l'année."
+      },
+      {
+        "title": "11 langues",
+        "desc": "L'interface, les villes et les fuseaux horaires sont traduits en 11 langues."
+      },
+      {
+        "title": "Gratuit, sans inscription",
+        "desc": "Sans compte, sans installation, sans paywall. Ouvrez la page et commencez à comparer les heures."
+      }
+    ],
+    "useCasesTitle": "Cas d'usage",
+    "useCases": [
+      {
+        "title": "Équipes distantes distribuées",
+        "desc": "Trouvez les créneaux communs entre collègues de fuseaux différents et choisissez des heures qui conviennent à tous."
+      },
+      {
+        "title": "Voyages internationaux",
+        "desc": "Vérifiez l'heure de votre destination avant de partir et planifiez vos appels vers chez vous."
+      },
+      {
+        "title": "Forex et trading",
+        "desc": "Suivez d'un coup d'œil les heures d'ouverture de Londres, New York, Tokyo et Sydney."
+      },
+      {
+        "title": "Support global et Follow-the-Sun",
+        "desc": "Transférez les relèves entre régions et sachez toujours qui est en service."
+      },
+      {
+        "title": "Réunions intersites",
+        "desc": "Planifiez des réunions entre bureaux sans calcul mental ni erreur d'une heure."
+      }
+    ],
+    "faqTitle": "Questions fréquentes",
+    "faq": [
+      {
+        "q": "Comment comparer l'heure de deux villes ?",
+        "a": "Ajoutez les villes via la barre de recherche et la grille affiche chaque heure côte à côte, avec le décalage en temps réel."
+      },
+      {
+        "q": "WorldTime gère-t-il l'heure d'été ?",
+        "a": "Oui. Les passages à l'heure d'été sont détectés automatiquement pour chaque ville, le décalage reste correct les jours de changement."
+      },
+      {
+        "q": "Comment trouver la meilleure heure pour une réunion internationale ?",
+        "a": "Ajoutez les villes de tous les participants, puis utilisez la carte de chaleur pour trouver des créneaux où personne ne dort. Sélectionnez une plage pour l'exporter vers votre calendrier."
+      },
+      {
+        "q": "WorldTime est-il gratuit ?",
+        "a": "Oui, WorldTime est entièrement gratuit, fonctionne dans le navigateur et ne nécessite pas de compte."
+      },
+      {
+        "q": "L'heure affichée est-elle en temps réel ?",
+        "a": "L'heure actuelle se met à jour en direct dans votre navigateur. Les pages de conversion actualisent leurs tableaux toutes les heures."
+      }
+    ]
   }
 }

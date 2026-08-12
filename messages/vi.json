@@ -1,7 +1,9 @@
 {
   "App": {
     "title": "WorldTime",
-    "tagline": "Đồng hồ thế giới / chuyển đổi múi giờ / lập lịch họp"
+    "tagline": "Đồng hồ thế giới / chuyển đổi múi giờ / lập lịch họp",
+    "homeTitle": "WorldTime — Đồng hồ thế giới, trình chuyển đổi múi giờ và lên lịch họp",
+    "homeDescription": "Đồng hồ thế giới và trình chuyển đổi múi giờ miễn phí. So sánh giờ địa phương giữa các thành phố, lên lịch họp quốc tế và sắp xếp thời gian biểu giữa các múi giờ với hỗ trợ giờ mùa hè tự động."
   },
   "Common": {
     "add": "Thêm",
@@ -128,7 +130,27 @@
     "bNote": "{b} {dir} so với {a}.",
     "currentOffsetNote": "(chênh lệch hiện tại; có thể khác trong ngày chuyển giờ mùa hè)",
     "comparisonNote": "So sánh giờ tiêu biểu (chênh lệch cố định).",
-    "updatedAt": "Tạo lúc {time} (cập nhật mỗi giờ)."
+    "updatedAt": "Tạo lúc {time} (cập nhật mỗi giờ).",
+    "metaDescription": "Chênh lệch giờ giữa {a} và {b}: độ bù múi giờ trực tiếp, bảng so sánh từng giờ và lên lịch họp có hỗ trợ giờ mùa hè. Xem ngay bây giờ là mấy giờ ở {b}.",
+    "intro": "Chuyển đổi giờ giữa {a} và {b}: xem chênh lệch giờ hiện tại (độ bù), bảng so sánh từng giờ đầy đủ và việc có áp dụng giờ mùa hè, để sắp xếp cuộc gọi, họp và chuyến đi giữa hai địa điểm.",
+    "dirAhead": "nhanh hơn",
+    "dirBehind": "chậm hơn",
+    "faqTitle": "Câu hỏi thường gặp",
+    "faq": [
+      {
+        "q": "Chênh lệch giờ giữa {a} và {b} là bao nhiêu?",
+        "a": "{b} {dir} {a} {offset} giờ. Đây là độ bù hiện tại; vào ngày chuyển đổi giờ mùa hè một số giờ có thể lệch một giờ."
+      },
+      {
+        "q": "{a} hay {b} có dùng giờ mùa hè không?",
+        "a": "WorldTime tự động phát hiện giờ mùa hè cho từng thành phố. Bảng so sánh đã phản ánh độ bù thực của từng ngày."
+      },
+      {
+        "q": "Giờ tốt nhất cho cuộc họp giữa {a} và {b}?",
+        "a": "Mở trang chủ, thêm cả hai thành phố và dùng bản đồ nhiệt tìm giờ làm việc chồng lấp, sau đó xuất khung giờ sang lịch."
+      }
+    ],
+    "relatedTitle": "Trình chuyển đổi múi giờ liên quan"
   },
   "Widget": {
     "eventTitle": "Tiện ích sự kiện WorldTime",
@@ -140,6 +162,79 @@
   "Seo": {
     "introTitle": "Đồng hồ thế giới và trình chuyển đổi múi giờ",
     "introBody": "WorldTime là công cụ đồng hồ thế giới, chuyển đổi múi giờ và lên lịch họp miễn phí. So sánh giờ địa phương giữa các thành phố và múi giờ, tìm khung giờ phù hợp cho các cuộc họp quốc tế và chia sẻ lựa chọn thời gian với hỗ trợ tự động giờ mùa hè (DST).",
-    "popularTitle": "Trình chuyển đổi múi giờ phổ biến"
+    "popularTitle": "Trình chuyển đổi múi giờ phổ biến",
+    "featuresTitle": "Tính năng chính",
+    "features": [
+      {
+        "title": "Đồng hồ thế giới",
+        "desc": "Xem giờ địa phương hiện tại của các thành phố và múi giờ trên toàn thế giới, xếp cạnh nhau."
+      },
+      {
+        "title": "Chuyển đổi múi giờ",
+        "desc": "Chuyển đổi bất kỳ giờ nào giữa hai thành phố hoặc múi giờ và nhận độ lệch theo thời gian thực."
+      },
+      {
+        "title": "Lên lịch họp",
+        "desc": "Chọn giờ một lần và xem ngay giờ địa phương của từng người tham gia."
+      },
+      {
+        "title": "Hỗ trợ giờ mùa hè",
+        "desc": "Giờ mùa hè được phát hiện tự động nên độ lệch luôn đúng quanh năm."
+      },
+      {
+        "title": "11 ngôn ngữ",
+        "desc": "Giao diện, thành phố và múi giờ được dịch đầy đủ sang 11 ngôn ngữ."
+      },
+      {
+        "title": "Miễn phí, không cần đăng ký",
+        "desc": "Không tài khoản, không cài đặt, không trả phí. Mở trang là có thể so sánh giờ ngay."
+      }
+    ],
+    "useCasesTitle": "Trường hợp sử dụng",
+    "useCases": [
+      {
+        "title": "Nhóm từ xa phân tán",
+        "desc": "Tìm khoảng giao thoa giữa đồng nghiệp ở các múi giờ khác nhau và chọn giờ phù hợp với tất cả."
+      },
+      {
+        "title": "Du lịch quốc tế",
+        "desc": "Kiểm tra giờ tại điểm đến trước khi bay và lên kế hoạch gọi về nhà."
+      },
+      {
+        "title": "Forex & giao dịch",
+        "desc": "Theo dõi nhanh giờ giao dịch của London, New York, Tokyo và Sydney."
+      },
+      {
+        "title": "Hỗ trợ toàn cầu & Follow-the-sun",
+        "desc": "Bàn giao ca giữa các khu vực và luôn biết ai đang trực."
+      },
+      {
+        "title": "Đặt họp giữa các văn phòng",
+        "desc": "Đặt lịch họp giữa các văn phòng không cần tính nhẩm hay sai lệch một giờ."
+      }
+    ],
+    "faqTitle": "Câu hỏi thường gặp",
+    "faq": [
+      {
+        "q": "Làm sao để so sánh giờ ở hai thành phố?",
+        "a": "Thêm thành phố qua ô tìm kiếm, lưới thời gian sẽ hiển thị từng giờ cạnh nhau cùng độ lệch theo thời gian thực."
+      },
+      {
+        "q": "WorldTime có hỗ trợ giờ mùa hè không?",
+        "a": "Có. Việc chuyển đổi giờ mùa hè được phát hiện tự động cho từng thành phố, nên độ lệch đúng cả những ngày đổi giờ."
+      },
+      {
+        "q": "Tìm giờ tốt nhất cho cuộc họp quốc tế thế nào?",
+        "a": "Thêm thành phố của mọi người, dùng bản đồ nhiệt để tìm khung giờ không ai ngủ. Chọn khung và xuất sang lịch."
+      },
+      {
+        "q": "WorldTime có miễn phí không?",
+        "a": "Có, WorldTime hoàn toàn miễn phí, chạy trên trình duyệt và không cần tài khoản."
+      },
+      {
+        "q": "Giờ hiển thị có theo thời gian thực không?",
+        "a": "Giờ hiện tại cập nhật trực tiếp trong trình duyệt. Các trang chuyển đổi làm mới bảng mỗi giờ."
+      }
+    ]
   }
 }

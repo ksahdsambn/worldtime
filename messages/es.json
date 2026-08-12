@@ -1,7 +1,9 @@
 {
   "App": {
     "title": "WorldTime",
-    "tagline": "Reloj mundial / conversor de zonas horarias / planificador de reuniones"
+    "tagline": "Reloj mundial / conversor de zonas horarias / planificador de reuniones",
+    "homeTitle": "WorldTime — Reloj mundial, conversor de zonas horarias y planificador de reuniones",
+    "homeDescription": "Reloj mundial y conversor de zonas horarias gratuito. Compara la hora local entre ciudades, planifica reuniones internacionales y organiza tu agenda entre zonas horarias con soporte automático del horario de verano."
   },
   "Common": {
     "add": "Añadir",
@@ -128,7 +130,27 @@
     "bNote": "{b} está {dir} respecto a {a}.",
     "currentOffsetNote": "(diferencia actual; puede variar los días de cambio de horario de verano)",
     "comparisonNote": "Comparación típica de horas (diferencia fija).",
-    "updatedAt": "Generado a las {time} (actualizado cada hora)."
+    "updatedAt": "Generado a las {time} (actualizado cada hora).",
+    "metaDescription": "Diferencia horaria entre {a} y {b}: desfase de zona horaria en vivo, tabla de comparación hora por hora y planificación de reuniones con horario de verano. Consulta qué hora es ahora en {b}.",
+    "intro": "Convierte la hora entre {a} y {b}: consulta la diferencia horaria actual (desfase), una comparación completa hora por hora y si aplica el horario de verano. Úsalo para organizar llamadas, reuniones y viajes entre ambas ubicaciones.",
+    "dirAhead": "por delante de",
+    "dirBehind": "por detrás de",
+    "faqTitle": "Preguntas frecuentes",
+    "faq": [
+      {
+        "q": "¿Cuál es la diferencia horaria entre {a} y {b}?",
+        "a": "{b} está {offset} horas {dir} {a}. Es el desfase actual; en los días de cambio de horario de verano algunas horas pueden diferir en una hora."
+      },
+      {
+        "q": "¿{a} o {b} tienen horario de verano?",
+        "a": "WorldTime detecta el horario de verano automáticamente para cada ciudad. La tabla de comparación ya refleja el desfase real de cada día."
+      },
+      {
+        "q": "¿Cuál es la mejor hora para una reunión entre {a} y {b}?",
+        "a": "Abre la página principal, añade ambas ciudades y usa el mapa de calor para encontrar horas laborables que se solapen; luego exporta la franja al calendario."
+      }
+    ],
+    "relatedTitle": "Conversores de zona horaria relacionados"
   },
   "Widget": {
     "eventTitle": "Widget de eventos de WorldTime",
@@ -140,6 +162,79 @@
   "Seo": {
     "introTitle": "Reloj mundial y conversor de zonas horarias",
     "introBody": "WorldTime es un reloj mundial, conversor de zonas horarias y organizador de reuniones gratuito. Compara la hora local entre ciudades y zonas horarias, encuentra las mejores horas para reuniones internacionales y comparte selecciones de hora con soporte automático del horario de verano (DST).",
-    "popularTitle": "Conversores de zona horaria populares"
+    "popularTitle": "Conversores de zona horaria populares",
+    "featuresTitle": "Funciones principales",
+    "features": [
+      {
+        "title": "Reloj mundial",
+        "desc": "Consulta la hora local actual de ciudades y zonas horarias de todo el mundo, una al lado de otra."
+      },
+      {
+        "title": "Conversor de zonas horarias",
+        "desc": "Convierte cualquier hora entre dos ciudades o zonas y obtén la diferencia en tiempo real."
+      },
+      {
+        "title": "Planificador de reuniones",
+        "desc": "Elige una hora una vez y ve al instante las horas locales de cada participante."
+      },
+      {
+        "title": "Compatible con horario de verano",
+        "desc": "Los cambios de horario de verano se detectan automáticamente, por lo que la diferencia es correcta todo el año."
+      },
+      {
+        "title": "11 idiomas",
+        "desc": "La interfaz, las ciudades y las zonas horarias están traducidas a 11 idiomas."
+      },
+      {
+        "title": "Gratis y sin registro",
+        "desc": "Sin cuenta, sin instalación y sin pago. Abre la página y empieza a comparar horas."
+      }
+    ],
+    "useCasesTitle": "Casos de uso",
+    "useCases": [
+      {
+        "title": "Equipos remotos distribuidos",
+        "desc": "Encuentra el solapamiento entre compañeros de distintas zonas y elige horas que sirvan para todos."
+      },
+      {
+        "title": "Viajes internacionales",
+        "desc": "Comprueba la hora de tu destino antes de volar y planifica las llamadas a casa."
+      },
+      {
+        "title": "Forex y trading",
+        "desc": "Controla de un vistazo el horario de mercado de Londres, Nueva York, Tokio y Sídney."
+      },
+      {
+        "title": "Soporte global y turno Follow-the-Sun",
+        "desc": "Pasa turnos entre regiones y siempre sabe quién está trabajando."
+      },
+      {
+        "title": "Reuniones entre oficinas",
+        "desc": "Agenda reuniones entre oficinas sin cálculos mentales ni errores de una hora."
+      }
+    ],
+    "faqTitle": "Preguntas frecuentes",
+    "faq": [
+      {
+        "q": "¿Cómo comparo la hora de dos ciudades?",
+        "a": "Añade las ciudades con el buscador y la cuadrícula muestra cada hora una al lado de otra, con la diferencia en tiempo real."
+      },
+      {
+        "q": "¿WorldTime tiene en cuenta el horario de verano?",
+        "a": "Sí. Los cambios de horario de verano se detectan automáticamente para cada ciudad, por lo que la diferencia es correcta también en los días de cambio."
+      },
+      {
+        "q": "¿Cómo encuentro la mejor hora para una reunión internacional?",
+        "a": "Añade las ciudades de todos los participantes y usa el mapa de calor para encontrar horas en las que nadie esté dormido. Selecciona una franja para exportarla al calendario."
+      },
+      {
+        "q": "¿Es gratis WorldTime?",
+        "a": "Sí, WorldTime es totalmente gratuito, funciona en el navegador y no necesita cuenta."
+      },
+      {
+        "q": "¿La hora que se muestra es en tiempo real?",
+        "a": "La hora actual se actualiza en vivo en tu navegador. Las páginas de conversión actualizan sus tablas cada hora."
+      }
+    ]
   }
 }

@@ -1,7 +1,9 @@
 {
   "App": {
     "title": "WorldTime",
-    "tagline": "Weltuhr / Zeitzonen-Rechner / Meeting-Planer"
+    "tagline": "Weltuhr / Zeitzonen-Rechner / Meeting-Planer",
+    "homeTitle": "WorldTime — Weltuhr, Zeitzonenkonverter und Meeting-Planer",
+    "homeDescription": "Kostenlose Weltuhr und Zeitzonenkonverter. Vergleichen Sie die Ortszeit zwischen Städten, planen Sie internationale Meetings und organisieren Sie Termine über Zeitzonen hinweg mit automatischer Sommerzeit-Unterstützung."
   },
   "Common": {
     "add": "Hinzufügen",
@@ -128,7 +130,27 @@
     "bNote": "{b} ist {dir} gegenüber {a}.",
     "currentOffsetNote": "(aktueller Versatz; kann an Sommerzeitumstellungstagen abweichen)",
     "comparisonNote": "Typischer Stundenvergleich (fester Versatz).",
-    "updatedAt": "Erzeugt um {time} (stündlich aktualisiert)."
+    "updatedAt": "Erzeugt um {time} (stündlich aktualisiert).",
+    "metaDescription": "Zeitunterschied zwischen {a} und {b}: Live-Zeitzonenversatz, stündliche Vergleichstabelle und sommerzeitfähige Meeting-Planung. Sehen Sie sofort, wie spät es jetzt in {b} ist.",
+    "intro": "Zeit zwischen {a} und {b} umrechnen: aktueller Zeitunterschied (Versatz), ein vollständiger stündlicher Vergleich und ob Sommerzeit gilt – für Anrufe, Meetings und Reisen zwischen beiden Orten.",
+    "dirAhead": "vor",
+    "dirBehind": "hinter",
+    "faqTitle": "Häufige Fragen",
+    "faq": [
+      {
+        "q": "Wie groß ist der Zeitunterschied zwischen {a} und {b}?",
+        "a": "{b} liegt {offset} Stunden {dir} {a}. Das ist der aktuelle Versatz; an Sommerzeitumstellungstagen können einige Stunden um eine Stunde abweichen."
+      },
+      {
+        "q": "Gelten in {a} oder {b} Sommerzeit?",
+        "a": "WorldTime erkennt die Sommerzeit automatisch für jede Stadt. Die Vergleichstabelle spiegelt bereits den tatsächlichen Versatz jedes Tages wider."
+      },
+      {
+        "q": "Wann ist die beste Zeit für ein Meeting zwischen {a} und {b}?",
+        "a": "Öffnen Sie die Startseite, fügen Sie beide Städte hinzu und nutzen Sie die Heatmap für gemeinsame Arbeitszeiten; exportieren Sie das Fenster dann in den Kalender."
+      }
+    ],
+    "relatedTitle": "Verwandte Zeitzonenkonverter"
   },
   "Widget": {
     "eventTitle": "WorldTime Veranstaltungs-Widget",
@@ -140,6 +162,79 @@
   "Seo": {
     "introTitle": "Weltuhr und Zeitzonenkonverter",
     "introBody": "WorldTime ist eine kostenlose Weltuhr, Zeitzonenkonverter und Terminplaner. Vergleichen Sie die Ortszeit zwischen Städten und Zeitzonen, finden Sie die besten Stunden für internationale Meetings und teilen Sie Zeitauswahlen mit automatischer Sommerzeit-Unterstützung (DST).",
-    "popularTitle": "Beliebte Zeitzonenkonverter"
+    "popularTitle": "Beliebte Zeitzonenkonverter",
+    "featuresTitle": "Hauptfunktionen",
+    "features": [
+      {
+        "title": "Weltuhr",
+        "desc": "Sehen Sie die aktuelle Ortszeit von Städten und Zeitzonen weltweit, Seite an Seite."
+      },
+      {
+        "title": "Zeitzonenkonverter",
+        "desc": "Rechnen Sie jede Zeit zwischen zwei Städten oder Zonen um und erhalten Sie den Versatz in Echtzeit."
+      },
+      {
+        "title": "Meeting-Planer",
+        "desc": "Wählen Sie einmal eine Uhrzeit und sehen Sie sofort die passende Ortszeit jedes Teilnehmers."
+      },
+      {
+        "title": "Sommerzeitfähig",
+        "desc": "Sommerzeitumstellungen werden automatisch erkannt, der Versatz bleibt das ganze Jahr korrekt."
+      },
+      {
+        "title": "11 Sprachen",
+        "desc": "Oberfläche, Städte und Zeitzonen sind vollständig in 11 Sprachen übersetzt."
+      },
+      {
+        "title": "Kostenlos, ohne Anmeldung",
+        "desc": "Kein Konto, keine Installation, keine Paywall. Seite öffnen und sofort Zeiten vergleichen."
+      }
+    ],
+    "useCasesTitle": "Anwendungsfälle",
+    "useCases": [
+      {
+        "title": "Verteilte Remote-Teams",
+        "desc": "Finden Sie die Überschneidung zwischen Teamkollegen in verschiedenen Zonen und wählen Sie passende Uhrzeiten."
+      },
+      {
+        "title": "Internationales Reisen",
+        "desc": "Prüfen Sie die Zeit am Zielort vor dem Flug und planen Sie Anrufe nach Hause."
+      },
+      {
+        "title": "Forex & Trading",
+        "desc": "Behalten Sie die Handelszeiten von London, New York, Tokio und Sydney auf einen Blick."
+      },
+      {
+        "title": "Globaler Support & Follow-the-Sun",
+        "desc": "Geben Sie Schichten zwischen Regionen weiter und wissen Sie immer, wer Dienst hat."
+      },
+      {
+        "title": "Standortübergreifende Meetings",
+        "desc": "Buchen Sie Meetings zwischen Büros ohne Kopfrechnen oder Ein-Stunden-Fehler."
+      }
+    ],
+    "faqTitle": "Häufige Fragen",
+    "faq": [
+      {
+        "q": "Wie vergleiche ich die Zeit in zwei Städten?",
+        "a": "Fügen Sie die Städte über das Suchfeld hinzu, und das Raster zeigt jede Stunde Seite an Seite mit dem Versatz in Echtzeit."
+      },
+      {
+        "q": "Berücksichtigt WorldTime die Sommerzeit?",
+        "a": "Ja. Sommerzeitumstellungen werden automatisch pro Stadt erkannt, der Versatz stimmt auch an Umstellungstagen."
+      },
+      {
+        "q": "Wie finde ich die beste Zeit für ein internationales Meeting?",
+        "a": "Fügen Sie die Städte aller Teilnehmer hinzu und nutzen Sie die Heatmap, um Stunden ohne Schlafende zu finden. Wählen Sie ein Fenster und exportieren Sie es in den Kalender."
+      },
+      {
+        "q": "Ist WorldTime kostenlos?",
+        "a": "Ja, WorldTime ist komplett kostenlos, läuft im Browser und benötigt kein Konto."
+      },
+      {
+        "q": "Ist die angezeigte Zeit echtzeitig?",
+        "a": "Die aktuelle Zeit aktualisiert sich live im Browser. Die Konverterseiten aktualisieren ihre Tabellen stündlich."
+      }
+    ]
   }
 }

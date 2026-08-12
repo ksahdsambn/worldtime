@@ -12,12 +12,47 @@ import {
   buildAlternates,
   buildOpenGraph,
   webAppJsonLd,
+  faqPageJsonLd,
   localeUrl,
 } from "@/lib/seo";
+import { Link } from "@/i18n/navigation";
+import { CITY_BY_ID } from "@/data/cities";
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>;
 };
+
+/** 着陆页 FAQ 占位符替换：模板仅含简单 {var}（无 ICU plural/select），手工替换即安全。 */
+function interpFaq(
+  tpl: string,
+  vars: { a: string; b: string; offset: string; dir: string },
+): string {
+  return tpl
+    .replaceAll("{a}", vars.a)
+    .replaceAll("{b}", vars.b)
+    .replaceAll("{offset}", vars.offset)
+    .replaceAll("{dir}", vars.dir);
+}
+
+/**
+ * 相关转换器互链：返回热门配对（排除当前 slug），供着陆页底部内链，
+ * 增强站内链接权重传递。城市对显示英文名，时区对显示缩写。
+ */
+function relatedConverterLinks(currentSlug: string): Array<{ slug: string; label: string }> {
+  const city = POPULAR_CITY_PAIRS.map(([a, b]) => {
+    const ca = CITY_BY_ID[a];
+    const cb = CITY_BY_ID[b];
+    return {
+      slug: `${a}--${b}`,
+      label: ca && cb ? `${ca.nameEn} ↔ ${cb.nameEn}` : `${a} ↔ ${b}`,
+    };
+  });
+  const tz = POPULAR_TZ_PAIRS.map(([a, b]) => ({
+    slug: `${a}--${b}`,
+    label: `${a} ↔ ${b}`,
+  }));
+  return [...city, ...tz].filter((x) => x.slug !== currentSlug);
+}
 
 /**
  * SEO 着陆页（第五章 LP-1~5）。
@@ -36,6 +71,7 @@ type Props = {
  *
  * SEO：每页输出 canonical + 全语言 hreflang（含 x-default），用同名 slug
  * 把 11 语言版本收束到同一组对照页，避免重复内容惩罚。
+ * 第 14 轮：补充关键词引言段、FAQ（→ FAQPage JSON-LD）、相关转换器互链。
  */
 
 export function generateStaticParams() {
@@ -81,7 +117,8 @@ export async function generateMetadata({
   }
   // title 仅声明页面名，品牌后缀由 layout template 追加（避免重复品牌）
   const title = `${info.aLabel} ↔ ${info.bLabel} · ${t("title")}`;
-  const description = `${info.aLabel} - ${info.bLabel}: ${t("description")}`;
+  // 第 14 轮：description 改为独立成句的 metaDescription 模板（含 {a}/{b}）。
+  const description = t("metaDescription", { a: info.aLabel, b: info.bLabel });
   return {
     title,
     description,
@@ -125,6 +162,22 @@ export default async function LandingPage({ params }: Props) {
 
   const pageTitle = `${info.aLabel} ↔ ${info.bLabel} · ${t("title")}`;
 
+  // FAQ：模板含 {a}/{b}/{offset}/{dir} 占位符，用当前配对的真实时差填充。
+  // offset 取绝对值（带单位由各语言模板负责），方向由 {dir} 单独表达，
+  // 避免「-12 落后」这类符号与方向词同时出现的语义冗余。
+  // formatOffset 对正数会带前导 "+"，这里去掉，得到纯数值（如 "12" / "5:30"）。
+  const faqRaw = t.raw("faq") as Array<{ q: string; a: string }>;
+  const faqVars = {
+    a: info.aLabel,
+    b: info.bLabel,
+    offset: formatOffset(Math.abs(diff)).replace(/^\+/, ""),
+    dir: bAhead ? t("dirAhead") : t("dirBehind"),
+  };
+  const faqItems = faqRaw.map((it) => ({
+    q: interpFaq(it.q, faqVars),
+    a: interpFaq(it.a, faqVars),
+  }));
+
   return (
     <main className="p-6 prose max-w-2xl">
       <h1>
@@ -140,6 +193,8 @@ export default async function LandingPage({ params }: Props) {
       <p className="text-sm text-gray-600">
         {t("bNote", { b: info.bLabel, a: info.aLabel, dir: t(bAhead ? "aheadNote" : "behindNote") })}
       </p>
+      {/* 关键词导向引言段（含 {a}/{b}） */}
+      <p>{t("intro", { a: info.aLabel, b: info.bLabel })}</p>
 
       <h2>{t("timeComparison")}</h2>
       <p className="text-xs text-gray-500 mb-1">{t("comparisonNote")}</p>
@@ -170,12 +225,43 @@ export default async function LandingPage({ params }: Props) {
         </p>
       )}
 
+      {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
+      <h2>{t("faqTitle")}</h2>
+      <ul className="list-none pl-0">
+        {faqItems.map((item) => (
+          <li key={item.q} className="mb-3">
+            <p className="font-semibold">{item.q}</p>
+            <p className="text-sm text-gray-600">{item.a}</p>
+          </li>
+        ))}
+      </ul>
+
+      {/* 相关转换器互链 */}
+      <h2>{t("relatedTitle")}</h2>
+      <nav>
+        <ul className="flex flex-wrap gap-x-4 gap-y-1 list-none pl-0">
+          {relatedConverterLinks(slug).map((item) => (
+            <li key={item.slug}>
+              <Link
+                href={`/time-converter/${item.slug}`}
+                className="text-blue-600 hover:underline"
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       <JsonLd
         data={webAppJsonLd({
           name: pageTitle,
           url: localeUrl(locale, `/time-converter/${slug}`),
-          description: `${info.aLabel} - ${info.bLabel}: ${t("description")}`,
+          description: t("metaDescription", { a: info.aLabel, b: info.bLabel }),
         })}
+      />
+      <JsonLd
+        data={faqPageJsonLd(faqItems.map((it) => ({ question: it.q, answer: it.a })))}
       />
     </main>
   );

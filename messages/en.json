@@ -1,7 +1,9 @@
 {
   "App": {
     "title": "WorldTime",
-    "tagline": "World clock / time zone converter / meeting scheduler"
+    "tagline": "World clock / time zone converter / meeting scheduler",
+    "homeTitle": "WorldTime — World Clock, Time Zone Converter & Meeting Planner",
+    "homeDescription": "Free world clock and time zone converter. Compare local time across cities, plan international meetings, and schedule across time zones with automatic daylight saving support."
   },
   "Common": {
     "add": "Add",
@@ -128,7 +130,27 @@
     "bNote": "{b} is {dir} relative to {a}.",
     "currentOffsetNote": "(current offset; may differ on DST transition days)",
     "comparisonNote": "Typical hours comparison (fixed offset).",
-    "updatedAt": "Generated at {time} (refreshed hourly)."
+    "updatedAt": "Generated at {time} (refreshed hourly).",
+    "metaDescription": "{a} to {b} time difference: live time zone offset, an hour-by-hour comparison table, and DST-aware meeting planning. See what time it is in {b} right now.",
+    "intro": "Convert time between {a} and {b}: see the current time difference (offset), a full hour-by-hour comparison, and whether daylight saving time applies. Use it to schedule calls, meetings, and travel between the two locations.",
+    "dirAhead": "ahead of",
+    "dirBehind": "behind",
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "q": "What is the time difference between {a} and {b}?",
+        "a": "{b} is {offset} hours {dir} {a}. This is the current offset; on daylight saving transition days some hours may differ by one hour."
+      },
+      {
+        "q": "Do {a} or {b} observe daylight saving time?",
+        "a": "WorldTime detects daylight saving time automatically for each city. The comparison table already reflects each day's actual offset."
+      },
+      {
+        "q": "What is the best time for a meeting between {a} and {b}?",
+        "a": "Open the home page, add both cities, and use the heatmap to find overlapping working hours, then export the slot to your calendar."
+      }
+    ],
+    "relatedTitle": "Related time zone converters"
   },
   "Widget": {
     "eventTitle": "WorldTime Event Widget",
@@ -140,6 +162,79 @@
   "Seo": {
     "introTitle": "World clock & time zone converter",
     "introBody": "WorldTime is a free world clock, time zone converter, and meeting planner. Compare the local time across cities and time zones, find the best hours to schedule international meetings, and share time selections with automatic daylight saving time (DST) support.",
-    "popularTitle": "Popular time zone converters"
+    "popularTitle": "Popular time zone converters",
+    "featuresTitle": "Key features",
+    "features": [
+      {
+        "title": "World clock",
+        "desc": "See the current local time in cities and time zones around the world, side by side."
+      },
+      {
+        "title": "Time zone converter",
+        "desc": "Convert any time between two cities or zones and get a live offset, updated in real time."
+      },
+      {
+        "title": "Meeting planner",
+        "desc": "Pick a time once and instantly see the matching local hours for every participant."
+      },
+      {
+        "title": "DST-aware",
+        "desc": "Daylight saving time is detected automatically, so offsets stay correct all year round."
+      },
+      {
+        "title": "11 languages",
+        "desc": "The interface, cities, and time zones are fully localized into 11 languages."
+      },
+      {
+        "title": "Free, no sign-up",
+        "desc": "No account, no install, no paywall. Open the page and start comparing time right away."
+      }
+    ],
+    "useCasesTitle": "Use cases",
+    "useCases": [
+      {
+        "title": "Distributed remote teams",
+        "desc": "Find the overlap between teammates in different zones and choose hours that work for everyone."
+      },
+      {
+        "title": "International travel",
+        "desc": "Check the time at your destination before you fly and plan calls back home."
+      },
+      {
+        "title": "Forex & trading",
+        "desc": "Track market hours across London, New York, Tokyo, and Sydney at a glance."
+      },
+      {
+        "title": "Global support & follow-the-sun",
+        "desc": "Hand off shifts between regions and always know who is on the clock."
+      },
+      {
+        "title": "Cross-office scheduling",
+        "desc": "Book meetings between offices without mental math or off-by-one mistakes."
+      }
+    ],
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "q": "How do I compare the time in two cities?",
+        "a": "Add the cities with the search box and the time grid shows every hour side by side, with the live offset between them."
+      },
+      {
+        "q": "Does WorldTime handle daylight saving time?",
+        "a": "Yes. Daylight saving transitions are detected automatically for each city, so the offset is correct on spring-forward and fall-back days too."
+      },
+      {
+        "q": "How do I find the best time for an international meeting?",
+        "a": "Add everyone's cities, then use the color heatmap to find hours where no one is asleep. Select a slot to export it to your calendar."
+      },
+      {
+        "q": "Is WorldTime free to use?",
+        "a": "Yes, WorldTime is completely free, runs in the browser, and does not require an account."
+      },
+      {
+        "q": "Is the time shown in real time?",
+        "a": "The current time updates live in your browser. The converter pages refresh their tables hourly."
+      }
+    ]
   }
 }

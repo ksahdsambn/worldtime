@@ -22,7 +22,10 @@ import {
   POPULAR_CITY_PAIRS,
   POPULAR_TZ_PAIRS,
   webAppJsonLd,
+  faqPageJsonLd,
+  organizationJsonLd,
   localeUrl,
+  getSiteUrl,
 } from "@/lib/seo";
 
 type Props = {
@@ -56,6 +59,10 @@ export default async function Home({ params }: Props) {
   // async server component 中不能用 hook，用 getTranslations 替代 useTranslations
   const t = await getTranslations({ locale, namespace: "App" });
   const tSeo = await getTranslations({ locale, namespace: "Seo" });
+  // 数组类文案（功能/场景/FAQ）用 raw() 取原始数组，组件层 .map 渲染。
+  const features = tSeo.raw("features") as Array<{ title: string; desc: string }>;
+  const useCases = tSeo.raw("useCases") as Array<{ title: string; desc: string }>;
+  const faq = tSeo.raw("faq") as Array<{ q: string; a: string }>;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -98,40 +105,88 @@ export default async function Home({ params }: Props) {
       <SelectionBar />
 
       {/*
-        SEO 介绍与内链区：服务端渲染，含关键词导向文案与到热门时差对照页的
-        站内链接（增强可索引正文与链接权重传递）。视觉上次要，对交互无影响。
+        SEO 介绍与内链区：服务端渲染，含功能 / 使用场景 / FAQ 关键词导向文案，
+        以及到热门时差对照页的站内链接（增强可索引正文与链接权重传递）。
+        视觉上次要，对交互无影响。
       */}
-      <footer className="border-t bg-white px-4 py-6 text-sm text-gray-600">
-        <h2 className="text-base font-semibold text-gray-800 mb-2">
-          {tSeo("introTitle")}
-        </h2>
-        <p className="max-w-3xl leading-relaxed">{tSeo("introBody")}</p>
-        <h3 className="text-sm font-semibold text-gray-700 mt-4 mb-2">
-          {tSeo("popularTitle")}
-        </h3>
-        <nav>
-          <ul className="flex flex-wrap gap-x-4 gap-y-1">
-            {popularConverterLinks().map((item) => (
-              <li key={item.slug}>
-                <Link
-                  href={`/time-converter/${item.slug}`}
-                  className="text-blue-600 hover:underline"
-                >
-                  {item.label}
-                </Link>
+      <footer className="border-t bg-white px-4 py-8 text-sm text-gray-600">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="text-base font-semibold text-gray-800 mb-2">
+            {tSeo("introTitle")}
+          </h2>
+          <p className="max-w-3xl leading-relaxed">{tSeo("introBody")}</p>
+
+          {/* 核心功能 */}
+          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
+            {tSeo("featuresTitle")}
+          </h3>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
+            {features.map((f) => (
+              <li key={f.title}>
+                <span className="font-medium text-gray-800">{f.title}</span>
+                <span className="block text-gray-600">{f.desc}</span>
               </li>
             ))}
           </ul>
-        </nav>
+
+          {/* 使用场景 */}
+          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
+            {tSeo("useCasesTitle")}
+          </h3>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
+            {useCases.map((u) => (
+              <li key={u.title}>
+                <span className="font-medium text-gray-800">{u.title}</span>
+                <span className="block text-gray-600">{u.desc}</span>
+              </li>
+            ))}
+          </ul>
+
+          {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
+          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
+            {tSeo("faqTitle")}
+          </h3>
+          <ul className="max-w-3xl divide-y divide-gray-200">
+            {faq.map((item) => (
+              <li key={item.q} className="py-2">
+                <p className="font-medium text-gray-800">{item.q}</p>
+                <p className="text-gray-600">{item.a}</p>
+              </li>
+            ))}
+          </ul>
+
+          {/* 热门时区转换内链 */}
+          <h3 className="text-sm font-semibold text-gray-700 mt-6 mb-2">
+            {tSeo("popularTitle")}
+          </h3>
+          <nav>
+            <ul className="flex flex-wrap gap-x-4 gap-y-1">
+              {popularConverterLinks().map((item) => (
+                <li key={item.slug}>
+                  <Link
+                    href={`/time-converter/${item.slug}`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </footer>
 
-      {/* WebApplication 结构化数据（富结果识别） */}
+      {/* 结构化数据：WebApplication + Organization + FAQPage（富结果识别） */}
       <JsonLd
         data={webAppJsonLd({
           name: t("title"),
           url: localeUrl(locale, ""),
           description: t("tagline"),
         })}
+      />
+      <JsonLd data={organizationJsonLd({ url: getSiteUrl(), name: t("title") })} />
+      <JsonLd
+        data={faqPageJsonLd(faq.map((it) => ({ question: it.q, answer: it.a })))}
       />
     </div>
   );

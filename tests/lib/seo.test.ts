@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { routing } from "@/i18n/routing";
+import { CITY_BY_ID } from "@/data/cities";
+import { TIME_ZONE_ABBREVIATIONS } from "@/data/timeZoneAbbreviations";
 import {
   getSiteUrl,
   localeUrl,
@@ -10,6 +12,8 @@ import {
   POPULAR_TZ_PAIRS,
   LOCALE_OG_MAP,
   webAppJsonLd,
+  faqPageJsonLd,
+  organizationJsonLd,
 } from "@/lib/seo";
 
 describe("getSiteUrl", () => {
@@ -107,6 +111,11 @@ describe("buildLandingSlugs", () => {
       POPULAR_CITY_PAIRS.length + POPULAR_TZ_PAIRS.length,
     );
   });
+  it("第 14 轮扩充后共 24 条（16 城市对 + 8 时区对）", () => {
+    expect(POPULAR_CITY_PAIRS.length).toBe(16);
+    expect(POPULAR_TZ_PAIRS.length).toBe(8);
+    expect(buildLandingSlugs()).toHaveLength(24);
+  });
   it("城市对 slug 以 -- 分隔且保留城市 id 内的单连号", () => {
     const slugs = buildLandingSlugs();
     expect(slugs).toContain("cn-beijing--us-new-york");
@@ -119,6 +128,23 @@ describe("buildLandingSlugs", () => {
     for (const s of buildLandingSlugs()) {
       expect(s.split("--").length).toBe(2);
     }
+  });
+  it("每个热门城市对的 id 都能在 CITY_BY_ID 解析（防配对写错）", () => {
+    for (const [a, b] of POPULAR_CITY_PAIRS) {
+      expect(CITY_BY_ID[a], `unknown city id: ${a}`).toBeDefined();
+      expect(CITY_BY_ID[b], `unknown city id: ${b}`).toBeDefined();
+    }
+  });
+  it("每个热门时区缩写对都能在缩写表解析（防配对写错）", () => {
+    const known = new Set(TIME_ZONE_ABBREVIATIONS.map((x) => x.abbr));
+    for (const [a, b] of POPULAR_TZ_PAIRS) {
+      expect(known.has(a), `unknown tz abbr: ${a}`).toBe(true);
+      expect(known.has(b), `unknown tz abbr: ${b}`).toBe(true);
+    }
+  });
+  it("热门 slug 无重复", () => {
+    const slugs = buildLandingSlugs();
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 });
 
@@ -134,5 +160,43 @@ describe("webAppJsonLd", () => {
     expect(ld.name).toBe("WorldTime");
     expect(ld.offers.price).toBe("0");
     expect(ld.operatingSystem).toContain("Web");
+  });
+});
+
+describe("faqPageJsonLd", () => {
+  it("产出 FAQPage 结构化数据，逐条映射 Question/AcceptedAnswer", () => {
+    const ld = faqPageJsonLd([
+      { question: "Q1?", answer: "A1" },
+      { question: "Q2?", answer: "A2" },
+    ]);
+    expect(ld["@context"]).toBe("https://schema.org");
+    expect(ld["@type"]).toBe("FAQPage");
+    expect(ld.mainEntity).toHaveLength(2);
+    expect(ld.mainEntity[0]).toEqual({
+      "@type": "Question",
+      name: "Q1?",
+      acceptedAnswer: { "@type": "Answer", text: "A1" },
+    });
+  });
+  it("空列表产出空 mainEntity（不抛错）", () => {
+    const ld = faqPageJsonLd([]);
+    expect(ld.mainEntity).toEqual([]);
+  });
+});
+
+describe("organizationJsonLd", () => {
+  it("产出 Organization 结构化数据，含 logo 且无虚假 sameAs", () => {
+    const ld = organizationJsonLd({ url: "https://x/zh", name: "WorldTime" });
+    expect(ld["@context"]).toBe("https://schema.org");
+    expect(ld["@type"]).toBe("Organization");
+    expect(ld.name).toBe("WorldTime");
+    expect(ld.url).toBe("https://x/zh");
+    expect(ld.logo).toContain("worldtime-mark.svg");
+    expect(JSON.stringify(ld)).not.toContain("sameAs");
+  });
+  it("未传 name/logo 时回退默认值", () => {
+    const ld = organizationJsonLd({ url: "https://x/zh" });
+    expect(ld.name).toBe("WorldTime");
+    expect(ld.logo).toBeTruthy();
   });
 });

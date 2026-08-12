@@ -37,21 +37,24 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "App" });
-  const title = t("title");
-  const description = t("tagline");
+  const brand = t("title");
+  // 首页 <title> 用关键词丰富的标题（第 14 轮 SEO）；
+  // 可见 <h1> 仍是品牌名 brand，品牌后缀模板也仍用 brand。
+  const homeTitle = t("homeTitle");
+  const description = t("homeDescription");
   return {
     metadataBase: new URL(getSiteUrl()),
     title: {
-      default: title,
+      default: homeTitle,
       // 子路由仅声明页面名，品牌后缀由模板统一追加，避免重复
-      template: `%s | ${title}`,
+      template: `%s | ${brand}`,
     },
     description,
-    applicationName: title,
+    applicationName: brand,
     // 首页 canonical/hreflang；子页面各自覆盖
     alternates: buildAlternates(locale, ""),
     openGraph: buildOpenGraph(locale, {
-      title,
+      title: homeTitle,
       description,
       path: "",
       type: "website",

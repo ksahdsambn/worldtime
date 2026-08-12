@@ -126,23 +126,42 @@ export function buildOpenGraph(locale: string, opts: {
 /**
  * 热门城市对（构建期预生成 + sitemap 内链）。
  * 与 `time-converter/[slug]/page.tsx` 共用同一数据源，避免重复维护。
+ *
+ * 第 14 轮扩充：覆盖主要经济体/金融中心间的高商业价值时差对照，
+ * 拉宽 sitemap 长尾与首页内链面。所有 id 均经 `CITY_BY_ID` 校验存在。
  */
 export const POPULAR_CITY_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["cn-beijing", "us-new-york"],
+  ["cn-beijing", "gb-london"],
+  ["cn-beijing", "jp-tokyo"],
+  ["gb-london", "us-new-york"],
+  ["us-new-york", "us-los-angeles"],
   ["gb-london", "jp-tokyo"],
-  ["us-new-york", "gb-london"],
-  ["cn-shanghai", "au-sydney"],
   ["us-los-angeles", "de-berlin"],
+  ["cn-shanghai", "au-sydney"],
+  ["in-mumbai", "us-new-york"],
+  ["ae-dubai", "gb-london"],
+  ["sg-singapore", "gb-london"],
+  ["kr-seoul", "us-new-york"],
+  ["fr-paris", "us-new-york"],
+  ["hk-hong-kong", "gb-london"],
+  ["us-chicago", "de-frankfurt"],
+  ["au-sydney", "gb-london"],
 ];
 
 /**
  * 热门时区缩写对（构建期预生成 + sitemap 内链）。
+ * 第 14 轮扩充：补充跨洲主要时区缩写对照。
  */
 export const POPULAR_TZ_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["EST", "PST"],
   ["GMT", "CET"],
   ["JST", "PST"],
   ["IST", "EST"],
+  ["CET", "JST"],
+  ["GMT", "EST"],
+  ["PST", "GMT"],
+  ["AEST", "PST"],
 ];
 
 /**
@@ -183,5 +202,58 @@ export function webAppJsonLd(opts: {
     applicationCategory: opts.applicationCategory ?? "UtilitiesApplication",
     operatingSystem: "Any (Web Browser)",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  };
+}
+
+/**
+ * FAQPage JSON-LD（首页/着陆页 FAQ 模块的结构化数据，触发 FAQ 富结果）。
+ *
+ * @param items 问答列表（question / answer 均为纯文本）
+ */
+export function faqPageJsonLd(
+  items: ReadonlyArray<{ question: string; answer: string }>,
+): {
+  "@context": string;
+  "@type": "FAQPage";
+  mainEntity: Array<{
+    "@type": "Question";
+    name: string;
+    acceptedAnswer: { "@type": "Answer"; text: string };
+  }>;
+} {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((it) => ({
+      "@type": "Question",
+      name: it.question,
+      acceptedAnswer: { "@type": "Answer", text: it.answer },
+    })),
+  };
+}
+
+/**
+ * Organization JSON-LD（站点发布者实体，辅助知识图谱识别）。
+ *
+ * 仅声明可核实字段：名称、官网、logo。不编造 sameAs 社交账号
+ * （站点目前无官方社交主页，虚假 sameAs 会损害实体可信度）。
+ */
+export function organizationJsonLd(opts: {
+  url: string;
+  name?: string;
+  logoUrl?: string;
+}): {
+  "@context": string;
+  "@type": "Organization";
+  name: string;
+  url: string;
+  logo: string;
+} {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: opts.name ?? "WorldTime",
+    url: opts.url,
+    logo: opts.logoUrl ?? `${getSiteUrl()}/brand/worldtime-mark.svg`,
   };
 }

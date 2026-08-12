@@ -1,5 +1,64 @@
 # 开发进度记录
 
+## 第 14 轮：补全 SEO 文案 / 标题 / 结构化数据 / 图标素材
+
+> 时间：2026-08-12
+> 范围：在已完备的 SEO **基建层**（第 11 轮）之上，补全最薄弱的**可索引正文与文案素材**——首页/着陆页的功能·场景·FAQ 正文、关键词 meta 标题与描述、FAQPage/Organization 结构化数据、热门配对扩充、PWA 位图图标。
+> 依据：自审发现首页正文仅 1 段引言+9 内链、着陆页正文极薄且 meta description 为小写片段、仅有 WebApplication 单一 JSON-LD、热门配对仅 9 组、manifest 仅 SVG 图标。
+
+### 架构决策
+
+1. **文案集中可审 + 幂等注入**：新增 `scripts/seo-content.mjs`（仿第 11 轮 `seo-messages.mjs`），把 11 语言的全部新键集中在一份 JS 数据对象里，循环注入到 `messages/*.json`。译文人工撰写（非机翻），结构/键位完全对齐。数组类文案（features/useCases/faq）用 next-intl 的 `t.raw()` 取原始数组、组件层 `.map` 渲染。
+2. **JSON-LD 只加可核实类型**：首页加 `Organization`（实体识别）+ `FAQPage`（富结果），着陆页加 `FAQPage`；**不加 `WebSite/SearchAction`**——站点无搜索结果页，声明会触发 Google 警告；Organization 不编造 `sameAs` 社交账号（站点暂无官方社交主页，虚假 sameAs 损害可信度）。
+3. **FAQ 时差用「绝对值+方向词」表述**：着陆页 FAQ Q1 模板含 `{offset}/{dir}` 占位符，组件层传 `formatOffset(Math.abs(diff))`（去前导 `+`）+ 方向词（dirAhead/dirBehind），避免「-12 落后」这类符号与方向词同时出现的语义冗余；各语言按自身语序重排占位符。
+4. **配对扩充驱动 sitemap/内链**：`POPULAR_CITY_PAIRS` 5→16、`POPULAR_TZ_PAIRS` 4→8（共 24），sitemap 与首页/着陆页内链自动跟随 `buildLandingSlugs()`，单一数据源 DRY。新增 id 全部经 `CITY_BY_ID`/tz 表校验存在（测试断言）。
+5. **位图图标由 SVG 栅格化**：`scripts/gen-icons.mjs` 用 sharp（已是 next 传递依赖，本轮登记为直接 devDep）把 `src/app/icon.svg` 渲染为 192/512（any）+ maskable（圆角改全出血 `rx=0`，mark 直径 ~62.5% 落在 maskable 80% 安全区内）。
+
+### 改动清单
+
+#### 新增
+- `scripts/seo-content.mjs`：11 语言文案注入（App.homeTitle/homeDescription + Seo.features/useCases/faq + Landing.metaDescription/intro/faq/relatedTitle/dirAhead/dirBehind），幂等覆盖。
+- `scripts/gen-icons.mjs`：SVG → PNG 栅格化（any 192/512 + maskable 192/512）。
+- `public/icons/`：icon-192.png、icon-512.png、icon-192-maskable.png、icon-512-maskable.png。
+
+#### 修改
+- `src/lib/seo.ts`：扩充 `POPULAR_CITY_PAIRS`（→16）/`POPULAR_TZ_PAIRS`（→8）；新增 `faqPageJsonLd()`、`organizationJsonLd()`。
+- `src/app/[locale]/layout.tsx`：首页 `title.default` 由品牌名改为关键词丰富的 `App.homeTitle`；`description` 改用 `App.homeDescription`（可见 `<h1>` 与品牌后缀模板仍用品牌名）。
+- `src/app/[locale]/page.tsx`：footer 扩为「引言 + 核心功能(6) + 使用场景(5) + 常见问题(5) + 热门转换(24 内链)」；多挂 `organizationJsonLd` + `faqPageJsonLd`（保留 `webAppJsonLd`）。
+- `src/app/[locale]/time-converter/[slug]/page.tsx`：`generateMetadata.description` 改用独立成句的 `Landing.metaDescription`；正文加 `intro` 关键词引言段、FAQ 模块（3 条，实时时差填充）、相关转换器互链（23 条，排除当前页）；多挂 `faqPageJsonLd`；新增 `interpFaq()`/`relatedConverterLinks()` 纯函数。
+- `src/app/manifest.ts`：在 SVG 之外补充 4 个 PNG 图标（带 sizes/type/purpose）。
+- `messages/*.json`（11）：新增 App.homeTitle/homeDescription、Seo.featuresTitle/features[6]、Seo.useCasesTitle/useCases[5]、Seo.faqTitle/faq[5]、Landing.metaDescription/intro/dirAhead/dirBehind/faqTitle/faq[3]/relatedTitle。
+- `tests/lib/seo.test.ts`：+8 用例（buildLandingSlugs=24、城市对 id 全可解析、tz 缩写全可解析、slug 无重复、faqPageJsonLd/organizationJsonLd schema）。
+- `package.json`：`sharp` 加入 devDependencies。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | ✅ 通过 |
+| `npm test` | ✅ 172/172（原 164 + 新增 8 SEO 用例） |
+| `npm run lint` | ✅ 无警告/错误 |
+| `npm run build` | ✅ 成功；sitemap 275 条（24 配对×11 + 11 首页） |
+| messages 键一致性 | ✅ 11 文件完全对齐（shape 比对） |
+| 静态 HTML 核验（首页 zh/en） | ✅ 关键词标题、新 meta description、4 个区块标题、3 类 JSON-LD（WebApplication/Organization/FAQPage 含 5 个 Question）、24 条内链 |
+| 静态 HTML 核验（着陆页） | ✅ intro 段、FAQ（FAQPage JSON-LD）、相关转换器 23 互链、独立成句 description |
+| FAQ 时差表述 | ✅ 跨 11 语言均为「绝对值 + 方向词」自然句（如 EN「London is 7 hours behind Beijing」、JA「7時間遅れています」、KO「7시간 뒤처집니다」），无符号冗余 |
+| PNG 图标 | ✅ 4 文件落盘；manifest 声明 any(192/512)+maskable(192/512) |
+
+### 设计说明与遗留
+
+- **首页 `<title>` vs 可见 `<h1>` 分离**：`<title>` 用关键词丰富的 `homeTitle`（利于搜索），可见 `<h1>` 仍是品牌名 `WorldTime`（保持品牌识别），子路由品牌后缀模板（`%s | WorldTime`）不变。
+- **OG 分享图保持英文**：Satori 默认字体无中文字形（已文档化），本轮不动；社交预览国际化是通行做法。
+- **不加 `keywords` meta / `WebSite+SearchAction`**：前者现代 SEO 无价值，后者站点无搜索页会触发 Google 警告。
+- **运行时核验用静态 HTML**：项目 `output:"standalone"`，`next start` 会因 standalone 配置服务到过期内容（Next 官方告警），故本轮运行时核验改为直接读取 `next build` 产出的预渲染静态 HTML（`.next/server/app/**.html`），即生产 ISR/SSG 的真实产物；生产部署走 `node .next/standalone/server.js`（Dockerfile 已配）。
+
+### 提交与发布
+
+- 工作在 `main` 分支进行。
+- 提交内容：2 新脚本（seo-content.mjs / gen-icons.mjs）+ 4 新 PNG + 11 messages + 6 改造源码（seo.ts/layout/page/landing/manifest/test）+ package.json/lock + progress.md。
+
+---
+
 ## 第 12 轮：Google 日历叠加接入真实 OAuth（替换 mock）
 
 > 时间：2026-08-12

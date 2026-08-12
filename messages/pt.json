@@ -1,7 +1,9 @@
 {
   "App": {
     "title": "WorldTime",
-    "tagline": "Relógio mundial / conversor de fusos / agendador de reuniões"
+    "tagline": "Relógio mundial / conversor de fusos / agendador de reuniões",
+    "homeTitle": "WorldTime — Relógio mundial, conversor de fusos horários e agenda de reuniões",
+    "homeDescription": "Relógio mundial e conversor de fusos horários gratuito. Compare o horário local entre cidades, planeje reuniões internacionais e organize sua agenda entre fusos com suporte automático ao horário de verão."
   },
   "Common": {
     "add": "Adicionar",
@@ -128,7 +130,27 @@
     "bNote": "{b} está {dir} em relação a {a}.",
     "currentOffsetNote": "(diferença atual; pode variar nos dias de mudança de horário de verão)",
     "comparisonNote": "Comparação típica de horas (diferença fixa).",
-    "updatedAt": "Gerado às {time} (atualizado a cada hora)."
+    "updatedAt": "Gerado às {time} (atualizado a cada hora).",
+    "metaDescription": "Diferença de horário entre {a} e {b}: defasagem de fuso ao vivo, tabela de comparação hora a hora e planejamento de reuniões com horário de verão. Veja que horas são agora em {b}.",
+    "intro": "Converta a hora entre {a} e {b}: veja a diferença de horário atual (defasagem), uma comparação completa hora a hora e se o horário de verão se aplica, para organizar ligações, reuniões e viagens entre os dois locais.",
+    "dirAhead": "à frente de",
+    "dirBehind": "atrás de",
+    "faqTitle": "Perguntas frequentes",
+    "faq": [
+      {
+        "q": "Qual é a diferença de horário entre {a} e {b}?",
+        "a": "{b} está {offset} horas {dir} {a}. Esta é a defasagem atual; nos dias de mudança de horário de verão, algumas horas podem diferir em uma hora."
+      },
+      {
+        "q": "{a} ou {b} adotam horário de verão?",
+        "a": "O WorldTime detecta o horário de verão automaticamente para cada cidade. A tabela de comparação já reflete a defasagem real de cada dia."
+      },
+      {
+        "q": "Qual o melhor horário para uma reunião entre {a} e {b}?",
+        "a": "Abra a página inicial, adicione ambas as cidades e use o mapa de calor para encontrar horários úteis sobrepostos; depois exporte o slot ao calendário."
+      }
+    ],
+    "relatedTitle": "Conversores de fuso horário relacionados"
   },
   "Widget": {
     "eventTitle": "Widget de eventos do WorldTime",
@@ -140,6 +162,79 @@
   "Seo": {
     "introTitle": "Relógio mundial e conversor de fusos horários",
     "introBody": "WorldTime é um relógio mundial, conversor de fusos horários e organizador de reuniões gratuito. Compare o horário local entre cidades e fusos horários, encontre os melhores horários para reuniões internacionais e compartilhe seleções de horário com suporte automático ao horário de verão (DST).",
-    "popularTitle": "Conversores de fuso horário populares"
+    "popularTitle": "Conversores de fuso horário populares",
+    "featuresTitle": "Principais recursos",
+    "features": [
+      {
+        "title": "Relógio mundial",
+        "desc": "Veja a hora local atual de cidades e fusos horários do mundo todo, lado a lado."
+      },
+      {
+        "title": "Conversor de fusos horários",
+        "desc": "Converta qualquer hora entre duas cidades ou fusos e obtenha a diferença em tempo real."
+      },
+      {
+        "title": "Agenda de reuniões",
+        "desc": "Escolha um horário uma vez e veja instantaneamente as horas locais de cada participante."
+      },
+      {
+        "title": "Suporta horário de verão",
+        "desc": "As mudanças de horário de verão são detectadas automaticamente, mantendo a diferença correta o ano todo."
+      },
+      {
+        "title": "11 idiomas",
+        "desc": "A interface, as cidades e os fusos horários estão totalmente traduzidos em 11 idiomas."
+      },
+      {
+        "title": "Grátis, sem cadastro",
+        "desc": "Sem conta, sem instalação, sem paywall. Abra a página e comece a comparar horários."
+      }
+    ],
+    "useCasesTitle": "Casos de uso",
+    "useCases": [
+      {
+        "title": "Equipes remotas distribuídas",
+        "desc": "Encontre a interseção entre colegas de fusos diferentes e escolha horários que servem para todos."
+      },
+      {
+        "title": "Viagens internacionais",
+        "desc": "Confira a hora do destino antes de voar e planeje ligações para casa."
+      },
+      {
+        "title": "Forex e trading",
+        "desc": "Acompanhe de relance o horário de mercado de Londres, Nova York, Tóquio e Sydney."
+      },
+      {
+        "title": "Suporte global e Follow-the-Sun",
+        "desc": "Repasse turnos entre regiões e saiba sempre quem está trabalhando."
+      },
+      {
+        "title": "Reuniões entre escritórios",
+        "desc": "Agende reuniões entre escritórios sem cálculo mental nem erros de uma hora."
+      }
+    ],
+    "faqTitle": "Perguntas frequentes",
+    "faq": [
+      {
+        "q": "Como comparo a hora em duas cidades?",
+        "a": "Adicione as cidades pela busca e a grade mostra cada hora lado a lado, com a diferença em tempo real."
+      },
+      {
+        "q": "O WorldTime considera o horário de verão?",
+        "a": "Sim. As mudanças de horário de verão são detectadas automaticamente por cidade, então a diferença fica correta também nos dias de transição."
+      },
+      {
+        "q": "Como encontro o melhor horário para uma reunião internacional?",
+        "a": "Adicione as cidades de todos os participantes e use o mapa de calor para achar faixas em que ninguém esteja dormindo. Selecione um slot para exportá-lo ao calendário."
+      },
+      {
+        "q": "O WorldTime é gratuito?",
+        "a": "Sim, o WorldTime é totalmente gratuito, funciona no navegador e não exige conta."
+      },
+      {
+        "q": "A hora mostrada é em tempo real?",
+        "a": "A hora atual é atualizada ao vivo no seu navegador. As páginas de conversão atualizam suas tabelas a cada hora."
+      }
+    ]
   }
 }
