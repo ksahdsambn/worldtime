@@ -19,18 +19,18 @@
   },
   "CitySearch": {
     "placeholder": "搜索城市、国家或时区…",
-    "noResults": "无匹配结果"
+    "noResults": "没有匹配的城市，试试搜索国家或时区名称。"
   },
   "Settings": {
     "title": "设置",
     "hourFormat": "小时格式",
     "fmt12": "12 小时制",
     "fmt24": "24 小时制",
-    "fmtMixed": "混合（各地原生）"
+    "fmtMixed": "混合（按各地习惯）"
   },
   "Places": {
     "title": "地点",
-    "empty": "尚未添加地点，请搜索添加。",
+    "empty": "还没有城市，在上方搜索框添加第一个吧。",
     "setHome": "设为主地点",
     "remove": "删除",
     "home": "主地点",
@@ -38,18 +38,19 @@
     "offsetFromHome": "与主地点的时差（正为领先）",
     "dstActive": "当前处于夏令时",
     "dst": "夏令时",
+    "dstBadge": "夏令时",
     "yes": "是",
     "no": "否",
     "nextChange": "下次切换",
     "noUpcoming": "近期无切换",
-    "dstWarnSoon": "夏令时切换临近",
+    "dstWarnSoon": "夏令时即将切换",
     "rename": "重命名",
-    "renamePrompt": "自定义显示名",
+    "renamePrompt": "为此城市输入自定义名称（留空即恢复原名）。",
     "tags": "标签",
-    "tagsPrompt": "标签（逗号分隔）",
+    "tagsPrompt": "添加标签，用逗号分隔（例如：团队、客户）。",
     "all": "全部",
     "dragHandle": "拖拽排序",
-    "confirmRemoveHome": "确认删除主地点？",
+    "confirmRemoveHome": "确定删除主地点吗？其他城市的时间差以主地点为基准，删除后将改用其他城市作为参考。",
     "sunNone": "无"
   },
   "Selection": {
@@ -72,31 +73,32 @@
     "eventPage": "公开事件页",
     "copySummary": "复制时间摘要",
     "shareLink": "复制分享链接",
-    "copied": "已复制"
+    "copied": "已复制！"
   },
   "Event": {
     "title": "公开事件",
     "description": "以下为该事件在各地对应时间。",
+    "invalid": "此事件链接无效或已过期。",
     "openOriginal": "在 WorldTime 中打开"
   },
   "Heatmap": {
-    "green": "全员工作时段",
-    "orange": "有人可联系",
-    "red": "有人休息",
-    "worstStatus": "取最差状态"
+    "green": "全员在工作时段",
+    "orange": "部分人在非工作时段",
+    "red": "有人在休息",
+    "worstStatus": "每列按最不方便的城市着色。"
   },
   "Now": {
     "backToNow": "回到现在"
   },
   "Cursor": {
-    "cursor": "游标",
-    "enable": "启用游标",
+    "cursor": "时间游标：",
+    "enable": "显示时间游标",
     "move": "移动",
     "resize": "微调选区边缘",
-    "disable": "关闭游标"
+    "disable": "隐藏时间游标"
   },
   "DateJump": {
-    "jumpTo": "跳转日期",
+    "jumpTo": "跳转日期：",
     "today": "今天"
   },
   "Theme": {
@@ -104,17 +106,18 @@
   },
   "Gcal": {
     "label": "Google 日历",
-    "connect": "连接并叠加",
-    "connected": "已连接（点击断开）",
+    "connect": "连接 Google 日历",
+    "connected": "已连接",
+    "disconnect": "断开 Google 日历",
     "loading": "连接中…",
-    "error": "连接失败，请重试"
+    "error": "无法连接 Google 日历，请重试。"
   },
   "PrintExport": {
     "print": "打印",
     "image": "导出图片"
   },
   "Grid": {
-    "empty": "请先添加地点以查看时间网格。"
+    "empty": "添加一个城市，即可查看时间网格。"
   },
   "Landing": {
     "title": "时区转换",

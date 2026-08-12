@@ -19,18 +19,18 @@
   },
   "CitySearch": {
     "placeholder": "도시, 국가 또는 시간대 검색…",
-    "noResults": "결과 없음"
+    "noResults": "일치하는 도시가 없습니다. 국가 또는 시간대 이름으로 검색해 보세요."
   },
   "Settings": {
     "title": "설정",
     "hourFormat": "시간 형식",
     "fmt12": "12시간제",
     "fmt24": "24시간제",
-    "fmtMixed": "혼합 (현지 기준)"
+    "fmtMixed": "혼합 (각 도시 현지 형식)"
   },
   "Places": {
     "title": "장소",
-    "empty": "아직 장소가 없습니다. 검색하여 추가하세요.",
+    "empty": "아직 도시가 없습니다. 위쪽 검색창에서 첫 도시를 추가하세요.",
     "setHome": "기준으로 설정",
     "remove": "제거",
     "home": "기준",
@@ -38,18 +38,19 @@
     "offsetFromHome": "기준과의 시차 (양수 = 앞섬)",
     "dstActive": "현재 서머타임 중",
     "dst": "서머타임",
+    "dstBadge": "서머타임",
     "yes": "예",
     "no": "아니오",
     "nextChange": "다음 변경",
     "noUpcoming": "예정된 변경 없음",
-    "dstWarnSoon": "서머타임 변경 임박",
+    "dstWarnSoon": "곧 서머타임이 변경됩니다",
     "rename": "이름 변경",
-    "renamePrompt": "사용자 지정 표시 이름",
+    "renamePrompt": "이 도시의 사용자 지정 이름을 입력 (비우면 원래 이름으로 되돌림).",
     "tags": "태그",
-    "tagsPrompt": "태그 (쉼표 구분)",
+    "tagsPrompt": "태그를 쉼표로 구분해 입력 (예: 팀, 고객).",
     "all": "전체",
     "dragHandle": "드래그하여 재정렬",
-    "confirmRemoveHome": "기준 장소를 제거하시겠습니까?",
+    "confirmRemoveHome": "기준 도시를 제거하시겠습니까? 다른 도시의 시간은 기준과의 시차로 표시되므로 다른 도시가 기준이 됩니다.",
     "sunNone": "없음"
   },
   "Selection": {
@@ -72,31 +73,32 @@
     "eventPage": "공개 이벤트 페이지",
     "copySummary": "시간 요약 복사",
     "shareLink": "공유 링크 복사",
-    "copied": "복사됨"
+    "copied": "복사됨!"
   },
   "Event": {
     "title": "공개 이벤트",
     "description": "이 이벤트의 각 지역 현지 시간:",
+    "invalid": "이 이벤트 링크는 유효하지 않거나 만료되었습니다.",
     "openOriginal": "WorldTime에서 열기"
   },
   "Heatmap": {
-    "green": "전원 근무 시간",
-    "orange": "연락 가능한 사람 있음",
-    "red": "휴식 중인 사람 있음",
-    "worstStatus": "최악 상태가 우선"
+    "green": "전원 근무 시간대",
+    "orange": "근무 시간 외인 사람 있음",
+    "red": "자는 사람 있음",
+    "worstStatus": "각 열은 가장 참여하기 어려운 도시 기준으로 색이 표시됩니다."
   },
   "Now": {
     "backToNow": "현재로 돌아가기"
   },
   "Cursor": {
-    "cursor": "커서",
-    "enable": "커서 활성화",
+    "cursor": "시간 표시:",
+    "enable": "시간 표시 보기",
     "move": "이동",
     "resize": "가장자리 조정",
-    "disable": "커서 비활성화"
+    "disable": "시간 표시 숨기기"
   },
   "DateJump": {
-    "jumpTo": "이동",
+    "jumpTo": "이동:",
     "today": "오늘"
   },
   "Theme": {
@@ -104,17 +106,18 @@
   },
   "Gcal": {
     "label": "Google 캘린더",
-    "connect": "연결 및 겹쳐 보기",
-    "connected": "연결됨 (클릭하여 해제)",
+    "connect": "Google 캘린더 연결",
+    "connected": "연결됨",
+    "disconnect": "Google 캘린더 연결 해제",
     "loading": "연결 중…",
-    "error": "연결에 실패했습니다. 다시 시도하세요"
+    "error": "Google 캘린더에 연결하지 못했습니다. 다시 시도해 주세요."
   },
   "PrintExport": {
     "print": "인쇄",
     "image": "이미지 내보내기"
   },
   "Grid": {
-    "empty": "시간 격자를 보려면 장소를 추가하세요."
+    "empty": "도시를 추가하면 시간 격자가 표시됩니다."
   },
   "Landing": {
     "title": "시간대 변환",

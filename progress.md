@@ -1,5 +1,44 @@
 # 开发进度记录
 
+## 第 16 轮：界面文案清晰度优化（按钮 / 提示 / 错误信息）
+
+> 时间：2026-08-12
+> 范围：依据 clarify 技能，对全部 11 个语言的按钮、提示与错误文案做清晰度/自然度优化；随后对改动做自查并修复 4 项遗留问题。目标契合 AGENTS.md「immediately legible / 避免行话 / 友好但精准」。
+> 依据：原文案存在多处行话（"overlay"、"worst status wins"、"DST"）、死胡同式空状态（"No results"）、含糊确认（"Remove the home place?"），以及一个真实 bug（事件链接失效时误显示正常文案）。
+
+### 完成内容
+
+**文案优化（11 语言同步）**
+- 按钮/CTA：`Connect & overlay` → `Connect Google Calendar`（去行话）；已连接状态拆分为状态标签 `Connected` + 新动作 tooltip `Disconnect Google Calendar`。
+- 提示/对话框：重命名、标签弹窗由裸标签改为完整指令并带示例；删除主地点确认 `Remove the home place?` → 说清动作与后果的整句。
+- 错误/空状态：搜索 `No results` → `No matching cities. Try a country or time zone name.`；Google 连接失败文案更口语；**修复 bug**：事件页链接失效新增 `Event.invalid`（"此事件链接无效或已过期"），`EventView` 失效分支改用它（原先误用 `description` 正常文案）。
+- 热力图图例：`worst status wins` → 整句说明着色规则；`Some contactable / Someone resting` → 语法与含义都更清楚的 `Some outside work hours / Someone asleep`。
+
+**自查后修复的 4 项问题**
+1. `Cursor.disable` 不对称：`enable`="Show time marker" 而 `disable`="Hide"。统一为 `Hide time marker`（与 enable 对称），11 语言同步。
+2. 硬编码全角冒号（既有 i18n 缺陷）：`CursorBar.tsx`/`DateJump.tsx` 直接写了全角 `：`，拉丁/西里尔字母下排版突兀。改为把标点移入 messages（CJK 用全角 `：`，其余用半角 `:`），组件去除硬编码冒号。
+3. DST 徽章字面量（既有不一致）：`PlacesPanel` 徽章硬编码 `"DST"`。新增 `Places.dstBadge`（CJK 用本地词「夏令时/夏時間/서머타임」，拉丁/西里尔保留通用缩写 `DST`），徽章改用 i18n key，tooltip 已拼写全称。
+4. 过期本地快照：`.playwright-cli/` 为 gitignore 的本地调试产物（未跟踪、不入库），清理陈旧文件。
+
+### 涉及文件
+
+- `messages/*.json`（11 个语言文件，新增 `Gcal.disconnect`、`Event.invalid`、`Places.dstBadge` 三个键，每语言现 119 键且键集一致）
+- `src/components/GoogleCalendarConnect.tsx`（已连接按钮 title 改用 `disconnect`）
+- `src/components/EventView.tsx`（失效分支改用 `Event.invalid`）
+- `src/components/CursorBar.tsx`（去除硬编码冒号）
+- `src/components/DateJump.tsx`（去除硬编码冒号）
+- `src/components/PlacesPanel.tsx`（DST 徽章改用 `dstBadge`）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| JSON 合法性 | 11 文件全部合法 |
+| 键集一致性 | 11 语言各 119 键，与 en 完全一致（next-intl 无 fallback，缺键会在对应语言运行时抛错，故必须一致） |
+| `npm run type-check`（tsc --noEmit） | 通过 |
+| `npm run lint`（改动组件） | 通过（无警告/错误） |
+| `npm test`（vitest） | 172/172 通过 |
+
 ## 第 15 轮：UI 视觉重构 —— 令牌化主题系统 + 精致工具质感
 
 > 时间：2026-08-12

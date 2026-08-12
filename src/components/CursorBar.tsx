@@ -69,7 +69,7 @@ export default function CursorBar() {
 
   return (
     <div className="flex items-center gap-2 px-1 py-0.5 text-xs text-muted">
-      <span>{t("cursor")}：</span>
+      <span>{t("cursor")}</span>
       {cursorMs == null ? (
         <button
           type="button"

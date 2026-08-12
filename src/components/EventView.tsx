@@ -37,7 +37,7 @@ export default function EventView({
   }, [code]);
 
   if (!data || !data.selection || data.places.length === 0) {
-    return <main className="p-6 text-sm text-muted">{t("description")}</main>;
+    return <main className="p-6 text-sm text-muted">{t("invalid")}</main>;
   }
 
   return (

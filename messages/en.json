@@ -19,37 +19,38 @@
   },
   "CitySearch": {
     "placeholder": "Search city, country or time zone…",
-    "noResults": "No results"
+    "noResults": "No matching cities. Try a country or time zone name."
   },
   "Settings": {
     "title": "Settings",
     "hourFormat": "Hour format",
     "fmt12": "12-hour",
     "fmt24": "24-hour",
-    "fmtMixed": "Mixed (native per place)"
+    "fmtMixed": "Mixed (each city's local format)"
   },
   "Places": {
     "title": "Places",
-    "empty": "No places yet. Search to add one.",
+    "empty": "No cities yet. Search above to add your first one.",
     "setHome": "Set as home",
     "remove": "Remove",
     "home": "Home",
     "utcRow": "Coordinated Universal Time",
     "offsetFromHome": "Offset from home (positive = ahead)",
     "dstActive": "Currently in daylight saving time",
-    "dst": "DST",
+    "dst": "Daylight saving",
+    "dstBadge": "DST",
     "yes": "yes",
     "no": "no",
     "nextChange": "Next change",
     "noUpcoming": "no upcoming change",
-    "dstWarnSoon": "DST change approaching",
+    "dstWarnSoon": "Daylight saving time changes soon",
     "rename": "Rename",
-    "renamePrompt": "Custom display name",
+    "renamePrompt": "Enter a custom name for this city (leave blank to reset).",
     "tags": "Tags",
-    "tagsPrompt": "Tags (comma separated)",
+    "tagsPrompt": "Add tags, separated by commas (e.g. team, clients).",
     "all": "All",
     "dragHandle": "Drag to reorder",
-    "confirmRemoveHome": "Remove the home place?",
+    "confirmRemoveHome": "Remove your home city? Other cities compare their time to home, so a different city will become the reference.",
     "sunNone": "none"
   },
   "Selection": {
@@ -72,31 +73,32 @@
     "eventPage": "Public event page",
     "copySummary": "Copy time summary",
     "shareLink": "Copy share link",
-    "copied": "Copied"
+    "copied": "Copied!"
   },
   "Event": {
     "title": "Public event",
     "description": "The corresponding local times for this event:",
+    "invalid": "This event link is invalid or has expired.",
     "openOriginal": "Open in WorldTime"
   },
   "Heatmap": {
-    "green": "All working hours",
-    "orange": "Some contactable",
-    "red": "Someone resting",
-    "worstStatus": "worst status wins"
+    "green": "All in work hours",
+    "orange": "Some outside work hours",
+    "red": "Someone asleep",
+    "worstStatus": "Each column is colored by whoever is least available."
   },
   "Now": {
     "backToNow": "Back to now"
   },
   "Cursor": {
-    "cursor": "Cursor",
-    "enable": "Enable cursor",
+    "cursor": "Time marker:",
+    "enable": "Show time marker",
     "move": "move",
-    "resize": "resize edge",
-    "disable": "Disable cursor"
+    "resize": "adjust edges",
+    "disable": "Hide time marker"
   },
   "DateJump": {
-    "jumpTo": "Jump to",
+    "jumpTo": "Jump to:",
     "today": "Today"
   },
   "Theme": {
@@ -104,17 +106,18 @@
   },
   "Gcal": {
     "label": "Google Calendar",
-    "connect": "Connect & overlay",
-    "connected": "Connected (click to disconnect)",
+    "connect": "Connect Google Calendar",
+    "connected": "Connected",
+    "disconnect": "Disconnect Google Calendar",
     "loading": "Connecting…",
-    "error": "Connection failed, please retry"
+    "error": "Couldn't connect to Google Calendar. Please try again."
   },
   "PrintExport": {
     "print": "Print",
     "image": "Export image"
   },
   "Grid": {
-    "empty": "Add a place to view the time grid."
+    "empty": "Add a city to see the time grid."
   },
   "Landing": {
     "title": "Time Zone Converter",

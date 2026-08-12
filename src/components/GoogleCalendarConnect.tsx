@@ -49,7 +49,7 @@ export default function GoogleCalendarConnect() {
         onClick={disconnect}
         data-testid="gcal-disconnect"
         className="btn-ghost btn-sm"
-        title={t("connected")}
+        title={t("disconnect")}
       >
         <span
           className="h-1.5 w-1.5 rounded-full bg-emerald-500"

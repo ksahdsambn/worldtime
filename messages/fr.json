@@ -19,18 +19,18 @@
   },
   "CitySearch": {
     "placeholder": "Rechercher une ville, un pays ou un fuseau horaire…",
-    "noResults": "Aucun résultat"
+    "noResults": "Aucune ville correspondante. Essayez avec un pays ou un fuseau horaire."
   },
   "Settings": {
     "title": "Paramètres",
     "hourFormat": "Format de l'heure",
     "fmt12": "12 heures",
     "fmt24": "24 heures",
-    "fmtMixed": "Mixte (natif selon le lieu)"
+    "fmtMixed": "Mixte (format local de chaque ville)"
   },
   "Places": {
     "title": "Lieux",
-    "empty": "Aucun lieu pour le moment. Recherchez pour en ajouter un.",
+    "empty": "Aucune ville pour le moment. Recherchez ci-dessus pour ajouter la première.",
     "setHome": "Définir comme principal",
     "remove": "Retirer",
     "home": "Principal",
@@ -38,18 +38,19 @@
     "offsetFromHome": "Décalage avec le principal (positif = en avance)",
     "dstActive": "Actuellement en heure d'été",
     "dst": "Heure d'été",
+    "dstBadge": "DST",
     "yes": "oui",
     "no": "non",
     "nextChange": "Prochain changement",
     "noUpcoming": "aucun changement à venir",
-    "dstWarnSoon": "Changement d'heure d'été à venir",
+    "dstWarnSoon": "Le passage à l'heure d'été est proche",
     "rename": "Renommer",
-    "renamePrompt": "Nom d'affichage personnalisé",
+    "renamePrompt": "Saisissez un nom personnalisé pour cette ville (vide pour réinitialiser).",
     "tags": "Étiquettes",
-    "tagsPrompt": "Étiquettes (séparées par des virgules)",
+    "tagsPrompt": "Ajoutez des étiquettes séparées par des virgules (ex. équipe, clients).",
     "all": "Toutes",
     "dragHandle": "Glisser pour réordonner",
-    "confirmRemoveHome": "Retirer le lieu principal ?",
+    "confirmRemoveHome": "Retirer votre ville principale ? Les autres villes comparent leur heure à la ville principale, une autre ville deviendra donc la référence.",
     "sunNone": "aucun"
   },
   "Selection": {
@@ -72,31 +73,32 @@
     "eventPage": "Page publique de l'événement",
     "copySummary": "Copier le résumé des horaires",
     "shareLink": "Copier le lien de partage",
-    "copied": "Copié"
+    "copied": "Copié !"
   },
   "Event": {
     "title": "Événement public",
     "description": "Les heures locales correspondantes pour cet événement :",
+    "invalid": "Ce lien d'événement est invalide ou a expiré.",
     "openOriginal": "Ouvrir dans WorldTime"
   },
   "Heatmap": {
     "green": "Tous en heures ouvrables",
-    "orange": "Certains joignables",
-    "red": "Quelqu'un se repose",
-    "worstStatus": "l'état le plus défavorable l'emporte"
+    "orange": "Certains hors heures ouvrables",
+    "red": "Quelqu'un dort",
+    "worstStatus": "Chaque colonne est colorée selon la ville la moins disponible."
   },
   "Now": {
     "backToNow": "Revenir à maintenant"
   },
   "Cursor": {
-    "cursor": "Curseur",
-    "enable": "Activer le curseur",
+    "cursor": "Repère temporel :",
+    "enable": "Afficher le repère temporel",
     "move": "déplacer",
     "resize": "ajuster le bord",
-    "disable": "Désactiver le curseur"
+    "disable": "Masquer le repère temporel"
   },
   "DateJump": {
-    "jumpTo": "Aller à",
+    "jumpTo": "Aller à :",
     "today": "Aujourd'hui"
   },
   "Theme": {
@@ -104,17 +106,18 @@
   },
   "Gcal": {
     "label": "Google Calendar",
-    "connect": "Connecter et superposer",
-    "connected": "Connecté (cliquer pour déconnecter)",
+    "connect": "Connecter Google Calendar",
+    "connected": "Connecté",
+    "disconnect": "Déconnecter Google Calendar",
     "loading": "Connexion…",
-    "error": "Échec de connexion, réessayez"
+    "error": "Impossible de se connecter à Google Calendar. Veuillez réessayer."
   },
   "PrintExport": {
     "print": "Imprimer",
     "image": "Exporter l'image"
   },
   "Grid": {
-    "empty": "Ajoutez un lieu pour afficher la grille horaire."
+    "empty": "Ajoutez une ville pour afficher la grille horaire."
   },
   "Landing": {
     "title": "Convertisseur de fuseaux horaires",

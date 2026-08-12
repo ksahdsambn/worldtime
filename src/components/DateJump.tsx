@@ -47,7 +47,7 @@ export default function DateJump() {
 
   return (
     <label className="flex items-center gap-1.5 text-xs text-muted">
-      <span>{t("jumpTo")}：</span>
+      <span>{t("jumpTo")}</span>
       <input
         type="date"
         value={value}

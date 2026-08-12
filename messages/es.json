@@ -19,18 +19,18 @@
   },
   "CitySearch": {
     "placeholder": "Buscar ciudad, país o zona horaria…",
-    "noResults": "Sin resultados"
+    "noResults": "Ninguna ciudad coincide. Prueba con un país o zona horaria."
   },
   "Settings": {
     "title": "Ajustes",
     "hourFormat": "Formato de hora",
     "fmt12": "12 horas",
     "fmt24": "24 horas",
-    "fmtMixed": "Mixto (nativo por lugar)"
+    "fmtMixed": "Mixto (formato local de cada ciudad)"
   },
   "Places": {
     "title": "Lugares",
-    "empty": "Aún no hay lugares. Busca para añadir uno.",
+    "empty": "Aún no hay ciudades. Busca arriba para añadir la primera.",
     "setHome": "Definir como principal",
     "remove": "Quitar",
     "home": "Principal",
@@ -38,18 +38,19 @@
     "offsetFromHome": "Diferencia con el principal (positivo = por delante)",
     "dstActive": "Actualmente en horario de verano",
     "dst": "Horario de verano",
+    "dstBadge": "DST",
     "yes": "sí",
     "no": "no",
     "nextChange": "Próximo cambio",
     "noUpcoming": "sin cambios próximos",
-    "dstWarnSoon": "Cambio de horario de verano próximo",
+    "dstWarnSoon": "El cambio de horario de verano está próximo",
     "rename": "Renombrar",
-    "renamePrompt": "Nombre para mostrar personalizado",
+    "renamePrompt": "Escribe un nombre personalizado para esta ciudad (vacío para restablecer).",
     "tags": "Etiquetas",
-    "tagsPrompt": "Etiquetas (separadas por comas)",
+    "tagsPrompt": "Añade etiquetas separadas por comas (p. ej. equipo, clientes).",
     "all": "Todas",
     "dragHandle": "Arrastrar para reordenar",
-    "confirmRemoveHome": "¿Quitar el lugar principal?",
+    "confirmRemoveHome": "¿Quitar tu ciudad principal? Otras ciudades comparan su hora con la principal, así que otra ciudad pasará a ser la referencia.",
     "sunNone": "ninguno"
   },
   "Selection": {
@@ -72,31 +73,32 @@
     "eventPage": "Página pública del evento",
     "copySummary": "Copiar resumen de horarios",
     "shareLink": "Copiar enlace para compartir",
-    "copied": "Copiado"
+    "copied": "¡Copiado!"
   },
   "Event": {
     "title": "Evento público",
     "description": "Los horarios locales correspondientes a este evento:",
+    "invalid": "Este enlace de evento no es válido o ha caducado.",
     "openOriginal": "Abrir en WorldTime"
   },
   "Heatmap": {
     "green": "Todo en horario laboral",
-    "orange": "Algunos disponibles",
-    "red": "Alguien descansando",
-    "worstStatus": "predomina el peor estado"
+    "orange": "Algunos fuera del horario laboral",
+    "red": "Alguien durmiendo",
+    "worstStatus": "Cada columna se colorea según la ciudad que esté menos disponible."
   },
   "Now": {
     "backToNow": "Volver al ahora"
   },
   "Cursor": {
-    "cursor": "Cursor",
-    "enable": "Activar cursor",
+    "cursor": "Marcador de tiempo:",
+    "enable": "Mostrar marcador de tiempo",
     "move": "mover",
     "resize": "ajustar borde",
-    "disable": "Desactivar cursor"
+    "disable": "Ocultar marcador de tiempo"
   },
   "DateJump": {
-    "jumpTo": "Ir a",
+    "jumpTo": "Ir a:",
     "today": "Hoy"
   },
   "Theme": {
@@ -104,17 +106,18 @@
   },
   "Gcal": {
     "label": "Google Calendar",
-    "connect": "Conectar y superponer",
-    "connected": "Conectado (clic para desconectar)",
+    "connect": "Conectar con Google Calendar",
+    "connected": "Conectado",
+    "disconnect": "Desconectar Google Calendar",
     "loading": "Conectando…",
-    "error": "Error de conexión, reintenta"
+    "error": "No se pudo conectar con Google Calendar. Inténtalo de nuevo."
   },
   "PrintExport": {
     "print": "Imprimir",
     "image": "Exportar imagen"
   },
   "Grid": {
-    "empty": "Añade un lugar para ver la cuadrícula horaria."
+    "empty": "Añade una ciudad para ver la cuadrícula horaria."
   },
   "Landing": {
     "title": "Conversor de zonas horarias",

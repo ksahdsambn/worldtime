@@ -19,18 +19,18 @@
   },
   "CitySearch": {
     "placeholder": "Tìm thành phố, quốc gia hoặc múi giờ…",
-    "noResults": "Không có kết quả"
+    "noResults": "Không có thành phố phù hợp. Thử tìm theo quốc gia hoặc múi giờ."
   },
   "Settings": {
     "title": "Cài đặt",
     "hourFormat": "Định dạng giờ",
     "fmt12": "12 giờ",
     "fmt24": "24 giờ",
-    "fmtMixed": "Kết hợp (theo từng địa điểm)"
+    "fmtMixed": "Kết hợp (theo định dạng địa phương của từng thành phố)"
   },
   "Places": {
     "title": "Địa điểm",
-    "empty": "Chưa có địa điểm. Tìm kiếm để thêm.",
+    "empty": "Chưa có thành phố. Tìm ở trên để thêm thành phố đầu tiên.",
     "setHome": "Đặt làm chính",
     "remove": "Xoá",
     "home": "Chính",
@@ -38,18 +38,19 @@
     "offsetFromHome": "Chênh lệch với địa điểm chính (dương = nhanh hơn)",
     "dstActive": "Hiện đang trong giờ mùa hè",
     "dst": "Giờ mùa hè",
+    "dstBadge": "DST",
     "yes": "có",
     "no": "không",
     "nextChange": "Lần chuyển tiếp theo",
     "noUpcoming": "không có chuyển đổi sắp tới",
-    "dstWarnSoon": "Sắp đến giờ mùa hè",
+    "dstWarnSoon": "Sắp đến lúc chuyển giờ mùa hè",
     "rename": "Đổi tên",
-    "renamePrompt": "Tên hiển thị tuỳ chỉnh",
+    "renamePrompt": "Nhập tên tuỳ chỉnh cho thành phố này (để trống để đặt lại).",
     "tags": "Nhãn",
-    "tagsPrompt": "Nhãn (phân tách bằng dấu phẩy)",
+    "tagsPrompt": "Thêm nhãn, phân tách bằng dấu phẩy (ví dụ: nhóm, khách hàng).",
     "all": "Tất cả",
     "dragHandle": "Kéo để sắp xếp lại",
-    "confirmRemoveHome": "Xoá địa điểm chính?",
+    "confirmRemoveHome": "Xoá thành phố chính? Các thành phố khác so sánh giờ với thành phố chính, nên một thành phố khác sẽ trở thành mốc tham chiếu.",
     "sunNone": "không"
   },
   "Selection": {
@@ -72,31 +73,32 @@
     "eventPage": "Trang sự kiện công khai",
     "copySummary": "Sao chép tóm tắt thời gian",
     "shareLink": "Sao chép liên kết chia sẻ",
-    "copied": "Đã sao chép"
+    "copied": "Đã sao chép!"
   },
   "Event": {
     "title": "Sự kiện công khai",
     "description": "Giờ địa phương tương ứng cho sự kiện này:",
+    "invalid": "Liên kết sự kiện này không hợp lệ hoặc đã hết hạn.",
     "openOriginal": "Mở trong WorldTime"
   },
   "Heatmap": {
     "green": "Tất cả trong giờ làm việc",
-    "orange": "Một số người có thể liên hệ",
-    "red": "Có người đang nghỉ",
-    "worstStatus": "trạng thái xấu nhất được ưu tiên"
+    "orange": "Một số ngoài giờ làm việc",
+    "red": "Có người đang ngủ",
+    "worstStatus": "Mỗi cột được tô màu theo thành phố khó tham gia nhất."
   },
   "Now": {
     "backToNow": "Về hiện tại"
   },
   "Cursor": {
-    "cursor": "Con trỏ",
-    "enable": "Bật con trỏ",
+    "cursor": "Đánh dấu thời gian:",
+    "enable": "Hiện đánh dấu thời gian",
     "move": "di chuyển",
     "resize": "chỉnh biên",
-    "disable": "Tắt con trỏ"
+    "disable": "Ẩn đánh dấu thời gian"
   },
   "DateJump": {
-    "jumpTo": "Chuyển đến",
+    "jumpTo": "Chuyển đến:",
     "today": "Hôm nay"
   },
   "Theme": {
@@ -104,17 +106,18 @@
   },
   "Gcal": {
     "label": "Google Lịch",
-    "connect": "Kết nối & phủ lên",
-    "connected": "Đã kết nối (nhấn để ngắt)",
+    "connect": "Kết nối Google Lịch",
+    "connected": "Đã kết nối",
+    "disconnect": "Ngắt kết nối Google Lịch",
     "loading": "Đang kết nối…",
-    "error": "Kết nối thất bại, vui lòng thử lại"
+    "error": "Không thể kết nối với Google Lịch. Vui lòng thử lại."
   },
   "PrintExport": {
     "print": "In",
     "image": "Xuất hình ảnh"
   },
   "Grid": {
-    "empty": "Thêm địa điểm để xem lưới thời gian."
+    "empty": "Thêm thành phố để xem lưới thời gian."
   },
   "Landing": {
     "title": "Chuyển đổi múi giờ",

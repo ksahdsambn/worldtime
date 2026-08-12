@@ -368,7 +368,7 @@ function PlaceRow({
                 data-testid={`dst-warn-${p.id}`}
                 title={t("dstWarnSoon")}
               >
-                DST
+                {t("dstBadge")}
               </span>
             )}
           </div>

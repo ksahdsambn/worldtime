@@ -19,18 +19,18 @@
   },
   "CitySearch": {
     "placeholder": "Stadt, Land oder Zeitzone suchen…",
-    "noResults": "Keine Ergebnisse"
+    "noResults": "Keine passende Stadt gefunden. Versuche es mit einem Land oder einer Zeitzone."
   },
   "Settings": {
     "title": "Einstellungen",
     "hourFormat": "Stundenformat",
     "fmt12": "12-Stunden",
     "fmt24": "24-Stunden",
-    "fmtMixed": "Gemischt (native je Ort)"
+    "fmtMixed": "Gemischt (jeweils lokales Format)"
   },
   "Places": {
     "title": "Orte",
-    "empty": "Noch keine Orte. Suche, um einen hinzuzufügen.",
+    "empty": "Noch keine Städte. Suche oben, um die erste hinzuzufügen.",
     "setHome": "Als Hauptort festlegen",
     "remove": "Entfernen",
     "home": "Hauptort",
@@ -38,18 +38,19 @@
     "offsetFromHome": "Abstand zum Hauptort (positiv = voraus)",
     "dstActive": "Aktuell in der Sommerzeit",
     "dst": "Sommerzeit",
+    "dstBadge": "DST",
     "yes": "ja",
     "no": "nein",
     "nextChange": "Nächste Umstellung",
     "noUpcoming": "keine anstehende Umstellung",
-    "dstWarnSoon": "Sommerzeitumstellung steht an",
+    "dstWarnSoon": "Die Sommerzeitumstellung steht kurz bevor",
     "rename": "Umbenennen",
-    "renamePrompt": "Benutzerdefinierter Anzeigename",
+    "renamePrompt": "Eigenen Namen für diese Stadt eingeben (leer lassen zum Zurücksetzen).",
     "tags": "Tags",
-    "tagsPrompt": "Tags (kommagetrennt)",
+    "tagsPrompt": "Tags durch Kommas getrennt hinzufügen (z. B. Team, Kunden).",
     "all": "Alle",
     "dragHandle": "Ziehen zum Sortieren",
-    "confirmRemoveHome": "Hauptort entfernen?",
+    "confirmRemoveHome": "Hauptort entfernen? Andere Städte vergleichen ihre Zeit mit dem Hauptort, daher wird eine andere Stadt zur Referenz.",
     "sunNone": "keine"
   },
   "Selection": {
@@ -72,31 +73,32 @@
     "eventPage": "Öffentliche Veranstaltungsseite",
     "copySummary": "Zeitzusammenfassung kopieren",
     "shareLink": "Teilen-Link kopieren",
-    "copied": "Kopiert"
+    "copied": "Kopiert!"
   },
   "Event": {
     "title": "Öffentliche Veranstaltung",
     "description": "Die entsprechenden Ortszeiten für diese Veranstaltung:",
+    "invalid": "Dieser Veranstaltungslink ist ungültig oder abgelaufen.",
     "openOriginal": "In WorldTime öffnen"
   },
   "Heatmap": {
     "green": "Alle in Arbeitszeit",
-    "orange": "Einige erreichbar",
-    "red": "Jemand ruht",
-    "worstStatus": "schlechtester Status zählt"
+    "orange": "Einige außerhalb der Arbeitszeit",
+    "red": "Jemand schläft",
+    "worstStatus": "Jede Spalte wird nach der am wenigsten verfügbaren Stadt eingefärbt."
   },
   "Now": {
     "backToNow": "Zurück zu jetzt"
   },
   "Cursor": {
-    "cursor": "Cursor",
-    "enable": "Cursor aktivieren",
+    "cursor": "Zeitmarkierung:",
+    "enable": "Zeitmarkierung anzeigen",
     "move": "verschieben",
     "resize": "Rand anpassen",
-    "disable": "Cursor deaktivieren"
+    "disable": "Zeitmarkierung ausblenden"
   },
   "DateJump": {
-    "jumpTo": "Springen zu",
+    "jumpTo": "Springen zu:",
     "today": "Heute"
   },
   "Theme": {
@@ -104,17 +106,18 @@
   },
   "Gcal": {
     "label": "Google Calendar",
-    "connect": "Verbinden & überlagern",
-    "connected": "Verbunden (Klick zum Trennen)",
+    "connect": "Mit Google Calendar verbinden",
+    "connected": "Verbunden",
+    "disconnect": "Google Calendar trennen",
     "loading": "Verbinden…",
-    "error": "Verbindung fehlgeschlagen, bitte erneut versuchen"
+    "error": "Verbindung zu Google Calendar fehlgeschlagen. Bitte erneut versuchen."
   },
   "PrintExport": {
     "print": "Drucken",
     "image": "Bild exportieren"
   },
   "Grid": {
-    "empty": "Ort hinzufügen, um das Zeitraster zu sehen."
+    "empty": "Stadt hinzufügen, um das Zeitraster zu sehen."
   },
   "Landing": {
     "title": "Zeitzonen-Rechner",
