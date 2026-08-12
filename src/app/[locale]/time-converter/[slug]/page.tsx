@@ -178,80 +178,117 @@ export default async function LandingPage({ params }: Props) {
     a: interpFaq(it.a, faqVars),
   }));
 
+  // pairKind 仅作 h1 上方的「 eyebrow 」小标签，弱化呈现，强化 h1 主标题层级。
+  const pairKind = info.kind === "city" ? t("cityPair") : t("tzPair");
+
   return (
-    <main className="p-6 prose max-w-2xl">
-      <h1>
-        {info.aLabel} ↔ {info.bLabel}
-      </h1>
-      <p>
-        {info.kind === "city" ? t("cityPair") : t("tzPair")} ·{" "}
-        <strong>
-          {info.bLabel} {bAhead ? t("isAhead") : t("lags")} {diffLabel} {t("vs")} {info.aLabel}
-        </strong>{" "}
-        <span className="text-xs text-faint">{t("currentOffsetNote")}</span>
-      </p>
-      <p className="text-sm text-muted">
-        {t("bNote", { b: info.bLabel, a: info.aLabel, dir: t(bAhead ? "aheadNote" : "behindNote") })}
-      </p>
-      {/* 关键词导向引言段（含 {a}/{b}） */}
-      <p>{t("intro", { a: info.aLabel, b: info.bLabel })}</p>
-
-      <h2>{t("timeComparison")}</h2>
-      <p className="text-xs text-faint mb-1">{t("comparisonNote")}</p>
-      <table className="border-collapse">
-        <thead>
-          <tr>
-            <th className="border border-line px-2 py-1">{info.aLabel}</th>
-            <th className="border border-line px-2 py-1">{info.bLabel}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i}>
-              <td className="border border-line px-2 py-1 tabular-nums">{r.aHour}</td>
-              <td className="border border-line px-2 py-1 tabular-nums">
-                {r.bHour} <span className="text-faint">({r.bDay})</span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <p className="text-xs text-faint">{t("updatedAt", { time: updatedAt })}</p>
-
-      {info.kind === "tz" && (
-        <p className="text-sm text-muted">
-          {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
+    <main className="mx-auto max-w-2xl px-4 py-10 text-ink sm:py-16">
+      <header className="mb-8">
+        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-faint">
+          {pairKind}
         </p>
-      )}
+        <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-[28px]">
+          {info.aLabel} <span className="text-muted">↔</span> {info.bLabel}
+        </h1>
+
+        {/*
+          时差是本页的核心数字，作为视觉锚点（surface 卡片 + 大号等宽数字）。
+          currentOffsetNote 是关于该数字的说明，放卡片内弱化。
+        */}
+        <div className="surface mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-5 py-4">
+          <span className="font-mono text-3xl font-bold tabular-nums text-ink">
+            {diffLabel}
+          </span>
+          <span className="text-sm text-muted">
+            {info.bLabel} {bAhead ? t("isAhead") : t("lags")} {t("vs")} {info.aLabel}
+          </span>
+          <span className="text-xs text-faint">{t("currentOffsetNote")}</span>
+        </div>
+
+        <p className="mt-4 text-sm leading-relaxed text-muted">
+          {t("bNote", { b: info.bLabel, a: info.aLabel, dir: t(bAhead ? "aheadNote" : "behindNote") })}
+        </p>
+        {/* 关键词导向引言段（含 {a}/{b}） */}
+        <p className="mt-3 leading-relaxed text-muted">
+          {t("intro", { a: info.aLabel, b: info.bLabel })}
+        </p>
+      </header>
+
+      {/* 典型时段对照表 */}
+      <section className="mt-10">
+        <h2 className="mb-1 text-base font-semibold text-ink">{t("timeComparison")}</h2>
+        <p className="mb-3 text-xs text-faint">{t("comparisonNote")}</p>
+        <div className="surface overflow-hidden">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-line-strong">
+                <th
+                  scope="col"
+                  className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
+                >
+                  {info.aLabel}
+                </th>
+                <th
+                  scope="col"
+                  className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
+                >
+                  {info.bLabel}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={i} className="border-b border-line last:border-0">
+                  <td className="px-4 py-2 font-mono tabular-nums text-ink">{r.aHour}</td>
+                  <td className="px-4 py-2 font-mono tabular-nums text-ink">
+                    {r.bHour} <span className="text-faint">({r.bDay})</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="mt-2 text-xs text-faint">{t("updatedAt", { time: updatedAt })}</p>
+
+        {info.kind === "tz" && (
+          <p className="mt-3 text-sm text-muted">
+            {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
+          </p>
+        )}
+      </section>
 
       {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
-      <h2>{t("faqTitle")}</h2>
-      <ul className="list-none pl-0">
-        {faqItems.map((item) => (
-          <li key={item.q} className="mb-3">
-            <p className="text-ink font-semibold">{item.q}</p>
-            <p className="text-sm text-muted">{item.a}</p>
-          </li>
-        ))}
-      </ul>
-
-      {/* 相关转换器互链 */}
-      <h2>{t("relatedTitle")}</h2>
-      <nav>
-        <ul className="flex flex-wrap gap-x-4 gap-y-1 list-none pl-0">
-          {relatedConverterLinks(slug).map((item) => (
-            <li key={item.slug}>
-              <Link
-                href={`/time-converter/${item.slug}`}
-                className="text-accent hover:underline"
-              >
-                {item.label}
-              </Link>
+      <section className="mt-10">
+        <h2 className="mb-3 text-base font-semibold text-ink">{t("faqTitle")}</h2>
+        <ul className="divide-y divide-line">
+          {faqItems.map((item) => (
+            <li key={item.q} className="py-3">
+              <p className="font-medium text-ink">{item.q}</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted">{item.a}</p>
             </li>
           ))}
         </ul>
-      </nav>
+      </section>
+
+      {/* 相关转换器互链 */}
+      <section className="mt-10">
+        <h2 className="mb-3 text-base font-semibold text-ink">{t("relatedTitle")}</h2>
+        <nav>
+          <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+            {relatedConverterLinks(slug).map((item) => (
+              <li key={item.slug}>
+                <Link
+                  href={`/time-converter/${item.slug}`}
+                  className="text-accent hover:underline"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </section>
 
       <JsonLd
         data={webAppJsonLd({
