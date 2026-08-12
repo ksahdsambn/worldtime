@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
 import FirstUseEmptyState from "./FirstUseEmptyState";
-import { buildColumns, todayStartMs, isWeekendAt } from "@/lib/grid";
+import { buildColumns, todayStartMs } from "@/lib/grid";
+import { getCountry } from "@/data/countries";
 import { prefers12Hour } from "@/lib/time";
 import { columnColor, type HeatColor } from "@/lib/heatmap";
 import { localCityName } from "@/lib/cityName";
@@ -166,6 +167,13 @@ export default function TimeGrid() {
   // 审查报告 P2：单击（未拖拽）原实现会强制选中 1 小时，导致触屏误触与无法
   // 用指针清除选区。现改为：只有真的移动过才选中；纯点击则清除已有选区。
   const movedRef = useRef(false);
+  // 拖拽命中测试用 rAF 合帧：pointermove 在快速拖动时每秒触发数十次，原实现每次都
+  // document.elementFromPoint（强制命中测试）+ setState，导致单帧多次回流/重渲染。
+  // 现把指针位置记入 ref，每帧至多一次命中测试与一次 setState，拖动更顺滑、省 CPU。
+  const dragPtRef = useRef<{ x: number; y: number } | null>(null);
+  const dragRafRef = useRef<number | null>(null);
+  // dragEndMs 的 ref 镜像：rAF 回调里读取最新值做去重，避免闭包捕获过期 state。
+  const dragEndMsRef = useRef<number | null>(null);
 
   // 当前高亮范围（拖拽中优先，否则用已确认选区）
   const highlight = useMemo<{ start: number; end: number } | null>(() => {
@@ -195,36 +203,71 @@ export default function TimeGrid() {
     setIsDragging(true);
     setDragStartMs(ms);
     setDragEndMs(ms);
+    dragEndMsRef.current = ms;
     movedRef.current = false;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }
 
   function onPointerMove(e: React.PointerEvent) {
     if (!isDragging) return;
-    const ms = msFromPoint(e.clientX, e.clientY);
-    if (ms != null && ms !== dragEndMs) {
+    dragPtRef.current = { x: e.clientX, y: e.clientY };
+    // 本帧已调度则等待，合帧处理
+    if (dragRafRef.current != null) return;
+    dragRafRef.current = requestAnimationFrame(() => {
+      dragRafRef.current = null;
+      const pt = dragPtRef.current;
+      if (!pt) return;
+      const ms = msFromPoint(pt.x, pt.y);
       // 仅当落到不同格子时才视为「真移动」，避免微抖动误判
-      movedRef.current = true;
-      setDragEndMs(ms);
-    }
+      if (ms != null && ms !== dragEndMsRef.current) {
+        movedRef.current = true;
+        dragEndMsRef.current = ms;
+        setDragEndMs(ms);
+      }
+    });
   }
+
+  // 卸载时取消可能挂起的 rAF，避免对已卸载组件 setState
+  useEffect(() => {
+    return () => {
+      if (dragRafRef.current != null) cancelAnimationFrame(dragRafRef.current);
+    };
+  }, []);
 
   function onPointerUp(_e: React.PointerEvent) {
     if (!isDragging) return;
+    if (dragRafRef.current != null) {
+      cancelAnimationFrame(dragRafRef.current);
+      dragRafRef.current = null;
+    }
+    // 同步提交最后指针位置（被取消的 rAF 可能尚未跑），
+    // 避免快速「移动→抬起」时丢失最后一格。
+    const pt = dragPtRef.current;
+    if (pt && movedRef.current) {
+      const ms = msFromPoint(pt.x, pt.y);
+      if (ms != null) dragEndMsRef.current = ms;
+    }
     setIsDragging(false);
     // 单击（未移动到别的格子）：清除已有选区，不强制选中 1 小时
     if (!movedRef.current) {
       setSelection(null);
       setDragStartMs(null);
       setDragEndMs(null);
+      dragEndMsRef.current = null;
+      dragPtRef.current = null;
       return;
     }
-    if (dragStartMs == null || dragEndMs == null) {
+    // 用 ref 取已刷新的最终 end（setState 异步，state 此刻尚未更新）
+    const startMs = dragStartMs;
+    const endMs = dragEndMsRef.current;
+    if (startMs == null || endMs == null) {
       setSelection(null);
+      dragEndMsRef.current = null;
+      dragPtRef.current = null;
       return;
     }
-    const start = Math.min(dragStartMs, dragEndMs);
-    const end = Math.max(dragStartMs, dragEndMs) + 3600_000; // 半开区间
+    const start = Math.min(startMs, endMs);
+    const end = Math.max(startMs, endMs) + 3600_000; // 半开区间
     if (end - start <= 0) {
       setSelection(null);
     } else {
@@ -232,6 +275,8 @@ export default function TimeGrid() {
     }
     setDragStartMs(null);
     setDragEndMs(null);
+    dragEndMsRef.current = null;
+    dragPtRef.current = null;
   }
 
   if (!home || columns.length === 0) {
@@ -251,32 +296,6 @@ export default function TimeGrid() {
       );
     }
     return <FirstUseEmptyState />;
-  }
-
-  /**
-   * 格式化某一列在目标时区的显示文字（按小时）。
-   * 12 小时制下额外返回 24 小时对照（alt），便于跨时区心算；
-   * 24 小时制下 alt 为 null（与 primary 冗余，不重复显示）。
-   */
-  function cellLabel(
-    zone: string,
-    countryCode: string,
-    ms: number,
-  ): { primary: string; alt: string | null } {
-    const dt = DateTime.fromMillis(ms, { zone });
-    const use12 =
-      hourFormat === "12" ||
-      (hourFormat === "mixed" && prefers12Hour(countryCode));
-    return {
-      primary: dt.toFormat(use12 ? "h a" : "HH"),
-      alt: use12 ? dt.toFormat("HH") : null,
-    };
-  }
-
-  /** 判断某列是否在选区内。 */
-  function inHighlight(ms: number): boolean {
-    if (!highlight) return false;
-    return ms >= highlight.start && ms < highlight.end;
   }
 
   return (
@@ -339,8 +358,8 @@ export default function TimeGrid() {
             countryCode=""
             columns={columns}
             colorByMs={colors}
-            cellLabel={(ms) => cellLabel("UTC", "", ms)}
-            inHighlight={inHighlight}
+            hourFormat={hourFormat}
+            highlight={highlight}
             now={nowRaw}
             busyMs={gcalBusyMs}
           />
@@ -352,8 +371,8 @@ export default function TimeGrid() {
               countryCode={p.countryCode}
               columns={columns}
               colorByMs={colors}
-              cellLabel={(ms) => cellLabel(p.timeZone, p.countryCode, ms)}
-              inHighlight={inHighlight}
+              hourFormat={hourFormat}
+              highlight={highlight}
               now={nowRaw}
               busyMs={gcalBusyMs}
             />
@@ -364,14 +383,14 @@ export default function TimeGrid() {
   );
 }
 
-function Row({
+const Row = memo(function Row({
   label,
   zone,
   countryCode,
   columns,
   colorByMs,
-  cellLabel,
-  inHighlight,
+  hourFormat,
+  highlight,
   now,
   busyMs,
 }: {
@@ -380,44 +399,66 @@ function Row({
   countryCode: string;
   columns: ReturnType<typeof buildColumns>;
   colorByMs: Record<number, HeatColor>;
-  cellLabel: (ms: number) => { primary: string; alt: string | null };
-  inHighlight: (ms: number) => boolean;
+  hourFormat: "12" | "24" | "mixed";
+  /** 选区高亮范围（半开区间）；null 表示无高亮。传范围对象而非闭包，便于 memo。 */
+  highlight: { start: number; end: number } | null;
   now: number | null;
   busyMs: Set<number>;
 }) {
+  // 每格需要的信息（显示文字 + 是否周末）集中 memo，且对每列仅构造一次 DateTime
+  // 复用于「文字格式化」与「周末判定」两处。依赖 columns/zone/countryCode/hourFormat，
+  // 不含 now —— 故每 60s 的 now tick 命中缓存，跳过全部 DateTime 分配（原实现每次渲染
+  // 对 ~168 列 × N 行各自 new DateTime，是网格最大的 GC 压力源）。
+  const cellInfo = useMemo(() => {
+    const use12 =
+      hourFormat === "12" ||
+      (hourFormat === "mixed" && prefers12Hour(countryCode));
+    // UTC 行无 countryCode：跳过周末判定（避免兜底 [6,7] 产生无意义高亮）
+    const weekendDays = countryCode
+      ? getCountry(countryCode).weekendDays
+      : null;
+    return columns.map((c) => {
+      const dt = DateTime.fromMillis(c.ms, { zone });
+      const weekend = weekendDays && dt.isValid ? weekendDays.includes(dt.weekday) : false;
+      return {
+        primary: dt.toFormat(use12 ? "h a" : "HH"),
+        alt: use12 ? dt.toFormat("HH") : null,
+        weekend,
+      };
+    });
+  }, [columns, zone, countryCode, hourFormat]);
+
   return (
     <tr>
       <td className="sticky-col sticky left-0 z-10 px-3 py-1.5 text-[13px] font-medium text-ink">
         <span className="block max-w-[38vw] truncate md:max-w-none">{label}</span>
       </td>
-      {columns.map((c) => {
-        const selected = inHighlight(c.ms);
-        // UTC 行无国家归属，跳过周末判定（避免兜底 [6,7] 产生无意义高亮）
-        const weekend = countryCode ? isWeekendAt(zone, countryCode, c.ms) : false;
-        const busy = busyMs.has(c.ms);
+      {columns.map((c, i) => {
+        const info = cellInfo[i];
         // 当前小时标记（TC-5）：当前时刻落在该列所在的小时区间内。
         // 用区间判定（c.ms <= now < c.ms + 1h）以正确支持半小时/45 分钟偏移时区
         // （Asia/Kolkata、Asia/Kathmandu 等列 ms 不落在 UTC 整点上）。
         // 单元格的视觉状态（热力 / 周末 / 选区 / 现在 / 忙碌）全部由 data-* 属性
         // 驱动 globals.css 的令牌化规则，优先级在那里靠源码顺序保证。
         const isNow = now ? c.ms <= now && now < c.ms + 3600_000 : false;
-        const cl = cellLabel(c.ms);
         return (
           <td
             key={c.ms}
             data-zone={zone}
             data-ms={c.ms}
-            data-weekend={weekend ? "1" : "0"}
+            data-weekend={info.weekend ? "1" : "0"}
             data-heat={colorByMs[c.ms] ?? ""}
             data-now={isNow ? "1" : "0"}
-            data-busy={busy ? "1" : "0"}
-            data-selected={selected ? "1" : "0"}
+            data-busy={busyMs.has(c.ms) ? "1" : "0"}
+            data-selected={
+              highlight ? c.ms >= highlight.start && c.ms < highlight.end ? "1" : "0" : "0"
+            }
             className="cursor-cell px-1 py-1.5 text-center"
           >
-            <span className="tabular-nums">{cl.primary}</span>
-            {cl.alt && (
+            <span className="tabular-nums">{info.primary}</span>
+            {info.alt && (
               <span className="block text-[10px] leading-none text-faint tabular-nums">
-                {cl.alt}
+                {info.alt}
               </span>
             )}
           </td>
@@ -425,4 +466,4 @@ function Row({
       })}
     </tr>
   );
-}
+});

@@ -1,5 +1,65 @@
 # 开发进度记录
 
+## 第 20 轮：性能优化（渲染热路径缓存 / 派生计算 memo / 拖拽合帧）
+
+> 时间：2026-08-13
+> 范围：依据 `optimize` 技能与 AGENTS.md 设计原则，针对「空闲期 CPU/GC 开销大、拖拽掉帧、搜索卡顿」三类性能问题做系统优化，不改变任何功能与可访问性行为。
+> 依据：性能评估发现——核心网格与地点列表每 30s/60s 的 `now` tick 都触发**整树重渲染 + 全量重算**，其中多处是重复且昂贵的计算：① `nextDSTChange` 每次调用逐月×逐日探测 ~360 次 Luxon `DateTime` 构造，而 `PlacesPanel` 每个地点行每 30s 调一次（30 个地点 = 上万次分配/分钟）；② `timeZoneAbbrev` / `describeOffset` 每次都 `new Intl.DateTimeFormat`（构造昂贵）；③ `TimeGrid` 每个单元格每次渲染都 `new DateTime`（~168 列 × N 行，含 now tick，是网格最大 GC 源）；④ `prefers12Hour` 每次新建 `Set`；⑤ `CitySearch` 每次按键对全部 1200+ 城市反复 `.toLowerCase()`（~7200 次/查询 + filter+map 双趟）；⑥ 拖拽选区每个 `pointermove` 都 `document.elementFromPoint` + `setState`（快速拖动每秒数十次，单帧多次回流）。
+
+### 优化策略（核心：缓存稳定结果 + 跳过无关重算 + 合帧）
+
+1. **昂贵纯函数做结果/对象缓存**：DST 与时区缩写在「天/会话」尺度上几乎不变，但被每 tick 重算——改为按「时区+本地日」/「locale+时区」缓存，命中即 O(1)。`Intl.DateTimeFormat` 构造（解析 locale/选项、内部建表）是真正昂贵项，缓存**可复用的格式化器对象**、仅保留廉价 `formatToParts`。
+2. **组件 memo + 派生值 useMemo**：让「重命名某一地点」不再重算所有兄弟行的 DST/日出/偏移；让 `now` tick 不再触发网格单元格的文字/周末重算（标签 memo 不含 `now` 依赖）。
+3. **拖拽 `requestAnimationFrame` 合帧**：pointermove 高频触发，改为把指针位置记入 ref、每帧至多一次命中测试 + 一次 setState；pointerup 时**同步 flush** 最后位置，避免「快速移动→抬起」丢失末格。
+4. **搜索预构建索引**：模块加载时一次性建小写字段索引，查询变单趟 `includes` 遍历，去掉重复 `toLowerCase` 与双趟 filter+map。
+
+### 完成内容
+
+**① `src/lib/time.ts` —— 热点纯函数缓存**
+- `nextDSTChange`：拆出 `nextDSTChangeUncached`（原逐月×逐日探测逻辑不变），外层加「时区 + fromMs 本地日 + maxMonths」日级 `Map` 缓存（超 1000 项清空兜底）。结果在自然日内恒定，缓存安全；30 地点/分钟上万次分配 → 每时区每日一次真实计算。
+- `timeZoneAbbrev`：新增 `tzAbbrevFormatter` 按 `locale|timeZone` 缓存 `Intl.DateTimeFormat`（可复用于任意日期），消除每次构造；locale 列表提为模块常量 `TZ_ABBREV_LOCALES`。
+- `prefers12Hour`：国家集合提为模块级常量 `PREFERS_12HOUR_COUNTRIES`（原每次调用新建 `Set`，处于网格/列表热路径）。
+
+**② `src/components/PlacesPanel.tsx` —— PlaceRow memo + 派生值集中 memo**
+- `PlaceRow` 用 `memo` 包裹（传入的 store action、next-intl `t/tCom`、`useDialog` 的 `prompt/confirm` 均为稳定引用，默认浅比较即可正确跳过兄弟行）。
+- 行内全部 Luxon/DST/日出/偏移/悬浮详情计算收进一个 `useMemo`（依赖 `now/nowRaw/p/hourFormat/home/t`），避免无关重渲染重复调用。
+
+**③ `src/components/TimeGrid.tsx` —— 单元格标签 memo + Row memo + 拖拽合帧**
+- `Row` 用 `memo` 包裹；props 由「闭包 `cellLabel`/`inHighlight`」改为「`hourFormat` + `highlight` 范围对象」，便于 memo 浅比较命中。
+- 新增 `cellInfo` useMemo：对每列**仅构造一次 `DateTime`**，同时产出「显示文字 + 周末」；依赖 `columns/zone/countryCode/hourFormat`，**不含 `now`** → 每 60s now tick 命中缓存、零 `DateTime` 分配（原 ~168×N 次/渲染）。周末判定改为复用同一 `dt`（`getCountry().weekendDays.includes(dt.weekday)`），不再每格另开 `DateTime`。移除已无用的 `cellLabel`/`inHighlight`/`isWeekendAt` 引用。
+- 拖拽选区改 rAF 合帧：`dragPtRef`/`dragRafRef`/`dragEndMsRef` 三 ref；`onPointerMove` 记位置 + 每帧至多一次命中测试/setState；`onPointerUp` 取消挂起 rAF 后**同步 flush** 最后指针位置到 `dragEndMsRef`，并以 ref（而非异步未更新的 state）作为最终 end 计算选区，杜绝末格丢失；新增卸载时 `cancelAnimationFrame` 清理 effect。
+
+**④ `src/components/CitySearch.tsx` —— 搜索索引 + 偏移格式化器缓存**
+- 模块级 `SEARCH_INDEX`：加载时一次性预计算每城市的 6 个小写字段；查询改单趟 `for...of` + 按字段优先级（名字<国家<时区/id）直接 push，去掉 filter+map 双趟与每次按键的重复 `toLowerCase`。
+- `describeOffset` 走 `getOffsetFormatter` 按 `timeZone` 缓存 `Intl.DateTimeFormat`（shortOffset 格式器可跨日期复用）。
+
+### 审查与修复（提交前自审，纠正 2 项）
+
+1. **[关键] SelectionBar 违反 Rules of Hooks**：初版给 `eventCode` 加 `useMemo`，但放在了 early return（`if (!presence.mounted ...) return null`）**之后**，破坏 hook 调用顺序。鉴于该项收益边际（组件仅在有选区时挂载、encode 本身不贵）且与 ref/early-return 模式纠缠难正确放置，**回退为内联计算**以保正确性。
+2. **[轻微] CitySearch 注释错位**：原 `describeOffset` 的 JSDoc（「格式化为 +8/-5 风格」）在重构后落到了 `offsetFormatterCache` 上方，误导读者。修正：把描述性 JSDoc 归位到 `describeOffset`，缓存块改用专门的缓存说明注释。
+
+### 涉及文件
+
+- `src/lib/time.ts`（DST/缩写/12h 三处缓存）
+- `src/components/PlacesPanel.tsx`（PlaceRow memo + 派生值 memo）
+- `src/components/TimeGrid.tsx`（单元格标签 memo + Row memo + 拖拽 rAF 合帧）
+- `src/components/CitySearch.tsx`（搜索索引 + 偏移格式化器缓存）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript 类型检查（`tsc --noEmit`） | ✅ 通过 |
+| 单元测试（`vitest`） | ✅ 172/172 通过（含 time 31 / grid 15） |
+| ESLint（`next lint`） | ✅ 无警告或错误 |
+| 生产构建（`next build`） | ✅ 成功，305 个静态页面；首屏 JS 体积未增 |
+
+### 设计说明
+
+- **正确性优先**：所有缓存键按「会改变结果的最粗粒度」取——DST 按「本地日」（同日内下一次切换恒定）、缩写/偏移按「格式器对象」（跨日期复用、随日期变化由 `formatToParts` 自身处理），无一处牺牲精度。
+- **零功能改动**：DST 判定、周末、选区、搜索排序、偏移显示逻辑与输出完全一致；纯计算函数 `nextDSTChangeUncached` 与原逐月×逐日算法逐行保留，仅外包缓存层。
+- **未做（主动克制）**：未给 `SelectionBar` 强加 memo（hooks 顺序风险 > 收益）；未虚拟化地点列表（≤30 行无必要）；未改 `useNow` 轮询频率（时钟精度需求优先）。
+
 ## 第 19 轮：健壮性加固（错误处理 / 空状态 / 边界场景）
 
 > 时间：2026-08-12
