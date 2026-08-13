@@ -84,6 +84,39 @@
     --dur-fast: 150ms; /* 微反馈：按压、悬停、单元描边 */
     --dur-base: 200ms; /* 弹层进出、状态切换 */
     --dur-slow: 320ms; /* 抽屉、大块进场 */
+    --dur-slower: 520ms; /* 英雄/大块进场 */
+    /* 双向过渡（进出场对称），仍属 ease 家族，无 bounce */
+    --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+    /* —— 科技 premium 氛围层（Atmosphere）——
+       极光径向渐变停止色（蓝/青/紫，低透明）+ 点阵纹理色。
+       亮色：极淡冷调晕染，不喧宾夺主；暗色见 .dark。*/
+    --aurora-1: rgba(37, 99, 235, 0.1); /* 蓝 */
+    --aurora-2: rgba(56, 189, 248, 0.08); /* 青 */
+    --aurora-3: rgba(139, 92, 246, 0.06); /* 紫 */
+    --grid-texture: rgba(15, 23, 42, 0.04); /* 点阵纹理 */
+
+    /* —— 玻璃（Glass）—— 抬升浮层/顶栏磨砂质感 —— */
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-blur: 14px;
+
+    /* —— 发光（Glow）—— 主色/暖色染色外发光，用于交互高亮 —— */
+    --glow-accent: rgba(37, 99, 235, 0.35);
+    --glow-warm: rgba(245, 158, 11, 0.4);
+    --shadow-glow: 0 0 0 1px rgba(37, 99, 235, 0.12),
+      0 8px 24px -8px rgba(37, 99, 235, 0.35);
+    --shadow-glow-warm: 0 0 0 1px rgba(245, 158, 11, 0.18),
+      0 8px 24px -8px rgba(245, 158, 11, 0.4);
+
+    /* —— 渐变边 / 渐变文字 —— 关键卡片边缘与品牌文字 —— */
+    --border-gradient: linear-gradient(
+      135deg,
+      rgba(56, 189, 248, 0.5),
+      rgba(37, 99, 235, 0.5)
+    );
+    --text-gradient-from: #2563eb; /* 品牌蓝（白底 ~5.2:1）*/
+    --text-gradient-to: #0369a1; /* sky-700：白底 ~5.9:1，达 WCAG AA 正文（含 14–16px 标题）*/
 
     color-scheme: light;
   }
@@ -134,6 +167,33 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
+
+    /* —— 科技 premium 氛围层（暗色秀场：发光更放得开）—— */
+    --aurora-1: rgba(37, 99, 235, 0.24);
+    --aurora-2: rgba(56, 189, 248, 0.16);
+    --aurora-3: rgba(139, 92, 246, 0.16);
+    --grid-texture: rgba(148, 163, 184, 0.05);
+
+    /* 玻璃：深色抬升面半透明 + 更强 blur */
+    --glass-bg: rgba(19, 28, 46, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-blur: 16px;
+
+    /* 发光：暗色下外发光更显著（「秀场」）*/
+    --glow-accent: rgba(59, 130, 246, 0.45);
+    --glow-warm: rgba(251, 191, 36, 0.45);
+    --shadow-glow: 0 0 0 1px rgba(59, 130, 246, 0.2),
+      0 8px 30px -6px rgba(59, 130, 246, 0.45);
+    --shadow-glow-warm: 0 0 0 1px rgba(251, 191, 36, 0.22),
+      0 8px 30px -6px rgba(251, 191, 36, 0.45);
+
+    --border-gradient: linear-gradient(
+      135deg,
+      rgba(56, 189, 248, 0.6),
+      rgba(96, 165, 250, 0.6)
+    );
+    --text-gradient-from: #60a5fa;
+    --text-gradient-to: #38bdf8;
 
     color-scheme: dark;
   }
@@ -212,6 +272,8 @@
   }
   .btn-primary:hover {
     background-color: var(--accent-hover);
+    /* 科技 premium：主按钮悬停叠加主色发光 */
+    box-shadow: var(--shadow-glow);
   }
   /* 危险/破坏性操作（如删除主地点确认）*/
   .btn-danger {
@@ -298,7 +360,8 @@
   .input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    /* 科技 premium：聚焦环 + 主色外发光 */
+    box-shadow: 0 0 0 3px var(--accent-soft), 0 0 14px -2px var(--glow-accent);
   }
 
   /* —— 工具栏分隔线 —— */
@@ -392,17 +455,159 @@
     pointer-events: auto;
   }
 
-  /* —— 骨架扫光（替代单调 pulse）：高光带横向掠过 —— */
+  /* —— 骨架扫光（替代单调 pulse）：高光带横向掠过 ——
+     升级为更宽、更柔的双带扫光，质感更「premium」。*/
   .shimmer {
     background-image: linear-gradient(
-      90deg,
-      transparent 0%,
+      100deg,
+      transparent 20%,
       var(--surface-hover) 50%,
-      transparent 100%
+      transparent 80%
     );
     background-size: 200% 100%;
     animation: shimmer 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
   }
+
+  /* ============================================================================
+     科技 premium · 玻璃 / 发光 / 渐变 组件类
+     ========================================================================== */
+
+  /* —— 玻璃表面（frosted glass）—— 抬升卡片 / 关键浮层。
+     半透明 + backdrop-blur + 顶部高光 hairline。backdrop-filter 有性能成本，
+     仅用于顶栏 / 关键浮层 / 选区栏 / 对话框；默认仍用不透明 .surface。
+     注意：基类不声明 transition——否则其简写会覆盖 .motion-* 的 opacity/transform
+     过渡（如 SelectionBar 的 motion-sheet 进/出场）。主题切换的视觉过渡由
+     View Transition（圆形揭示）整体覆盖，玻璃面无需自带 morph。*/
+  .surface-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    /* 顶部 1px 高光：模拟「光自上方打下来」的玻璃边缘 */
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), var(--shadow-sm);
+  }
+  /* 交互式玻璃卡：悬停轻浮起 + 主色发光（仅用于可点击卡片；不与 motion-* 同用）*/
+  .surface-glass-interactive {
+    cursor: pointer;
+    transition: box-shadow var(--dur-base) var(--ease-out-quint),
+      transform var(--dur-base) var(--ease-out-quint);
+  }
+  .surface-glass-interactive:hover {
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+
+  /* —— 粘性玻璃栏（顶栏 / 工具条）—— 底部主色渐变 hairline —— */
+  .glass-bar {
+    position: relative;
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  }
+  /* 底部主色→青 渐变发丝线（取代普通 border-b，更「科技」）*/
+  .glass-bar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--border-gradient);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  /* —— 悬停发光 —— 交互元素的轻主色辉光（与按压反馈叠加）—— */
+  .glow-hover {
+    transition: box-shadow var(--dur-base) var(--ease-out-quint),
+      background-color var(--dur-fast) var(--ease-out-quint),
+      color var(--dur-fast) var(--ease-out-quint);
+  }
+  .glow-hover:hover {
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* —— 「实时 / 在线」脉冲点 —— 暖色核心 + 扩散 ping —— */
+  .live-dot {
+    position: relative;
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background-color: var(--warm);
+    box-shadow: 0 0 8px 0 var(--glow-warm);
+  }
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background-color: var(--warm);
+    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+/* —— 品牌渐变文字（.text-gradient / .text-gradient-flow）——
+   放在 @layer components 之外（普通层），因使用 @supports 块更清晰。
+   默认实色回退（--text-gradient-from），支持 background-clip:text 时裁切为渐变；
+   CJK 长串与降级环境均回退良好，绝不出现透明不可读文字。*/
+.text-gradient {
+  color: var(--text-gradient-from);
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .text-gradient {
+    background-image: linear-gradient(
+      135deg,
+      var(--text-gradient-from),
+      var(--text-gradient-to)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  /* 流动渐变（强调态）：更大的背景 + gradient-pan 平移 */
+  .text-gradient-flow {
+    background-image: linear-gradient(
+      135deg,
+      var(--text-gradient-from),
+      var(--text-gradient-to),
+      var(--text-gradient-from)
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-pan 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+}
+
+/* —— 品牌 mark 发光 —— logo 的柔和主色外发光（静态，不干扰阅读）—— */
+.brand-mark {
+  filter: drop-shadow(0 0 6px var(--glow-accent));
+}
+
+/* —— 主地点行（home-row）—— 左侧暖色渐变发光导轨，标识「主地点」。
+   用 ::before 绘制，独立于 box-shadow（hover 发光 / 拖拽阴影天然共存）。*/
+.home-row {
+  position: relative;
+}
+.home-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--warm) 14%,
+    var(--warm) 86%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px 0 var(--glow-warm);
+  pointer-events: none;
 }
 
 /* ============================================================================
@@ -417,9 +622,14 @@
   border-spacing: 0;
 }
 
-/* 表头 / 冻结列：抬升表面 + 发丝边，滚动时遮住下层内容 */
+/* 表头 / 冻结列：滚动时遮住下层内容。
+   科技 premium：表头用磨砂玻璃（仅 thead，元素少、成本可控），滚动时
+   下层内容经模糊透出，呈「frosted header」质感。冻结首列逐行较多、保持
+   不透明以控制 backdrop-filter 成本与对比度。*/
 .wt-grid thead th {
-  background-color: var(--surface);
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
   color: var(--text-muted);
   font-weight: 600;
   border-bottom: 1px solid var(--border-strong);
@@ -481,9 +691,10 @@
   );
 }
 
-/* 「现在」：暖色（琥珀）左侧条，同一列各行拼成一条纵向「当前时刻」指示线。
+/* 「现在」：暖色（琥珀）纵向指示线，同一列各行拼成一条「当前时刻」线。
    用 ::before 绘制（独立于 background-color 热力/选区与 background-image 忙碌
-   斜纹，天然分层共存），并附极轻呼吸以牵引视线；reduced-motion 下归零即静止。*/
+   斜纹，天然分层共存）。科技 premium 升级：上下渐隐的渐变线 + 暖色外发光，
+   并附极轻呼吸牵引视线；reduced-motion 下归零即静止。单元格数据不动。*/
 .wt-grid td[data-now="1"]::before {
   content: "";
   position: absolute;
@@ -491,7 +702,15 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  background-color: var(--warm);
+  /* 上下渐隐：首尾行拼合时形成连贯发光柱，避免硬顶/硬底 */
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--warm) 14%,
+    var(--warm) 86%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px 0 var(--glow-warm), 0 0 2px 0 var(--warm);
   animation: now-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   pointer-events: none;
 }
@@ -509,6 +728,18 @@
 .places-rows > li:nth-child(7) { animation-delay: 240ms; }
 .places-rows > li:nth-child(8) { animation-delay: 280ms; }
 .places-rows > li:nth-child(n + 9) { animation-delay: 280ms; }
+
+/* 通用错落进场（.stagger）：任意子元素序列的递增 animation-delay，
+   封顶第 8 个，避免长列表末尾过慢。配合 animate-* 进场类使用。*/
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 50ms; }
+.stagger > *:nth-child(3) { animation-delay: 100ms; }
+.stagger > *:nth-child(4) { animation-delay: 150ms; }
+.stagger > *:nth-child(5) { animation-delay: 200ms; }
+.stagger > *:nth-child(6) { animation-delay: 250ms; }
+.stagger > *:nth-child(7) { animation-delay: 300ms; }
+.stagger > *:nth-child(8) { animation-delay: 350ms; }
+.stagger > *:nth-child(n + 9) { animation-delay: 350ms; }
 
 /* ============================================================================
    动效 —— 仅一次编排好的进场；transform/opacity only
@@ -536,6 +767,177 @@
   }
   50% {
     opacity: 1;
+  }
+}
+
+/* ============================================================================
+   科技 premium 动效 keyframes（同样定义于此，避免被 Tailwind tree-shake）
+   全部被上方 prefers-reduced-motion 全局守卫归零，无需逐个处理。
+   ========================================================================== */
+
+/* 极光氛围网格缓慢漂移：背景位移，营造「活着」的科技感（不动 layout）*/
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, -1.5%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+/* 发光呼吸：opacity + 极轻 scale，用于「实时」点与发光高亮 */
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+/* 渐变平移：渐变边/渐变文字的「流动」质感 */
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* 扫描掠过：选区创建瞬间的一次性 sweep、加载扫描线 */
+@keyframes scan-sweep {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+/* logo 地球极慢自转（科技感细节，不干扰阅读）*/
+@keyframes orbit-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 「实时/在线」脉冲点：双层 ping（核心点 + 扩散环）*/
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.9;
+  }
+  70% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* ============================================================================
+   氛围背景（.atmosphere）—— 科技 premium 极光层
+   ----------------------------------------------------------------------------
+   固定全屏、置于内容之下（z-index:-10）、不拦截指针。两套主题各自由
+   --aurora-* / --grid-texture 令牌驱动；缓慢漂移由 aurora-drift 提供，
+   reduced-motion 下被全局守卫归零为静态快照。打印态由 .no-print 隐藏。
+   依赖：顶层页面容器须透明（不盖 opaque 背景）方可见——body 已铺 --app-bg
+   作为基底画布。
+   ========================================================================== */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  overflow: hidden;
+}
+/* 极光径向晕染：三色（蓝/青/紫）低透明，缓慢漂移营造「活着」的科技感 */
+.atmosphere__aurora {
+  position: absolute;
+  inset: -25%; /* 外溢，使漂移位移不露白边 */
+  background:
+    radial-gradient(42% 50% at 16% 20%, var(--aurora-1), transparent 70%),
+    radial-gradient(40% 48% at 84% 16%, var(--aurora-2), transparent 70%),
+    radial-gradient(46% 56% at 72% 84%, var(--aurora-3), transparent 70%);
+  animation: aurora-drift 32s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+/* 顶部主色微光晕：锚定顶栏视觉焦点，呼应品牌蓝 */
+.atmosphere__topglow {
+  position: absolute;
+  top: -12%;
+  left: 50%;
+  width: 65%;
+  height: 42%;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 50%, var(--aurora-2), transparent 70%);
+  opacity: 0.55;
+  animation: glow-breathe 9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: transform, opacity;
+}
+/* 点阵纹理：极淡科技网格，边缘 mask 渐隐避免硬边 */
+.atmosphere__grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    var(--grid-texture) 1px,
+    transparent 1px
+  );
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 75% 65% at 50% 28%,
+    #000 25%,
+    transparent 78%
+  );
+  mask-image: radial-gradient(
+    ellipse 75% 65% at 50% 28%,
+    #000 25%,
+    transparent 78%
+  );
+}
+
+/* ============================================================================
+   主题切换 · View Transition 圆形扩散揭示
+   ----------------------------------------------------------------------------
+   配合 useViewTransition：ThemeToggle 点击时写入 --vt-x / --vt-y（视口坐标），
+   新主题快照以点击点为圆心做 clip-path 圆形扩散。不支持时 hook 直接同步切换、
+   退化为 next-themes 平滑过渡。reduced-motion 由 hook 侧判定不走此分支。
+   ========================================================================== */
+@supports (view-transition-name: root) {
+  /* 关闭默认的交叉淡入，改用自定义圆形揭示 */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-new(root) {
+    animation: vt-reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+@keyframes vt-reveal {
+  from {
+    clip-path: circle(0% at var(--vt-x, 50%) var(--vt-y, 50%));
+  }
+  to {
+    /* 150% 足以覆盖任意宽高比的视口（以点击点为圆心）*/
+    clip-path: circle(150% at var(--vt-x, 50%) var(--vt-y, 50%));
   }
 }
 
@@ -574,6 +976,13 @@
     --shadow-sm: none;
     --shadow-md: none;
     --shadow-lg: none;
+    /* 玻璃面（顶栏/选区栏已 .no-print 隐藏；但 hero 卡 / 对照表 / 事件列表 /
+       表头仍可能打印）：压回不透明，避免半透明 + 失效 backdrop-filter 导致
+       打印脏污。表头 .wt-grid thead th 用 var(--glass-bg)，一并收口。*/
+    --glass-bg: #ffffff;
+    --glass-border: #cccccc;
+    --shadow-glow: none;
+    --shadow-glow-warm: none;
   }
   main {
     overflow: visible !important;

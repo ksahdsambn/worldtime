@@ -134,7 +134,7 @@ export default function PlacesPanel() {
   }
 
   return (
-    <aside className="animate-fade-in flex w-full shrink-0 flex-col border-line bg-surface md:w-72 md:border-r">
+    <aside className="animate-slide-in-left flex w-full shrink-0 flex-col border-line bg-surface md:w-72 md:border-r">
       {/* 移动端折叠开关：桌面端面板常驻展开，手机端默认折叠，把视口让给网格 */}
       <button
         type="button"
@@ -385,8 +385,8 @@ const PlaceRow = memo(function PlaceRow({
     <li
       ref={setNodeRef}
       style={style}
-      className={`surface group animate-fade-in overflow-hidden transition-shadow duration-150 hover:shadow-md ${
-        isHome ? "bg-warm-soft" : "bg-surface"
+      className={`surface group animate-fade-in overflow-hidden transition-shadow duration-200 hover:shadow-glow ${
+        isHome ? "bg-warm-soft home-row" : "bg-surface"
       }`}
     >
       <div className="flex items-center gap-2 px-2.5 py-2">

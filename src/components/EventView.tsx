@@ -8,6 +8,7 @@ import { decodeState, encodeState } from "@/lib/shareUrl";
 import { decodeEventCode } from "@/lib/calendar";
 import { localCityName } from "@/lib/cityName";
 import { IconHome } from "./icons";
+import { StateSurface } from "./StateSurface";
 import type { AppLocale } from "@/i18n/routing";
 
 /**
@@ -42,14 +43,7 @@ export default function EventView({
   }, [code]);
 
   if (!data || !data.selection || data.places.length === 0) {
-    return (
-      <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-20 text-center">
-        <div className="text-3xl" aria-hidden>
-          📅
-        </div>
-        <p className="text-sm text-muted">{t("invalid")}</p>
-      </main>
-    );
+    return <StateSurface icon={<span>📅</span>} title={t("invalid")} className="min-h-[50vh]" />;
   }
 
   const sel = data.selection;
@@ -62,12 +56,12 @@ export default function EventView({
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 sm:py-16">
-      <header className="mb-5 space-y-1.5">
-        <h1 className="text-lg font-bold text-ink">{t("title")}</h1>
+      <header className="animate-fade-up mb-5 space-y-1.5">
+        <h1 className="text-lg font-bold text-gradient">{t("title")}</h1>
         <p className="text-sm text-muted">{t("description")}</p>
       </header>
 
-      <ul className="surface overflow-hidden p-0">
+      <ul className="surface-glass stagger overflow-hidden p-0">
         {ordered.map((p) => {
           const sDt = DateTime.fromMillis(sel.startMs, { zone: p.timeZone });
           const eDt = DateTime.fromMillis(sel.endMs, { zone: p.timeZone });
@@ -78,7 +72,9 @@ export default function EventView({
           return (
             <li
               key={p.id}
-              className="flex items-center gap-3 px-4 py-3 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-line"
+              className={`animate-fade-up flex items-center gap-3 px-4 py-3 [&:not(:last-child)]:border-b [&:not(:last-child)]:border-line ${
+                isHome ? "home-row" : ""
+              }`}
             >
               <span className="text-xl leading-none" aria-hidden>
                 {p.flag}

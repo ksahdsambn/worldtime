@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { StateSurface } from "@/components/StateSurface";
 
 /**
  * 本地化 404（[locale] 子树）。
@@ -10,15 +11,10 @@ import { Link } from "@/i18n/navigation";
 export default async function NotFound() {
   const t = await getTranslations("NotFound");
   return (
-    <main className="mx-auto flex max-w-md flex-col items-center gap-4 p-8 text-center">
-      <div className="text-4xl" aria-hidden>
-        🧭
-      </div>
-      <h1 className="text-lg font-bold text-ink">{t("title")}</h1>
-      <p className="text-sm text-muted">{t("description")}</p>
+    <StateSurface icon={<span>🧭</span>} title={t("title")} description={t("description")}>
       <Link href="/" className="btn btn-primary btn-sm">
         {t("home")}
       </Link>
-    </main>
+    </StateSurface>
   );
 }

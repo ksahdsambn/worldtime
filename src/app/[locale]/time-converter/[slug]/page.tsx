@@ -6,6 +6,7 @@ import { formatOffset } from "@/lib/time";
 import { parseSlug } from "@/lib/landingSlug";
 import { routing } from "@/i18n/routing";
 import { JsonLd } from "@/components/JsonLd";
+import { Reveal } from "@/components/Reveal";
 import {
   POPULAR_CITY_PAIRS,
   POPULAR_TZ_PAIRS,
@@ -183,7 +184,7 @@ export default async function LandingPage({ params }: Props) {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 text-ink sm:py-16">
-      <header className="mb-8">
+      <header className="animate-fade-up mb-8">
         <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-faint">
           {pairKind}
         </p>
@@ -192,11 +193,12 @@ export default async function LandingPage({ params }: Props) {
         </h1>
 
         {/*
-          时差是本页的核心数字，作为视觉锚点（surface 卡片 + 大号等宽数字）。
+          时差是本页的核心数字，作为视觉锚点。科技 premium：磨砂玻璃卡 + 主色
+          外发光 + 大号渐变等宽数字（蓝→深天蓝，两端均达 WCAG AA）。
           currentOffsetNote 是关于该数字的说明，放卡片内弱化。
         */}
-        <div className="surface mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-5 py-4">
-          <span className="font-mono text-3xl font-bold tabular-nums text-ink">
+        <div className="surface-glass shadow-glow mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-5 py-4">
+          <span className="text-gradient font-mono text-3xl font-bold tabular-nums">
             {diffLabel}
           </span>
           <span className="text-sm text-muted">
@@ -215,80 +217,89 @@ export default async function LandingPage({ params }: Props) {
       </header>
 
       {/* 典型时段对照表 */}
-      <section className="mt-10">
-        <h2 className="mb-1 text-base font-semibold text-ink">{t("timeComparison")}</h2>
-        <p className="mb-3 text-xs text-faint">{t("comparisonNote")}</p>
-        <div className="surface overflow-hidden">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-line-strong">
-                <th
-                  scope="col"
-                  className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
-                >
-                  {info.aLabel}
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
-                >
-                  {info.bLabel}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => (
-                <tr key={i} className="border-b border-line last:border-0">
-                  <td className="px-4 py-2 font-mono tabular-nums text-ink">{r.aHour}</td>
-                  <td className="px-4 py-2 font-mono tabular-nums text-ink">
-                    {r.bHour} <span className="text-faint">({r.bDay})</span>
-                  </td>
+      <Reveal className="mt-10">
+        <section>
+          <h2 className="mb-1 text-base font-semibold text-gradient">{t("timeComparison")}</h2>
+          <p className="mb-3 text-xs text-faint">{t("comparisonNote")}</p>
+          <div className="surface-glass overflow-hidden">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="border-b border-line-strong">
+                  <th
+                    scope="col"
+                    className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
+                  >
+                    {info.aLabel}
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
+                  >
+                    {info.bLabel}
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {rows.map((r, i) => (
+                  <tr
+                    key={i}
+                    className="border-b border-line transition-colors duration-150 last:border-0 hover:bg-surface-hover"
+                  >
+                    <td className="px-4 py-2 font-mono tabular-nums text-ink">{r.aHour}</td>
+                    <td className="px-4 py-2 font-mono tabular-nums text-ink">
+                      {r.bHour} <span className="text-faint">({r.bDay})</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-        <p className="mt-2 text-xs text-faint">{t("updatedAt", { time: updatedAt })}</p>
+          <p className="mt-2 text-xs text-faint">{t("updatedAt", { time: updatedAt })}</p>
 
-        {info.kind === "tz" && (
-          <p className="mt-3 text-sm text-muted">
-            {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
-          </p>
-        )}
-      </section>
+          {info.kind === "tz" && (
+            <p className="mt-3 text-sm text-muted">
+              {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
+            </p>
+          )}
+        </section>
+      </Reveal>
 
       {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
-      <section className="mt-10">
-        <h2 className="mb-3 text-base font-semibold text-ink">{t("faqTitle")}</h2>
-        <ul className="divide-y divide-line">
-          {faqItems.map((item) => (
-            <li key={item.q} className="py-3">
-              <p className="font-medium text-ink">{item.q}</p>
-              <p className="mt-1 text-sm leading-relaxed text-muted">{item.a}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      {/* 相关转换器互链 */}
-      <section className="mt-10">
-        <h2 className="mb-3 text-base font-semibold text-ink">{t("relatedTitle")}</h2>
-        <nav>
-          <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
-            {relatedConverterLinks(slug).map((item) => (
-              <li key={item.slug}>
-                <Link
-                  href={`/time-converter/${item.slug}`}
-                  className="text-accent underline underline-offset-2 hover:text-accent-hover"
-                >
-                  {item.label}
-                </Link>
+      <Reveal className="mt-10" delay={60}>
+        <section>
+          <h2 className="mb-3 text-base font-semibold text-gradient">{t("faqTitle")}</h2>
+          <ul className="divide-y divide-line">
+            {faqItems.map((item) => (
+              <li key={item.q} className="py-3">
+                <p className="font-medium text-ink">{item.q}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted">{item.a}</p>
               </li>
             ))}
           </ul>
-        </nav>
-      </section>
+        </section>
+      </Reveal>
+
+      {/* 相关转换器互链 */}
+      <Reveal className="mt-10" delay={120}>
+        <section>
+          <h2 className="mb-3 text-base font-semibold text-gradient">{t("relatedTitle")}</h2>
+          <nav>
+            <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+              {relatedConverterLinks(slug).map((item) => (
+                <li key={item.slug}>
+                  <Link
+                    href={`/time-converter/${item.slug}`}
+                    className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </section>
+      </Reveal>
 
       <JsonLd
         data={webAppJsonLd({

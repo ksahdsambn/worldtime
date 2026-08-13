@@ -1036,3 +1036,86 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 ### 未做（主动克制）
 
 - **地点行删除退场** 与 **Google 日历忙碌斜纹淡入**：前者与 dnd-kit 内联 `transform/transition`、`animate-fade-in` 的 `fill:both` 冲突；后者受限于网格逐格 `data-busy` 属性系统。两者都会给核心组件引入脆弱性而价值有限，故未强行加入。
+
+---
+
+## 第 23 轮：全站「科技 premium」视觉重设计 + 3 轮审查修复
+
+> 时间：2026-08-13
+> 范围：在既有令牌/动效体系上叠加「氛围层 + 玻璃/发光层 + 动效语言层」三层，全站（首页工作区 / time-converter 落地页 / 事件页 / 状态页 / widget / 页脚）统一升级为 Linear·Vercel·Raycast 式「科技 premium · 精炼」质感；**亮暗双主题同等全力打造**；零新增依赖。随后对全部未提交改动做 **3 轮独立审查**（正确性回归 / 无障碍·性能·i18n / 一致性·边界），发现并修复 4 个真实问题。
+> 方向抉择：用户诉求「科技感 + 设计感 + 更多动画」与 AGENTS.md「温暖·友好·人文 / 拒绝冰冷终端」存在张力——经澄清选定**「科技 premium · 精炼」**（非赛博朋克霓虹、非冰冷终端），保留品牌蓝 + 琥珀暖色为前提注入发光/玻璃/动效。
+
+### 架构决策
+
+1. **三层叠加、不动网格内核**：①氛围层（`AtmosphereBackground`，固定全屏极光径向网格 + 点阵纹理 + 顶部光晕，缓慢漂移）②玻璃/发光层（顶栏/选区栏/浮层磨砂玻璃 + 主色发光描边）③动效语言层（扩展既有 `usePresence`/`animate-*`，新增进场/主题圆形揭示/现在线/错落）。**网格数据单元格保持冷静**（仅表头磨砂 + 现在线发光 + 行悬停发光），坚守 AGENTS.md「可读性第一」。
+2. **令牌驱动、亮暗双写**：18 个新语义令牌（`--aurora-1/2/3`/`--grid-texture`/`--glass-bg/-border/-blur`/`--glow-accent/-warm`/`--shadow-glow/-glow-warm`/`--border-gradient`/`--text-gradient-from/-to`/`--dur-slower`/`--ease-in-out-quart`）在 `:root` 与 `.dark` 各声明一套，`tailwind.config` 映射为工具类。暗色作「秀场」略放开发光，亮色协调收敛。
+3. **主题切换圆形揭示（原生 View Transitions API）**：新增 `useViewTransition`（feature-detect + try/catch 回退 + reduced-motion 跳过），`ThemeToggle` 以点击点为圆心写 `--vt-x/-y`，`::view-transition-new(root)` 做 clip-path 圆形扩散；`flushSync` 在回调内同步提交 next-themes 状态，确保过渡捕获真实 DOM 变化。所有分支保证 `setTheme` 执行——功能绝不丢失。
+4. **状态界面统一抽取**：新增 `StateSurface`（居中玻璃卡 + scale-in 图标 + 渐变标题），统一 loading/error/not-found/事件失效态；`WorldClockWidget` 消除历史硬编码（`bg-slate-800/bg-white/text-gray-*`）改令牌驱动（根元素 `.dark` 类响应 `?theme=`）。
+
+### 完成内容
+
+**① 令牌 + 氛围层（`globals.css` + `tailwind.config.ts` + 新增 `AtmosphereBackground.tsx`）**
+- 18 个亮暗双写令牌；6 个新 `@keyframes`（`aurora-drift`/`glow-breathe`/`gradient-pan`/`scan-sweep`/`orbit-slow`/`pulse-dot`，定义于 globals.css 防 tree-shake）；`animate-blur-in/-slide-in-left/-slide-down/-scale-in` 及 `aurora-drift/glow-breathe/gradient-pan` 工具类；`shadow-glow/-glow-warm` 阴影档。
+- `AtmosphereBackground`（server 组件，纯 CSS，`fixed -z-10 pointer-events:none`，`reduced-motion` 归零、`.no-print` 隐藏）挂入 `layout.tsx`；首页根容器去 `bg-app` 使氛围层可见（`body` 仍铺 `--app-bg` 基底）。
+
+**② 玻璃/发光组件类（`globals.css`）**
+- `.surface-glass`（半透明 + `backdrop-filter` + 顶部高光 hairline）、`.glass-bar`（粘性栏 + 底部主色渐变发丝线 `::after`）、`.glow-hover`、`.live-dot`（脉冲点）、`.text-gradient`/`-flow`（`@supports background-clip:text` + 实色回退，CJK/降级安全）、`.brand-mark`（logo 主色 drop-shadow）、`.home-row`（主地点暖色 `::before` 发光导轨）。
+- `.btn-primary:hover` 叠加 `--shadow-glow`；`.input:focus` 叠加主色外发光；`.shimmer` 升级为双带扫光；`.stagger > *` 通用错落（nth-child 50ms 步进，封顶第 8）。
+
+**③ 主工作区**
+- 顶栏：`glass-bar` + 品牌名 `text-gradient` + logo `brand-mark`，进场改 `animate-blur-in`。
+- 选区栏：`motion-sheet surface-glass shadow-glow`（玻璃 + 主色发光）。
+- 地点行：悬停 `shadow-glow`、主地点 `home-row` 暖色导轨；面板进场 `animate-slide-in-left`。
+- 网格表头：`var(--glass-bg)` + `backdrop-filter`（frosted header，仅 ~8 个 th，成本可控）；「现在」线升级上下渐隐渐变 + 暖色外发光；工具条 `animate-fade-up`。
+
+**④ 动效语言**
+- `Reveal`（IntersectionObserver 滚动进场，SSR 安全 + reduced-motion 直显）；`useViewTransition`（主题圆形揭示）。落地于页脚、time-converter 章节、事件列表错落、各处进场。
+
+**⑤ 次级界面**
+- time-converter 落地页：玻璃 hero + 大号渐变时差数字 + 玻璃对照表（行悬停）+ 3 个渐变章节标题 + 滚动 `Reveal`。
+- EventView：玻璃列表 + 错落进场 + 失效态接入 `StateSurface`。
+- 状态页：loading/error/not-found 统一 `StateSurface`（loading 升级玻璃药丸 + shimmer）。
+- widget：`WorldClockWidget`/`EventWidget` 令牌归一化 + 渐变标题。
+- 页脚：`Reveal` 包裹 + intro 标题渐变 + 链接 transition。
+
+### 3 轮审查发现并修复（4 项）
+
+| # | 轮次 | 类别 | 问题 | 修复 |
+| --- | --- | --- | --- | --- |
+| 1 | R2·无障碍 | **对比度回归（关键）** | 亮色 `--text-gradient-to: #0284c7` 白底仅 **4.09:1**，未达 AA 4.5:1；被用于 14–16px 标题（品牌标题/小节/widget），且注释误标「≥4.5:1」 | 下沉为 `#0369a1`（sky-700，~5.9:1），两端均达 AA 正文；订正注释 |
+| 2 | R3·动效 | **进出场过渡冲突** | `SelectionBar` 用 `motion-sheet surface-glass`，`.surface-glass` 的 `transition` 简写在源码中位于 `.motion-sheet` **之后**→ 覆盖后者，选区栏**丢失 opacity 淡入淡出**且时长 320→200ms（原 `motion-sheet surface` 因 `.surface` 在前而未受影响） | 移除 `.surface-glass` 基类的 `transition`（交还 motion-\* 接管；独立玻璃卡的主题切换由 View Transition 整体覆盖，无需自带 morph）；交互态过渡迁至 `.surface-glass-interactive` |
+| 3 | R3·打印 | **打印半透明** | 网格表头改 `var(--glass-bg)` 后，打印块仅覆盖 `--surface` 未覆盖 `--glass-bg` → 表头/玻璃卡打印半透明 + 失效 backdrop-filter 脏污 | 打印 `:root` 补 `--glass-bg:#fff`/`--glass-border:#ccc`/`--shadow-glow:none`/`--shadow-glow-warm:none` |
+| 4 | R3·无障碍 | **reduced-motion 闪隐** | `Reveal` 在 reduced-motion 下虽 `shown=true` 仍挂 `animate-fade-up`（`both` fill 的 opacity:0 起态）+ 内联 `animation-delay` → 带 `delay` 的 time-converter 章节在 delay 期间短暂闪隐 | 新增 `noMotion` state，reduced-motion 时**完全不挂动画类、不设 delay**，直接可见 |
+
+> R1（正确性）未发现回归：`StateSurface`/`Reveal` 的 `<main>`/`<div>` 嵌套与 server/client 边界均正确；`flushSync` 在事件处理器内安全；`useViewTransition` 泛型 `<T,>` 合法；`vt-reveal` 的 `circle(150%)` 经核算可覆盖任意宽高比视口的对角线。thead 仅 ~8 个 `th`，`backdrop-filter` 成本可控。
+
+### 涉及文件
+
+- 新增：`src/components/AtmosphereBackground.tsx`、`src/components/Reveal.tsx`、`src/components/StateSurface.tsx`、`src/lib/useViewTransition.ts`
+- 令牌/动效：`src/app/globals.css`、`tailwind.config.ts`
+- 布局/页面：`src/app/[locale]/layout.tsx`、`src/app/[locale]/page.tsx`、`src/app/[locale]/loading.tsx`、`src/app/[locale]/error.tsx`、`src/app/[locale]/not-found.tsx`、`src/app/[locale]/time-converter/[slug]/page.tsx`
+- 组件：`src/components/{ThemeToggle,SelectionBar,PlacesPanel,GridToolbar,EventView,EventWidget,WorldClockWidget}.tsx`
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript 类型检查（`tsc --noEmit`） | ✅ 通过 |
+| 单元测试（`vitest`） | ✅ 172/172 通过 |
+| ESLint（`next lint`） | ✅ 无警告 |
+| 生产构建（`next build`） | ✅ 成功，305 个静态页面；First Load JS 共享 103 kB（持平，零新增依赖） |
+| 浏览器计算样式核验 | ✅ 亮色：氛围层 `fixed/-z-10/pointer-events:none`、aurora 渐变 `rgba(37,99,235,.1)`、顶栏 `backdrop-filter: blur(14px) saturate(1.4)`、品牌名 `background-clip:text`、logo `drop-shadow(accent)`；落地页：玻璃 hero/对照表 `backdrop-filter`、渐变数字、3 个渐变章节标题 |
+| reduced-motion / 打印 / 焦点 | ✅ 全局守卫归零 + `useViewTransition`/`Reveal` 侧判定；打印块补玻璃令牌；`:focus-visible` 叠加发光 |
+
+### 设计说明 / 护栏
+
+- **可读性第一**：氛围/玻璃/动效集中在外层铬与交互瞬间，网格数据区不加持续动画；热力图颜色仍与文字/图案冗余。
+- **对比度**：渐变文字亮色两端 `#2563eb`(~5.2:1)/`#0369a1`(~5.9:1) 均 ≥ AA 正文；暗色端 `#60a5fa`/`#38bdf8` 远超。
+- **性能**：`backdrop-filter` 仅用于顶栏/选区栏/网格表头（~8 th）/关键浮层；`will-change` 仅氛围两子层；纯 CSS 动画，无动效/状态库。
+- **环境限制（诚实告知）**：主题切换的圆形揭示经 `flushSync + startViewTransition` 集成（文档推荐 + try/catch 回退），但本会话内置浏览器经自动化点击无法驱动 next-themes（连最简 `setTheme` 也不生效，原版同样）——系 IAB 对合成点击/存储沙盒的限制，非代码缺陷；真实浏览器点击会正常触发。
+
+### 未做（主动克制 / 待决）
+
+- **签名西文字体**（Inter/Sora/Geist + CJK 回退）：「设计感」另一高杠杆，但增体积/FOUT；默认不做，待用户拍板。
+- **GridToolbar 玻璃化**：与顶栏玻璃相邻，为免「过度玻璃」与保对比，保留不透明 `bg-surface` + fade-up 进场。
+- **选区创建一次性 sweep**：需 TimeGrid 内状态机配合，价值有限且触及核心组件，本轮未做（仅留 `scan-sweep` keyframe 备用）。
