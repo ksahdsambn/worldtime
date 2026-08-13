@@ -10,8 +10,7 @@ import type { CityRecord } from "@/lib/types";
  * 首次使用富空状态：替代旧的一行 `Grid.empty` 文案。
  *
  * - 温暖主标题 + 一行价值说明；
- * - 一键起始预设（本地时区 / 世界金融时钟），点一下即填入城市——网格 / 热力图 /
- *   拖拽选区全部立刻可用，这是到「aha」的最短路径；
+ * - 一键起始预设（本地时区 / 世界金融时钟），点一下即填入城市；
  * - 指向搜索框的轻提示，承接想自己挑城市的用户。
  *
  * addPlace 会自动把加入的首座城市设为主地点（home），因此预设顺序即「主地点在前」。
@@ -25,21 +24,23 @@ export default function FirstUseEmptyState() {
   }
 
   return (
-    <div className="flex min-h-[340px] flex-col items-center justify-center px-6 py-12">
-      <div className="animate-fade-up w-full max-w-md space-y-6 text-center">
-        <div className="space-y-2">
-          {/* 品牌印记：unoptimized 跳过 next/image 优化器——SVG 经优化器会被拒
-              （dangerouslyAllowSVG 未启用，返回 400），SVG 本为矢量图亦无优化收益。*/}
-          <Image
-            src="/brand/worldtime-mark.svg"
-            alt=""
-            width={40}
-            height={40}
-            unoptimized
-            className="mx-auto drop-shadow-sm"
-            aria-hidden
-          />
-          <h2 className="text-lg font-semibold text-ink">{t("emptyHeadline")}</h2>
+    <div className="relative flex min-h-[380px] flex-col items-center justify-center px-6 py-14">
+      <div className="animate-scale-in relative w-full max-w-md space-y-7 text-center">
+        <div className="space-y-3">
+          <span className="brand-orbit mx-auto">
+            <Image
+              src="/brand/worldtime-mark.svg"
+              alt=""
+              width={48}
+              height={48}
+              unoptimized
+              className="brand-mark"
+              aria-hidden
+            />
+          </span>
+          <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+            {t("emptyHeadline")}
+          </h2>
           <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted">
             {t("emptyBody")}
           </p>
@@ -65,7 +66,7 @@ export default function FirstUseEmptyState() {
           <p className="text-xs text-faint">{t("presetFinanceHint")}</p>
         </div>
 
-        <p className="pt-1 text-xs text-faint">{t("searchHint")}</p>
+        <p className="pt-1 text-xs tracking-wide text-faint">{t("searchHint")}</p>
       </div>
     </div>
   );

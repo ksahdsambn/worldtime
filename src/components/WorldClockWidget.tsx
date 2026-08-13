@@ -82,7 +82,7 @@ export default function WorldClockWidget() {
           <li key={c.id} className="flex items-center gap-2">
             <span>{c.flag}</span>
             <span className="flex-1">{c.nameEn}</span>
-            <span className="font-mono tabular-nums">{now ? DateTime.fromMillis(now, { zone: c.timeZone }).toFormat(fmt) : "--:--:--"}</span>
+            <span className="chrono">{now ? DateTime.fromMillis(now, { zone: c.timeZone }).toFormat(fmt) : "--:--:--"}</span>
           </li>
         ))}
       </ul>

@@ -93,7 +93,7 @@ export default function SelectionBar() {
             {t("duration")}
           </span>
           <span
-            className="text-base font-semibold tabular-nums text-ink"
+            className="chrono text-lg text-ink"
             data-testid="selection-duration"
           >
             {formatDuration(ms, durationWords)}

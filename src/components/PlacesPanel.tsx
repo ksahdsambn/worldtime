@@ -134,7 +134,7 @@ export default function PlacesPanel() {
   }
 
   return (
-    <aside className="animate-slide-in-left flex w-full shrink-0 flex-col border-line bg-surface md:w-72 md:border-r">
+    <aside className="animate-slide-in-left flex w-full shrink-0 flex-col border-line bg-surface md:w-80 md:border-r">
       {/* 移动端折叠开关：桌面端面板常驻展开，手机端默认折叠，把视口让给网格 */}
       <button
         type="button"
@@ -164,12 +164,18 @@ export default function PlacesPanel() {
         className={`${mobileOpen ? "flex" : "hidden"} flex-col flex-1 bg-surface-inset p-3 md:flex`}
       >
         {/* UTC 基准行（WC-7）：固定在列表顶部，仅作参考 */}
-        <div className="surface mb-3 flex items-center justify-between px-3 py-2">
-          <span className="text-[11px] uppercase tracking-wide text-faint">
-            UTC · {t("utcRow")}
+        <div className="utc-strip surface mb-3">
+          <span className="flex items-center gap-2">
+            <span
+              className="text-[10px] font-semibold uppercase tracking-[0.16em] text-faint"
+              aria-hidden
+            >
+              UTC
+            </span>
+            <span className="sr-only">{t("utcRow")}</span>
           </span>
           <span
-            className="font-mono text-sm font-semibold tabular-nums text-ink"
+            className="chrono text-lg text-ink"
             data-testid="utc-clock"
           >
             {utcStr}
@@ -434,7 +440,7 @@ const PlaceRow = memo(function PlaceRow({
         </div>
         <div className="flex shrink-0 flex-col items-end leading-tight">
           <span
-            className="font-mono text-sm font-semibold tabular-nums text-ink"
+            className="chrono text-xl text-ink"
             data-testid={`clock-${p.id}`}
           >
             {timeStr}

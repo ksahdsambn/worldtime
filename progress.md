@@ -1,5 +1,91 @@
 # 开发进度记录
 
+## 第 24 轮：「天文台精密计时」视觉加深 + 审查修复
+
+> 时间：2026-08-13
+> 范围：在第 23 轮「科技 premium」之上继续加强科技感与动效（用户反馈仍不够酷炫），方向定为 **Observatory Chronograph（天文台精密计时）**——经线 / 地平暖光 / HUD 角标 / 大号等宽时钟，避开霓虹赛博与紫青 AI slop。随后对全部未提交改动做两轮审查，共修复 15 项（对比度 / 读屏 / 性能 / 分层 / HUD 叠层）。
+> 零新增 npm 依赖；字体经 `next/font` 引入 Sora（拉丁）+ 既有 CJK 系统回退。
+
+### 架构决策
+
+1. **签名字体只覆盖拉丁**：`Sora` 经 `next/font/google` 挂 `--font-display`，`tailwind` sans 栈首位消费；中日韩仍走 PingFang / YaHei / Noto CJK，避免为 11 语种拉 CJK webfont。
+2. **氛围层加深但可降级**：在既有极光上加地平暖光、经线漂移、轨道环、扫描线、颗粒；手机端（`<768px`）关掉扫描 / 颗粒 / 经线，`prefers-reduced-motion` 仍由全局守卫归零。
+3. **网格内核继续冷静**：HUD 框只包容器；选区**不做**逐格 `box-shadow` 点燃动画（拖拽可同时点亮数百格，会卡核心路径）。「现在」光柱与进场编排承担动效。
+4. **亮色抬升面退回近白**：曾把 `--surface` 改成 `#f7f9fc`、`--surface-inset` 改成 `#e6ebf4`，导致 `text-faint` 在 inset 上仅 **3.98:1**（AA 失败）。审查后 `--surface` 回 `#ffffff`（faint 4.76:1）、`--surface-inset` 用 `#f7f9fc`（4.51:1）。
+
+### 完成内容
+
+**① 令牌 / 氛围 / HUD（`globals.css` + `AtmosphereBackground` + `tailwind.config.ts`）**
+- 暗色画布沉到 `#070b14`；极光第三停改为琥珀（去掉紫色）；新增 `--aurora-warm` / `--orbit-line` / `--scan-line`。
+- 氛围层：horizon / meridians / orbit / scan / grain；手机隐藏重层。
+- 新组件类：`.hud-frame`（仪器角标）、`.chrono`（tabular 时钟）、`.brand-orbit`（logo 轨道，`--sm` 用于顶栏）、`.feature-card`、`.chrono-spinner`、`.utc-strip`。
+- 主按钮悬停扫光（`scan-sweep`）；sans 栈接入 `var(--font-display)`。
+
+**② 主工作区**
+- 顶栏：Sora + 轨道 logo + `LiveUtcClock`（xl+，秒级 UTC）+ 搜索加 `IconSearch`。
+- 侧栏：UTC 条 + 大号 `chrono` 时钟；面板宽 `md:w-80`；**保留 `bg-surface`**（审查恢复，避免移动端折叠条透底、破坏 M1 分层）。
+- 网格：`hud-frame` 包表 / 空状态 / 恢复骨架；工作区去不透明 inset，让氛围从框外透出。
+- 空状态：更大品牌印记 + 轨道；加载态改轨道 spinner。
+- 「回到现在」按钮带 `live-dot`；工具条 `glass-bar`；选区时长改 `chrono`。
+- 页脚功能 / 场景改为 `feature-card` + 错落 `Reveal`。
+
+**③ 次级界面**
+- time-converter：HUD hero 大号时差 + HUD 对照表。
+- EventView / StateSurface / widget 时钟统一 `chrono` / `hud-frame`。
+
+### 审查发现并修复
+
+| # | 类别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | 无障碍·对比度 | 浅色 `--surface-inset: #e6ebf4` 上 `--text-faint` 仅 **3.98:1**（侧栏空文案 / 次级标签） | inset 改为 `#f7f9fc`（4.51:1）；抬升面回 `#ffffff`（4.76:1） |
+| 2 | 无障碍·读屏 | `LiveUtcClock` 用 `aria-live="polite"` 且每秒改数字 → 读屏每秒播报 | 去掉 live region，保留可见 UTC 文本 |
+| 3 | 性能 | `td[data-selected="1"]` 挂 `sel-ignite` box-shadow 动画，拖拽可选中数百格 | 删除该动画，选区仍用既有 inset 描边过渡 |
+| 4 | 分层表面回归 | 侧栏去掉 `bg-surface`，移动端折叠条与铬透出极光 | 恢复 `bg-surface` |
+| 5 | 布局 | `.hud-frame { overflow:hidden }` 与网格 `overflow-x-auto` 叠在同一节点，多余裁切 | 去掉 frame 的 overflow:hidden（圆角仍在） |
+| 6 | 顶栏溢出 | `brand-orbit` 外环 -13px 伸出 32px logo，压到标题/工具条 | 顶栏改 `brand-orbit--sm` |
+| 7 | 性能·移动 | 8 层氛围（含 feTurbulence 颗粒 + 扫描）在手机上过重 | `<768px` 隐藏 scan / grain / meridians |
+| 8 | 无障碍 | UTC 条只留 `title`，读屏读不到「协调世界时」 | 补 `sr-only` `{t("utcRow")}` |
+
+### 第二轮独立审查（提交前，对全部未提交 diff 再审）
+
+第一轮自审后仍残留 7 项，已全部落地：
+
+| # | 类别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 9 | 无障碍·对比度 | 画布沉到 `#eef2f8` 后，页脚 `text-faint` 落在 app-bg 上仅 **4.24:1**（AA 失败） | 页脚恢复 `bg-surface`（faint 4.76:1） |
+| 10 | 无障碍·对比度 | 着陆页 eyebrow / 对照说明 / 更新时间是 faint 且直接铺在 app-bg 上（同 4.24:1） | 这三处改为 `text-muted`（画布上 6.75:1） |
+| 11 | 无障碍·对比度 | `.utc-strip` 左侧 `warm-soft` 洗底，faint「UTC」落在 `#fef3c7` 上仅 **4.27:1** | 去掉洗底，改左侧 2px 暖色导轨；文字仍在 surface 上 |
+| 12 | 视觉 | `.hud-frame::before` `z-index:4` 低于冻结列 `z-10`，网格四角 HUD 标被表头/首列盖住 | 角标提到 `z-index:21`（`pointer-events:none`） |
+| 13 | 视觉 | 空状态 `overflow-hidden` 裁掉 `brand-orbit` 外环（inset -13px） | 去掉该 overflow |
+| 14 | UX | 侧栏 UTC 挂 `live-dot`，时钟仍 30s 一跳，像秒级直播 | 去掉侧栏 live-dot；可见「UTC」改 `aria-hidden`，读屏只听 `utcRow` |
+| 15 | 性能 | `useNow(1000)` 后台标签页仍每秒 setState；Sora 拉了 4 个静态字重 | `useNow` 随 `visibilitychange` 暂停/回前台对齐；Sora 改 variable 单文件 |
+
+其余核对：浅色 faint 在 surface **4.76:1** / inset **4.51:1**、深色 faint 在 surface **5.08:1** / inset **5.46:1**，均 ≥ AA；顶栏 glass 合成底 ≈ `#fafbfd`，faint **4.60:1**。搜索图标包进 input 的 `relative` 容器，避免以后非绝对子节点把图标垂直居中算偏。
+
+### 涉及文件
+
+- 新增：`src/components/LiveUtcClock.tsx`；`icons.tsx` 增 `IconSearch`
+- 令牌/动效：`src/app/globals.css`、`tailwind.config.ts`
+- 布局/页面：`src/app/[locale]/{layout,page,loading}.tsx`、`src/app/[locale]/time-converter/[slug]/page.tsx`
+- 组件：`AtmosphereBackground`、`TimeGrid`、`PlacesPanel`、`CitySearch`、`FirstUseEmptyState`、`GridToolbar`、`SelectionBar`、`NowButton`、`EventView`、`StateSurface`、`HeatmapLegend`、`CursorBar`、`WorldClockWidget`、`EventWidget`
+- 第二轮另改：`src/lib/useNow.ts`（后台暂停）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 通过 |
+| 单元测试（`vitest run`） | ✅ 172/172 通过 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 对比度（WCAG 相对亮度公式） | ✅ faint/surface 4.76 · faint/inset 4.51 · 页脚回 surface · 着陆页 canvas 改 muted 6.75 · utc-strip 去洗底 |
+
+### 未做（主动克制）
+
+- **选区创建一次性 sweep**：仍需 TimeGrid 状态机，不值得动核心拖拽路径。
+- **秒级刷新侧栏时钟**：侧栏仍 30s，避免 N 行每秒重算 Luxon；仅顶栏一处 1s。
+
+---
+
 ## 第 22 轮：界面质量审计问题全量修复（无障碍 / 图标体系 / 令牌 / 响应式）
 
 > 时间：2026-08-13

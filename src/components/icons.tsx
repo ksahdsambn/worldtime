@@ -175,6 +175,16 @@ export function IconImage(props: IconProps) {
   );
 }
 
+/** 搜索。 */
+export function IconSearch(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </Svg>
+  );
+}
+
 /** 公文包（工作时段）。 */
 export function IconBriefcase(props: IconProps) {
   return (

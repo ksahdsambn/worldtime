@@ -301,23 +301,28 @@ export default function TimeGrid() {
     // 都闪一下完整引导空状态；恢复后若无城市再显示真正的 FirstUseEmptyState。
     if (!restored) {
       return (
-        <div className="flex min-h-[40vh] items-center justify-center" aria-busy="true">
-          <span className="text-sm text-muted">
-            <span
-              className="mr-2 inline-block h-3 w-3 animate-pulse rounded-full bg-accent align-middle"
-              aria-hidden
-            />
+        <div className="hud-frame flex min-h-[40vh] items-center justify-center" aria-busy="true">
+          <span className="inline-flex items-center gap-3 text-sm text-muted">
+            <span className="chrono-spinner" aria-hidden>
+              <span className="chrono-spinner__ring" />
+              <span className="chrono-spinner__ring chrono-spinner__ring--inner" />
+              <span className="chrono-spinner__dot" />
+            </span>
             {tLoad("label")}
           </span>
         </div>
       );
     }
-    return <FirstUseEmptyState />;
+    return (
+      <div className="hud-frame">
+        <FirstUseEmptyState />
+      </div>
+    );
   }
 
   return (
     <div
-      className="select-none overflow-x-auto overscroll-x-contain"
+      className="hud-frame select-none overflow-x-auto overscroll-x-contain"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 /**
- * 路由切换加载态（骨架屏）。
+ * 路由切换加载态。
  * 在 [locale] 段导航时短暂显示，避免空白闪烁；label 供读屏播报。
  */
 export default async function Loading() {
@@ -12,11 +12,12 @@ export default async function Loading() {
       aria-busy="true"
       aria-live="polite"
     >
-      <span className="surface-glass inline-flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted">
-        <span
-          className="shimmer inline-block h-3 w-8 rounded-full bg-surface-hover align-middle"
-          aria-hidden
-        />
+      <span className="surface-glass inline-flex items-center gap-3 px-5 py-3 text-sm text-muted">
+        <span className="chrono-spinner" aria-hidden>
+          <span className="chrono-spinner__ring" />
+          <span className="chrono-spinner__ring chrono-spinner__ring--inner" />
+          <span className="chrono-spinner__dot" />
+        </span>
         {t("label")}
       </span>
     </main>

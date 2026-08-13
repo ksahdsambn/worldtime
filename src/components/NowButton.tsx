@@ -48,8 +48,9 @@ export default function NowButton() {
       type="button"
       onClick={backToNow}
       data-testid="now-button"
-      className="btn-primary btn-sm"
+      className="btn-primary btn-sm gap-2"
     >
+      <span className="live-dot" aria-hidden />
       {t("backToNow")}
     </button>
   );

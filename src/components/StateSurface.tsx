@@ -33,11 +33,11 @@ export function StateSurface({
       className={`flex min-h-[60vh] flex-col items-center justify-center gap-5 p-8 text-center ${className}`}
     >
       {icon != null && (
-        <div className="animate-scale-in text-5xl" aria-hidden>
+        <div className="brand-orbit animate-scale-in text-5xl" aria-hidden>
           {icon}
         </div>
       )}
-      <div className="surface-glass max-w-md space-y-2.5 px-7 py-8">
+      <div className="hud-frame max-w-md space-y-2.5 px-7 py-8">
         <h1 className="text-lg font-bold text-gradient">{title}</h1>
         {description != null && (
           <p className="text-sm leading-relaxed text-muted">{description}</p>
