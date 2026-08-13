@@ -96,7 +96,7 @@ export default function CursorBar() {
       ) : (
         <>
           <span
-            className="font-mono font-semibold tabular-nums text-ink"
+            className="chrono text-ink"
             data-testid="cursor-time"
           >
             {label}

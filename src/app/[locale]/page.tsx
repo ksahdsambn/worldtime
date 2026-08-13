@@ -11,6 +11,7 @@ import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import { Reveal } from "@/components/Reveal";
 import { JsonLd } from "@/components/JsonLd";
+import LiveUtcClock from "@/components/LiveUtcClock";
 import { Link } from "@/i18n/navigation";
 import { CITY_BY_ID } from "@/data/cities";
 import {
@@ -68,35 +69,34 @@ export default async function Home({ params }: Props) {
           抬升表面（bg-surface）+ 发丝底边 + 极淡阴影，与内凹网格区形成层次。
           safe-top：notched / 全面屏下避开顶部安全区。 */}
       <header className="safe-top animate-blur-in glass-bar sticky top-0 z-30 shadow-sm no-print">
-        <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5">
-          <h1 className="flex shrink-0 items-center gap-2.5">
-            {/* 品牌 mark：unoptimized 跳过优化器——SVG 经优化器会被拒
-                （dangerouslyAllowSVG 未启用，返回 400），并修复此前首屏 logo 静默 404。*/}
-            <Image
-              src="/brand/worldtime-mark.svg"
-              alt=""
-              width={30}
-              height={30}
-              unoptimized
-              priority
-              className="brand-mark"
-            />
+        <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
+          <h1 className="flex shrink-0 items-center gap-3">
+            <span className="brand-orbit brand-orbit--sm">
+              <Image
+                src="/brand/worldtime-mark.svg"
+                alt=""
+                width={32}
+                height={32}
+                unoptimized
+                priority
+                className="brand-mark"
+              />
+            </span>
             <span className="flex flex-col leading-tight">
-              <span className="text-[15px] font-semibold tracking-tight text-gradient">
+              <span className="text-[16px] font-semibold tracking-tight text-gradient">
                 {t("title")}
               </span>
-              <span className="hidden text-[11px] text-faint sm:block">
+              <span className="hidden text-[11px] tracking-wide text-faint sm:block">
                 {t("tagline")}
               </span>
             </span>
           </h1>
 
-          {/* 城市搜索：主操作，桌面端居中增长，移动端整行 */}
-          <div className="min-w-0 flex-1 md:max-w-sm">
+          <div className="min-w-0 flex-1 md:max-w-md">
             <CitySearch />
           </div>
 
-          {/* 次要操作：桌面内联，手机折叠进 ⋯ 菜单（见 HeaderActions）*/}
+          <LiveUtcClock />
           <HeaderActions />
         </div>
       </header>
@@ -112,7 +112,7 @@ export default async function Home({ params }: Props) {
           {/* 网格（内凹表面）+ 首次拖拽上下文提示（浮于可见顶部，不随滚动） */}
           <div className="relative min-h-0 flex-1">
             <DragHintCoachmark />
-            <div className="h-full overflow-auto bg-surface-inset p-3 md:p-4">
+            <div className="h-full overflow-auto p-3 md:p-4">
               <TimeGrid />
             </div>
           </div>
@@ -127,48 +127,46 @@ export default async function Home({ params }: Props) {
         以及到热门时差对照页的站内链接（增强可索引正文与链接权重传递）。
         视觉上次要，对交互无影响；文案与结构化数据完整保留。
       */}
-      <footer className="border-t border-line bg-surface px-4 py-10 text-sm">
-        <Reveal className="mx-auto max-w-5xl space-y-8">
+      <footer className="border-t border-line bg-surface px-4 py-12 text-sm">
+        <Reveal className="mx-auto max-w-5xl space-y-10">
           <section>
-            <h2 className="text-gradient mb-2 text-base font-semibold">
+            <h2 className="text-gradient mb-2 text-lg font-semibold tracking-tight">
               {tSeo("introTitle")}
             </h2>
             <p className="max-w-3xl leading-relaxed text-muted">{tSeo("introBody")}</p>
           </section>
 
-          {/* 核心功能 */}
           <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
               {tSeo("featuresTitle")}
             </h3>
-            <ul className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((f) => (
-                <li key={f.title} className="border-l border-line pl-3">
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {features.map((f, i) => (
+                <Reveal as="li" key={f.title} delay={i * 50} className="feature-card">
                   <span className="font-medium text-ink">{f.title}</span>
-                  <span className="mt-0.5 block text-muted">{f.desc}</span>
-                </li>
+                  <span className="mt-1 block text-muted">{f.desc}</span>
+                </Reveal>
               ))}
             </ul>
           </section>
 
-          {/* 使用场景 */}
           <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
               {tSeo("useCasesTitle")}
             </h3>
-            <ul className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-              {useCases.map((u) => (
-                <li key={u.title} className="border-l border-line pl-3">
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {useCases.map((u, i) => (
+                <Reveal as="li" key={u.title} delay={i * 50} className="feature-card">
                   <span className="font-medium text-ink">{u.title}</span>
-                  <span className="mt-0.5 block text-muted">{u.desc}</span>
-                </li>
+                  <span className="mt-1 block text-muted">{u.desc}</span>
+                </Reveal>
               ))}
             </ul>
           </section>
 
           {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
           <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
               {tSeo("faqTitle")}
             </h3>
             <ul className="max-w-3xl divide-y divide-line">
@@ -183,7 +181,7 @@ export default async function Home({ params }: Props) {
 
           {/* 热门时区转换内链 */}
           <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-faint">
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
               {tSeo("popularTitle")}
             </h3>
             <nav>

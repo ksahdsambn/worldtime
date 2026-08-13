@@ -57,11 +57,11 @@ export default function EventView({
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 sm:py-16">
       <header className="animate-fade-up mb-5 space-y-1.5">
-        <h1 className="text-lg font-bold text-gradient">{t("title")}</h1>
+        <h1 className="text-xl font-bold tracking-tight text-gradient">{t("title")}</h1>
         <p className="text-sm text-muted">{t("description")}</p>
       </header>
 
-      <ul className="surface-glass stagger overflow-hidden p-0">
+      <ul className="hud-frame stagger overflow-hidden p-0">
         {ordered.map((p) => {
           const sDt = DateTime.fromMillis(sel.startMs, { zone: p.timeZone });
           const eDt = DateTime.fromMillis(sel.endMs, { zone: p.timeZone });
@@ -90,7 +90,7 @@ export default function EventView({
                 </span>
               </div>
               <div className="flex shrink-0 flex-col items-end leading-tight">
-                <span className="font-mono text-sm font-semibold tabular-nums text-ink">
+                <span className="chrono text-lg text-ink">
                   {timeRange}
                 </span>
                 <span className="text-[11px] text-muted tabular-nums">

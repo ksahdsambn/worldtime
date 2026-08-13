@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Sora } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -9,6 +10,12 @@ import GisScript from "@/components/GisScript";
 import AtmosphereBackground from "@/components/AtmosphereBackground";
 import { getSiteUrl, buildAlternates, buildOpenGraph } from "@/lib/seo";
 import "../globals.css";
+
+const sora = Sora({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
+});
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -29,8 +36,8 @@ export const viewport: Viewport = {
   // 配合 .safe-top / .safe-bottom 避免 sticky 顶栏与底部浮栏被遮挡。
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: light)", color: "#eef2f8" },
+    { media: "(prefers-color-scheme: dark)", color: "#070b14" },
   ],
 };
 
@@ -78,7 +85,7 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider locale={locale}>
-      <html lang={locale} suppressHydrationWarning>
+      <html lang={locale} className={sora.variable} suppressHydrationWarning>
         <body>
           <ThemeRegistry>
             <AtmosphereBackground />

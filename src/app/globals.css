@@ -13,9 +13,9 @@
 @layer base {
   :root {
     /* —— 分层表面（layered surfaces）—— */
-    --app-bg: #f5f7fb; /* 画布：偏冷的暖白，非纯白 */
-    --surface: #ffffff; /* 抬升面板 */
-    --surface-inset: #eef2f8; /* 内凹表面（网格底）*/
+    --app-bg: #eef2f8; /* 画布：冷纸，氛围层落在此上 */
+    --surface: #ffffff; /* 抬升面板近白：faint 在此面上 4.76:1 ≥ AA */
+    --surface-inset: #f7f9fc; /* 内凹：faint 在此面上 4.51:1 ≥ AA */
     --surface-hover: #e8edf5;
 
     /* —— 边框 —— */
@@ -23,8 +23,8 @@
     --border-strong: #ccd5e3;
 
     /* —— 文字（带色调，避免纯黑/纯白）——
-       faint 经对比度校准：在 #ffffff 抬升面上 ≥4.5:1（WCAG AA 正文），
-       旧值 #8a97ab 仅 2.96:1，未达 AA，已下沉至 slate-500 系。*/
+        faint 经对比度校准：在 --surface #ffffff 上 4.76:1、在 --surface-inset
+        #f7f9fc 上 4.51:1（均 ≥ WCAG AA 正文）。旧值 #8a97ab 仅 2.96:1。*/
     --text: #0f172a;
     --text-muted: #475569;
     --text-faint: #64748b;
@@ -89,12 +89,15 @@
     --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
     /* —— 科技 premium 氛围层（Atmosphere）——
-       极光径向渐变停止色（蓝/青/紫，低透明）+ 点阵纹理色。
-       亮色：极淡冷调晕染，不喧宾夺主；暗色见 .dark。*/
-    --aurora-1: rgba(37, 99, 235, 0.1); /* 蓝 */
-    --aurora-2: rgba(56, 189, 248, 0.08); /* 青 */
-    --aurora-3: rgba(139, 92, 246, 0.06); /* 紫 */
-    --grid-texture: rgba(15, 23, 42, 0.04); /* 点阵纹理 */
+        极光径向渐变停止色（蓝 / 深青 / 琥珀，低透明）+ 点阵纹理色。
+        亮色：极淡冷调晕染，不喧宾夺主；暗色见 .dark。*/
+    --aurora-1: rgba(37, 99, 235, 0.12);
+    --aurora-2: rgba(14, 116, 184, 0.08);
+    --aurora-3: rgba(245, 158, 11, 0.07);
+    --aurora-warm: rgba(245, 158, 11, 0.1);
+    --grid-texture: rgba(15, 23, 42, 0.055);
+    --orbit-line: rgba(37, 99, 235, 0.18);
+    --scan-line: rgba(37, 99, 235, 0.28);
 
     /* —— 玻璃（Glass）—— 抬升浮层/顶栏磨砂质感 —— */
     --glass-bg: rgba(255, 255, 255, 0.72);
@@ -122,17 +125,17 @@
   }
 
   .dark {
-    --app-bg: #0b1120;
-    --surface: #131c2e;
-    --surface-inset: #0f172a;
-    --surface-hover: #1b2740;
+    --app-bg: #070b14;
+    --surface: #10182a;
+    --surface-inset: #0a101c;
+    --surface-hover: #182338;
 
     --border: #283449;
     --border-strong: #3a4963;
 
     --text: #e6ebf2;
     --text-muted: #9faec4;
-    /* faint 校准：在 #131c2e 面上 ≥4.5:1（WCAG AA）；旧值 #64748b 仅 3.58:1。*/
+    /* faint 校准：在 --surface #10182a 上 5.08:1（WCAG AA）；旧值 #64748b 仅 3.58:1。*/
     --text-faint: #7c8aa3;
 
     --accent: #3b82f6;
@@ -169,13 +172,16 @@
     --shadow-lg: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
 
     /* —— 科技 premium 氛围层（暗色秀场：发光更放得开）—— */
-    --aurora-1: rgba(37, 99, 235, 0.24);
-    --aurora-2: rgba(56, 189, 248, 0.16);
-    --aurora-3: rgba(139, 92, 246, 0.16);
-    --grid-texture: rgba(148, 163, 184, 0.05);
+    --aurora-1: rgba(37, 99, 235, 0.28);
+    --aurora-2: rgba(56, 189, 248, 0.12);
+    --aurora-3: rgba(251, 191, 36, 0.14);
+    --aurora-warm: rgba(251, 191, 36, 0.16);
+    --grid-texture: rgba(148, 163, 184, 0.07);
+    --orbit-line: rgba(96, 165, 250, 0.22);
+    --scan-line: rgba(251, 191, 36, 0.45);
 
-    /* 玻璃：深色抬升面半透明 + 更强 blur */
-    --glass-bg: rgba(19, 28, 46, 0.6);
+    /* 玻璃：对齐新抬升面 #10182a，半透明 + 更强 blur */
+    --glass-bg: rgba(16, 24, 42, 0.62);
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-blur: 16px;
 
@@ -192,8 +198,8 @@
       rgba(56, 189, 248, 0.6),
       rgba(96, 165, 250, 0.6)
     );
-    --text-gradient-from: #60a5fa;
-    --text-gradient-to: #38bdf8;
+    --text-gradient-from: #93c5fd; /* 深面 ~9.8:1 */
+    --text-gradient-to: #fbbf24; /* 琥珀端 ~10.6:1，两端均远超 AA */
 
     color-scheme: dark;
   }
@@ -266,14 +272,31 @@
   }
   .btn-primary {
     @apply btn;
+    position: relative;
+    overflow: hidden;
     background-color: var(--accent);
     color: var(--accent-fg);
     box-shadow: var(--shadow-sm);
   }
+  .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 36%,
+      rgba(255, 255, 255, 0.22) 50%,
+      transparent 64%
+    );
+    transform: translateX(-130%);
+    pointer-events: none;
+  }
   .btn-primary:hover {
     background-color: var(--accent-hover);
-    /* 科技 premium：主按钮悬停叠加主色发光 */
     box-shadow: var(--shadow-glow);
+  }
+  .btn-primary:hover::after {
+    animation: scan-sweep 0.55s var(--ease-out-quart);
   }
   /* 危险/破坏性操作（如删除主地点确认）*/
   .btn-danger {
@@ -360,8 +383,7 @@
   .input:focus {
     outline: none;
     border-color: var(--accent);
-    /* 科技 premium：聚焦环 + 主色外发光 */
-    box-shadow: 0 0 0 3px var(--accent-soft), 0 0 14px -2px var(--glow-accent);
+    box-shadow: 0 0 0 3px var(--accent-soft), 0 0 18px -2px var(--glow-accent);
   }
 
   /* —— 工具栏分隔线 —— */
@@ -582,9 +604,136 @@
   }
 }
 
-/* —— 品牌 mark 发光 —— logo 的柔和主色外发光（静态，不干扰阅读）—— */
 .brand-mark {
   filter: drop-shadow(0 0 6px var(--glow-accent));
+}
+
+.brand-orbit {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.brand-orbit::before,
+.brand-orbit::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--orbit-line);
+  pointer-events: none;
+}
+.brand-orbit::before {
+  inset: -7px;
+  animation: orbit-ring 18s linear infinite;
+}
+.brand-orbit::after {
+  inset: -13px;
+  border-style: dashed;
+  opacity: 0.55;
+  animation: orbit-ring 32s linear infinite reverse;
+}
+.brand-orbit--sm::before {
+  inset: -4px;
+}
+.brand-orbit--sm::after {
+  inset: -8px;
+}
+
+.chrono {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+  font-weight: 600;
+}
+
+.hud-frame {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  box-shadow: var(--shadow-md);
+}
+.hud-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 21;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 16px 1.5px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 0 0 / 1.5px 16px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 0 / 16px 1.5px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 0 / 1.5px 16px no-repeat,
+    linear-gradient(var(--warm), var(--warm)) 0 100% / 16px 1.5px no-repeat,
+    linear-gradient(var(--warm), var(--warm)) 0 100% / 1.5px 16px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 100% / 16px 1.5px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 100% 100% / 1.5px 16px no-repeat;
+}
+
+.feature-card {
+  position: relative;
+  padding: 0.95rem 1rem 0.95rem 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  transition: transform var(--dur-base) var(--ease-out-quint),
+    box-shadow var(--dur-base) var(--ease-out-quint),
+    border-color var(--dur-base) var(--ease-out-quint);
+}
+.feature-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--warm));
+}
+.feature-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-glow);
+}
+
+.chrono-spinner {
+  position: relative;
+  display: inline-block;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.chrono-spinner__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-strong);
+}
+.chrono-spinner__ring--inner {
+  inset: 22%;
+  border-style: dashed;
+  opacity: 0.65;
+}
+.chrono-spinner__dot {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 999px;
+  background: var(--warm);
+  box-shadow: 0 0 10px var(--glow-warm);
+  transform-origin: 50% 16px;
+  animation: orbit-ring 1.35s linear infinite;
+}
+
+.utc-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  box-shadow: inset 2px 0 0 0 var(--warm);
 }
 
 /* —— 主地点行（home-row）—— 左侧暖色渐变发光导轨，标识「主地点」。
@@ -702,16 +851,15 @@
   top: 0;
   bottom: 0;
   width: 3px;
-  /* 上下渐隐：首尾行拼合时形成连贯发光柱，避免硬顶/硬底 */
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    var(--warm) 14%,
-    var(--warm) 86%,
+    var(--warm) 10%,
+    var(--warm) 90%,
     transparent 100%
   );
-  box-shadow: 0 0 8px 0 var(--glow-warm), 0 0 2px 0 var(--warm);
-  animation: now-pulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  box-shadow: 0 0 12px 1px var(--glow-warm), 0 0 3px 0 var(--warm);
+  animation: now-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   pointer-events: none;
 }
 
@@ -852,6 +1000,41 @@
   }
 }
 
+@keyframes meridian-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(72px, 0, 0);
+  }
+}
+
+@keyframes scan-vertical {
+  0% {
+    transform: translate3d(0, -8%, 0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.55;
+  }
+  92% {
+    opacity: 0.28;
+  }
+  100% {
+    transform: translate3d(0, 108vh, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes orbit-ring {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* ============================================================================
    氛围背景（.atmosphere）—— 科技 premium 极光层
    ----------------------------------------------------------------------------
@@ -868,49 +1051,142 @@
   pointer-events: none;
   overflow: hidden;
 }
-/* 极光径向晕染：三色（蓝/青/紫）低透明，缓慢漂移营造「活着」的科技感 */
 .atmosphere__aurora {
   position: absolute;
-  inset: -25%; /* 外溢，使漂移位移不露白边 */
+  inset: -25%;
   background:
-    radial-gradient(42% 50% at 16% 20%, var(--aurora-1), transparent 70%),
-    radial-gradient(40% 48% at 84% 16%, var(--aurora-2), transparent 70%),
-    radial-gradient(46% 56% at 72% 84%, var(--aurora-3), transparent 70%);
-  animation: aurora-drift 32s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    radial-gradient(42% 50% at 14% 18%, var(--aurora-1), transparent 70%),
+    radial-gradient(38% 46% at 86% 12%, var(--aurora-2), transparent 70%),
+    radial-gradient(48% 58% at 78% 88%, var(--aurora-3), transparent 72%);
+  animation: aurora-drift 36s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   will-change: transform;
 }
-/* 顶部主色微光晕：锚定顶栏视觉焦点，呼应品牌蓝 */
+.atmosphere__horizon {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -18%;
+  height: 46%;
+  background: radial-gradient(
+    55% 80% at 50% 100%,
+    var(--aurora-warm),
+    transparent 72%
+  );
+  animation: glow-breathe 11s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 .atmosphere__topglow {
   position: absolute;
-  top: -12%;
+  top: -14%;
   left: 50%;
-  width: 65%;
-  height: 42%;
+  width: 70%;
+  height: 44%;
   transform: translateX(-50%);
   background: radial-gradient(50% 50% at 50% 50%, var(--aurora-2), transparent 70%);
-  opacity: 0.55;
+  opacity: 0.6;
   animation: glow-breathe 9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  will-change: transform, opacity;
 }
-/* 点阵纹理：极淡科技网格，边缘 mask 渐隐避免硬边 */
+.atmosphere__meridians {
+  position: absolute;
+  inset: -8% 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 71px,
+    var(--grid-texture) 71px,
+    var(--grid-texture) 72px
+  );
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 72%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #000 18%,
+    #000 72%,
+    transparent 100%
+  );
+  opacity: 0.85;
+  animation: meridian-drift 56s linear infinite;
+}
+.atmosphere__orbit {
+  position: absolute;
+  top: -12%;
+  right: -8%;
+  width: min(58vw, 560px);
+  height: min(58vw, 560px);
+  border-radius: 50%;
+  border: 1px solid var(--orbit-line);
+  box-shadow: inset 0 0 0 40px var(--orbit-line);
+  animation: orbit-ring 90s linear infinite;
+}
+.atmosphere__orbit::before,
+.atmosphere__orbit::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--orbit-line);
+}
+.atmosphere__orbit::before {
+  inset: 16%;
+  border-style: dashed;
+  opacity: 0.7;
+}
+.atmosphere__orbit::after {
+  inset: 32%;
+  opacity: 0.45;
+}
+.atmosphere__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 120px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--scan-line) 48%,
+    transparent
+  );
+  opacity: 0.22;
+  animation: scan-vertical 18s linear infinite;
+}
 .atmosphere__grid {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(
-    var(--grid-texture) 1px,
-    transparent 1px
-  );
-  background-size: 28px 28px;
+  background-image: radial-gradient(var(--grid-texture) 1px, transparent 1px);
+  background-size: 26px 26px;
   -webkit-mask-image: radial-gradient(
-    ellipse 75% 65% at 50% 28%,
-    #000 25%,
+    ellipse 78% 68% at 50% 24%,
+    #000 22%,
     transparent 78%
   );
   mask-image: radial-gradient(
-    ellipse 75% 65% at 50% 28%,
-    #000 25%,
+    ellipse 78% 68% at 50% 24%,
+    #000 22%,
     transparent 78%
   );
+}
+.atmosphere__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+@media (max-width: 767px) {
+  .atmosphere__scan,
+  .atmosphere__grain,
+  .atmosphere__meridians {
+    display: none;
+  }
+  .atmosphere__orbit {
+    opacity: 0.45;
+  }
 }
 
 /* ============================================================================
@@ -1017,9 +1293,12 @@
 }
 
 @media (hover: none) {
-  /* 触屏点击会残留 :hover；网格单元的灰底移除，热力/周末/选区色照常显示 */
   .wt-grid td[data-ms]:hover {
     background-color: transparent;
+  }
+  .feature-card:hover {
+    transform: none;
+    box-shadow: none;
   }
 }
 

@@ -185,20 +185,15 @@ export default async function LandingPage({ params }: Props) {
   return (
     <main className="mx-auto max-w-2xl px-4 py-10 text-ink sm:py-16">
       <header className="animate-fade-up mb-8">
-        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-faint">
+        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
           {pairKind}
         </p>
-        <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-[28px]">
-          {info.aLabel} <span className="text-muted">↔</span> {info.bLabel}
+        <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-[32px]">
+          {info.aLabel} <span className="text-gradient">↔</span> {info.bLabel}
         </h1>
 
-        {/*
-          时差是本页的核心数字，作为视觉锚点。科技 premium：磨砂玻璃卡 + 主色
-          外发光 + 大号渐变等宽数字（蓝→深天蓝，两端均达 WCAG AA）。
-          currentOffsetNote 是关于该数字的说明，放卡片内弱化。
-        */}
-        <div className="surface-glass shadow-glow mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-5 py-4">
-          <span className="text-gradient font-mono text-3xl font-bold tabular-nums">
+        <div className="hud-frame shadow-glow mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-6 py-5">
+          <span className="text-gradient chrono text-4xl font-bold sm:text-5xl">
             {diffLabel}
           </span>
           <span className="text-sm text-muted">
@@ -220,8 +215,8 @@ export default async function LandingPage({ params }: Props) {
       <Reveal className="mt-10">
         <section>
           <h2 className="mb-1 text-base font-semibold text-gradient">{t("timeComparison")}</h2>
-          <p className="mb-3 text-xs text-faint">{t("comparisonNote")}</p>
-          <div className="surface-glass overflow-hidden">
+          <p className="mb-3 text-xs text-muted">{t("comparisonNote")}</p>
+          <div className="hud-frame overflow-hidden">
             <table className="w-full border-collapse text-sm">
               <thead>
                 <tr className="border-b border-line-strong">
@@ -245,8 +240,8 @@ export default async function LandingPage({ params }: Props) {
                     key={i}
                     className="border-b border-line transition-colors duration-150 last:border-0 hover:bg-surface-hover"
                   >
-                    <td className="px-4 py-2 font-mono tabular-nums text-ink">{r.aHour}</td>
-                    <td className="px-4 py-2 font-mono tabular-nums text-ink">
+                    <td className="chrono px-4 py-2.5 text-ink">{r.aHour}</td>
+                    <td className="chrono px-4 py-2.5 text-ink">
                       {r.bHour} <span className="text-faint">({r.bDay})</span>
                     </td>
                   </tr>
@@ -255,7 +250,7 @@ export default async function LandingPage({ params }: Props) {
             </table>
           </div>
 
-          <p className="mt-2 text-xs text-faint">{t("updatedAt", { time: updatedAt })}</p>
+          <p className="mt-2 text-xs text-muted">{t("updatedAt", { time: updatedAt })}</p>
 
           {info.kind === "tz" && (
             <p className="mt-3 text-sm text-muted">

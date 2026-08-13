@@ -15,7 +15,7 @@ export default function HeatmapLegend() {
       {items.map((it) => (
         <span key={it.key} className="flex items-center gap-1.5">
           <span
-            className="inline-block h-2.5 w-2.5 rounded-sm border border-line"
+            className="inline-block h-2 w-3.5 rounded-[2px] border border-line"
             style={{ backgroundColor: it.token }}
             aria-hidden
           />

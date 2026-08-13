@@ -7,6 +7,7 @@ import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import type { CityRecord } from "@/lib/types";
 import { toast } from "@/lib/toast";
 import { usePresence } from "@/lib/usePresence";
+import { IconSearch } from "./icons";
 
 /**
  * 偏移量格式化器缓存。
@@ -158,35 +159,37 @@ export default function CitySearch() {
 
   return (
     <div className="relative w-full max-w-md">
-      <input
-        type="text"
-        role="combobox"
-        maxLength={60}
-        aria-expanded={open && query.trim().length > 0}
-        aria-controls={listboxId}
-        aria-autocomplete="list"
-        aria-activedescendant={
-          open && query.trim() && results.length > 0
-            ? `${listboxId}-opt-${highlight}`
-            : undefined
-        }
-        value={query}
-        aria-label={t("placeholder")}
-        placeholder={t("placeholder")}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          setOpen(true);
-          setHighlight(0);
-        }}
-        onFocus={() => setOpen(true)}
-        onBlur={() => {
-          // 延迟关闭以允许点击下拉项
-          if (blurTimer.current) clearTimeout(blurTimer.current);
-          blurTimer.current = setTimeout(() => setOpen(false), 150);
-        }}
-        onKeyDown={onKeyDown}
-        className="input w-full"
-      />
+      <div className="relative">
+        <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
+        <input
+          type="text"
+          role="combobox"
+          maxLength={60}
+          aria-expanded={open && query.trim().length > 0}
+          aria-controls={listboxId}
+          aria-autocomplete="list"
+          aria-activedescendant={
+            open && query.trim() && results.length > 0
+              ? `${listboxId}-opt-${highlight}`
+              : undefined
+          }
+          value={query}
+          aria-label={t("placeholder")}
+          placeholder={t("placeholder")}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setOpen(true);
+            setHighlight(0);
+          }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => {
+            if (blurTimer.current) clearTimeout(blurTimer.current);
+            blurTimer.current = setTimeout(() => setOpen(false), 150);
+          }}
+          onKeyDown={onKeyDown}
+          className="input w-full pl-9"
+        />
+      </div>
       {presence.mounted && (
         <ul
               id={listboxId}

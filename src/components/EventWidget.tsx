@@ -54,7 +54,7 @@ export default function EventWidget({ locale }: { locale: AppLocale }) {
             <li key={p.id} className="flex items-center gap-2">
               <span>{p.flag}</span>
               <span className="flex-1">{localCityName(locale, p)}</span>
-              <span className="font-mono tabular-nums">{s} - {e}</span>
+              <span className="chrono">{s} - {e}</span>
             </li>
           );
         })}

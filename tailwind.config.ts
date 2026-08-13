@@ -73,6 +73,7 @@ const config: Config = {
       fontFamily: {
         // 保留 CJK 回退（11 语种含中日韩），仅精简排序以优先取各平台最佳原生无衬线。
         sans: [
+          "var(--font-display)",
           "ui-sans-serif",
           "system-ui",
           "-apple-system",
