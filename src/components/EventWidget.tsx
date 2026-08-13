@@ -33,10 +33,7 @@ export default function EventWidget({ locale }: { locale: AppLocale }) {
 
   if (!data || !data.selection) {
     return (
-      <div
-        data-testid="event-widget"
-        className="rounded-lg border border-line p-4 text-sm text-muted"
-      >
+      <div data-testid="event-widget" className="surface p-4 text-sm text-muted">
         {tw("eventEmpty")}
       </div>
     );
@@ -45,10 +42,10 @@ export default function EventWidget({ locale }: { locale: AppLocale }) {
   return (
     <div
       data-testid="event-widget"
-      className="rounded-lg border border-line bg-surface p-4 text-ink"
+      className="surface p-4 text-ink"
       style={{ minWidth: 240 }}
     >
-      <h2 className="mb-2 text-sm font-bold text-ink">{t("title")}</h2>
+      <h2 className="text-gradient mb-2 text-sm font-bold">{t("title")}</h2>
       <ul className="space-y-1 text-sm">
         {data.places.map((p) => {
           const s = DateTime.fromMillis(data.selection!.startMs, { zone: p.timeZone }).toFormat("MM-dd HH:mm");

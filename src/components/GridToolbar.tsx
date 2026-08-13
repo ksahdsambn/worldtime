@@ -19,7 +19,7 @@ export default function GridToolbar() {
   if (places.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line bg-surface px-4 py-2.5 no-print">
+    <div className="animate-fade-up flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line bg-surface px-4 py-2.5 no-print">
       <HeatmapLegend />
       <div className="flex flex-wrap items-center gap-1.5">
         <DateJump />

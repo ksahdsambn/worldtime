@@ -12,9 +12,9 @@ export default async function Loading() {
       aria-busy="true"
       aria-live="polite"
     >
-      <span className="text-sm text-muted">
+      <span className="surface-glass inline-flex items-center gap-2.5 px-4 py-2.5 text-sm text-muted">
         <span
-          className="shimmer mr-2 inline-block h-3 w-8 rounded-full bg-surface-hover align-middle"
+          className="shimmer inline-block h-3 w-8 rounded-full bg-surface-hover align-middle"
           aria-hidden
         />
         {t("label")}

@@ -69,19 +69,20 @@ export default function WorldClockWidget() {
   return (
     <div
       data-testid="wc-widget"
-      className={`rounded-lg border p-4 ${dark ? "bg-slate-800 text-slate-100" : "bg-white text-gray-900"}`}
+      // 通过根元素的 .dark 类驱动令牌（globals.css 的 .dark { --surface… } 作用于
+      // 本元素及其后代），从而用语义令牌替代历史的 bg-slate-800/bg-white 硬编码，
+      // 同时仍由 ?theme= 参数控制明暗。
+      className={`surface p-4 text-ink ${dark ? "dark" : ""}`}
       style={{ minWidth: 200 }}
     >
-      <h2 className="mb-2 text-sm font-bold">{t("worldClock")}</h2>
+      <h2 className="text-gradient mb-2 text-sm font-bold">{t("worldClock")}</h2>
       <ul className="space-y-1 text-sm">
-        {cities.length === 0 && <li className="text-gray-500">{t("worldClockEmpty")}</li>}
+        {cities.length === 0 && <li className="text-faint">{t("worldClockEmpty")}</li>}
         {cities.map((c) => (
           <li key={c.id} className="flex items-center gap-2">
             <span>{c.flag}</span>
             <span className="flex-1">{c.nameEn}</span>
-            <span className="font-mono tabular-nums">
-              {now ? DateTime.fromMillis(now, { zone: c.timeZone }).toFormat(fmt) : "--:--:--"}
-            </span>
+            <span className="font-mono tabular-nums">{now ? DateTime.fromMillis(now, { zone: c.timeZone }).toFormat(fmt) : "--:--:--"}</span>
           </li>
         ))}
       </ul>

@@ -9,6 +9,7 @@ import GridToolbar from "@/components/GridToolbar";
 import DragHintCoachmark from "@/components/DragHintCoachmark";
 import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
+import { Reveal } from "@/components/Reveal";
 import { JsonLd } from "@/components/JsonLd";
 import { Link } from "@/i18n/navigation";
 import { CITY_BY_ID } from "@/data/cities";
@@ -59,14 +60,14 @@ export default async function Home({ params }: Props) {
   const faq = tSeo.raw("faq") as Array<{ q: string; a: string }>;
 
   return (
-    <div className="flex min-h-screen flex-col bg-app text-ink">
+    <div className="flex min-h-screen flex-col text-ink">
       <UrlStateSync />
       <KeyboardShortcuts />
 
       {/* 顶部导航栏：品牌 · 城市搜索 · 语言/设置/主题/日历。
           抬升表面（bg-surface）+ 发丝底边 + 极淡阴影，与内凹网格区形成层次。
           safe-top：notched / 全面屏下避开顶部安全区。 */}
-      <header className="safe-top animate-fade-in sticky top-0 z-30 border-b border-line bg-surface shadow-sm no-print">
+      <header className="safe-top animate-blur-in glass-bar sticky top-0 z-30 shadow-sm no-print">
         <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5">
           <h1 className="flex shrink-0 items-center gap-2.5">
             {/* 品牌 mark：unoptimized 跳过优化器——SVG 经优化器会被拒
@@ -78,10 +79,10 @@ export default async function Home({ params }: Props) {
               height={30}
               unoptimized
               priority
-              className="drop-shadow-sm"
+              className="brand-mark"
             />
             <span className="flex flex-col leading-tight">
-              <span className="text-[15px] font-semibold tracking-tight text-ink">
+              <span className="text-[15px] font-semibold tracking-tight text-gradient">
                 {t("title")}
               </span>
               <span className="hidden text-[11px] text-faint sm:block">
@@ -127,9 +128,9 @@ export default async function Home({ params }: Props) {
         视觉上次要，对交互无影响；文案与结构化数据完整保留。
       */}
       <footer className="border-t border-line bg-surface px-4 py-10 text-sm">
-        <div className="mx-auto max-w-5xl space-y-8">
+        <Reveal className="mx-auto max-w-5xl space-y-8">
           <section>
-            <h2 className="mb-2 text-base font-semibold text-ink">
+            <h2 className="text-gradient mb-2 text-base font-semibold">
               {tSeo("introTitle")}
             </h2>
             <p className="max-w-3xl leading-relaxed text-muted">{tSeo("introBody")}</p>
@@ -191,7 +192,7 @@ export default async function Home({ params }: Props) {
                   <li key={item.slug}>
                     <Link
                       href={`/time-converter/${item.slug}`}
-                      className="text-accent underline underline-offset-2 hover:text-accent-hover"
+                      className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover"
                     >
                       {item.label}
                     </Link>
@@ -200,7 +201,7 @@ export default async function Home({ params }: Props) {
               </ul>
             </nav>
           </section>
-        </div>
+        </Reveal>
       </footer>
 
       {/* 结构化数据：WebApplication + Organization + FAQPage（富结果识别） */}

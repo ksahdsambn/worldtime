@@ -86,7 +86,7 @@ export default function SelectionBar() {
     <div className="safe-bottom sticky bottom-3 z-30 px-3 no-print">
       <div
         data-state={presence.state}
-        className="motion-sheet surface mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 shadow-lg md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
+        className="motion-sheet surface-glass shadow-glow mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
       >
         <div className="flex shrink-0 items-baseline gap-2">
           <span className="text-[11px] uppercase tracking-wide text-faint">

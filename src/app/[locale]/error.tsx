@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { StateSurface } from "@/components/StateSurface";
 
 /**
  * 路由级错误边界（[locale] 子树）。
@@ -25,27 +26,30 @@ export default function LocaleError({
   }, [error]);
 
   return (
-    <main className="mx-auto flex max-w-md flex-col items-center gap-4 p-8 text-center">
-      <div className="text-4xl" aria-hidden>
-        ⚠️
-      </div>
-      <h1 className="text-lg font-bold text-ink">{t("title")}</h1>
-      <p className="text-sm text-muted">{t("description")}</p>
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        <button type="button" onClick={() => reset()} className="btn btn-primary btn-sm">
-          {t("retry")}
-        </button>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          className="btn btn-ghost btn-sm"
-        >
-          {t("reload")}
-        </button>
-      </div>
-      {error.digest ? (
-        <p className="mt-2 break-all font-mono text-[11px] text-faint">{error.digest}</p>
-      ) : null}
-    </main>
+    <StateSurface
+      icon={<span>⚠️</span>}
+      title={t("title")}
+      description={
+        <>
+          {t("description")}
+          {error.digest ? (
+            <span className="mt-2 block break-all font-mono text-[11px] text-faint">
+              {error.digest}
+            </span>
+          ) : null}
+        </>
+      }
+    >
+      <button type="button" onClick={() => reset()} className="btn btn-primary btn-sm">
+        {t("retry")}
+      </button>
+      <button
+        type="button"
+        onClick={() => window.location.reload()}
+        className="btn btn-ghost btn-sm"
+      >
+        {t("reload")}
+      </button>
+    </StateSurface>
   );
 }
