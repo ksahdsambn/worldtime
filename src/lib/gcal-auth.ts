@@ -16,6 +16,33 @@ import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 const TOKEN_KEY = "worldtime:gcal-token";
 const GIS_TIMEOUT_MS = 10_000;
 
+/**
+ * sessionStorage 访问统一走 try/catch（审查报告 P3）：
+ * Safari 隐私模式 / 被禁用的第三方存储下 getItem/setItem/removeItem 会抛
+ * SecurityError，无防护会中断挂载 effect 或 OAuth 回调。
+ */
+function sessionGet(key: string): string | null {
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function sessionSet(key: string, value: string): void {
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    // 存储不可用时仅失去「刷新免重授权」优化，不影响本次会话
+  }
+}
+function sessionRemove(key: string): void {
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    // 同上：清除失败忽略
+  }
+}
+
 let tokenClient: GisTokenClient | null = null;
 let gisPromise: Promise<GoogleAccountsOauth2> | null = null;
 /** 首次连接（弹窗）的结果 resolver。 */
@@ -62,7 +89,7 @@ function ensureTokenClient(
         // 脱离 React 作用域写 store：用 getState() 直接拿 setter
         const store = useWorldTimeStore.getState();
         store.setGcalAccessToken(token);
-        sessionStorage.setItem(TOKEN_KEY, token);
+        sessionSet(TOKEN_KEY, token);
         store.setGcalConnected(true);
       }
       if (connectResolver) {
@@ -138,7 +165,7 @@ export async function requestSilentRefresh(): Promise<string | null> {
 /** 挂载时从 sessionStorage 恢复 token（刷新页面后免重新点授权）。 */
 export function restoreGcalToken(): void {
   if (typeof window === "undefined") return;
-  const saved = sessionStorage.getItem(TOKEN_KEY);
+  const saved = sessionGet(TOKEN_KEY);
   if (saved) {
     const store = useWorldTimeStore.getState();
     store.setGcalAccessToken(saved);
@@ -148,7 +175,7 @@ export function restoreGcalToken(): void {
 
 /** 清除会话：token + 连接态 + sessionStorage 缓存（不断开远端授权）。 */
 export function clearGcalSession(): void {
-  if (typeof window !== "undefined") sessionStorage.removeItem(TOKEN_KEY);
+  sessionRemove(TOKEN_KEY);
   const store = useWorldTimeStore.getState();
   store.setGcalAccessToken(null);
   store.setGcalConnected(false);

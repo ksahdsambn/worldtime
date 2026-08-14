@@ -1,9 +1,9 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { DateTime } from "luxon";
 import { formatOffset } from "@/lib/time";
-import { parseSlug } from "@/lib/landingSlug";
+import { parseSlug, buildComparisonState } from "@/lib/landingSlug";
+import { LandingHero, LandingTable } from "@/components/LandingComparison";
 import { routing } from "@/i18n/routing";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
@@ -136,30 +136,12 @@ export default async function LandingPage({ params }: Props) {
   const info = parseSlug(slug);
   if (!info) notFound();
 
-  // 服务端"当前"时刻用于对照表（固定采样若干小时）。
-  // 该页面配置了 revalidate=3600，now 会随每次按需重新生成而刷新，
-  // 此处同时记录"生成时刻"供页面展示（避免误以为是实时数据）。
-  const now = Date.now();
-  const updatedAt = DateTime.fromMillis(now, { zone: "utc" }).toFormat(
-    "yyyy-MM-dd HH:mm 'UTC'",
-  );
-  // diffMinutes 基于"当前"单一时刻；DST 切换日各小时偏移可能不同，
-  // 此处仅作顶部概览展示，对照表逐行用 setZone 精确换算（见下方 rows）。
-  const diff = info.diffMinutes;
-  const diffLabel = formatOffset(diff);
-  // 统一以「B 相对 A」表述：diff>0 表示 B 领先（更晚），diff<0 表示 B 落后（更早）。
-  const bAhead = diff >= 0;
-
-  // 典型时段对照表（A 地 0/6/9/12/18/22 点对应 B 地时间）
-  const rows = [0, 6, 9, 12, 15, 18, 22].map((h) => {
-    const aDt = DateTime.fromMillis(now, { zone: info.aZone }).startOf("day").plus({ hours: h });
-    const bDt = aDt.setZone(info.bZone);
-    return {
-      aHour: aDt.toFormat("HH:mm"),
-      bHour: bDt.toFormat("HH:mm"),
-      bDay: bDt.toFormat("EEE"),
-    };
-  });
+  // 服务端"当前"时刻用于对照表首帧（ISR 烘焙，供 SSR/爬虫）。
+  // 客户端挂载后由 LandingHero/LandingTable 每分钟实时重算，
+  // 不再受 revalidate=3600 的「至多滞后 1 小时」限制。
+  const initial = buildComparisonState(Date.now(), info.aZone, info.bZone);
+  // FAQ 中的时差数字随服务端生成（ISR 窗口内静态），与首帧一致。
+  const diff = initial.diffMinutes;
 
   const pageTitle = `${info.aLabel} ↔ ${info.bLabel} · ${t("title")}`;
 
@@ -172,7 +154,7 @@ export default async function LandingPage({ params }: Props) {
     a: info.aLabel,
     b: info.bLabel,
     offset: formatOffset(Math.abs(diff)).replace(/^\+/, ""),
-    dir: bAhead ? t("dirAhead") : t("dirBehind"),
+    dir: diff >= 0 ? t("dirAhead") : t("dirBehind"),
   };
   const faqItems = faqRaw.map((it) => ({
     q: interpFaq(it.q, faqVars),
@@ -192,73 +174,33 @@ export default async function LandingPage({ params }: Props) {
           {info.aLabel} <span className="text-gradient">↔</span> {info.bLabel}
         </h1>
 
-        <div className="hud-frame shadow-glow mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-6 py-5">
-          <span className="text-gradient chrono text-4xl font-bold sm:text-5xl">
-            {diffLabel}
-          </span>
-          <span className="text-sm text-muted">
-            {info.bLabel} {bAhead ? t("isAhead") : t("lags")} {t("vs")} {info.aLabel}
-          </span>
-          <span className="text-xs text-faint">{t("currentOffsetNote")}</span>
-        </div>
-
-        <p className="mt-4 text-sm leading-relaxed text-muted">
-          {t("bNote", { b: info.bLabel, a: info.aLabel, dir: t(bAhead ? "aheadNote" : "behindNote") })}
-        </p>
+        {/* 时差 hero + 方向句：客户端实时（每分钟重算，见 LandingComparison） */}
+        <LandingHero
+          aZone={info.aZone}
+          bZone={info.bZone}
+          aLabel={info.aLabel}
+          bLabel={info.bLabel}
+          initial={initial}
+        />
         {/* 关键词导向引言段（含 {a}/{b}） */}
         <p className="mt-3 leading-relaxed text-muted">
           {t("intro", { a: info.aLabel, b: info.bLabel })}
         </p>
       </header>
 
-      {/* 典型时段对照表 */}
-      <Reveal className="mt-10">
-        <section>
-          <h2 className="mb-1 text-base font-semibold text-gradient">{t("timeComparison")}</h2>
-          <p className="mb-3 text-xs text-muted">{t("comparisonNote")}</p>
-          <div className="hud-frame overflow-hidden">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-line-strong">
-                  <th
-                    scope="col"
-                    className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
-                  >
-                    {info.aLabel}
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-muted"
-                  >
-                    {info.bLabel}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r, i) => (
-                  <tr
-                    key={i}
-                    className="border-b border-line transition-colors duration-150 last:border-0 hover:bg-surface-hover"
-                  >
-                    <td className="chrono px-4 py-2.5 text-ink">{r.aHour}</td>
-                    <td className="chrono px-4 py-2.5 text-ink">
-                      {r.bHour} <span className="text-faint">({r.bDay})</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <p className="mt-2 text-xs text-muted">{t("updatedAt", { time: updatedAt })}</p>
-
-          {info.kind === "tz" && (
-            <p className="mt-3 text-sm text-muted">
-              {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
-            </p>
-          )}
-        </section>
-      </Reveal>
+      {/* 典型时段对照表：客户端实时（每分钟重算，见 LandingComparison） */}
+      <LandingTable
+        aZone={info.aZone}
+        bZone={info.bZone}
+        aLabel={info.aLabel}
+        bLabel={info.bLabel}
+        initial={initial}
+      />
+      {info.kind === "tz" && (
+        <p className="mt-3 text-sm text-muted">
+          {info.aLabel} = {info.aName} ({info.aZone}); {info.bLabel} = {info.bName} ({info.bZone}).
+        </p>
+      )}
 
       {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
       <Reveal className="mt-10" delay={60}>

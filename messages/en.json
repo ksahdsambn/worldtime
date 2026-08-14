@@ -128,6 +128,7 @@
     "print": "Print",
     "image": "Export image",
     "exporting": "Exporting…",
+    "exported": "Image exported.",
     "exportFailed": "Couldn't export the image. Try again.",
     "noTarget": "Nothing to export yet."
   },
@@ -148,7 +149,7 @@
     "bNote": "{b} is {dir} relative to {a}.",
     "currentOffsetNote": "(current offset; may differ on DST transition days)",
     "comparisonNote": "Typical hours comparison (fixed offset).",
-    "updatedAt": "Generated at {time} (refreshed hourly).",
+    "updatedAt": "Generated at {time}.",
     "metaDescription": "{a} to {b} time difference: live time zone offset, an hour-by-hour comparison table, and DST-aware meeting planning. See what time it is in {b} right now.",
     "intro": "Convert time between {a} and {b}: see the current time difference (offset), a full hour-by-hour comparison, and whether daylight saving time applies. Use it to schedule calls, meetings, and travel between the two locations.",
     "dirAhead": "ahead of",

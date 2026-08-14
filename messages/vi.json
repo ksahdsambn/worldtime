@@ -128,6 +128,7 @@
     "print": "In",
     "image": "Xuất hình ảnh",
     "exporting": "Đang xuất…",
+    "exported": "Đã xuất ảnh.",
     "exportFailed": "Không thể xuất ảnh. Hãy thử lại.",
     "noTarget": "Chưa có gì để xuất."
   },
@@ -148,7 +149,7 @@
     "bNote": "{b} {dir} so với {a}.",
     "currentOffsetNote": "(chênh lệch hiện tại; có thể khác trong ngày chuyển giờ mùa hè)",
     "comparisonNote": "So sánh giờ tiêu biểu (chênh lệch cố định).",
-    "updatedAt": "Tạo lúc {time} (cập nhật mỗi giờ).",
+    "updatedAt": "Tạo lúc {time}.",
     "metaDescription": "Chênh lệch giờ giữa {a} và {b}: độ bù múi giờ trực tiếp, bảng so sánh từng giờ và lên lịch họp có hỗ trợ giờ mùa hè. Xem ngay bây giờ là mấy giờ ở {b}.",
     "intro": "Chuyển đổi giờ giữa {a} và {b}: xem chênh lệch giờ hiện tại (độ bù), bảng so sánh từng giờ đầy đủ và việc có áp dụng giờ mùa hè, để sắp xếp cuộc gọi, họp và chuyến đi giữa hai địa điểm.",
     "dirAhead": "nhanh hơn",

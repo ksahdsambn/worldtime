@@ -1,6 +1,124 @@
 # 开发进度记录
 
-## 第 24 轮：「天文台精密计时」视觉加深 + 审查修复
+## 第 26 轮：三轮独立审查 + 收尾修复
+
+> 时间：2026-08-15
+> 范围：对第 25 轮全部未提交更改做三轮连续走读审查（第一轮通读全量 diff；第二轮复查修复质量 + 深层逻辑/边界；第三轮最终检查 + 全套验证），修复 1 项 P2（城市数据清理不彻底）+ 2 项 P3/P4（回归测试缺口、消息格式），并对第 25 轮其余改动逐项复核确认无新问题。
+
+### 完成内容
+
+**① 城市数据收尾清理（P2，`src/data/cities.ts` + 测试）**
+第 25 轮后缀剥离后仍有 14 条同类残留，与「显示名保持纯净」的既定政策相悖，本轮全部处理：
+- **删除 11 条**：`萨尔瓦多巴`、`霍巴特塔斯`、`拉斯维加斯东`、`塞维利亚北`、`洛格罗`、`威尼斯北`（剥离后与既有条目四字段完全相同）、`姆巴巴内高`、`温得和克西`（同城重复）、`基多南`（数据本身错误：厄瓜多尔首都标成 US/America_Phoenix）、`霍尼奥`（杜撰名，非真实城市）、`大丰东`（中英文张冠李戴：大丰 ≠ 东台，且两者均已有正表条目）。
+- **剥离后缀改名 4 条**：`波特兰缅因`→`波特兰`、`哥伦比亚密苏里`→`哥伦比亚`、`Vitória Brazil`→`Vitória`、`Natal Brazil`→`Natal`（与第 25 轮 `León Mexico`→`León` 同规则）。
+- 城市总数 1183 → **1172**；`scripts/strip-city-suffixes.mjs` dry-run 复核：无残留改动（仅遂宁/睢宁同英文名对照，有意保留）。
+
+**② 回归测试（P3，`tests/data/cities.test.ts`）**
+- 新增「已清理条目不得复现」测试：29 项禁用名单（中英文名）+ 4 个纯净名存在性断言 + Quito 错误国家/时区组合断言，防止未来数据回灌。
+
+**③ 格式（P4，`messages/*.json` × 11）**
+- `PrintExport.exported` key 缩进统一为 4 空格（原 2 空格，与相邻 key 不一致）。
+
+**④ 设计说明更正**
+- 第 25 轮验证表中的城市数 1183 系清理前的数字，实际本提交后为 1172 条（25 + 26 两轮合计删除 31 条、改名 50+ 条）。长尾旧 id 失效属已声明的破坏性变更，范围不变（热门对 / 起始预设 / `latlng.ts` 均不受影响，已逐项核查无悬挂引用）。
+
+### 三轮审查范围（复核结论：无新问题）
+
+| 模块 | 复核要点 | 结论 |
+| --- | --- | --- |
+| `Dialog.tsx` | Tab 焦点陷阱循环、退场期 Esc 幂等、与 autoFocus 兼容 | ✅ 无问题 |
+| `Reveal.tsx` | useIsomorphicLayoutEffect 首帧判定、once=false 双向、SSR/reduced-motion | ✅ 无问题 |
+| `NowButton.tsx` / `HeaderActions.tsx` | `.wt-grid` 作用域、断点切换菜单复位 | ✅ 无问题 |
+| `SelectionBar.tsx` | 退场窗口复制链接用 lastSel（含 s= 参数） | ✅ 无问题 |
+| `PrintExport.tsx` | 主题画布色令牌、exported 消息、超时守卫 | ✅ 无问题 |
+| `gcal-auth.ts` | sessionStorage try/catch 全路径（含 SSR 引用的 ReferenceError 兜底） | ✅ 无问题 |
+| `robots.ts` / `CitySearch.tsx` | locale 前缀规则、GMT 零偏移分支 | ✅ 无问题 |
+| 着陆页实时化（page + `landingSlug.ts` + `LandingComparison.tsx`） | 服务端/客户端共用纯函数、水合一致、ISR 与 useNow 边界 | ✅ 无问题 |
+| 消息 i18n | 168 keys × 11 locales 深层键完全一致（实测校验） | ✅ 无问题 |
+
+### 涉及文件
+
+- 数据：`src/data/cities.ts`（删除 11 / 改名 4）
+- 测试：`tests/data/cities.test.ts`（新增回归测试）
+- 消息：`messages/*.json` × 11（缩进统一）
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript 类型检查（`tsc --noEmit`） | ✅ 通过 |
+| ESLint（`next lint`） | ✅ 无警告 |
+| 单元测试（`vitest`） | ✅ 184/184 通过（25 轮 183 + 本轮新增 1 项回归） |
+| 消息 key 一致性 | ✅ 168 keys × 11 locales 完全一致 |
+| 生产构建（`next build`） | ✅ 成功 |
+| 城市数据卫生 | ✅ 1172 条：id 唯一、无两字母/国家州名级后缀残留、无四字段重复（遂宁/睢宁除外，有意保留）；`strip-city-suffixes.mjs` dry-run 零变更 |
+
+### 设计说明 / 遗留
+
+- **有意保留的「区划式」复名**：`南京南` / `呼和浩特东` / `Ahmedabad West` / `Surabaya East` 等为真实区划/车站片区名，非消歧后缀，不在清理范围。
+- **第 25 轮遗留与第 26 轮一致**：FAQ 时差数字随 ISR 生成；hero/对照表/生成时刻为客户端实时；旧长尾 id 静默不解析。
+
+## 第 25 轮：全量审查问题修复（数据 / 导出 / SEO / 无障碍 / 实时化）
+
+> 时间：2026-08-15
+> 范围：对当前代码做全量走读审查，修复全部发现项：2 项 P2（国家周末数据错误、深色主题导出 PNG 不可读）+ 11 项 P3（导出 toast 误报、robots.txt 死规则、退场窗口复制失效链接、城市显示名消歧后缀、Dialog 焦点陷阱、NowButton 全文档查询、断点切换菜单残留、sessionStorage 无防护、Coachmark 语义、Reveal 首帧闪烁、着陆页 ISR 滞后 1 小时），并补回归测试。
+
+### 完成内容
+
+**① 数据修正（P2）**
+- `src/data/countries.ts`：埃及 / 利比亚 / 阿尔及利亚 / 苏丹 / 叙利亚 / 约旦周末由误标 `[6,7]`（周六日）改为实际官方周末 `[5,6]`（周五六），修复热力图周末覆盖与 `isWeekendAt` 判定错位。
+- `src/data/cities.ts`：剥离 50+ 条内联在显示名里的消歧后缀（英文 `"Oakland US"` → `"Oakland"`、中文 `"巴勒莫意"` → `"巴勒莫"`、`"León Mexico"`/`"Hamilton Ontario"`/`"Birmingham Alabama"` 等全名级特例），统一「消歧靠 id + 次级行（国家·时区·国旗），显示名保持纯净」；同时合并 20 条剥离后四字段完全相同的重复条目（亚历山大港、温尼伯、塞萨洛尼、堪培拉等同城异名变体）。英文名/中文名均不再带后缀；遂宁/睢宁这类同名不同城的有意保留。一次性脚本 `scripts/strip-city-suffixes.mjs`（dry-run 预览，`--write` 落盘）留存可复跑。
+  - 注意：展示名变更会使**这些长尾城市**的旧分享链接 id（由英文名 slug 派生）不再解析，属可接受的破坏性变更；热门对 / 起始预设均不受影响。
+
+**② 导出（P2 + P3，`PrintExport.tsx` + 11 语言消息）**
+- 导出 PNG 画布背景取当前主题 `--app-bg` 令牌（亮 `#eef2f8` / 暗 `#070b14`），取代硬编码白底 —— 修复暗色主题下「浅字配白底」近乎不可读。
+- 成功提示由误用 `Export.copied`（"已复制！"）改为新增 `PrintExport.exported`（"图片已导出"），11 语言补 key。
+
+**③ SEO / 分享**
+- `src/app/robots.ts`：`/widget/`、`/event/` 裸路径规则与带 locale 前缀的真实 URL（`/zh/widget/…`）不匹配、形同虚设；改为按 `routing.locales` 枚举 `/{locale}/widget/` 与 `/{locale}/event/`。
+- `SelectionBar.tsx`：复制分享链接改用渲染中的 `sel`（`lastSel`）而非 store 的 `selection` —— 修复清除选区后 320ms 退场动画窗口内复制出「无 `s=` 参数」失效链接。
+
+**④ 无障碍 / 健壮性**
+- `Dialog.tsx`：补 Tab 焦点陷阱（焦点在首/尾或移出对话框时回卷），`aria-modal` 语义落地。
+- `DragHintCoachmark.tsx`：`role="status"`（live region 内不应有交互控件）改 `role="dialog"` + `aria-label`。
+- `NowButton.tsx`：单元格查询限定到 `.wt-grid`，避免多网格场景滚错目标。
+- `HeaderActions.tsx`：断点切回桌面时关闭「⋯」菜单，消除 open 态残留（缩回移动端不再直接弹菜单）。
+- `src/lib/gcal-auth.ts`：sessionStorage 读写统一 try/catch（Safari 隐私模式 SecurityError 不再中断挂载/回调）。
+- `Reveal.tsx`：挂载瞬间（`useIsomorphicLayoutEffect`）同步判定视口内元素直接置 shown，消除「IO 回调到达前隐藏一帧」的首帧闪烁；SSR/reduced-motion 行为不变。
+- `CitySearch.tsx`：零偏移时区（Intl 返回纯 `"GMT"`）显示 `+0`，不再拼出 `"UTCGMT"`。
+
+**⑤ 着陆页实时化（P3）**
+- `src/lib/landingSlug.ts` 新增 `buildComparisonState(now, aZone, bZone)` 纯函数（时差 + 7 行典型时段对照 + 生成时刻），服务端与客户端共用。
+- 新增 `src/components/LandingComparison.tsx`（`LandingHero` / `LandingTable` 两个客户端组件）：挂载后每分钟 `useNow` 重算，长尾 ISR 页「当前偏移 / 对照表日期」不再滞后至多 1 小时；首帧仍由服务端烘焙的 initial 渲染，SSR/爬虫内容与旧版一致、无水合差异。
+- 11 语言 `Landing.updatedAt` 文案去掉「每小时刷新」表述（现为客户端实时）。
+
+### 涉及文件
+
+- 数据：`src/data/countries.ts`、`src/data/cities.ts`（+ 新增 `scripts/strip-city-suffixes.mjs`）
+- 组件：`PrintExport.tsx`、`SelectionBar.tsx`、`Dialog.tsx`、`DragHintCoachmark.tsx`、`NowButton.tsx`、`HeaderActions.tsx`、`Reveal.tsx`、`CitySearch.tsx`、新增 `LandingComparison.tsx`
+- 页面/路由：`src/app/robots.ts`、`src/app/[locale]/time-converter/[slug]/page.tsx`
+- lib：`src/lib/gcal-auth.ts`、`src/lib/landingSlug.ts`
+- 消息：`messages/*.json` × 11（新增 `PrintExport.exported`、更新 `Landing.updatedAt`）
+- 测试：新增 `tests/data/countries.test.ts`、`tests/data/cities.test.ts`；扩展 `tests/lib/landingSlug.test.ts`
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript 类型检查（`tsc --noEmit`） | ✅ 通过 |
+| ESLint（`next lint`） | ✅ 无警告 |
+| 单元测试（`vitest`） | ✅ 183/183 通过（含新增 12 项） |
+| 消息 key 一致性 | ✅ 168 keys × 11 locales 完全一致 |
+| 生产构建（`next build`） | ✅ 成功 |
+| 城市数据卫生 | ✅ 1183 条：id 唯一、无 `" XX"` 后缀残留、无四字段重复条目（遂宁/睢宁除外，有意保留） |
+
+### 设计说明 / 遗留
+
+- **消歧与显示名分离**：地理消歧信息改由列表次级行（`国家 · 时区`）与网格行的国旗承担；两座「London」（GB/CA）在搜索与网格中同显示 `伦敦`，靠国旗与国家行区分，与 Time.is 等通行做法一致。
+- **着陆页实时化边界**：FAQ 时差数字与 pair 方向仍随 ISR 生成（窗口内静态）；hero 大数字、方向句、对照表、生成时刻为用户所见即实时。爬虫仍读到 SSR 首帧（SEO 不变）。
+- **城市 id 破坏性变更**：仅影响本次被改名/合并的 50+ 条长尾城市的历史分享链接与服务端存储的 `placeIds`，解析时静默跳过；其余 1100+ 城市 id 不变。
+
+
 
 > 时间：2026-08-13
 > 范围：在第 23 轮「科技 premium」之上继续加强科技感与动效（用户反馈仍不够酷炫），方向定为 **Observatory Chronograph（天文台精密计时）**——经线 / 地平暖光 / HUD 角标 / 大号等宽时钟，避开霓虹赛博与紫青 AI slop。随后对全部未提交改动做两轮审查，共修复 15 项（对比度 / 读屏 / 性能 / 分层 / HUD 叠层）。

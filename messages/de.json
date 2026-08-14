@@ -128,6 +128,7 @@
     "print": "Drucken",
     "image": "Bild exportieren",
     "exporting": "Wird exportiert…",
+    "exported": "Bild exportiert.",
     "exportFailed": "Bild konnte nicht exportiert werden. Erneut versuchen.",
     "noTarget": "Noch nichts zu exportieren."
   },
@@ -148,7 +149,7 @@
     "bNote": "{b} ist {dir} gegenüber {a}.",
     "currentOffsetNote": "(aktueller Versatz; kann an Sommerzeitumstellungstagen abweichen)",
     "comparisonNote": "Typischer Stundenvergleich (fester Versatz).",
-    "updatedAt": "Erzeugt um {time} (stündlich aktualisiert).",
+    "updatedAt": "Erzeugt um {time}.",
     "metaDescription": "Zeitunterschied zwischen {a} und {b}: Live-Zeitzonenversatz, stündliche Vergleichstabelle und sommerzeitfähige Meeting-Planung. Sehen Sie sofort, wie spät es jetzt in {b} ist.",
     "intro": "Zeit zwischen {a} und {b} umrechnen: aktueller Zeitunterschied (Versatz), ein vollständiger stündlicher Vergleich und ob Sommerzeit gilt – für Anrufe, Meetings und Reisen zwischen beiden Orten.",
     "dirAhead": "vor",

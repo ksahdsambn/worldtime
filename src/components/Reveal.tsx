@@ -2,11 +2,19 @@
 
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type ElementType,
   type ReactNode,
 } from "react";
+
+/**
+ * SSR 安全的选择：客户端在布局阶段即可同步判定首帧可见性
+ * （useLayoutEffect 在服务端不执行，水合无差异）。
+ */
+const useIsomorphicLayoutEffect =
+  typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /**
  * 滚动进场（Reveal）—— 元素进入视口时触发一次性进场动画。
@@ -62,7 +70,7 @@ export function Reveal({
   // `both` fill 的 opacity:0 起态在 animation-delay 期间造成短暂闪隐）。
   const [noMotion, setNoMotion] = useState(false);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
     const reduce =
@@ -73,6 +81,12 @@ export function Reveal({
       setShown(true);
       return;
     }
+    // 挂载瞬间同步判定是否已在视口内：在视口内的元素直接置 shown，首帧即可见，
+    // 避免「IO 回调异步到达前先隐藏一帧」的闪烁（审查报告 P3）。首屏不可见元素
+    // 仍由 IO 在其进入视口时触发进场动画。
+    const rect = el.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    if (rect.top < vh && rect.bottom > 0) setShown(true);
     setEnabled(true);
     const obs = new IntersectionObserver(
       (entries) => {

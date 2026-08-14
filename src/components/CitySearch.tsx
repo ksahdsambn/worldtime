@@ -42,6 +42,9 @@ function describeOffset(city: CityRecord): string {
   try {
     const parts = f.formatToParts(new Date());
     const tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+    // 纯 "GMT"（零偏移，如未来加入 UTC 城市）：与 "GMT+0" 一致展示为 +0，
+    // 避免拼出 "UTCGMT"（审查报告 P3）。
+    if (tz === "GMT") return "+0";
     // tz 形如 "GMT+8" / "GMT-05"
     const m = tz.match(/GMT([+-]\d{1,2})(?::(\d{2}))?/);
     if (m) {

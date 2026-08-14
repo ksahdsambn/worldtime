@@ -128,6 +128,7 @@
     "print": "列印",
     "image": "匯出圖片",
     "exporting": "匯出中…",
+    "exported": "圖片已匯出",
     "exportFailed": "圖片匯出失敗，請重試。",
     "noTarget": "暫無可匯出的內容。"
   },
@@ -148,7 +149,7 @@
     "bNote": "{b} 相對 {a} {dir}。",
     "currentOffsetNote": "（目前偏移，日光節約時間切換日可能有變動）",
     "comparisonNote": "以下為固定時差的典型時段對照。",
-    "updatedAt": "資料產生於 {time}（每小時更新）。",
+    "updatedAt": "資料產生於 {time}。",
     "metaDescription": "{a} 與 {b} 的時差：即時時區偏移、逐小時對照表，以及支援夏令時間的會議排程。立即查看 {b} 現在幾點。",
     "intro": "在 {a} 與 {b} 之間換算時間：查看目前時差（偏移）、完整的逐小時對照，以及是否適用夏令時間，用於安排兩地間的通話、會議與出行。",
     "dirAhead": "領先",

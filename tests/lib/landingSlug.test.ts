@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { parseSlug } from "@/lib/landingSlug";
+import { DateTime } from "luxon";
+import { parseSlug, buildComparisonState } from "@/lib/landingSlug";
 
 describe("parseSlug 时区缩写对", () => {
   it("双连字符缩写对 EST--PST", () => {
@@ -77,5 +78,36 @@ describe("parseSlug diffMinutes", () => {
     const info = parseSlug("cn-beijing--us-new-york");
     expect(info).not.toBeNull();
     expect(typeof info!.diffMinutes).toBe("number");
+  });
+});
+
+describe("buildComparisonState（着陆页实时对照，审查报告 P3 修复）", () => {
+  const now = DateTime.fromISO("2026-08-15T12:00:00Z").toMillis();
+
+  it("北京 ↔ 纽约（8 月 EDT）：diff = -720 分钟，首行 00:00 对齐", () => {
+    const s = buildComparisonState(now, "Asia/Shanghai", "America/New_York");
+    expect(s.diffMinutes).toBe(-720);
+    expect(s.rows).toHaveLength(7);
+    // 北京 8/15 00:00 (+08)；纽约（EDT -04）= 8/14 12:00 周五
+    expect(s.rows[0]).toEqual({ aHour: "00:00", bHour: "12:00", bDay: "Fri" });
+    // 北京 9:00 → 纽约前一日 21:00（下标 2 对应小时序列 [0,6,9,12,…] 中的 9）
+    expect(s.rows[2]).toEqual({ aHour: "09:00", bHour: "21:00", bDay: "Fri" });
+    // 北京 12:00 → 纽约当日 00:00（周六）
+    expect(s.rows[3]).toEqual({ aHour: "12:00", bHour: "00:00", bDay: "Sat" });
+  });
+
+  it("相同时区 pair diff = 0，各行 B 与 A 一致", () => {
+    const s = buildComparisonState(now, "Asia/Shanghai", "Asia/Shanghai");
+    expect(s.diffMinutes).toBe(0);
+    for (const r of s.rows) {
+      expect(r.aHour).toBe(r.bHour);
+    }
+  });
+
+  it("updatedAt 为 UTC 标注格式", () => {
+    const s = buildComparisonState(now, "Asia/Shanghai", "America/New_York");
+    expect(s.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC$/);
+    // 固定 now → 生成时刻确定
+    expect(s.updatedAt).toBe("2026-08-15 12:00 UTC");
   });
 });
