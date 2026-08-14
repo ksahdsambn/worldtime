@@ -128,6 +128,7 @@
     "print": "Imprimer",
     "image": "Exporter l'image",
     "exporting": "Exportation…",
+    "exported": "Image exportée.",
     "exportFailed": "Impossible d'exporter l'image. Réessayez.",
     "noTarget": "Rien à exporter pour le moment."
   },
@@ -148,7 +149,7 @@
     "bNote": "{b} est {dir} par rapport à {a}.",
     "currentOffsetNote": "(décalage actuel ; peut différer les jours de passage à l'heure d'été)",
     "comparisonNote": "Comparaison typique des heures (décalage fixe).",
-    "updatedAt": "Généré à {time} (actualisé toutes les heures).",
+    "updatedAt": "Généré à {time}.",
     "metaDescription": "Décalage horaire entre {a} et {b} : décalage de fuseau en direct, tableau de comparaison heure par heure et planification de réunions avec heure d'été. Voyez quelle heure il est à {b} maintenant.",
     "intro": "Convertir l'heure entre {a} et {b} : consultez le décalage horaire actuel, une comparaison complète heure par heure et l'application de l'heure d'été, pour organiser appels, réunions et déplacements entre les deux lieux.",
     "dirAhead": "en avance sur",

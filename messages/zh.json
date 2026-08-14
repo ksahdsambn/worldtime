@@ -128,6 +128,7 @@
     "print": "打印",
     "image": "导出图片",
     "exporting": "导出中…",
+    "exported": "图片已导出",
     "exportFailed": "图片导出失败，请重试。",
     "noTarget": "暂无可导出的内容。"
   },
@@ -148,7 +149,7 @@
     "bNote": "{b} 相对 {a} {dir}。",
     "currentOffsetNote": "（当前偏移，夏令时切换日可能有变化）",
     "comparisonNote": "以下为固定时差的典型时段对照。",
-    "updatedAt": "数据生成于 {time}（每小时刷新）。",
+    "updatedAt": "数据生成于 {time}。",
     "metaDescription": "{a} 与 {b} 的时差：实时时区偏移、逐小时对照表，以及支持夏令时的会议排期。立即查看 {b} 现在几点。",
     "intro": "在 {a} 与 {b} 之间换算时间：查看当前时差（偏移）、完整的逐小时对照，以及是否适用夏令时，用于安排两地间的通话、会议与出行。",
     "dirAhead": "领先",

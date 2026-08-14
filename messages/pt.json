@@ -128,6 +128,7 @@
     "print": "Imprimir",
     "image": "Exportar imagem",
     "exporting": "Exportando…",
+    "exported": "Imagem exportada.",
     "exportFailed": "Não foi possível exportar a imagem. Tente novamente.",
     "noTarget": "Nada para exportar ainda."
   },
@@ -148,7 +149,7 @@
     "bNote": "{b} está {dir} em relação a {a}.",
     "currentOffsetNote": "(diferença atual; pode variar nos dias de mudança de horário de verão)",
     "comparisonNote": "Comparação típica de horas (diferença fixa).",
-    "updatedAt": "Gerado às {time} (atualizado a cada hora).",
+    "updatedAt": "Gerado às {time}.",
     "metaDescription": "Diferença de horário entre {a} e {b}: defasagem de fuso ao vivo, tabela de comparação hora a hora e planejamento de reuniões com horário de verão. Veja que horas são agora em {b}.",
     "intro": "Converta a hora entre {a} e {b}: veja a diferença de horário atual (defasagem), uma comparação completa hora a hora e se o horário de verão se aplica, para organizar ligações, reuniões e viagens entre os dois locais.",
     "dirAhead": "à frente de",

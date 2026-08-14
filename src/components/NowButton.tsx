@@ -23,10 +23,14 @@ export default function NowButton() {
     // 等待 React 重渲染后再读 DOM（避免读到旧窗口的 cells）
     requestAnimationFrame(() => {
       const now = Date.now();
+      // 只查询主网格（.wt-grid）内的单元格：避免将来页面嵌入多张网格/小组件时
+      // 全文档 querySelectorAll 命中错误目标（审查报告 P3）。
+      const grid = document.querySelector<HTMLElement>(".wt-grid");
+      if (!grid) return;
       // 找到包含当前时刻的单元格（c.ms <= now < c.ms + 1h），
       // 兼容半小时/45 分钟偏移时区（其列 ms 不落在 UTC 整点上）。
       const cells = Array.from(
-        document.querySelectorAll<HTMLTableCellElement>("td[data-ms]"),
+        grid.querySelectorAll<HTMLTableCellElement>("td[data-ms]"),
       );
       const target =
         cells.find((c) => {

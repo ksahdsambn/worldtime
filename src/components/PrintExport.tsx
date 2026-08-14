@@ -15,13 +15,25 @@ import { IconPrinter, IconImage } from "./icons";
  * - 导出图片为耗时异步操作，加 loading 态（禁用按钮 + spinner）与 in-flight 防连点；
  * - toPng 超时（大网格 / CORS 污染 / OOM 可能久挂）；
  * - 失败时不再静默吞掉，给 toast 反馈；成功也给 toast 确认。
+ *
+ * 主题适配（审查报告 P2）：导出画布背景取当前主题的 --app-bg 令牌
+ * （亮色 #eef2f8、暗色 #070b14），避免硬编码白底导致暗色主题下
+ * 浅色文字「浅字配白底」近乎不可读。
  */
 export default function PrintExport() {
   const t = useTranslations("PrintExport");
-  const tExp = useTranslations("Export");
   const [exporting, setExporting] = useState(false);
   // in-flight 守卫：ref 同步可读，避免连点在 setState 异步窗口内重复触发。
   const inFlightRef = useRef(false);
+
+  /** 当前主题的画布底色（hex/rgb 均可被 html-to-image 接受）。 */
+  function themeCanvasColor(): string {
+    if (typeof window === "undefined") return "#ffffff";
+    const v = getComputedStyle(document.documentElement)
+      .getPropertyValue("--app-bg")
+      .trim();
+    return v || "#ffffff";
+  }
 
   function onPrint() {
     window.print();
@@ -45,7 +57,7 @@ export default function PrintExport() {
           () => reject(new Error("export timeout")),
           12_000,
         );
-        toPng(target, { backgroundColor: "#ffffff" }).then(
+        toPng(target, { backgroundColor: themeCanvasColor() }).then(
           (url) => {
             clearTimeout(timer);
             resolve(url);
@@ -62,7 +74,7 @@ export default function PrintExport() {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      toast.success(tExp("copied"));
+      toast.success(t("exported"));
     } catch {
       // CORS 污染画布 / 内存不足 / 超时等：明确反馈，而非静默失败
       toast.error(t("exportFailed"));

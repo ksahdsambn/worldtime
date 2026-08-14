@@ -143,16 +143,41 @@ export function useDialog(cancelLabel: string, confirmLabel: string) {
     return () => cancelAnimationFrame(id);
   }, [pending]);
 
-  // Esc 关闭（等同取消）
+  // Esc 关闭（等同取消）+ Tab 焦点陷阱（审查报告 P3：aria-modal 需要真正的
+  // 焦点循环，否则 Tab 可移出对话框操作背后页面）。
   useEffect(() => {
-    if (!pending) return;
+    if (!pending || !presence.mounted) return;
     const p = pending;
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") close(p.kind === "prompt" ? null : false);
+      if (e.key === "Escape") {
+        close(p.kind === "prompt" ? null : false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusables = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      // 焦点在对话框外（或已到首/尾）时回卷，形成循环
+      if (
+        !panel.contains(active) ||
+        (e.shiftKey && active === first) ||
+        (!e.shiftKey && active === last)
+      ) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      }
     }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [pending, close]);
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [pending, presence.mounted, close]);
 
   let dialog: React.ReactNode = null;
   if (pending && presence.mounted) {

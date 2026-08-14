@@ -30,7 +30,13 @@ export default function HeaderActions() {
 
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 768px)");
-    const sync = () => setIsDesktop(mql.matches);
+    const sync = () => {
+      const desktop = mql.matches;
+      setIsDesktop(desktop);
+      // 切回桌面端时关闭「⋯」折叠菜单：否则 open 状态残留，日后缩回移动端
+      // 会直接弹出菜单（审查报告 P3）。
+      if (desktop) setOpen(false);
+    };
     sync();
     mql.addEventListener("change", sync);
     return () => mql.removeEventListener("change", sync);

@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { CITY_BY_ID } from "@/data/cities";
 import { TIME_ZONE_ABBREVIATIONS } from "@/data/timeZoneAbbreviations";
 import { diffOffsetMinutes } from "@/lib/time";
@@ -86,4 +87,53 @@ export function parseSlug(slug: string): PairInfo | null {
   }
 
   return null;
+}
+
+/** 对照表一行：「A 地整点 → B 地时间与星期」。 */
+export interface ComparisonRow {
+  aHour: string;
+  bHour: string;
+  bDay: string;
+}
+
+/** 着陆页全部时间相关状态（时差、典型时段对照、生成时刻标注）。 */
+export interface ComparisonState {
+  diffMinutes: number;
+  rows: ComparisonRow[];
+  updatedAt: string;
+}
+
+/**
+ * 计算对照页的时间相关状态。
+ * 服务端（ISR 烘焙，供首帧 SSR/爬虫）与客户端（挂载后每分钟重算，
+ * LandingComparison 组件）共用同一实现，保证二者输出一致、无水合差异。
+ *
+ * 动机（审查报告 P3）：原页面仅靠 ISR `revalidate=3600` 刷新，长尾页的
+ * 「当前偏移 / 对照表日期」最多滞后 1 小时；客户端实时接管后纠偏。
+ */
+export function buildComparisonState(
+  nowMs: number,
+  aZone: string,
+  bZone: string,
+): ComparisonState {
+  // diffMinutes 基于「当前」单一时刻；DST 切换日各小时偏移可能不同，仅作顶部概览，
+  // 对照表逐行用 setZone 精确换算（与旧实现保持一致，避免行为回归）。
+  const rows: ComparisonRow[] = [0, 6, 9, 12, 15, 18, 22].map((h) => {
+    const aDt = DateTime.fromMillis(nowMs, { zone: aZone })
+      .startOf("day")
+      .plus({ hours: h });
+    const bDt = aDt.setZone(bZone);
+    return {
+      aHour: aDt.toFormat("HH:mm"),
+      bHour: bDt.toFormat("HH:mm"),
+      bDay: bDt.toFormat("EEE"),
+    };
+  });
+  return {
+    diffMinutes: diffOffsetMinutes(aZone, bZone, nowMs),
+    rows,
+    updatedAt: DateTime.fromMillis(nowMs, { zone: "utc" }).toFormat(
+      "yyyy-MM-dd HH:mm 'UTC'",
+    ),
+  };
 }
