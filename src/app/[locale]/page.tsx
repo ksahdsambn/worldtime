@@ -65,10 +65,10 @@ export default async function Home({ params }: Props) {
       <UrlStateSync />
       <KeyboardShortcuts />
 
-      {/* 顶部导航栏：品牌 · 城市搜索 · 语言/设置/主题/日历。
+      {/* 顶部导航栏：品牌 · 城市搜索 · 语言/设置/主题。
           抬升表面（bg-surface）+ 发丝底边 + 极淡阴影，与内凹网格区形成层次。
           safe-top：notched / 全面屏下避开顶部安全区。 */}
-      <header className="safe-top animate-blur-in glass-bar sticky top-0 z-30 shadow-sm no-print">
+      <header className="safe-top animate-blur-in glass-bar sticky top-0 z-30 shadow-sm">
         <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
           <h1 className="flex shrink-0 items-center gap-3">
             <span className="brand-orbit brand-orbit--sm">

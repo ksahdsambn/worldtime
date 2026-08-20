@@ -1,5 +1,114 @@
 # 开发进度记录
 
+## 第 27 轮：功能精简与核心聚焦（删 Google 日历 / Widget / 打印导出 / 氛围背景 / 事件页，精简选区栏与地点面板）
+
+> 时间：2026-08-20
+> 范围：按「功能精简与核心聚焦」提示词执行减法改造，让产品回归核心路径——**添加城市 → 浏览时间网格（热力图）→ 拖拽选择重叠时段 → 复制/分享结果**。删除四大偏离主路径的功能（Google 日历集成、可嵌入 Widget 系统、打印/PNG 导出、氛围背景动画）+ 事件页路由，精简 SelectionBar 与 PlacesPanel 的信息密度。净删约 **2900 行**（48 个文件：19 删 + 29 改），1 个 npm 依赖移除。
+
+### 完全删除的功能
+
+**① Google 日历集成（全链路）**
+- 组件：`GoogleCalendarConnect.tsx`（顶栏连接按钮，桌面+移动菜单两处引用一并移除）、`GisScript.tsx`（GIS 脚本注入）。
+- lib：`gcal.ts`（freebusy 拉取/区间投影）、`gcal-auth.ts`（Token Client 单例/静默刷新）。
+- Store：`gcalConnected` / `gcalAccessToken` / `setGcalConnected` / `setGcalAccessToken`。
+- TimeGrid：busyRanges / gcalStatus 状态机 / 401 静默刷新 effect / 错误横幅+重试 / `Row` 的 `busyMs` prop 与 `data-busy` 属性（globals.css 的忙碌斜纹规则与 `--busy-stripe` 令牌同步删除）。
+- 类型：`types/google-accounts.d.ts`；测试：`tests/lib/gcal.test.ts`（8 用例）。
+- 环境变量：`.env.example` 的 `NEXT_PUBLIC_GOOGLE_CLIENT_ID` 说明块、`Dockerfile` ARG/ENV、`docker-compose.yml` args 透传。（`.env.local` 为本地 gitignored 文件未动。）
+
+**② 可嵌入 Widget 系统**
+- 路由：`/[locale]/widget/world-clock`、`/[locale]/widget/event` 两页；组件：`WorldClockWidget.tsx`、`EventWidget.tsx`。
+
+**③ 打印与导出图片**
+- 组件：`PrintExport.tsx`；GridToolbar 移除挂载；npm 依赖 `html-to-image` 移除（lockfile 同步）。
+- CSS：`@media print` 整块（令牌压浅色等）与 `.no-print` 类删除；5 处残留 `no-print` className（page 头部 / HelpPopover / DragHintCoachmark / GridToolbar / SelectionBar）全部摘除。
+
+**④ 氛围背景动画**
+- 组件：`AtmosphereBackground.tsx`（极光/地平暖光/经线/轨道环/扫描线/颗粒 8 层）；layout 移除挂载。
+- CSS：`.atmosphere*` 全部规则 + 专属 keyframes（aurora-drift / glow-breathe / meridian-drift / scan-vertical）+ 令牌 `--aurora-1/2/3` `--aurora-warm` `--grid-texture` `--scan-line`。`--orbit-line` 与 `orbit-ring` keyframes 保留（logo `.brand-orbit` 与 chrono-spinner 仍在用）。
+
+**⑤ 事件页（失去入口后删除）**
+- 路由：`/[locale]/event/[code]`；组件：`EventView.tsx`。
+- `lib/calendar.ts` 整文件删除：buildIcs / downloadIcs / googleCalendarUrl / mailtoUrl / encodeEventCode / decodeEventCode 在 SelectionBar 精简与事件页删除后全部无引用；测试 `tests/lib/calendar.test.ts`（13 用例）同步删除。
+- `robots.ts`：`/{locale}/widget/`、`/{locale}/event/` disallow 规则随路由删除（死规则清理），保留 allow + sitemap。
+
+### 精简的功能
+
+**⑥ SelectionBar：7 操作 → 3 操作**
+- 保留：复制摘要（升为主按钮 btn-primary）、复制分享链接、清除选区。
+- 删除：导出 .ics、Google 日历链接、发邮件、事件页链接；`eventUrl`/`encodeEventCode`/origin 相关逻辑一并移除。退场窗口复制链接用 lastSel 的审查修复逻辑原样保留。
+
+**⑦ PlacesPanel：地点卡片信息密度减负**
+- 删除日出/日落行（`lib/sun.ts` + 其唯一数据依赖 `data/latlng.ts` 一并删除；测试 `tests/lib/sun.test.ts` 14 用例删除）。
+- 删除标签系统：标签筛选栏、`#tag` chip 显示、「打标签」按钮、store 的 `setPlaceTags`/`activeTag`/`setActiveTag` 与上限常量 `MAX_TAGS`/`MAX_TAG_LEN`。
+- `PlaceItem.tags` 字段保留（恒空数组）：localStorage 旧数据含 tags 字段，保留类型可避免恢复路径数据丢失（提示词给出的兼容选项）。
+- 保留：国旗、城市名、时钟、时差偏移、时区缩写、昼夜图标、DST 预警徽章（视觉低调处理维持原样）、设为主页/重命名/删除三操作。dnd 排序恢复为全量列表参与（不再有筛选子集）。
+
+**⑧ GridToolbar**：删 PrintExport 后保留 HeatmapLegend + DateJump + CursorBar + NowButton（CursorBar 键盘选区可达性核心，未动）。
+
+### i18n（11 语言全量同步，纯删除 473 行）
+
+- 删除命名空间：`Gcal`（9 键）、`Widget`（4 键）、`PrintExport`（6 键）、`Event`（4 键）。
+- `Export` 删 `export/ics/google/email/eventPage`，保留 `copySummary/shareLink/copied`。
+- `Places` 删 `tags/tagsPrompt/all/sunNone/emptyFiltered/clearFilter`。
+- 校验：11 文件键集与 en 完全一致（各 133 键，原 168 键）。
+
+### 未改动（按提示词要求）
+
+TimeGrid 核心渲染（热力/拖拽/游标高亮，仅摘除忙碌叠加）、CitySearch、@dnd-kit 排序、next-intl 架构、next-themes、Zustand 持久化机制、URL 状态同步、键盘快捷键、SEO 全家（JsonLd/sitemap/robots 骨架/opengraph-image/着陆页/首页 SEO 文案）、PWA、HelpPopover、Reveal、Dialog、Toaster（CitySearch 上限提示仍在用）。
+
+### 涉及文件
+
+- 删除 19 个：组件 7（GoogleCalendarConnect / GisScript / WorldClockWidget / EventWidget / PrintExport / AtmosphereBackground / EventView）· 页面 3（widget×2 + event/[code]）· lib 4（gcal / gcal-auth / calendar / sun）· 数据 1（latlng.ts）· 类型 1（google-accounts.d.ts）· 测试 3（gcal / calendar / sun）。
+- 修改 29 个：store、TimeGrid、HeaderActions、layout、page、GridToolbar、SelectionBar、PlacesPanel、HelpPopover、DragHintCoachmark、icons（删 IconTag/IconPrinter/IconImage）、globals.css、robots.ts、package.json + lock、messages × 11、.env.example、Dockerfile、docker-compose.yml。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript 类型检查（`tsc --noEmit`，清 `.next` 陈旧产物后） | ✅ 通过 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 149/149 通过（原 184 − 删除的 gcal 8 / calendar 13 / sun 14） |
+| 生产构建（`next build`） | ✅ 成功，264 着陆页 + 11 首页 SSG |
+| 运行时冒烟（standalone server + curl） | ✅ 首页 200（无 gcal/GSI/atmosphere 残留、SEO 页脚与 JSON-LD 完整）；着陆页 200；`/widget/*`、`/event/*` 均已 404；robots.txt 无死规则 |
+| i18n 键一致性 | ✅ 11 文件各 133 键完全对齐，diff 纯删除 |
+| 残留引用扫描 | ✅ gcal/GisScript/html-to-image/sunRiseSet/atmosphere/PrintExport/EventView/encodeEventCode/busyRanges/no-print/IconTag 等全量 grep 零残留 |
+
+### 三轮独立审查（提交前，对全部未提交 diff）
+
+**第一轮（通读全量 diff）**：逐文件走读 48 个文件的完整 diff + 周边引用。发现 2 项：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P3 | `tailwind.config.ts` 残留死配置：`colors.aurora.{1,2,3}` 引用已删除的 `--aurora-*` 令牌（解析为未定义变量），且 `keyframes`/`animation` 中的 `aurora-drift`、`glow-breathe` 条目对应的 @keyframes 已随 atmosphere 删除、全站也无人使用 `animate-aurora-*` 工具类（grep 验证） | 删除 aurora 色板别名与两条 keyframes/animation 条目；同步修正注释（原「以下三个 keyframes 重复定义」只剩 gradient-pan，保留其重复定义——globals.css 原始 CSS 仍按名引用该 keyframes） |
+| 2 | P3 | `TimeGrid.tsx` 移除 `gcalAccessToken` selector 处残留双空行 | 清理 |
+
+**第二轮（深层逻辑 / 边界复查）**：对修复质量与全部改动做边界走读，无新增缺陷。重点核对项：
+
+- **Hooks 规则**：SelectionBar 删除 origin useState / useEffect 后，剩余 hooks 全部位于 early return 之前，调用顺序稳定；PlacesPanel 删除两个 useMemo 后 `useMemo` import 仍被 PlaceRow 使用。
+- **持久化兼容**：`PlaceItem.tags` 保留 + `useLocalPersist` 读写路径未动，旧 localStorage（含 tags/customName）恢复正常；`shareUrl.decodeState` 仍构造 `tags: []`，类型一致。
+- **i18n 键使用核对**：`Export` 剩余 3 键（copySummary/shareLink/copied）均在 SelectionBar 使用；`Places.limitReached` 由 CitySearch 使用（`tPlaces("limitReached")`）；`Places.dstActive`/`offsetFromHome` 经 `git grep HEAD` 确认为**改动前即未引用**的存量键，非本轮引入，按「不顺手清理」原则保留。
+- **CSS 级联**：删除 `@media print` / `.no-print` / `data-busy` / atmosphere 规则后无选择器依赖残留（编译产物验证：CSS bundle 中 aurora/no-print 零命中，`--orbit-line` 保留供 `.brand-orbit`）；`now-pulse`/`pulse-dot`/`gradient-pan`/`orbit-ring` 等仍被引用的 keyframes 全部保留。
+- **robots/构建**：`routing` import 随死规则一并移除；构建产物页数与上轮一致（264 着陆页 + 11 首页），无路由回归。
+
+**第三轮（最终检查 + 全套验证）**：残留引用全量 grep（aurora/glow-breathe/grid-texture/scan-line/busy-stripe/atmosphere）零命中；`.next` 清空后全新构建。全套验证：
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 149/149 通过 |
+| 生产构建（`next build`，清 `.next` 后） | ✅ 成功 |
+| 运行时冒烟（standalone + curl） | ✅ `/zh`、`/en`、着陆页均 200；robots.txt 干净 |
+| CSS bundle 抽查 | ✅ 无 aurora/no-print 残留；orbit-line 保留 |
+
+### 设计说明 / 遗留
+
+- **`StateSurface` 保留**：error/not-found 页仍在用；其 JSDoc 中「事件失效态」举例属注释陈旧，按「不顺手清理无关注释」原则未动。
+- **`tests/helpers.ts` 的 `washington()` fixture 保留**：共享测试工具库性质，未因单一用例删除而摘除。
+- **`.env.local` 未动**：本地 gitignored 文件，其中的 Client ID 值已无代码消费方，可自行清理。
+- **SEO 文案未改**：按提示词「SEO 资产保留不动」执行，未动任何着陆页/页脚文案。
+- **旧的含 `s=` 分享链接仍可用**：shareUrl 编解码未动；但旧的 `/event/[code]` 链接现 404（路由已删，属声明的破坏性变更）。
+
 ## 第 26 轮：三轮独立审查 + 收尾修复
 
 > 时间：2026-08-15

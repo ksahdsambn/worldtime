@@ -48,14 +48,8 @@
     "dstWarnSoon": "Daylight saving time changes soon",
     "rename": "Rename",
     "renamePrompt": "Enter a custom name for this city (leave blank to reset).",
-    "tags": "Tags",
-    "tagsPrompt": "Add tags, separated by commas (e.g. team, clients).",
-    "all": "All",
     "dragHandle": "Drag to reorder",
     "confirmRemoveHome": "Remove your home city? Other cities compare their time to home, so a different city will become the reference.",
-    "sunNone": "none",
-    "emptyFiltered": "No cities with the tag #{tag}.",
-    "clearFilter": "Clear filter",
     "limitReached": "You've reached the limit of 30 cities.",
     "periodWork": "Work hours",
     "periodContact": "Contact hours",
@@ -74,20 +68,9 @@
     "homeSuffix": " (home)"
   },
   "Export": {
-    "export": "Export",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google Calendar",
-    "email": "Email link",
-    "eventPage": "Public event page",
     "copySummary": "Copy time summary",
     "shareLink": "Copy share link",
     "copied": "Copied!"
-  },
-  "Event": {
-    "title": "Public event",
-    "description": "The corresponding local times for this event:",
-    "invalid": "This event link is invalid or has expired.",
-    "openOriginal": "Open in WorldTime"
   },
   "Heatmap": {
     "green": "All in work hours",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "Toggle light/dark theme"
-  },
-  "Gcal": {
-    "label": "Google Calendar",
-    "connect": "Connect Google Calendar",
-    "connected": "Connected",
-    "disconnect": "Disconnect Google Calendar",
-    "loading": "Connecting…",
-    "error": "Couldn't connect to Google Calendar. Please try again.",
-    "retry": "Retry",
-    "disconnected": "Google Calendar session expired. Please reconnect.",
-    "overlayFailed": "Couldn't load calendar availability. Check your connection."
-  },
-  "PrintExport": {
-    "print": "Print",
-    "image": "Export image",
-    "exporting": "Exporting…",
-    "exported": "Image exported.",
-    "exportFailed": "Couldn't export the image. Try again.",
-    "noTarget": "Nothing to export yet."
   },
   "Grid": {
     "empty": "Add a city to see the time grid."
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "Related time zone converters"
-  },
-  "Widget": {
-    "eventTitle": "WorldTime Event Widget",
-    "worldClockTitle": "WorldTime World Clock Widget",
-    "worldClock": "World Clock",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "World clock & time zone converter",

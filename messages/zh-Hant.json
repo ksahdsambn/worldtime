@@ -48,14 +48,8 @@
     "dstWarnSoon": "日光節約時間即將切換",
     "rename": "重新命名",
     "renamePrompt": "輸入此城市的自訂名稱（留空即恢復原名）。",
-    "tags": "標籤",
-    "tagsPrompt": "新增標籤，以逗號分隔（例如：團隊、客戶）。",
-    "all": "全部",
     "dragHandle": "拖曳以重新排序",
     "confirmRemoveHome": "確定移除主要城市嗎？其他城市的時差以主要城市為基準，移除後將改用其他城市作為參考。",
-    "sunNone": "無",
-    "emptyFiltered": "沒有 #{tag} 標籤的城市。",
-    "clearFilter": "清除篩選",
     "limitReached": "已達到 30 個城市的上限。",
     "periodWork": "工作時段",
     "periodContact": "可聯絡時段",
@@ -74,20 +68,9 @@
     "homeSuffix": "（主要）"
   },
   "Export": {
-    "export": "匯出",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google 行事曆",
-    "email": "電子郵件連結",
-    "eventPage": "公開活動頁面",
     "copySummary": "複製時間摘要",
     "shareLink": "複製分享連結",
     "copied": "已複製！"
-  },
-  "Event": {
-    "title": "公開活動",
-    "description": "以下為此活動在各地的對應時間。",
-    "invalid": "此活動連結無效或已過期。",
-    "openOriginal": "在 WorldTime 中開啟"
   },
   "Heatmap": {
     "green": "全員在工作時段",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "切換淺色/深色主題"
-  },
-  "Gcal": {
-    "label": "Google 行事曆",
-    "connect": "連結 Google 行事曆",
-    "connected": "已連結",
-    "disconnect": "解除連結 Google 行事曆",
-    "loading": "連線中…",
-    "error": "無法連結 Google 行事曆，請重試。",
-    "retry": "重試",
-    "disconnected": "Google 行事曆工作階段已失效，請重新連線。",
-    "overlayFailed": "無法載入行事曆空閒情況，請檢查網路連線。"
-  },
-  "PrintExport": {
-    "print": "列印",
-    "image": "匯出圖片",
-    "exporting": "匯出中…",
-    "exported": "圖片已匯出",
-    "exportFailed": "圖片匯出失敗，請重試。",
-    "noTarget": "暫無可匯出的內容。"
   },
   "Grid": {
     "empty": "新增一個城市，即可檢視時間網格。"
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "相關時區轉換"
-  },
-  "Widget": {
-    "eventTitle": "WorldTime 活動小工具",
-    "worldClockTitle": "WorldTime 世界時鐘小工具",
-    "worldClock": "世界時鐘",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "世界時鐘與時區轉換器",

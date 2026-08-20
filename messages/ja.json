@@ -48,14 +48,8 @@
     "dstWarnSoon": "まもなくサマータイムに切替されます",
     "rename": "名前変更",
     "renamePrompt": "この都市の表示名を入力（空欄でリセット）。",
-    "tags": "タグ",
-    "tagsPrompt": "タグをカンマ区切りで入力（例：チーム、顧客）。",
-    "all": "すべて",
     "dragHandle": "ドラッグで並び替え",
     "confirmRemoveHome": "基準都市を削除しますか？他の都市の時刻は基準との時差で表示されるため、別の都市が基準になります。",
-    "sunNone": "なし",
-    "emptyFiltered": "#{tag} タグの都市がありません。",
-    "clearFilter": "フィルターを解除",
     "limitReached": "都市は 30 件までです。",
     "periodWork": "勤務時間",
     "periodContact": "連絡可能時間",
@@ -74,20 +68,9 @@
     "homeSuffix": " (基準)"
   },
   "Export": {
-    "export": "エクスポート",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google カレンダー",
-    "email": "メールリンク",
-    "eventPage": "公開イベントページ",
     "copySummary": "時間サマリーをコピー",
     "shareLink": "共有リンクをコピー",
     "copied": "コピーしました！"
-  },
-  "Event": {
-    "title": "公開イベント",
-    "description": "このイベントの各地での現地時間：",
-    "invalid": "このイベントリンクは無効か、有効期限切れです。",
-    "openOriginal": "WorldTime で開く"
   },
   "Heatmap": {
     "green": "全員が勤務時間帯",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "ライト/ダークを切替"
-  },
-  "Gcal": {
-    "label": "Google カレンダー",
-    "connect": "Google カレンダーに接続",
-    "connected": "接続済み",
-    "disconnect": "Google カレンダーを切断",
-    "loading": "接続中…",
-    "error": "Google カレンダーに接続できませんでした。もう一度お試しください。",
-    "retry": "再試行",
-    "disconnected": "Google カレンダーのセッションが切れました。再接続してください。",
-    "overlayFailed": "カレンダーの空き状況を読み込めませんでした。接続を確認してください。"
-  },
-  "PrintExport": {
-    "print": "印刷",
-    "image": "画像エクスポート",
-    "exporting": "エクスポート中…",
-    "exported": "画像をエクスポートしました",
-    "exportFailed": "画像をエクスポートできませんでした。再試行してください。",
-    "noTarget": "エクスポートできるものがまだありません。"
   },
   "Grid": {
     "empty": "都市を追加すると時間グリッドが表示されます。"
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "関連するタイムゾーン変換"
-  },
-  "Widget": {
-    "eventTitle": "WorldTime イベントウィジェット",
-    "worldClockTitle": "WorldTime 世界時計ウィジェット",
-    "worldClock": "世界時計",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "世界時計とタイムゾーン変換",

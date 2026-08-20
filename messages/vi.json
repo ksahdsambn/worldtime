@@ -48,14 +48,8 @@
     "dstWarnSoon": "Sắp đến lúc chuyển giờ mùa hè",
     "rename": "Đổi tên",
     "renamePrompt": "Nhập tên tuỳ chỉnh cho thành phố này (để trống để đặt lại).",
-    "tags": "Nhãn",
-    "tagsPrompt": "Thêm nhãn, phân tách bằng dấu phẩy (ví dụ: nhóm, khách hàng).",
-    "all": "Tất cả",
     "dragHandle": "Kéo để sắp xếp lại",
     "confirmRemoveHome": "Xoá thành phố chính? Các thành phố khác so sánh giờ với thành phố chính, nên một thành phố khác sẽ trở thành mốc tham chiếu.",
-    "sunNone": "không",
-    "emptyFiltered": "Không có thành phố với thẻ #{tag}.",
-    "clearFilter": "Xóa bộ lọc",
     "limitReached": "Bạn đã đạt giới hạn 30 thành phố.",
     "periodWork": "Giờ làm việc",
     "periodContact": "Giờ liên lạc được",
@@ -74,20 +68,9 @@
     "homeSuffix": " (chính)"
   },
   "Export": {
-    "export": "Xuất",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google Lịch",
-    "email": "Liên kết email",
-    "eventPage": "Trang sự kiện công khai",
     "copySummary": "Sao chép tóm tắt thời gian",
     "shareLink": "Sao chép liên kết chia sẻ",
     "copied": "Đã sao chép!"
-  },
-  "Event": {
-    "title": "Sự kiện công khai",
-    "description": "Giờ địa phương tương ứng cho sự kiện này:",
-    "invalid": "Liên kết sự kiện này không hợp lệ hoặc đã hết hạn.",
-    "openOriginal": "Mở trong WorldTime"
   },
   "Heatmap": {
     "green": "Tất cả trong giờ làm việc",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "Chuyển giao diện sáng/tối"
-  },
-  "Gcal": {
-    "label": "Google Lịch",
-    "connect": "Kết nối Google Lịch",
-    "connected": "Đã kết nối",
-    "disconnect": "Ngắt kết nối Google Lịch",
-    "loading": "Đang kết nối…",
-    "error": "Không thể kết nối với Google Lịch. Vui lòng thử lại.",
-    "retry": "Thử lại",
-    "disconnected": "Phiên Google Lịch đã hết hạn. Vui lòng kết nối lại.",
-    "overlayFailed": "Không thể tải tình trạng rảnh của lịch. Hãy kiểm tra kết nối."
-  },
-  "PrintExport": {
-    "print": "In",
-    "image": "Xuất hình ảnh",
-    "exporting": "Đang xuất…",
-    "exported": "Đã xuất ảnh.",
-    "exportFailed": "Không thể xuất ảnh. Hãy thử lại.",
-    "noTarget": "Chưa có gì để xuất."
   },
   "Grid": {
     "empty": "Thêm thành phố để xem lưới thời gian."
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "Trình chuyển đổi múi giờ liên quan"
-  },
-  "Widget": {
-    "eventTitle": "Tiện ích sự kiện WorldTime",
-    "worldClockTitle": "Tiện ích đồng hồ thế giới WorldTime",
-    "worldClock": "Đồng hồ thế giới",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "Đồng hồ thế giới và trình chuyển đổi múi giờ",

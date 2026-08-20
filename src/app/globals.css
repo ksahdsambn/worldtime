@@ -62,9 +62,6 @@
     --cell-selected-bg: #dbeafe;
     --cell-selected-fg: #1e3a8a;
 
-    /* —— 日历忙碌条纹（紫调，与热力图三色区分）—— */
-    --busy-stripe: rgba(124, 58, 237, 0.55);
-
     /* —— 阴影 / 圆角 —— */
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
     --shadow-md: 0 4px 14px -4px rgba(15, 23, 42, 0.1),
@@ -88,16 +85,8 @@
     /* 双向过渡（进出场对称），仍属 ease 家族，无 bounce */
     --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
-    /* —— 科技 premium 氛围层（Atmosphere）——
-        极光径向渐变停止色（蓝 / 深青 / 琥珀，低透明）+ 点阵纹理色。
-        亮色：极淡冷调晕染，不喧宾夺主；暗色见 .dark。*/
-    --aurora-1: rgba(37, 99, 235, 0.12);
-    --aurora-2: rgba(14, 116, 184, 0.08);
-    --aurora-3: rgba(245, 158, 11, 0.07);
-    --aurora-warm: rgba(245, 158, 11, 0.1);
-    --grid-texture: rgba(15, 23, 42, 0.055);
+    /* —— 品牌轨道线（logo .brand-orbit 的描边色）—— */
     --orbit-line: rgba(37, 99, 235, 0.18);
-    --scan-line: rgba(37, 99, 235, 0.28);
 
     /* —— 玻璃（Glass）—— 抬升浮层/顶栏磨砂质感 —— */
     --glass-bg: rgba(255, 255, 255, 0.72);
@@ -165,20 +154,12 @@
     --cell-selected-bg: rgba(59, 130, 246, 0.3);
     --cell-selected-fg: #dbeafe;
 
-    --busy-stripe: rgba(167, 139, 250, 0.5);
-
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 6px 18px -6px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 16px 40px -10px rgba(0, 0, 0, 0.6);
 
-    /* —— 科技 premium 氛围层（暗色秀场：发光更放得开）—— */
-    --aurora-1: rgba(37, 99, 235, 0.28);
-    --aurora-2: rgba(56, 189, 248, 0.12);
-    --aurora-3: rgba(251, 191, 36, 0.14);
-    --aurora-warm: rgba(251, 191, 36, 0.16);
-    --grid-texture: rgba(148, 163, 184, 0.07);
+    /* —— 品牌轨道线（暗色提亮）—— */
     --orbit-line: rgba(96, 165, 250, 0.22);
-    --scan-line: rgba(251, 191, 36, 0.45);
 
     /* 玻璃：对齐新抬升面 #10182a，半透明 + 更强 blur */
     --glass-bg: rgba(16, 24, 42, 0.62);
@@ -831,18 +812,9 @@
   box-shadow: inset 0 0 0 1px var(--accent);
 }
 
-/* 日历忙碌：斜纹叠加（background-image，不擦除底色；与选区共存，非仅靠颜色）*/
-.wt-grid td[data-busy="1"] {
-  background-image: repeating-linear-gradient(
-    135deg,
-    var(--busy-stripe) 0 1px,
-    transparent 1px 6px
-  );
-}
-
 /* 「现在」：暖色（琥珀）纵向指示线，同一列各行拼成一条「当前时刻」线。
-   用 ::before 绘制（独立于 background-color 热力/选区与 background-image 忙碌
-   斜纹，天然分层共存）。科技 premium 升级：上下渐隐的渐变线 + 暖色外发光，
+   用 ::before 绘制（独立于 background-color 热力/选区，天然分层共存）。
+   科技 premium 升级：上下渐隐的渐变线 + 暖色外发光，
    并附极轻呼吸牵引视线；reduced-motion 下归零即静止。单元格数据不动。*/
 .wt-grid td[data-now="1"]::before {
   content: "";
@@ -923,32 +895,6 @@
    全部被上方 prefers-reduced-motion 全局守卫归零，无需逐个处理。
    ========================================================================== */
 
-/* 极光氛围网格缓慢漂移：背景位移，营造「活着」的科技感（不动 layout）*/
-@keyframes aurora-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(2%, -1.5%, 0) scale(1.06);
-  }
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-/* 发光呼吸：opacity + 极轻 scale，用于「实时」点与发光高亮 */
-@keyframes glow-breathe {
-  0%,
-  100% {
-    opacity: 0.6;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.12);
-  }
-}
-
 /* 渐变平移：渐变边/渐变文字的「流动」质感 */
 @keyframes gradient-pan {
   0% {
@@ -1000,192 +946,12 @@
   }
 }
 
-@keyframes meridian-drift {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(72px, 0, 0);
-  }
-}
-
-@keyframes scan-vertical {
-  0% {
-    transform: translate3d(0, -8%, 0);
-    opacity: 0;
-  }
-  8% {
-    opacity: 0.55;
-  }
-  92% {
-    opacity: 0.28;
-  }
-  100% {
-    transform: translate3d(0, 108vh, 0);
-    opacity: 0;
-  }
-}
-
 @keyframes orbit-ring {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
-  }
-}
-
-/* ============================================================================
-   氛围背景（.atmosphere）—— 科技 premium 极光层
-   ----------------------------------------------------------------------------
-   固定全屏、置于内容之下（z-index:-10）、不拦截指针。两套主题各自由
-   --aurora-* / --grid-texture 令牌驱动；缓慢漂移由 aurora-drift 提供，
-   reduced-motion 下被全局守卫归零为静态快照。打印态由 .no-print 隐藏。
-   依赖：顶层页面容器须透明（不盖 opaque 背景）方可见——body 已铺 --app-bg
-   作为基底画布。
-   ========================================================================== */
-.atmosphere {
-  position: fixed;
-  inset: 0;
-  z-index: -10;
-  pointer-events: none;
-  overflow: hidden;
-}
-.atmosphere__aurora {
-  position: absolute;
-  inset: -25%;
-  background:
-    radial-gradient(42% 50% at 14% 18%, var(--aurora-1), transparent 70%),
-    radial-gradient(38% 46% at 86% 12%, var(--aurora-2), transparent 70%),
-    radial-gradient(48% 58% at 78% 88%, var(--aurora-3), transparent 72%);
-  animation: aurora-drift 36s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-  will-change: transform;
-}
-.atmosphere__horizon {
-  position: absolute;
-  left: -10%;
-  right: -10%;
-  bottom: -18%;
-  height: 46%;
-  background: radial-gradient(
-    55% 80% at 50% 100%,
-    var(--aurora-warm),
-    transparent 72%
-  );
-  animation: glow-breathe 11s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-.atmosphere__topglow {
-  position: absolute;
-  top: -14%;
-  left: 50%;
-  width: 70%;
-  height: 44%;
-  transform: translateX(-50%);
-  background: radial-gradient(50% 50% at 50% 50%, var(--aurora-2), transparent 70%);
-  opacity: 0.6;
-  animation: glow-breathe 9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-.atmosphere__meridians {
-  position: absolute;
-  inset: -8% 0;
-  background-image: repeating-linear-gradient(
-    90deg,
-    transparent 0,
-    transparent 71px,
-    var(--grid-texture) 71px,
-    var(--grid-texture) 72px
-  );
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    transparent 0%,
-    #000 18%,
-    #000 72%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    180deg,
-    transparent 0%,
-    #000 18%,
-    #000 72%,
-    transparent 100%
-  );
-  opacity: 0.85;
-  animation: meridian-drift 56s linear infinite;
-}
-.atmosphere__orbit {
-  position: absolute;
-  top: -12%;
-  right: -8%;
-  width: min(58vw, 560px);
-  height: min(58vw, 560px);
-  border-radius: 50%;
-  border: 1px solid var(--orbit-line);
-  box-shadow: inset 0 0 0 40px var(--orbit-line);
-  animation: orbit-ring 90s linear infinite;
-}
-.atmosphere__orbit::before,
-.atmosphere__orbit::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid var(--orbit-line);
-}
-.atmosphere__orbit::before {
-  inset: 16%;
-  border-style: dashed;
-  opacity: 0.7;
-}
-.atmosphere__orbit::after {
-  inset: 32%;
-  opacity: 0.45;
-}
-.atmosphere__scan {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 120px;
-  background: linear-gradient(
-    180deg,
-    transparent,
-    var(--scan-line) 48%,
-    transparent
-  );
-  opacity: 0.22;
-  animation: scan-vertical 18s linear infinite;
-}
-.atmosphere__grid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(var(--grid-texture) 1px, transparent 1px);
-  background-size: 26px 26px;
-  -webkit-mask-image: radial-gradient(
-    ellipse 78% 68% at 50% 24%,
-    #000 22%,
-    transparent 78%
-  );
-  mask-image: radial-gradient(
-    ellipse 78% 68% at 50% 24%,
-    #000 22%,
-    transparent 78%
-  );
-}
-.atmosphere__grain {
-  position: absolute;
-  inset: 0;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-}
-
-@media (max-width: 767px) {
-  .atmosphere__scan,
-  .atmosphere__grain,
-  .atmosphere__meridians {
-    display: none;
-  }
-  .atmosphere__orbit {
-    opacity: 0.45;
   }
 }
 
@@ -1225,46 +991,6 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
-  }
-}
-
-/* ============================================================================
-   打印（6.9）：隐藏控件，强制浅色，网格/选区可读
-   ========================================================================== */
-@media print {
-  .no-print {
-    display: none !important;
-  }
-  body {
-    background: #ffffff !important;
-    color: #000000 !important;
-  }
-  /* 打印时把令牌压回浅色，避免深色主题下打印全黑 */
-  :root {
-    --app-bg: #ffffff;
-    --surface: #ffffff;
-    --surface-inset: #f5f5f5;
-    --border: #cccccc;
-    --border-strong: #999999;
-    --text: #000000;
-    --text-muted: #333333;
-    --text-faint: #666666;
-    --shadow-sm: none;
-    --shadow-md: none;
-    --shadow-lg: none;
-    /* 玻璃面（顶栏/选区栏已 .no-print 隐藏；但 hero 卡 / 对照表 / 事件列表 /
-       表头仍可能打印）：压回不透明，避免半透明 + 失效 backdrop-filter 导致
-       打印脏污。表头 .wt-grid thead th 用 var(--glass-bg)，一并收口。*/
-    --glass-bg: #ffffff;
-    --glass-border: #cccccc;
-    --shadow-glow: none;
-    --shadow-glow-warm: none;
-  }
-  main {
-    overflow: visible !important;
-  }
-  .wt-grid td[data-selected="1"] {
-    background-color: #dbeafe !important;
   }
 }
 
