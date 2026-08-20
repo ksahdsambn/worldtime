@@ -48,14 +48,8 @@
     "dstWarnSoon": "Die Sommerzeitumstellung steht kurz bevor",
     "rename": "Umbenennen",
     "renamePrompt": "Eigenen Namen für diese Stadt eingeben (leer lassen zum Zurücksetzen).",
-    "tags": "Tags",
-    "tagsPrompt": "Tags durch Kommas getrennt hinzufügen (z. B. Team, Kunden).",
-    "all": "Alle",
     "dragHandle": "Ziehen zum Sortieren",
     "confirmRemoveHome": "Hauptort entfernen? Andere Städte vergleichen ihre Zeit mit dem Hauptort, daher wird eine andere Stadt zur Referenz.",
-    "sunNone": "keine",
-    "emptyFiltered": "Keine Städte mit dem Tag #{tag}.",
-    "clearFilter": "Filter löschen",
     "limitReached": "Du hast das Limit von 30 Städten erreicht.",
     "periodWork": "Arbeitszeit",
     "periodContact": "Erreichbarkeit",
@@ -74,20 +68,9 @@
     "homeSuffix": " (Haupt)"
   },
   "Export": {
-    "export": "Exportieren",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google Calendar",
-    "email": "E-Mail-Link",
-    "eventPage": "Öffentliche Veranstaltungsseite",
     "copySummary": "Zeitzusammenfassung kopieren",
     "shareLink": "Teilen-Link kopieren",
     "copied": "Kopiert!"
-  },
-  "Event": {
-    "title": "Öffentliche Veranstaltung",
-    "description": "Die entsprechenden Ortszeiten für diese Veranstaltung:",
-    "invalid": "Dieser Veranstaltungslink ist ungültig oder abgelaufen.",
-    "openOriginal": "In WorldTime öffnen"
   },
   "Heatmap": {
     "green": "Alle in Arbeitszeit",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "Hell/Dunkel umschalten"
-  },
-  "Gcal": {
-    "label": "Google Calendar",
-    "connect": "Mit Google Calendar verbinden",
-    "connected": "Verbunden",
-    "disconnect": "Google Calendar trennen",
-    "loading": "Verbinden…",
-    "error": "Verbindung zu Google Calendar fehlgeschlagen. Bitte erneut versuchen.",
-    "retry": "Erneut versuchen",
-    "disconnected": "Die Google Calendar-Sitzung ist abgelaufen. Bitte erneut verbinden.",
-    "overlayFailed": "Kalender-Verfügbarkeit konnte nicht geladen werden. Verbindung prüfen."
-  },
-  "PrintExport": {
-    "print": "Drucken",
-    "image": "Bild exportieren",
-    "exporting": "Wird exportiert…",
-    "exported": "Bild exportiert.",
-    "exportFailed": "Bild konnte nicht exportiert werden. Erneut versuchen.",
-    "noTarget": "Noch nichts zu exportieren."
   },
   "Grid": {
     "empty": "Stadt hinzufügen, um das Zeitraster zu sehen."
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "Verwandte Zeitzonenkonverter"
-  },
-  "Widget": {
-    "eventTitle": "WorldTime Veranstaltungs-Widget",
-    "worldClockTitle": "WorldTime Weltuhr-Widget",
-    "worldClock": "Weltuhr",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "Weltuhr und Zeitzonenkonverter",

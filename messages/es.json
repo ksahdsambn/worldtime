@@ -48,14 +48,8 @@
     "dstWarnSoon": "El cambio de horario de verano está próximo",
     "rename": "Renombrar",
     "renamePrompt": "Escribe un nombre personalizado para esta ciudad (vacío para restablecer).",
-    "tags": "Etiquetas",
-    "tagsPrompt": "Añade etiquetas separadas por comas (p. ej. equipo, clientes).",
-    "all": "Todas",
     "dragHandle": "Arrastrar para reordenar",
     "confirmRemoveHome": "¿Quitar tu ciudad principal? Otras ciudades comparan su hora con la principal, así que otra ciudad pasará a ser la referencia.",
-    "sunNone": "ninguno",
-    "emptyFiltered": "No hay ciudades con la etiqueta #{tag}.",
-    "clearFilter": "Quitar filtro",
     "limitReached": "Has alcanzado el límite de 30 ciudades.",
     "periodWork": "Horario laboral",
     "periodContact": "Horario de contacto",
@@ -74,20 +68,9 @@
     "homeSuffix": " (principal)"
   },
   "Export": {
-    "export": "Exportar",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google Calendar",
-    "email": "Enlace por correo",
-    "eventPage": "Página pública del evento",
     "copySummary": "Copiar resumen de horarios",
     "shareLink": "Copiar enlace para compartir",
     "copied": "¡Copiado!"
-  },
-  "Event": {
-    "title": "Evento público",
-    "description": "Los horarios locales correspondientes a este evento:",
-    "invalid": "Este enlace de evento no es válido o ha caducado.",
-    "openOriginal": "Abrir en WorldTime"
   },
   "Heatmap": {
     "green": "Todo en horario laboral",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "Cambiar tema claro/oscuro"
-  },
-  "Gcal": {
-    "label": "Google Calendar",
-    "connect": "Conectar con Google Calendar",
-    "connected": "Conectado",
-    "disconnect": "Desconectar Google Calendar",
-    "loading": "Conectando…",
-    "error": "No se pudo conectar con Google Calendar. Inténtalo de nuevo.",
-    "retry": "Reintentar",
-    "disconnected": "La sesión de Google Calendar ha caducado. Vuelve a conectar.",
-    "overlayFailed": "No se pudo cargar la disponibilidad del calendario. Revisa tu conexión."
-  },
-  "PrintExport": {
-    "print": "Imprimir",
-    "image": "Exportar imagen",
-    "exporting": "Exportando…",
-    "exported": "Imagen exportada.",
-    "exportFailed": "No se pudo exportar la imagen. Inténtalo de nuevo.",
-    "noTarget": "Aún no hay nada que exportar."
   },
   "Grid": {
     "empty": "Añade una ciudad para ver la cuadrícula horaria."
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "Conversores de zona horaria relacionados"
-  },
-  "Widget": {
-    "eventTitle": "Widget de eventos de WorldTime",
-    "worldClockTitle": "Widget de reloj mundial de WorldTime",
-    "worldClock": "Reloj mundial",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "Reloj mundial y conversor de zonas horarias",

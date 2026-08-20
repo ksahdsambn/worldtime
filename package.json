@@ -19,7 +19,6 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "html-to-image": "^1.11.13",
     "luxon": "^2.5.2",
     "next": "^15.5.23",
     "next-intl": "^4.13.5",

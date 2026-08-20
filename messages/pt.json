@@ -48,14 +48,8 @@
     "dstWarnSoon": "A mudança de horário de verão está próxima",
     "rename": "Renomear",
     "renamePrompt": "Digite um nome personalizado para esta cidade (vazio para redefinir).",
-    "tags": "Marcadores",
-    "tagsPrompt": "Adicione marcadores separados por vírgulas (ex.: equipe, clientes).",
-    "all": "Todos",
     "dragHandle": "Arraste para reordenar",
     "confirmRemoveHome": "Remover sua cidade principal? Outras cidades comparam seu horário com a principal, então outra cidade passará a ser a referência.",
-    "sunNone": "nenhum",
-    "emptyFiltered": "Nenhuma cidade com a etiqueta #{tag}.",
-    "clearFilter": "Limpar filtro",
     "limitReached": "Você atingiu o limite de 30 cidades.",
     "periodWork": "Horário de trabalho",
     "periodContact": "Horário de contato",
@@ -74,20 +68,9 @@
     "homeSuffix": " (principal)"
   },
   "Export": {
-    "export": "Exportar",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google Agenda",
-    "email": "Link por e-mail",
-    "eventPage": "Página pública do evento",
     "copySummary": "Copiar resumo de horários",
     "shareLink": "Copiar link de compartilhamento",
     "copied": "Copiado!"
-  },
-  "Event": {
-    "title": "Evento público",
-    "description": "Os horários locais correspondentes para este evento:",
-    "invalid": "Este link de evento é inválido ou expirou.",
-    "openOriginal": "Abrir no WorldTime"
   },
   "Heatmap": {
     "green": "Todos em horário de trabalho",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "Alternar tema claro/escuro"
-  },
-  "Gcal": {
-    "label": "Google Agenda",
-    "connect": "Conectar Google Agenda",
-    "connected": "Conectado",
-    "disconnect": "Desconectar Google Agenda",
-    "loading": "Conectando…",
-    "error": "Não foi possível conectar ao Google Agenda. Tente novamente.",
-    "retry": "Tentar novamente",
-    "disconnected": "A sessão do Google Calendar expirou. Reconecte-se.",
-    "overlayFailed": "Não foi possível carregar a disponibilidade da agenda. Verifique sua conexão."
-  },
-  "PrintExport": {
-    "print": "Imprimir",
-    "image": "Exportar imagem",
-    "exporting": "Exportando…",
-    "exported": "Imagem exportada.",
-    "exportFailed": "Não foi possível exportar a imagem. Tente novamente.",
-    "noTarget": "Nada para exportar ainda."
   },
   "Grid": {
     "empty": "Adicione uma cidade para ver a grade de horários."
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "Conversores de fuso horário relacionados"
-  },
-  "Widget": {
-    "eventTitle": "Widget de eventos do WorldTime",
-    "worldClockTitle": "Widget de relógio mundial do WorldTime",
-    "worldClock": "Relógio mundial",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "Relógio mundial e conversor de fusos horários",

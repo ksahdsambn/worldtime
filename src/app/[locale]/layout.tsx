@@ -6,8 +6,6 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import ThemeRegistry from "@/components/ThemeRegistry";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import GisScript from "@/components/GisScript";
-import AtmosphereBackground from "@/components/AtmosphereBackground";
 import { getSiteUrl, buildAlternates, buildOpenGraph } from "@/lib/seo";
 import "../globals.css";
 
@@ -88,9 +86,7 @@ export default async function LocaleLayout({ children, params }: Props) {
       <html lang={locale} className={sora.variable} suppressHydrationWarning>
         <body>
           <ThemeRegistry>
-            <AtmosphereBackground />
             <ServiceWorkerRegister />
-            <GisScript />
             {children}
           </ThemeRegistry>
         </body>

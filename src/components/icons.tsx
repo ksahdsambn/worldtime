@@ -65,16 +65,6 @@ export function IconEdit(props: IconProps) {
   );
 }
 
-/** 标签 / tag。 */
-export function IconTag(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z" />
-      <circle cx="7.5" cy="7.5" r="0.6" fill="currentColor" stroke="none" />
-    </Svg>
-  );
-}
-
 /** 关闭 / x。 */
 export function IconClose(props: IconProps) {
   return (
@@ -149,28 +139,6 @@ export function IconHelp(props: IconProps) {
       <circle cx="12" cy="12" r="10" />
       <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
       <path d="M12 17h.01" />
-    </Svg>
-  );
-}
-
-/** 打印。 */
-export function IconPrinter(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M6 9V2h12v7" />
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-      <rect width="12" height="8" x="6" y="14" />
-    </Svg>
-  );
-}
-
-/** 图片导出。 */
-export function IconImage(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-      <circle cx="9" cy="9" r="2" />
-      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
     </Svg>
   );
 }

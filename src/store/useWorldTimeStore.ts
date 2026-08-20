@@ -41,10 +41,6 @@ export const DEFAULT_DAY_PERIODS: DayPeriods = {
 export const MAX_PLACES = 30;
 /** 自定义显示名最大字符数。 */
 export const MAX_CUSTOM_NAME_LEN = 40;
-/** 单个地点最多标签数。 */
-export const MAX_TAGS = 6;
-/** 单个标签最大字符数。 */
-export const MAX_TAG_LEN = 20;
 
 /**
  * 地点条目。
@@ -54,7 +50,10 @@ export const MAX_TAG_LEN = 20;
 export interface PlaceItem extends CityRecord {
   /** 用户自定义显示名（步骤 3.7 引入，MVP 默认与 city 名一致） */
   customName?: string;
-  /** 标签分组（步骤 3.7）；空数组表示未分组 */
+  /**
+   * 标签分组（历史字段）：标签 UI 已随功能精简移除，字段保留仅为
+   * localStorage 旧数据兼容（避免恢复时丢字段），当前恒为空数组。
+   */
   tags: string[];
 }
 
@@ -87,15 +86,6 @@ interface WorldTimeState {
 
   /** 网格视图起始日期（主地点本地午夜，TC-6 任意日期跳转）。null 表示今天。 */
   viewStartDateMs: number | null;
-
-  /** Google 日历是否已连接（6.1 叠加触发条件） */
-  gcalConnected: boolean;
-  /**
-   * Google 日历 access token（6.1 纯前端 Token Client 方案）。
-   * 约 1 小时过期，过期由消费方（TimeGrid 调 freebusy 收到 401 时）静默刷新。
-   * 不持久化到 localStorage——仅由 GoogleCalendarConnect 用 sessionStorage 临时缓存。
-   */
-  gcalAccessToken: string | null;
 
   // ---- 地点操作 ----
   /**
@@ -131,18 +121,6 @@ interface WorldTimeState {
   /** 设置网格视图起始日期（TC-6）；null 表示回到今天 */
   setViewStartDate: (ms: number | null) => void;
 
-  /** 切换 Google 日历连接状态 */
-  setGcalConnected: (v: boolean) => void;
-  /** 设置 Google 日历 access token（null 表示无 token / 已断开） */
-  setGcalAccessToken: (token: string | null) => void;
-
-  // ---- 标签分组（6.5）----
-  /** 给地点打标签（覆盖） */
-  setPlaceTags: (placeId: string, tags: string[]) => void;
-  /** 当前激活的标签筛选；null 表示显示全部 */
-  activeTag: string | null;
-  setActiveTag: (tag: string | null) => void;
-
   // ---- 持久化恢复（避免回访首屏闪一下引导空状态）----
   /** localStorage/URL 状态是否已恢复完毕。恢复前为 false，UI 据此显示轻量骨架。 */
   restored: boolean;
@@ -157,9 +135,6 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   selection: null,
   cursorMs: null,
   viewStartDateMs: null,
-  gcalConnected: false,
-  gcalAccessToken: null,
-  activeTag: null,
   restored: false,
 
   addPlace: (city) => {
@@ -271,27 +246,6 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
     }),
 
   setViewStartDate: (ms) => set({ viewStartDateMs: ms }),
-
-  setGcalConnected: (v) => set({ gcalConnected: v }),
-
-  setGcalAccessToken: (token) => set({ gcalAccessToken: token }),
-
-  setPlaceTags: (placeId, tags) =>
-    set((state) => ({
-      places: state.places.map((p) =>
-        p.id === placeId
-          ? {
-              ...p,
-              // 去重 + 截断每项长度 + 上限标签数；空串过滤
-              tags: Array.from(new Set(tags))
-                .map((tg) => tg.trim().slice(0, MAX_TAG_LEN))
-                .filter(Boolean)
-                .slice(0, MAX_TAGS),
-            }
-          : p,
-      ),
-    })),
-  setActiveTag: (tag) => set({ activeTag: tag }),
 
   markRestored: () => set({ restored: true }),
 }));

@@ -6,16 +6,14 @@ import LocaleSwitcher from "./LocaleSwitcher";
 import HelpPopover from "./HelpPopover";
 import SettingsPanel from "./SettingsPanel";
 import ThemeToggle from "./ThemeToggle";
-import GoogleCalendarConnect from "./GoogleCalendarConnect";
 import { usePresence } from "@/lib/usePresence";
 import { IconMore } from "./icons";
 
 /**
- * 顶栏次要操作簇：语言 · 帮助 · 设置 · 主题 · Google 日历。
+ * 顶栏次要操作簇：语言 · 帮助 · 设置 · 主题。
  *
  * 桌面端（≥md）常驻内联；手机端折叠进 "⋯" 弹出菜单，把顶栏横向空间让给
- * 品牌与城市搜索。组件按断点切换两套外壳，但内部操作只挂载一份，避免
- * GoogleCalendarConnect 等带状态的组件被重复挂载。
+ * 品牌与城市搜索。组件按断点切换两套外壳，但内部操作只挂载一份。
  *
  * SSR 与首帧一律按桌面渲染（isDesktop 初值 true），与服务器一致以避免
  * hydration 不匹配；挂载后用 matchMedia 同步真实断点，移动端会再切到菜单外壳
@@ -60,7 +58,6 @@ export default function HeaderActions() {
         <HelpPopover />
         <SettingsPanel />
         <ThemeToggle />
-        <GoogleCalendarConnect />
       </div>
     );
   }
@@ -105,7 +102,6 @@ export default function HeaderActions() {
                 <SettingsPanel />
                 <ThemeToggle />
               </div>
-              <GoogleCalendarConnect />
             </div>
           </div>
         </>

@@ -48,14 +48,8 @@
     "dstWarnSoon": "곧 서머타임이 변경됩니다",
     "rename": "이름 변경",
     "renamePrompt": "이 도시의 사용자 지정 이름을 입력 (비우면 원래 이름으로 되돌림).",
-    "tags": "태그",
-    "tagsPrompt": "태그를 쉼표로 구분해 입력 (예: 팀, 고객).",
-    "all": "전체",
     "dragHandle": "드래그하여 재정렬",
     "confirmRemoveHome": "기준 도시를 제거하시겠습니까? 다른 도시의 시간은 기준과의 시차로 표시되므로 다른 도시가 기준이 됩니다.",
-    "sunNone": "없음",
-    "emptyFiltered": "#{tag} 태그의 도시가 없습니다.",
-    "clearFilter": "필터 해제",
     "limitReached": "도시는 최대 30개까지 추가할 수 있습니다.",
     "periodWork": "근무 시간",
     "periodContact": "연락 가능 시간",
@@ -74,20 +68,9 @@
     "homeSuffix": " (기준)"
   },
   "Export": {
-    "export": "내보내기",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google 캘린더",
-    "email": "이메일 링크",
-    "eventPage": "공개 이벤트 페이지",
     "copySummary": "시간 요약 복사",
     "shareLink": "공유 링크 복사",
     "copied": "복사됨!"
-  },
-  "Event": {
-    "title": "공개 이벤트",
-    "description": "이 이벤트의 각 지역 현지 시간:",
-    "invalid": "이 이벤트 링크는 유효하지 않거나 만료되었습니다.",
-    "openOriginal": "WorldTime에서 열기"
   },
   "Heatmap": {
     "green": "전원 근무 시간대",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "밝은/어두운 테마 전환"
-  },
-  "Gcal": {
-    "label": "Google 캘린더",
-    "connect": "Google 캘린더 연결",
-    "connected": "연결됨",
-    "disconnect": "Google 캘린더 연결 해제",
-    "loading": "연결 중…",
-    "error": "Google 캘린더에 연결하지 못했습니다. 다시 시도해 주세요.",
-    "retry": "다시 시도",
-    "disconnected": "Google 캘린더 세션이 만료되었습니다. 다시 연결해 주세요.",
-    "overlayFailed": "캘린더 일정을 불러오지 못했습니다. 연결을 확인해 주세요."
-  },
-  "PrintExport": {
-    "print": "인쇄",
-    "image": "이미지 내보내기",
-    "exporting": "내보내는 중…",
-    "exported": "이미지를 내보냈습니다",
-    "exportFailed": "이미지를 내보낼 수 없습니다. 다시 시도해 주세요.",
-    "noTarget": "내보낼 항목이 아직 없습니다."
   },
   "Grid": {
     "empty": "도시를 추가하면 시간 격자가 표시됩니다."
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "관련 시간대 변환"
-  },
-  "Widget": {
-    "eventTitle": "WorldTime 이벤트 위젯",
-    "worldClockTitle": "WorldTime 세계 시계 위젯",
-    "worldClock": "세계 시계",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "세계 시계 및 시간대 변환기",

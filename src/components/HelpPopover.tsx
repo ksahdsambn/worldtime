@@ -87,7 +87,7 @@ export default function HelpPopover() {
           role="dialog"
           aria-modal="false"
           aria-label={t("title")}
-          className="motion-pop surface absolute right-0 top-full z-40 mt-1 w-80 max-w-[calc(100vw-1.5rem)] p-4 shadow-lg no-print"
+          className="motion-pop surface absolute right-0 top-full z-40 mt-1 w-80 max-w-[calc(100vw-1.5rem)] p-4 shadow-lg"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-sm font-semibold text-ink">{t("title")}</h2>

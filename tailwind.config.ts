@@ -59,15 +59,10 @@ const config: Config = {
           hover: "var(--danger-hover)",
           fg: "var(--danger-fg)",
         },
-        // —— 科技 premium 氛围层 —— 令牌映射（亮暗各自声明，见 globals.css）——
+        // —— 科技 premium 玻璃面 —— 令牌映射（亮暗各自声明，见 globals.css）——
         glass: {
           DEFAULT: "var(--glass-bg)",
           border: "var(--glass-border)",
-        },
-        aurora: {
-          1: "var(--aurora-1)",
-          2: "var(--aurora-2)",
-          3: "var(--aurora-3)",
         },
       },
       fontFamily: {
@@ -149,17 +144,9 @@ const config: Config = {
           from: { opacity: "0", transform: "translateY(-10px)" },
           to: { opacity: "1", transform: "translateY(0)" },
         },
-        // 以下三个 keyframes 同时存在于 globals.css（被原始 CSS 按名引用）；
+        // gradient-pan 的 @keyframes 同时存在于 globals.css（被原始 CSS 按名引用）；
         // 此处重复定义以供 animate-* 工具类使用——Tailwind 不会因重复声明而冲突，
         // 且确保工具类形式引用时不被 tree-shake。
-        "aurora-drift": {
-          "0%, 100%": { transform: "translate3d(0,0,0) scale(1)" },
-          "50%": { transform: "translate3d(2%, -1.5%, 0) scale(1.06)" },
-        },
-        "glow-breathe": {
-          "0%, 100%": { opacity: "0.6", transform: "scale(1)" },
-          "50%": { opacity: "1", transform: "scale(1.12)" },
-        },
         "gradient-pan": {
           from: { backgroundPosition: "0% 50%" },
           to: { backgroundPosition: "200% 50%" },
@@ -177,9 +164,7 @@ const config: Config = {
         "blur-in": "blur-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both",
         "slide-in-left": "slide-in-left 0.5s cubic-bezier(0.16, 1, 0.3, 1) both",
         "slide-down": "slide-down 0.5s cubic-bezier(0.16, 1, 0.3, 1) both",
-        // 氛围/发光常驻动效（缓慢、克制；reduced-motion 下被全局归零）
-        "aurora-drift": "aurora-drift 32s cubic-bezier(0.45, 0, 0.55, 1) infinite",
-        "glow-breathe": "glow-breathe 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        // 渐变流动常驻动效（缓慢、克制；reduced-motion 下被全局归零）
         "gradient-pan": "gradient-pan 6s cubic-bezier(0.45, 0, 0.55, 1) infinite",
       },
     },

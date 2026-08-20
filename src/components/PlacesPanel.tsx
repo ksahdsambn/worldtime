@@ -22,15 +22,12 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useWorldTimeStore, type PlaceItem, type DayPeriods } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
-import { getLatLng } from "@/data/latlng";
-import { sunRiseSet } from "@/lib/sun";
 import { localCityName } from "@/lib/cityName";
 import { useDialog } from "./Dialog";
 import {
   IconDrag,
   IconHome,
   IconEdit,
-  IconTag,
   IconClose,
   IconChevronDown,
   IconBriefcase,
@@ -81,14 +78,6 @@ export default function PlacesPanel() {
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
   const dayPeriods = useWorldTimeStore((s) => s.dayPeriods);
   const renamePlace = useWorldTimeStore((s) => s.renamePlace);
-  const setPlaceTags = useWorldTimeStore((s) => s.setPlaceTags);
-  const activeTag = useWorldTimeStore((s) => s.activeTag);
-  const setActiveTag = useWorldTimeStore((s) => s.setActiveTag);
-  // 直接从 places 派生标签，避免每次 render 返回新数组导致无限更新
-  const allTags = useMemo(
-    () => Array.from(new Set(places.flatMap((p) => p.tags))),
-    [places],
-  );
 
   const nowRaw = useNow(30_000);
   const now = nowRaw ?? 0; // 0 仅 SSR 占位；挂载后 nowRaw 非 null
@@ -105,21 +94,12 @@ export default function PlacesPanel() {
     ? DateTime.fromMillis(nowRaw, { zone: "UTC" }).toFormat("HH:mm")
     : "--:--";
 
-  // 拖拽排序（WC-6）：按激活标签筛选后的列表参与排序，
-  // 拖拽完成后用 setPlacesOrder 一次性整体回写，避免多次 splice 抖动。
+  // 拖拽排序（WC-6）：拖拽完成后用 setPlacesOrder 一次性整体回写，
+  // 避免多次 splice 抖动。
   const setPlacesOrder = useWorldTimeStore((s) => s.setPlacesOrder);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
-
-  // 当前展示的地点（按标签筛选）
-  const visiblePlaces = useMemo(
-    () =>
-      places.filter(
-        (p: PlaceItem) => activeTag === null || p.tags.includes(activeTag),
-      ),
-    [places, activeTag],
   );
 
   function onDragEnd(event: DragEndEvent) {
@@ -186,52 +166,7 @@ export default function PlacesPanel() {
           {t("title")}
         </h2>
 
-        {/* 标签筛选（6.5） */}
-        {allTags.length > 0 && (
-          <div className="mb-2 flex flex-wrap gap-1">
-            <button
-              type="button"
-              onClick={() => setActiveTag(null)}
-              className={`chip cursor-pointer transition-colors ${
-                activeTag === null
-                  ? "!bg-ink !text-app"
-                  : "hover:!bg-surface-hover"
-              }`}
-            >
-              {t("all")}
-            </button>
-            {allTags.map((tg) => (
-              <button
-                key={tg}
-                type="button"
-                onClick={() => setActiveTag(activeTag === tg ? null : tg)}
-                className={`chip cursor-pointer transition-colors ${
-                  activeTag === tg
-                    ? "!bg-accent !text-accent-fg !border-accent"
-                    : "hover:!bg-surface-hover"
-                }`}
-              >
-                #{tg}
-              </button>
-            ))}
-          </div>
-        )}
-
         {places.length === 0 && <p className="px-1 text-xs text-faint">{t("empty")}</p>}
-
-        {/* 标签筛选把所有城市过滤掉了：给明确空状态 + 清除筛选，避免空白列表 */}
-        {places.length > 0 && visiblePlaces.length === 0 && activeTag && (
-          <div className="px-1 py-2 text-xs text-muted">
-            <p className="mb-1.5">{t("emptyFiltered", { tag: activeTag })}</p>
-            <button
-              type="button"
-              onClick={() => setActiveTag(null)}
-              className="btn-ghost btn-sm"
-            >
-              {t("clearFilter")}
-            </button>
-          </div>
-        )}
 
         <DndContext
           sensors={sensors}
@@ -239,11 +174,11 @@ export default function PlacesPanel() {
           onDragEnd={onDragEnd}
         >
           <SortableContext
-            items={visiblePlaces.map((p) => p.id)}
+            items={places.map((p) => p.id)}
             strategy={verticalListSortingStrategy}
           >
             <ul className="places-rows space-y-1.5">
-              {visiblePlaces.map((p: PlaceItem) => (
+              {places.map((p: PlaceItem) => (
                 <PlaceRow
                   key={p.id}
                   place={p}
@@ -259,7 +194,6 @@ export default function PlacesPanel() {
                   onSetHome={setHome}
                   onRemove={removePlace}
                   onRename={renamePlace}
-                  onTags={setPlaceTags}
                   prompt={prompt}
                   confirm={confirm}
                 />
@@ -276,7 +210,7 @@ export default function PlacesPanel() {
 
 /** 可拖拽的地点行（WC-6 拖拽排序）。
  *
- * 用 memo 包裹：父级 places 数组任一变更（如重命名/打标签某行）会触发整个列表
+ * 用 memo 包裹：父级 places 数组任一变更（如重命名某行）会触发整个列表
  * 重渲染，memo 使仅 props 实际变化的行重渲染。传入的 store action、next-intl 的
  * t/tCom、useDialog 的 prompt/confirm 均为稳定引用，默认浅比较即可正确跳过。 */
 const PlaceRow = memo(function PlaceRow({
@@ -293,7 +227,6 @@ const PlaceRow = memo(function PlaceRow({
   onSetHome,
   onRemove,
   onRename,
-  onTags,
   prompt,
   confirm,
 }: {
@@ -310,7 +243,6 @@ const PlaceRow = memo(function PlaceRow({
   onSetHome: (id: string) => void;
   onRemove: (id: string) => void;
   onRename: (id: string, name: string) => void;
-  onTags: (id: string, tags: string[]) => void;
   prompt: (opts: {
     title: string;
     defaultValue?: string;
@@ -333,7 +265,7 @@ const PlaceRow = memo(function PlaceRow({
 
   const p = place;
   // 派生时间信息集中 memo：避免兄弟行变动（如重命名其一）导致本行无谓重算
-  // 所有 Luxon / DST / 日出日落计算。昂贵项（nextDSTChange / timeZoneAbbrev）
+  // 所有 Luxon / DST 计算。昂贵项（nextDSTChange / timeZoneAbbrev）
   // 已在 lib/time 内部缓存，此处 memo 进一步消除无关重渲染的重复调用。
   const {
     localHour,
@@ -343,7 +275,6 @@ const PlaceRow = memo(function PlaceRow({
     abbr,
     dstWarn,
     hoverDetail,
-    sun,
   } = useMemo(() => {
     const dt = DateTime.fromMillis(now, { zone: p.timeZone });
     const localHour = dt.hour;
@@ -369,10 +300,7 @@ const PlaceRow = memo(function PlaceRow({
         ? `${t("nextChange")}: ${DateTime.fromMillis(nextChange, { zone: p.timeZone }).toFormat("yyyy-MM-dd")}`
         : t("noUpcoming"),
     ].join("\n");
-    // 日出日落（6.7）：仅对收录经纬度的城市计算
-    const ll = getLatLng(p.id);
-    const sun = nowRaw && ll ? sunRiseSet(ll.lat, ll.lng, p.timeZone, nowRaw) : null;
-    return { localHour, timeStr, offsetMin, dst, abbr, dstWarn, hoverDetail, sun };
+    return { localHour, timeStr, offsetMin, dst, abbr, dstWarn, hoverDetail };
     // t 入 next-intl 稳定；place/home 为引用，变更时本行确需重算
   }, [now, nowRaw, p, hourFormat, home, t]);
 
@@ -424,19 +352,7 @@ const PlaceRow = memo(function PlaceRow({
           </div>
           <div className="truncate text-[11px] text-faint">
             {p.countryZh} · {p.timeZone}
-            {p.tags.length > 0 && (
-              <span className="ml-1">
-                {" "}
-                {p.tags.map((tg) => `#${tg}`).join(" ")}
-              </span>
-            )}
           </div>
-          {sun && (sun.rise || sun.set) && (
-            <div className="text-[10px] text-faint" data-testid={`sun-${p.id}`}>
-              🌅 {sun.rise ? sun.rise.toFormat("HH:mm") : t("sunNone")} {" / "} 🌇{" "}
-              {sun.set ? sun.set.toFormat("HH:mm") : t("sunNone")}
-            </div>
-          )}
         </div>
         <div className="flex shrink-0 flex-col items-end leading-tight">
           <span
@@ -516,29 +432,6 @@ const PlaceRow = memo(function PlaceRow({
           aria-label={t("rename")}
         >
           <IconEdit className="h-4 w-4 md:h-3.5 md:w-3.5" />
-        </button>
-        <button
-          type="button"
-          onClick={async () => {
-            const tagsStr = await prompt({
-              title: t("tagsPrompt"),
-              defaultValue: p.tags.join(", "),
-            });
-            if (tagsStr !== null) {
-              onTags(
-                p.id,
-                tagsStr
-                  .split(",")
-                  .map((s) => s.trim())
-                  .filter(Boolean),
-              );
-            }
-          }}
-          className="icon-btn h-10 w-10 md:!h-6 md:!w-6"
-          title={t("tags")}
-          aria-label={t("tags")}
-        >
-          <IconTag className="h-4 w-4 md:h-3.5 md:w-3.5" />
         </button>
         <button
           type="button"

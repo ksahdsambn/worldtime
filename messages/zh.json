@@ -48,14 +48,8 @@
     "dstWarnSoon": "夏令时即将切换",
     "rename": "重命名",
     "renamePrompt": "为此城市输入自定义名称（留空即恢复原名）。",
-    "tags": "标签",
-    "tagsPrompt": "添加标签，用逗号分隔（例如：团队、客户）。",
-    "all": "全部",
     "dragHandle": "拖拽排序",
     "confirmRemoveHome": "确定删除主地点吗？其他城市的时间差以主地点为基准，删除后将改用其他城市作为参考。",
-    "sunNone": "无",
-    "emptyFiltered": "没有 #{tag} 标签的城市。",
-    "clearFilter": "清除筛选",
     "limitReached": "已达到 30 个城市的上限。",
     "periodWork": "工作时段",
     "periodContact": "可联系时段",
@@ -74,20 +68,9 @@
     "homeSuffix": " (主)"
   },
   "Export": {
-    "export": "导出",
-    "ics": "iCal / Outlook (.ics)",
-    "google": "Google 日历",
-    "email": "邮件链接",
-    "eventPage": "公开事件页",
     "copySummary": "复制时间摘要",
     "shareLink": "复制分享链接",
     "copied": "已复制！"
-  },
-  "Event": {
-    "title": "公开事件",
-    "description": "以下为该事件在各地对应时间。",
-    "invalid": "此事件链接无效或已过期。",
-    "openOriginal": "在 WorldTime 中打开"
   },
   "Heatmap": {
     "green": "全员在工作时段",
@@ -112,25 +95,6 @@
   },
   "Theme": {
     "toggle": "切换明暗主题"
-  },
-  "Gcal": {
-    "label": "Google 日历",
-    "connect": "连接 Google 日历",
-    "connected": "已连接",
-    "disconnect": "断开 Google 日历",
-    "loading": "连接中…",
-    "error": "无法连接 Google 日历，请重试。",
-    "retry": "重试",
-    "disconnected": "Google 日历会话已失效，请重新连接。",
-    "overlayFailed": "无法加载日历空闲情况，请检查网络连接。"
-  },
-  "PrintExport": {
-    "print": "打印",
-    "image": "导出图片",
-    "exporting": "导出中…",
-    "exported": "图片已导出",
-    "exportFailed": "图片导出失败，请重试。",
-    "noTarget": "暂无可导出的内容。"
   },
   "Grid": {
     "empty": "添加一个城市，即可查看时间网格。"
@@ -170,13 +134,6 @@
       }
     ],
     "relatedTitle": "相关时区转换"
-  },
-  "Widget": {
-    "eventTitle": "WorldTime 事件小组件",
-    "worldClockTitle": "WorldTime 世界时钟小组件",
-    "worldClock": "世界时钟",
-    "worldClockEmpty": "?cities=...",
-    "eventEmpty": "?code=..."
   },
   "Seo": {
     "introTitle": "世界时钟与时区转换器",
