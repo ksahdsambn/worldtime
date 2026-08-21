@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "Hora actual en ciudades populares",
     "aboutLink": "Acerca de",
+    "faqLink": "FAQ",
     "privacyLink": "Privacidad",
     "sourceNote": "Las horas locales usan la base IANA de zonas horarias."
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "Acerca de WorldTime",
-    "metaDescription": "Cómo WorldTime calcula la hora local, los desfases y el horario de verano con la base IANA.",
+    "metaDescription": "Cómo WorldTime calcula la hora local, los desfases y el horario de verano con IANA, más funciones y casos de uso.",
     "lead": "WorldTime es un reloj mundial, conversor de zonas y planificador de reuniones gratuito. El solapamiento se lee de un vistazo: sin cuenta ni muro de pago.",
     "howTitle": "Cómo se calculan las horas",
     "howBody": "Cada ciudad se asocia a una zona IANA. Luxon calcula desfases y fechas en ese instante. El navegador y el HTML para rastreadores usan el mismo resultado.",
@@ -327,6 +328,11 @@
     "dstTitle": "Horario de verano",
     "dstBody": "El DST sale de la zona, no de la etiqueta EST/PST de la URL. En verano America/New_York es EDT. La abreviatura en vivo de la página es la referencia.",
     "privacyBlurb": "Privacidad: no hace falta cuenta. Detalles",
+    "breadcrumbHome": "Inicio"
+  },
+  "Faq": {
+    "title": "Preguntas frecuentes",
+    "metaDescription": "Respuestas sobre comparar horas de ciudades, horario de verano, solape de reuniones y si WorldTime es gratis y en vivo.",
     "breadcrumbHome": "Inicio"
   },
   "Privacy": {

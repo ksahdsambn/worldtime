@@ -16,6 +16,7 @@ WorldTime is a free browser world clock, time-zone converter, and meeting planne
 
 Site: ${base}
 About: ${base}/en/about
+FAQ: ${base}/en/faq
 Privacy: ${base}/en/privacy
 
 ## How time is computed
@@ -32,7 +33,8 @@ Privacy: ${base}/en/privacy
 - /{locale}/time/{cityId} — current time in one city
 - /{locale}/time-converter/{idA}--{idB} — pair converter
 - /{locale}/country/{iso} — cities in a country
-- /{locale}/about — methodology
+- /{locale}/about — methodology, features, use cases
+- /{locale}/faq — product FAQ
 - /{locale}/privacy — privacy
 
 Locales: en, zh, zh-Hant, ja, ko, de, es, fr, pt, ru, vi.

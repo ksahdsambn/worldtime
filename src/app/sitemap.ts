@@ -31,6 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   entries.push(...localizedEntries("", lastModified, "weekly", 1.0));
   entries.push(...localizedEntries("/about", lastModified, "monthly", 0.4));
+  entries.push(...localizedEntries("/faq", lastModified, "monthly", 0.4));
   entries.push(...localizedEntries("/privacy", lastModified, "yearly", 0.2));
 
   for (const slug of buildLandingSlugs()) {

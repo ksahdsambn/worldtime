@@ -42,7 +42,16 @@ export default async function AboutPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "About" });
   const tApp = await getTranslations({ locale, namespace: "App" });
+  const tSeo = await getTranslations({ locale, namespace: "Seo" });
   const pageUrl = localeUrl(locale, "/about");
+  const featuresRaw = tSeo.raw("features");
+  const useCasesRaw = tSeo.raw("useCases");
+  const features = Array.isArray(featuresRaw)
+    ? (featuresRaw as Array<{ title: string; desc: string }>)
+    : [];
+  const useCases = Array.isArray(useCasesRaw)
+    ? (useCasesRaw as Array<{ title: string; desc: string }>)
+    : [];
 
   return (
     <div className="liquid-glass-backdrop min-h-screen">
@@ -57,6 +66,34 @@ export default async function AboutPage({ params }: Props) {
         <h1 className="text-2xl font-bold tracking-tight sm:text-[32px]">{t("title")}</h1>
         <p className="mt-4 leading-relaxed text-muted">{t("lead")}</p>
 
+        {features.length > 0 ? (
+          <>
+            <h2 className="mt-10 text-base font-semibold text-gradient">{tSeo("featuresTitle")}</h2>
+            <dl className="mt-4 divide-y divide-line">
+              {features.map((f) => (
+                <div key={f.title} className="py-3 first:pt-0">
+                  <dt className="font-medium text-ink">{f.title}</dt>
+                  <dd className="mt-1 leading-relaxed text-muted">{f.desc}</dd>
+                </div>
+              ))}
+            </dl>
+          </>
+        ) : null}
+
+        {useCases.length > 0 ? (
+          <>
+            <h2 className="mt-10 text-base font-semibold text-gradient">{tSeo("useCasesTitle")}</h2>
+            <dl className="mt-4 divide-y divide-line">
+              {useCases.map((u) => (
+                <div key={u.title} className="py-3 first:pt-0">
+                  <dt className="font-medium text-ink">{u.title}</dt>
+                  <dd className="mt-1 leading-relaxed text-muted">{u.desc}</dd>
+                </div>
+              ))}
+            </dl>
+          </>
+        ) : null}
+
         <h2 className="mt-10 text-base font-semibold text-gradient">{t("howTitle")}</h2>
         <p className="mt-2 leading-relaxed text-muted">{t("howBody")}</p>
 
@@ -67,13 +104,13 @@ export default async function AboutPage({ params }: Props) {
         <p className="mt-2 leading-relaxed text-muted">{t("dstBody")}</p>
 
         <p className="mt-8 text-sm text-muted">
-          <Link href="/privacy" className="text-accent underline underline-offset-2">
+          <Link href="/privacy" className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover">
             {t("privacyBlurb")}
           </Link>
         </p>
 
         <div className="mt-12">
-          <SiteFooter locale={locale} />
+          <SiteFooter locale={locale} current="about" />
         </div>
 
         <JsonLd

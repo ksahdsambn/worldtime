@@ -14,7 +14,8 @@ WorldTime shows live local time for cities worldwide, converts time between two 
 - Current time in a city: ${base}/en/time/jp-tokyo
 - Pair converter: ${base}/en/time-converter/cn-beijing--us-new-york
 - Country index: ${base}/en/country/jp
-- About / methodology: ${base}/en/about
+- About (methodology, features, use cases): ${base}/en/about
+- FAQ: ${base}/en/faq
 - Privacy: ${base}/en/privacy
 - Full text: ${base}/llms-full.txt
 

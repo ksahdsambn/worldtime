@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "Heure actuelle dans les villes populaires",
     "aboutLink": "À propos",
+    "faqLink": "FAQ",
     "privacyLink": "Confidentialité",
     "sourceNote": "Les heures locales utilisent la base IANA des fuseaux."
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "À propos de WorldTime",
-    "metaDescription": "Comment WorldTime calcule l’heure locale, les décalages et l’heure d’été à partir d’IANA.",
+    "metaDescription": "Comment WorldTime calcule l’heure locale, les décalages et l’heure d’été à partir d’IANA — plus fonctions et cas d’usage.",
     "lead": "WorldTime est une horloge mondiale, un convertisseur de fuseaux et un planificateur de réunions gratuits. Le chevauchement se lit d’un coup d’œil — pas de compte, pas de péage.",
     "howTitle": "Calcul des heures",
     "howBody": "Chaque ville est liée à un fuseau IANA. Luxon calcule décalages et dates à l’instant donné. Le navigateur et le HTML pour les robots partagent le même résultat.",
@@ -327,6 +328,11 @@
     "dstTitle": "Heure d’été",
     "dstBody": "L’heure d’été vient du fuseau, pas du libellé EST/PST de l’URL. En été, America/New_York est en EDT. L’abréviation en direct sur la page fait foi.",
     "privacyBlurb": "Confidentialité : aucun compte requis. Détails",
+    "breadcrumbHome": "Accueil"
+  },
+  "Faq": {
+    "title": "Questions fréquentes",
+    "metaDescription": "Réponses sur la comparaison des heures, l’heure d’été, le chevauchement des réunions, et si WorldTime est gratuit et en direct.",
     "breadcrumbHome": "Accueil"
   },
   "Privacy": {

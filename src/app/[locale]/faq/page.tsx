@@ -5,6 +5,7 @@ import {
   buildOpenGraph,
   webPageJsonLd,
   breadcrumbJsonLd,
+  faqPageJsonLd,
   localeUrl,
   HREFLANG_MAP,
   SITEMAP_LASTMOD,
@@ -22,8 +23,8 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Privacy" });
-  const path = "/privacy";
+  const t = await getTranslations({ locale, namespace: "Faq" });
+  const path = "/faq";
   return {
     title: t("title"),
     description: t("metaDescription"),
@@ -36,13 +37,15 @@ export async function generateMetadata({
   };
 }
 
-export default async function PrivacyPage({ params }: Props) {
+export default async function FaqPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "Privacy" });
+  const t = await getTranslations({ locale, namespace: "Faq" });
   const tApp = await getTranslations({ locale, namespace: "App" });
-  const pageUrl = localeUrl(locale, "/privacy");
-  const paragraphs = t.raw("paragraphs") as string[];
+  const tSeo = await getTranslations({ locale, namespace: "Seo" });
+  const pageUrl = localeUrl(locale, "/faq");
+  const faqRaw = tSeo.raw("faq");
+  const faq = Array.isArray(faqRaw) ? (faqRaw as Array<{ q: string; a: string }>) : [];
 
   return (
     <div className="liquid-glass-backdrop min-h-screen">
@@ -55,13 +58,16 @@ export default async function PrivacyPage({ params }: Props) {
           ]}
         />
         <h1 className="text-2xl font-bold tracking-tight sm:text-[32px]">{t("title")}</h1>
-        <div className="mt-6 space-y-4 leading-relaxed text-muted">
-          {paragraphs.map((p, i) => (
-            <p key={i}>{p}</p>
+        <div className="mt-8 space-y-8">
+          {faq.map((item) => (
+            <section key={item.q}>
+              <h2 className="text-base font-semibold text-ink">{item.q}</h2>
+              <p className="mt-2 leading-relaxed text-muted">{item.a}</p>
+            </section>
           ))}
         </div>
         <div className="mt-12">
-          <SiteFooter locale={locale} current="privacy" />
+          <SiteFooter locale={locale} current="faq" />
         </div>
         <JsonLd
           data={webPageJsonLd({
@@ -78,6 +84,11 @@ export default async function PrivacyPage({ params }: Props) {
             { name: t("title"), url: pageUrl },
           ])}
         />
+        {faq.length > 0 ? (
+          <JsonLd
+            data={faqPageJsonLd(faq.map((it) => ({ question: it.q, answer: it.a })))}
+          />
+        ) : null}
       </main>
     </div>
   );

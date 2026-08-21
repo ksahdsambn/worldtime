@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "Giờ hiện tại ở các thành phố phổ biến",
     "aboutLink": "Giới thiệu",
+    "faqLink": "FAQ",
     "privacyLink": "Quyền riêng tư",
     "sourceNote": "Giờ địa phương dùng cơ sở múi giờ IANA."
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "Về WorldTime",
-    "metaDescription": "Cách WorldTime tính giờ địa phương, lệch múi và giờ mùa hè từ cơ sở IANA.",
+    "metaDescription": "Cách WorldTime tính giờ địa phương, lệch múi và giờ mùa hè từ IANA — kèm tính năng và tình huống dùng.",
     "lead": "WorldTime là đồng hồ thế giới, bộ chuyển múi giờ và công cụ xếp lịch họp miễn phí. Nhìn là thấy giờ trùng — không tài khoản, không tường phí.",
     "howTitle": "Cách tính giờ",
     "howBody": "Mỗi thành phố gắn một múi IANA. Luxon tính lệch và ngày tại một thời điểm. Trình duyệt và HTML cho crawler dùng cùng kết quả.",
@@ -327,6 +328,11 @@
     "dstTitle": "Giờ mùa hè",
     "dstBody": "DST lấy từ dữ liệu múi, không từ nhãn EST/PST trên URL. Mùa hè America/New_York là EDT. Viết tắt trực tiếp trên trang mới là nguồn chính xác.",
     "privacyBlurb": "Quyền riêng tư: không cần tài khoản. Chi tiết",
+    "breadcrumbHome": "Trang chủ"
+  },
+  "Faq": {
+    "title": "Câu hỏi thường gặp",
+    "metaDescription": "Câu trả lời về so sánh giờ thành phố, giờ mùa hè, khung giờ họp trùng, và WorldTime có miễn phí, có cập nhật trực tiếp không.",
     "breadcrumbHome": "Trang chủ"
   },
   "Privacy": {

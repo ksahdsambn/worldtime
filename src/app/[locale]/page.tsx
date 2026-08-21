@@ -23,7 +23,6 @@ import {
   POPULAR_TZ_PAIRS,
   popularCityIds,
   webAppJsonLd,
-  faqPageJsonLd,
   organizationJsonLd,
   localeUrl,
   getSiteUrl,
@@ -56,10 +55,6 @@ export default async function Home({ params }: Props) {
   // async server component 中不能用 hook，用 getTranslations 替代 useTranslations
   const t = await getTranslations({ locale, namespace: "App" });
   const tSeo = await getTranslations({ locale, namespace: "Seo" });
-  // 数组类文案（功能/场景/FAQ）用 raw() 取原始数组，组件层 .map 渲染。
-  const features = tSeo.raw("features") as Array<{ title: string; desc: string }>;
-  const useCases = tSeo.raw("useCases") as Array<{ title: string; desc: string }>;
-  const faq = tSeo.raw("faq") as Array<{ q: string; a: string }>;
 
   return (
     <div className="liquid-glass-backdrop flex min-h-screen flex-col text-ink">
@@ -123,67 +118,26 @@ export default async function Home({ params }: Props) {
       <SelectionBar />
 
       {/*
-        SEO 介绍与内链区：服务端渲染，含功能 / 使用场景 / FAQ 关键词导向文案，
-        以及到热门时差对照页的站内链接（增强可索引正文与链接权重传递）。
-        视觉上次要，对交互无影响；文案与结构化数据完整保留。
+        瘦 SEO 页脚：实体定义 + 热门城市/对照内链（首页权重传递）。
+        功能/场景在 /about，FAQ 与 FAQPage JSON-LD 在 /faq。
       */}
-      <footer className="border-t border-line bg-surface px-4 py-12 text-sm">
-        <Reveal className="mx-auto max-w-5xl space-y-10">
+      <footer className="border-t border-line bg-surface px-4 py-8 text-sm">
+        <Reveal className="mx-auto max-w-5xl space-y-8">
           <section>
-            <h2 className="text-gradient mb-2 text-lg font-semibold tracking-tight">
+            <h2 className="text-gradient mb-2 text-base font-semibold tracking-tight">
               {tSeo("introTitle")}
             </h2>
             <p className="max-w-3xl leading-relaxed text-muted">{tSeo("introBody")}</p>
           </section>
 
           <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-              {tSeo("featuresTitle")}
-            </h3>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {features.map((f, i) => (
-                <Reveal as="li" key={f.title} delay={i * 50} className="feature-card">
-                  <span className="font-medium text-ink">{f.title}</span>
-                  <span className="mt-1 block text-muted">{f.desc}</span>
-                </Reveal>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-              {tSeo("useCasesTitle")}
-            </h3>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {useCases.map((u, i) => (
-                <Reveal as="li" key={u.title} delay={i * 50} className="feature-card">
-                  <span className="font-medium text-ink">{u.title}</span>
-                  <span className="mt-1 block text-muted">{u.desc}</span>
-                </Reveal>
-              ))}
-            </ul>
-          </section>
-
-          {/* 常见问题（FAQ）—— 文本在 DOM 内，驱动 FAQPage 结构化数据 */}
-          <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-              {tSeo("faqTitle")}
-            </h3>
-            <ul className="max-w-3xl divide-y divide-line">
-              {faq.map((item) => (
-                <li key={item.q} className="py-3">
-                  <p className="font-medium text-ink">{item.q}</p>
-                  <p className="mt-1 text-muted">{item.a}</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
+            <h3
+              id="seo-cities"
+              className="mb-3 text-[11px] font-semibold text-faint"
+            >
               {tSeo("citiesTitle")}
             </h3>
-            <nav>
+            <nav aria-labelledby="seo-cities">
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
                 {popularCityIds().map((id) => {
                   const city = CITY_BY_ID[id];
@@ -204,10 +158,13 @@ export default async function Home({ params }: Props) {
           </section>
 
           <section>
-            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
+            <h3
+              id="seo-converters"
+              className="mb-3 text-[11px] font-semibold text-faint"
+            >
               {tSeo("popularTitle")}
             </h3>
-            <nav>
+            <nav aria-labelledby="seo-converters">
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
                 {popularConverterLinks(locale as AppLocale).map((item) => (
                   <li key={item.slug}>
@@ -227,7 +184,6 @@ export default async function Home({ params }: Props) {
         </Reveal>
       </footer>
 
-      {/* 结构化数据：WebApplication + Organization + FAQPage（富结果识别） */}
       <JsonLd
         data={webAppJsonLd({
           name: t("title"),
@@ -242,9 +198,6 @@ export default async function Home({ params }: Props) {
           description: tSeo("introBody"),
           aboutUrl: localeUrl(locale, "/about"),
         })}
-      />
-      <JsonLd
-        data={faqPageJsonLd(faq.map((it) => ({ question: it.q, answer: it.a })))}
       />
     </div>
   );

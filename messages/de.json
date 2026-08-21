@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "Aktuelle Zeit in beliebten Städten",
     "aboutLink": "Über uns",
+    "faqLink": "FAQ",
     "privacyLink": "Datenschutz",
     "sourceNote": "Ortszeiten nutzen die IANA-Zeitzonendatenbank."
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "Über WorldTime",
-    "metaDescription": "Wie WorldTime Ortszeit, Offsets und Sommerzeit aus der IANA-Zeitzonendatenbank berechnet.",
+    "metaDescription": "Wie WorldTime Ortszeit, Offsets und Sommerzeit aus der IANA-Zeitzonendatenbank berechnet — plus Funktionen und Einsatzszenarien.",
     "lead": "WorldTime ist eine kostenlose Weltuhr, ein Zeitzonenrechner und Meeting-Planer. Überlappungen auf einen Blick — kein Konto, keine Bezahlschranke.",
     "howTitle": "So werden Zeiten berechnet",
     "howBody": "Jede Stadt ist einer IANA-Zone zugeordnet. Offsets und Daten berechnet Luxon für den jeweiligen Zeitpunkt. Browser und Crawler-HTML nutzen dasselbe Ergebnis.",
@@ -327,6 +328,11 @@
     "dstTitle": "Sommerzeit",
     "dstBody": "Sommerzeit kommt aus den Zonendaten, nicht aus EST/PST in der URL. Im Sommer ist America/New_York EDT. Die Live-Abkürzung auf der Seite gilt.",
     "privacyBlurb": "Datenschutz: kein Konto nötig. Details",
+    "breadcrumbHome": "Start"
+  },
+  "Faq": {
+    "title": "Häufige Fragen",
+    "metaDescription": "Antworten zum Vergleich von Ortszeiten, Sommerzeit, Meeting-Überlappung und ob WorldTime kostenlos und live ist.",
     "breadcrumbHome": "Start"
   },
   "Privacy": {

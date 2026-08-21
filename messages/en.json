@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "Current time in popular cities",
     "aboutLink": "About",
+    "faqLink": "FAQ",
     "privacyLink": "Privacy",
     "sourceNote": "Local times use the IANA Time Zone Database."
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "About WorldTime",
-    "metaDescription": "How WorldTime calculates local time, time-zone offsets, and daylight saving from the IANA Time Zone Database.",
+    "metaDescription": "How WorldTime calculates local time, offsets, and daylight saving from IANA — plus features and use cases.",
     "lead": "WorldTime is a free world clock, time-zone converter, and meeting planner. It is built for reading overlap at a glance — no account, no paywall.",
     "howTitle": "How times are calculated",
     "howBody": "Each city is mapped to one IANA time zone. Offsets and calendar dates are computed with Luxon from that zone at a given instant, in the browser and in the HTML we send to crawlers.",
@@ -327,6 +328,11 @@
     "dstTitle": "Daylight saving time",
     "dstBody": "DST is taken from the zone, not from a URL label. A slug like EST--PST is a search alias; in summer America/New_York is EDT. The live abbreviation on each page is authoritative.",
     "privacyBlurb": "Privacy: we do not require an account. Details",
+    "breadcrumbHome": "Home"
+  },
+  "Faq": {
+    "title": "Frequently asked questions",
+    "metaDescription": "Answers about comparing city times, daylight saving, meeting overlap, and whether WorldTime is free and live.",
     "breadcrumbHome": "Home"
   },
   "Privacy": {

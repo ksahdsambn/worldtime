@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "熱門城市目前時間",
     "aboutLink": "關於",
+    "faqLink": "常見問題",
     "privacyLink": "隱私",
     "sourceNote": "當地時間依據 IANA 時區資料庫計算。"
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "關於 WorldTime",
-    "metaDescription": "WorldTime 如何用 IANA 時區資料庫計算當地時間、時差與夏令時間。",
+    "metaDescription": "WorldTime 如何用 IANA 時區資料庫計算當地時間、時差與夏令時間，以及核心功能與使用場景。",
     "lead": "WorldTime 是免費的世界時鐘、時區轉換與會議排程工具。一眼看清重疊時段，無需帳號，沒有付費牆。",
     "howTitle": "時間如何計算",
     "howBody": "每座城市對應一個 IANA 時區。偏移和日期由 Luxon 依該時區在某一瞬間計算，瀏覽器與提供給爬蟲的 HTML 使用同一套結果。",
@@ -327,6 +328,11 @@
     "dstTitle": "夏令時間",
     "dstBody": "夏令時間以時區資料為準，不以 URL 裡的 EST/PST 標籤為準。夏季 America/New_York 實際是 EDT。頁面上的即時縮寫才是準確來源。",
     "privacyBlurb": "隱私：無需帳號。了解詳情",
+    "breadcrumbHome": "首頁"
+  },
+  "Faq": {
+    "title": "常見問題",
+    "metaDescription": "WorldTime 常見問題：如何對比城市時間、是否支援夏令時間、如何選會議重疊時段，以及是否免費、時間是否即時。",
     "breadcrumbHome": "首頁"
   },
   "Privacy": {

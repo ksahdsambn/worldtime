@@ -38,6 +38,25 @@ describe("messages 11 语言键位对齐", () => {
     expect(en.City.title).toBeTruthy();
     expect(en.Country.title).toBeTruthy();
     expect(en.About.title).toBeTruthy();
+    expect(en.Faq.title).toBeTruthy();
+    expect(en.Faq.metaDescription).toBeTruthy();
+    expect(en.Seo.faqLink).toBeTruthy();
+    for (const file of files) {
+      const json = JSON.parse(readFileSync(resolve(dir, file), "utf8"));
+      expect(json.Faq.title, file).toBeTruthy();
+      expect(json.Faq.metaDescription, file).toBeTruthy();
+      expect(json.Faq.breadcrumbHome, file).toBeTruthy();
+      expect(json.Seo.faqLink, file).toBeTruthy();
+      expect(json.Seo.faq, file).toHaveLength(5);
+      expect(json.Seo.faq[0].q, file).toBeTruthy();
+      expect(json.Seo.faq[0].a, file).toBeTruthy();
+      expect(json.Seo.features, file).toHaveLength(6);
+      expect(json.Seo.features[0].title, file).toBeTruthy();
+      expect(json.Seo.features[0].desc, file).toBeTruthy();
+      expect(json.Seo.useCases, file).toHaveLength(5);
+      expect(json.Seo.useCases[0].title, file).toBeTruthy();
+      expect(json.Seo.useCases[0].desc, file).toBeTruthy();
+    }
     expect(en.Privacy.paragraphs.length).toBeGreaterThan(0);
     expect(en.Seo.citiesTitle).toBeTruthy();
     expect(en.Landing.factLead).toBeTruthy();

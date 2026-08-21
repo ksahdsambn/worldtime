@@ -1,17 +1,48 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
-export default async function SiteFooter({ locale }: { locale: string }) {
+type FooterCurrent = "about" | "faq" | "privacy";
+
+const linkClass =
+  "text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover";
+
+export default async function SiteFooter({
+  locale,
+  current,
+}: {
+  locale: string;
+  current?: FooterCurrent;
+}) {
   const t = await getTranslations({ locale, namespace: "Seo" });
   return (
-    <nav className="flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-sm text-muted">
-      <Link href="/about" className="text-accent underline underline-offset-2 hover:text-accent-hover">
-        {t("aboutLink")}
-      </Link>
-      <Link href="/privacy" className="text-accent underline underline-offset-2 hover:text-accent-hover">
-        {t("privacyLink")}
-      </Link>
+    <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-sm text-muted">
+      <nav
+        aria-label="Site"
+        className="flex flex-wrap items-baseline gap-x-5 gap-y-1.5"
+      >
+        <Link
+          href="/about"
+          className={linkClass}
+          aria-current={current === "about" ? "page" : undefined}
+        >
+          {t("aboutLink")}
+        </Link>
+        <Link
+          href="/faq"
+          className={linkClass}
+          aria-current={current === "faq" ? "page" : undefined}
+        >
+          {t("faqLink")}
+        </Link>
+        <Link
+          href="/privacy"
+          className={linkClass}
+          aria-current={current === "privacy" ? "page" : undefined}
+        >
+          {t("privacyLink")}
+        </Link>
+      </nav>
       <span>{t("sourceNote")}</span>
-    </nav>
+    </div>
   );
 }

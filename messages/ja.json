@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "主要都市の現在時刻",
     "aboutLink": "このサイトについて",
+    "faqLink": "よくある質問",
     "privacyLink": "プライバシー",
     "sourceNote": "現地時刻は IANA 時間帯データベースに基づきます。"
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "WorldTime について",
-    "metaDescription": "WorldTime が IANA 時間帯データベースから現地時刻・時差・夏時間を計算する方法。",
+    "metaDescription": "WorldTime が IANA 時間帯データベースから現地時刻・時差・夏時間を計算する方法。機能と用途も掲載。",
     "lead": "WorldTime は無料の世界時計・時差変換・会議スケジューラです。重なりが一目で分かります。アカウント不要、課金壁なし。",
     "howTitle": "時刻の計算方法",
     "howBody": "各都市は1つの IANA 時間帯に対応します。オフセットと日付は Luxon がその瞬間のゾーンから計算し、ブラウザとクローラ向け HTML で同じ結果を使います。",
@@ -327,6 +328,11 @@
     "dstTitle": "夏時間",
     "dstBody": "夏時間はゾーンデータに従い、URL の EST/PST ラベルには従いません。夏の America/New_York は EDT です。各ページのライブ略称が正です。",
     "privacyBlurb": "プライバシー：アカウント不要。詳細",
+    "breadcrumbHome": "ホーム"
+  },
+  "Faq": {
+    "title": "よくある質問",
+    "metaDescription": "都市の時刻比較、夏時間、会議の重なり、WorldTime が無料か・リアルタイムかについての回答。",
     "breadcrumbHome": "ホーム"
   },
   "Privacy": {

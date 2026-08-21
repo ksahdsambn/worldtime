@@ -850,35 +850,6 @@
     linear-gradient(var(--accent), var(--accent)) 100% 100% / 1.5px 16px no-repeat;
 }
 
-/* SEO 功能卡：长文阅读面，保持不透明。hover 只加 rim 高光，不做折射。 */
-.feature-card {
-  position: relative;
-  padding: 0.95rem 1rem 0.95rem 1.15rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background-color: var(--surface);
-  transition: transform var(--dur-base) var(--ease-out-quint),
-    box-shadow var(--dur-base) var(--ease-out-quint),
-    border-color var(--dur-base) var(--ease-out-quint);
-}
-.feature-card::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 18%;
-  bottom: 18%;
-  width: 2px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, var(--accent), var(--warm));
-}
-.feature-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--border-strong);
-  box-shadow:
-    var(--shadow-glow),
-    inset 0 1px 0 var(--glass-rim-top);
-}
-
 .chrono-spinner {
   position: relative;
   display: inline-block;
@@ -1218,8 +1189,7 @@ html.vt-busy .liquid-glass-chip--danger {
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
-  .liquid-glass--hover:hover,
-  .feature-card:hover {
+  .liquid-glass--hover:hover {
     transform: none;
   }
 }
@@ -1251,10 +1221,6 @@ html.vt-busy .liquid-glass-chip--danger {
 @media (hover: none) {
   .wt-grid td[data-ms]:hover {
     background-color: transparent;
-  }
-  .feature-card:hover {
-    transform: none;
-    box-shadow: none;
   }
 }
 

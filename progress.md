@@ -1,5 +1,157 @@
 # 开发进度记录
 
+## 第 40 轮：首页瘦身未提交改动三轮审查 + 合入 main
+
+> 时间：2026-08-21
+> 范围：对第 37–39 轮全部未提交 diff 再做三轮独立走读；修复审查项；全套验证后提交 `main` 并推送 GitHub。无其他本地/远程分支可删。
+
+### 三轮独立审查
+
+**第一轮（正确性）**：复验首页瘦页脚、`/about` 定义列表、`/faq`（metadata / hreflang / `WebPage`+`BreadcrumbList`+`FAQPage`）、sitemap、`llms.txt`、11 语文案、`SiteFooter current`。首页仍挂 `WebApplication`+`Organization`，不再输出 `FAQPage`。无 P1。
+
+**第二轮（边界 + a11y）**：第 39 轮改 AGENTS.md 措辞时，原则 6 续行又多出一空格（与 1–5 不对齐）。其余页脚 `aria-labelledby` / `aria-current` / `Array.isArray` 仍在。
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P3 | `AGENTS.md` 原则 6 续行比兄弟项多一空格（第 39 轮回潮） | 与原则 1–5 对齐为 3 空格续行 |
+
+**第三轮（复验）**：原则 6 缩进与 1–5 一致；FAQ 可见问答与 JSON-LD 同一数组；空 `faq` 不输出空 `FAQPage`；城市/对照/国家页脚不加 `aria-current`。未再发现新问题。远程仅 `origin/main`，无其它分支。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npx vitest run` | ✅ 189/189 |
+| `npx tsc --noEmit` | ✅ 0 错误 |
+| `npx next lint` | ✅ 无警告/错误 |
+
+### Git
+
+- 当前已在 `main`（与 `origin/main` 同步）。
+- 无其它本地分支、无其它 `origin` 分支，故无合并/删分支操作。
+- 本轮提交后推送 `origin/main`。
+
+---
+
+## 第 39 轮：首页瘦身未提交改动再三轮审查
+
+> 时间：2026-08-21
+> 范围：对第 37–38 轮全部未提交 diff 再做三轮独立走读；修复新发现问题；全套验证。不提交。
+
+### 三轮独立审查
+
+**第一轮（正确性）**：复验 `/faq` 路由、hreflang、`FAQPage` 与可见问答同一数组、首页 `WebApplication`+`Organization`、About 定义列表、sitemap `/faq`、11 语 `Faq`/`faqLink`。无 P1。`shape()` 对数组只记长度、不递归元素，About/FAQ 依赖的 `title/desc`、`q/a` 原先未断言。
+
+**第二轮（边界 + a11y）**：第 38 轮把 `SiteFooter` 的 `aria-label` 设成 `App.title`（与品牌/h1 重名）；About/FAQ/Privacy 当前页链接无 `aria-current`；`tSeo.raw()` 非数组会 `.map` 500；AGENTS.md 写阅读面必须 `--surface`，但 About/FAQ 实际落在 `--app-bg`。
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P3 | 页脚 `aria-label={App.title}` 与品牌名撞车 | 改为 `aria-label="Site"`（与面包屑英文 `Breadcrumb` 同一先例） |
+| 2 | P3 | About/FAQ/Privacy 页脚自链无当前页标识 | `SiteFooter current` + `aria-current="page"` |
+| 3 | P3 | `raw("features"|"useCases"|"faq")` 非数组即崩溃 | `Array.isArray` 回退空列表；空则不渲染块 / 不输出空 `FAQPage` |
+| 4 | P3 | `shape()` 不检查数组元素字段 | messages-shape 断言 11 语 `features[0].title/desc`、`useCases[0]`、`faq[0].q/a` |
+| 5 | P3 | About 隐私链无 hover（页脚链有） | 补 `hover:text-accent-hover` 与 150ms transition |
+| 6 | P3 | AGENTS.md「必须 `--surface`」与 About/FAQ 画布不符 | 改为 opaque / no frost，不绑定 `--surface` |
+
+**第三轮（复验）**：首页仍瘦页脚 + 内链 + 双 JSON-LD；`FAQPage` 仅 `/faq`；`current` 只在 about/faq/privacy 传入；城市/对照/国家页脚不加 `aria-current`。未再发现新问题。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npx vitest run` | ✅ 189/189 |
+| `npx tsc --noEmit` | ✅ 0 错误 |
+| `npx next lint` | ✅ 无警告/错误 |
+
+---
+
+## 第 38 轮：首页瘦身未提交改动三轮审查
+
+> 时间：2026-08-21
+> 范围：对第 37 轮全部未提交 diff 做三轮走读；修复审查项；全套验证。不提交。
+
+### 三轮独立审查
+
+**第一轮（正确性）**：走读首页页脚、`/about`、新页 `/faq`、sitemap、`llms.txt`、11 语文案、JSON-LD。路由 `/[locale]/faq` 与 `localePrefix: always`、hreflang、`FAQPage` 可见正文一致、首页仍挂 `WebApplication`+`Organization` 且不再输出 `FAQPage`。无 P1。文案键树与 `Seo.faq[5]` 由 messages-shape 兜住。
+
+**第二轮（边界 + a11y + i18n）**：首页瘦页脚后露出多个无名称 `<nav>`；默认 locale `zh` 下 `uppercase` + `tracking-[0.16em]` 把中文标题撑疏；`SiteFooter` 把 IANA 说明放进 `<nav>`；`AGENTS.md` 第 6 条续行多一空格。
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P2 | 页脚 h3 `uppercase tracking-[0.16em]` 对 CJK/西里尔不利（默认语言 zh） | 去掉 uppercase / tracking，只留字重与 faint |
+| 2 | P3 | 城市内链、对照内链两个 `<nav>` 无可达名称 | `aria-labelledby` 指向对应 h3 `id` |
+| 3 | P3 | `SiteFooter` 的 `<nav>` 混入非导航的 IANA 句，且无 `aria-label` | 链接单独成 `nav aria-label={App.title}`，说明放到 nav 外 |
+| 4 | P3 | `AGENTS.md` 原则 6 续行比兄弟项多一空格 | 与原则 1–5 对齐为 3 空格续行 |
+| 5 | P3 | FAQ 每问 `mt-8`、与 Privacy 间距节奏不一 | 改为 `mt-8 space-y-8` 包裹 |
+| 6 | P3 | `llms.txt` About 仍只写 methodology | 补 features / use cases |
+| 7 | P3 | `Faq.metaDescription` / 各语言 `faqLink` 只抽查 en | messages-shape 对 11 语断言非空，且 `Seo.faq.length === 5` |
+
+**第三轮（复验）**：首页 intro + 内链 + `WebApplication`/`Organization` 仍在；`FAQPage` 仅 `/faq` 且与可见问答同一数组；About 定义列表未玻璃化；sitemap `/faq` monthly 0.4；顶栏无营销项。未再发现新问题。`Seo.faqTitle` 现无页面引用（问答走 `Seo.faq`，页标题走 `Faq.title`），保留以免 11 语删键，不挡功能。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npx vitest run` | ✅ 189/189 |
+| `npx tsc --noEmit` | ✅ 0 错误 |
+| `npx next lint` | ✅ 无警告/错误 |
+
+---
+
+## 第 37 轮：首页瘦身 — 功能/场景迁 About，FAQ 独立页
+
+> 时间：2026-08-21
+> 范围：首页去掉功能卡 / 使用场景 / FAQ 墙，只留实体定义 + 热门城市/对照内链；文案迁到 `/about` 与新页 `/faq`。顶栏不加营销项。零新增 npm 依赖。
+
+### 背景
+
+首页网格下面叠了 6 张功能卡、5 张场景卡、5 条 FAQ，再加城市/对照内链。产品路径被营销墙压在下面；这些块是第 14 轮为加厚首页关键词叠上去的，不是网格交互的一部分。
+
+城市页 / 对照页 / 国家页 / `llms.txt` 已经承担长尾与 GEO。首页再堆卡片对头词帮助有限，却让第一屏之后的视觉不纯。
+
+### 架构决策
+
+1. **首页 = 产品 + 瘦页脚。** 保留 2～3 句实体定义（GEO/头词）、热门城市与对照内链（P1 权重 + 锚文本）。`WebApplication` + `Organization` JSON-LD 仍挂首页。
+2. **功能 / 场景 → `/about`。** 复用已有 11 语 `Seo.features` / `Seo.useCases`，用定义列表而不是卡片墙，接在 lead 之后、方法论之前。
+3. **FAQ → `/faq`。** 问答正文仍用 `Seo.faq`；`FAQPage` JSON-LD 从首页挪到该页（Google FAQ 富结果已不可靠，GEO 仍吃可见问答 + schema）。
+4. **顶栏不动。** 搜索 / 语言 / 设置保持工具铬；About · FAQ · Privacy 只走 `SiteFooter`。
+5. **删 `.feature-card`。** 卡片只服务已搬走的页脚；About/FAQ 是长文阅读面，走 opaque `--surface` + `dl` / `h2`。
+
+### 改动清单
+
+#### 新增
+
+- `src/app/[locale]/faq/page.tsx`：FAQ 正文（每问 `h2`）+ `WebPage` / `BreadcrumbList` / `FAQPage` JSON-LD。
+- `messages/*.json`（11）：`Seo.faqLink`、`Faq.{title,metaDescription,breadcrumbHome}`；`About.metaDescription` 补上功能与场景。
+
+#### 修改
+
+- `src/app/[locale]/page.tsx`：页脚只留 intro + 城市内链 + 对照内链 + `SiteFooter`；去掉功能/场景/FAQ 与首页 `faqPageJsonLd`。
+- `src/app/[locale]/about/page.tsx`：插入功能与使用场景定义列表。
+- `src/components/SiteFooter.tsx`：About · FAQ · Privacy。
+- `src/app/sitemap.ts`：`/faq` monthly 0.4。
+- `src/app/llms.txt/route.ts`、`llms-full.txt/route.ts`：FAQ URL。
+- `src/app/globals.css`：删除 `.feature-card` 及 hover / reduced-motion / 触屏覆盖。
+- `AGENTS.md`：阅读面列表改为 About/FAQ 正文与首页 SEO 页脚（不再提 feature-card）。
+- `tests/lib/messages-shape.test.ts`：断言 `Faq` 与 `Seo.faqLink`。
+
+### 刻意不做
+
+- 不把功能/FAQ 放进顶栏。
+- 不 `display:none` 藏首页文案。
+- 不删城市/对照内链（内链权重仍从首页出）。
+- 不改 `scripts/seo-content.mjs` / `seo-geo-content.mjs`（历史注入脚本；文案源是 `messages/*.json`）。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npx vitest run` | ✅ 189/189 |
+| `npx tsc --noEmit` | ✅ 0 错误 |
+| `npx next lint` | ✅ 无警告/错误 |
+
+---
+
 ## 第 36 轮：SEO/GEO 未提交改动三轮审查 + 合入 main
 
 > 时间：2026-08-21

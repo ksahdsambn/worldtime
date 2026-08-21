@@ -227,6 +227,7 @@
     ],
     "citiesTitle": "주요 도시 현재 시각",
     "aboutLink": "소개",
+    "faqLink": "FAQ",
     "privacyLink": "개인정보",
     "sourceNote": "현지 시각은 IANA 시간대 데이터베이스를 사용합니다."
   },
@@ -318,7 +319,7 @@
   },
   "About": {
     "title": "WorldTime 소개",
-    "metaDescription": "WorldTime이 IANA 시간대 데이터베이스로 현지 시각, 시차, 일광 절약을 계산하는 방법.",
+    "metaDescription": "WorldTime이 IANA 시간대 데이터베이스로 현지 시각, 시차, 일광 절약을 계산하는 방법. 기능과 사용 사례 포함.",
     "lead": "WorldTime은 무료 세계 시계, 시차 변환, 회의 일정 도구입니다. 겹치는 시간을 한눈에 봅니다. 계정 없음, 결제 장벽 없음.",
     "howTitle": "시각 계산 방식",
     "howBody": "각 도시는 IANA 시간대 하나에 매핑됩니다. 오프셋과 날짜는 Luxon이 해당 순간 구역에서 계산하며, 브라우저와 크롤러 HTML이 같은 결과를 씁니다.",
@@ -327,6 +328,11 @@
     "dstTitle": "일광 절약 시간",
     "dstBody": "DST는 URL의 EST/PST 라벨이 아니라 구역 데이터를 따릅니다. 여름 America/New_York은 EDT입니다. 페이지의 실시간 약어가 기준입니다.",
     "privacyBlurb": "개인정보: 계정이 필요 없습니다. 자세히",
+    "breadcrumbHome": "홈"
+  },
+  "Faq": {
+    "title": "자주 묻는 질문",
+    "metaDescription": "도시 시각 비교, 일광 절약, 회의 겹침, WorldTime이 무료인지·실시간인지에 대한 답변.",
     "breadcrumbHome": "홈"
   },
   "Privacy": {
