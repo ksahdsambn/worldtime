@@ -13,7 +13,8 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "gen:brand": "node scripts/gen-icons.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

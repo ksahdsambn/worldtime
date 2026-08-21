@@ -18,6 +18,13 @@ Site: ${base}
 About: ${base}/en/about
 FAQ: ${base}/en/faq
 Privacy: ${base}/en/privacy
+Short notes: ${base}/llms.txt
+
+## Brand
+
+Name: WorldTime (one word). Mark: globe meridians + clock hands + gold center (#FBBF24) on slate (#0F172A). Accent blue #2563EB.
+Share image: ${base}/og.png
+Mark PNG: ${base}/brand/worldtime-mark.png
 
 ## How time is computed
 

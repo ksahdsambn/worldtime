@@ -4,7 +4,7 @@ import { getSiteUrl } from "@/lib/seo";
 /**
  * `/robots.txt`。
  *
- * - 放行首页与时差对照页（核心可索引内容）；
+ * - 全站放行（含 GPTBot 等 AI 爬虫显式 Allow，与 `*` 等价、作 GEO 声明）；
  * - 声明 sitemap 位置。
  */
 export default function robots(): MetadataRoute.Robots {
@@ -13,6 +13,20 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
+        allow: "/",
+      },
+      {
+        userAgent: [
+          "GPTBot",
+          "ChatGPT-User",
+          "Google-Extended",
+          "ClaudeBot",
+          "Anthropic-AI",
+          "PerplexityBot",
+          "Applebot-Extended",
+          "CCBot",
+          "meta-externalagent",
+        ],
         allow: "/",
       },
     ],

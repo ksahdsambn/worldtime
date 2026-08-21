@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  
+  <rect width="1200" height="630" fill="#0F172A"/>
+  <circle cx="1120" cy="-40" r="260" fill="#2563EB" opacity="0.18"/>
+  <circle cx="-40" cy="670" r="200" fill="#FBBF24" opacity="0.08"/>
+  <circle cx="200" cy="315" r="210" fill="none" stroke="#1E3A5F" stroke-width="1.4" opacity="0.55"/>
+  <circle cx="200" cy="315" r="150" fill="none" stroke="#1E3A5F" stroke-width="1" opacity="0.35"/>
+  <line x1="-20" y1="315" x2="420" y2="315" stroke="#1E3A5F" stroke-width="1" opacity="0.35"/>
+  
+  
+  <defs>
+    <linearGradient id="ogMark" x1="10" y1="7" x2="55" y2="59" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/><stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(72 168) scale(1.3125)">
+    <rect width="64" height="64" rx="16" fill="#0F172A"/>
+    <circle cx="32" cy="32" r="20" stroke="url(#ogMark)" stroke-width="4"/>
+    <path d="M12 32h40M32 12c6 5.5 9 12.2 9 20s-3 14.5-9 20M32 12c-6 5.5-9 12.2-9 20s3 14.5 9 20" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    <path d="M32 21v12l9 5" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="32" cy="33" r="3" fill="#FBBF24"/>
+  </g>
+  <text x="174" y="226" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="52" font-weight="700" letter-spacing="-1.4">WorldTime</text>
+  <text x="72" y="292" fill="#BFDBFE" font-family="Arial, Helvetica, sans-serif" font-size="20">World clock, time zone converter,</text>
+  <text x="72" y="322" fill="#BFDBFE" font-family="Arial, Helvetica, sans-serif" font-size="20">and meeting planner</text>
+  <text x="72" y="372" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="16">11 languages</text>
+  <text x="214" y="372" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="16">·</text>
+  <text x="236" y="372" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="16">Live offsets</text>
+  <text x="362" y="372" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="16">·</text>
+  <text x="384" y="372" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="16">DST-aware</text>
+  <text x="72" y="548" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="18">worldtime.app</text>
+  <rect x="608" y="88" width="528" height="454" rx="20" fill="#1E293B" fill-opacity="0.96" stroke="#334155"/>
+  <text x="640" y="128" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="12" letter-spacing="1.8">OVERLAP AT A GLANCE</text>
+  <g transform="translate(608 52)">
+    <text x="32" y="107" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="15">New York</text>
+<rect x="132" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="148" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="164" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="180" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="196" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="212" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="228" y="86" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="244" y="86" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="260" y="86" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="276" y="86" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="292" y="86" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="308" y="86" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="324" y="86" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="340" y="86" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="356" y="86" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="372" y="86" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="388" y="86" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="404" y="86" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="420" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="436" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="452" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="468" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="484" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="500" y="86" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<text x="32" y="151" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="15">London</text>
+<rect x="132" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="148" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="164" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="180" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="196" y="130" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="212" y="130" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="228" y="130" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="244" y="130" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="260" y="130" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="276" y="130" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="292" y="130" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="308" y="130" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="324" y="130" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="340" y="130" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="356" y="130" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="372" y="130" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="388" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="404" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="420" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="436" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="452" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="468" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="484" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="500" y="130" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<text x="32" y="195" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="15">Tokyo</text>
+<rect x="132" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="148" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="164" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="180" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="196" y="174" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="212" y="174" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="228" y="174" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="244" y="174" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="260" y="174" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="276" y="174" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="292" y="174" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="308" y="174" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="324" y="174" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="340" y="174" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="356" y="174" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="372" y="174" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="388" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="404" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="420" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="436" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="452" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="468" y="174" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="484" y="174" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="500" y="174" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<text x="32" y="239" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="15">Beijing</text>
+<rect x="132" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="148" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="164" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="180" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="196" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="212" y="218" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="228" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="244" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="260" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="276" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="292" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="308" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="324" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="340" y="218" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="356" y="218" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="372" y="218" width="13" height="30" rx="3" fill="rgba(37,99,235,0.58)" stroke="#60A5FA" stroke-width="1.25"/>
+<rect x="388" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="404" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="420" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="436" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="452" y="218" width="13" height="30" rx="3" fill="rgba(34,197,94,0.55)"/>
+<rect x="468" y="218" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="484" y="218" width="13" height="30" rx="3" fill="rgba(245,158,11,0.50)"/>
+<rect x="500" y="218" width="13" height="30" rx="3" fill="rgba(239,68,68,0.38)"/>
+<rect x="297.5" y="76" width="2" height="178" fill="#FBBF24"/>
+<circle cx="298.5" cy="74" r="4" fill="#FBBF24"/>
+  </g>
+  <text x="740" y="478" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="12">00</text>
+  <text x="820" y="478" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="12">06</text>
+  <text x="904" y="478" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="12">12</text>
+  <text x="988" y="478" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="12">18</text>
+  <text x="1068" y="478" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="12">24</text>
+  <text x="640" y="516" fill="#FDE68A" font-family="Arial, Helvetica, sans-serif" font-size="16">Looks like a good time for everyone</text>
+</svg>

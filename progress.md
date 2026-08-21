@@ -1,5 +1,46 @@
 # 开发进度记录
 
+## 第 41 轮：OG/favicon/GEO 宣传素材 + 两轮审查合入 main
+
+> 时间：2026-08-21
+> 范围：品牌分享图、favicon 套件、结构化数据与 AI GEO 素材；对未提交 diff 做两轮独立走读并修复；全套验证后提交 `main` 并推送 GitHub。无其他本地/远程分支可删。
+
+### 交付
+
+- 静态 OG `/og.png`（1200×630）与 `/og-square.png`：品牌 mark + 热力重叠网格，取代时钟 emoji 动态图作为 meta 主图（带扩展名，爬虫更稳）。
+- Favicon 套件：`favicon.ico`（16/32/48）、SVG、Apple Touch 180、Safari pinned tab、PWA 192/512 + maskable。
+- 深色 wordmark、`worldtime-mark.png`（Organization logo）、`/ai.txt`、`llms.txt` 品牌/素材段。
+- `WebSite` JSON-LD、WebApplication 补 image/screenshot/featureList、layout 补 icons/keywords/twitter card。
+
+### 两轮独立审查
+
+**第一轮（正确性）**：走读 `seo.ts`、`layout.tsx`、`ogArtwork.tsx`、`gen-icons.mjs`、robots/manifest/llms。Meta `images` 显式 `/og.png`；子页 `openGraph` 覆盖不丢图；`/ai.txt` 与 `llms.txt` 同为带点路径，中间件不拦截。发现 Satori `<span>` 缺 `display:flex`、iOS `black-translucent` 在浅色顶栏会白字、热力行长度无校验、robots 注释过时。
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P2 | `OgArtwork` 内 `<span>` 无 `display:flex`，Satori 可能丢文案 | 全部 span 补 `display:flex` |
+| 2 | P2 | `appleWebApp.statusBarStyle: black-translucent` 浅色主题状态栏白字 | 改为 `default` |
+| 3 | P3 | `gen-icons` 热力行非 24 格会静默画出坏 OG | `assertHeatRows()` |
+| 4 | P3 | `robots.ts` 注释仍写「仅放行首页与对照页」 | 与全站 Allow + AI 爬虫声明对齐 |
+
+**第二轮（复验）**：locale 不再进入 OG URL（测 `ogImageUrl("ja") === "/og.png"`）；子页 noindex 仍自写 `robots` 覆盖 layout；`twitter-image` 与 `opengraph-image` 同画面、meta 走静态 PNG（接受构建多 11 条 ImageResponse）。未再发现新的 P1/P2。远程仅 `origin/main`。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npx vitest run` | ✅ 192/192 |
+| `npx tsc --noEmit` | ✅ 0 错误 |
+| `npx next lint` | ✅ 无警告/错误 |
+
+### Git
+
+- 当前已在 `main`（与 `origin/main` 同步）。
+- 无其它本地分支、无其它 `origin` 分支，故无合并/删分支操作。
+- 本轮提交后推送 `origin/main`。
+
+---
+
 ## 第 40 轮：首页瘦身未提交改动三轮审查 + 合入 main
 
 > 时间：2026-08-21

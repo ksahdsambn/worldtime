@@ -25,8 +25,26 @@ export const OG_IMAGE = {
   alt: "WorldTime — World Clock & Time Zone Converter",
 };
 
-export function ogImageUrl(locale: string): string {
-  return `/${locale}/opengraph-image`;
+/** 静态 OG（带扩展名）。Slack / LinkedIn / iMessage 对无后缀动态路由不稳定。 */
+export const OG_IMAGE_PATH = "/og.png";
+export const OG_SQUARE_PATH = "/og-square.png";
+export const BRAND_MARK_PNG = "/brand/worldtime-mark.png";
+export const APPLE_TOUCH_ICON = "/apple-touch-icon.png";
+
+export const SEO_KEYWORDS = [
+  "world clock",
+  "time zone converter",
+  "meeting planner",
+  "timezone converter",
+  "world time",
+  "international meeting scheduler",
+  "daylight saving time",
+  "DST",
+  "IANA time zone",
+];
+
+export function ogImageUrl(_locale?: string): string {
+  return OG_IMAGE_PATH;
 }
 
 /** 社交 og:locale。葡语面向更大的 pt-BR 市场。 */
@@ -108,8 +126,21 @@ export function buildOpenGraph(locale: string, opts: {
     title: opts.title,
     description: opts.description,
     url: localeUrl(locale, opts.path ?? ""),
-    images: [{ url: ogImageUrl(locale), ...OG_IMAGE }],
+    images: [
+      {
+        url: ogImageUrl(locale),
+        ...OG_IMAGE,
+        type: "image/png",
+      },
+    ],
   };
+}
+
+export function buildTwitterCard(): {
+  card: "summary_large_image";
+  images: string[];
+} {
+  return { card: "summary_large_image", images: [OG_IMAGE_PATH] };
 }
 
 export const POPULAR_CITY_PAIRS: ReadonlyArray<readonly [string, string]> = [
@@ -216,11 +247,22 @@ export function interp(tpl: string, vars: Record<string, string>): string {
   return out;
 }
 
+const DEFAULT_FEATURE_LIST = [
+  "World clock",
+  "Time zone converter",
+  "Cross-timezone meeting planner",
+  "DST-aware offsets",
+  "11 languages",
+];
+
 export function webAppJsonLd(opts: {
   name: string;
   url: string;
   description: string;
   applicationCategory?: string;
+  image?: string;
+  screenshot?: string;
+  featureList?: string[];
 }): {
   "@context": string;
   "@type": string;
@@ -230,7 +272,15 @@ export function webAppJsonLd(opts: {
   applicationCategory: string;
   operatingSystem: string;
   offers: { "@type": string; price: string; priceCurrency: string };
+  image: string;
+  screenshot: string;
+  featureList: string[];
+  inLanguage: string[];
+  isAccessibleForFree: boolean;
+  browserRequirements: string;
+  applicationSubCategory: string;
 } {
+  const site = getSiteUrl();
   return {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -238,8 +288,15 @@ export function webAppJsonLd(opts: {
     url: opts.url,
     description: opts.description,
     applicationCategory: opts.applicationCategory ?? "UtilitiesApplication",
+    applicationSubCategory: "Time Zone Converter",
     operatingSystem: "Any (Web Browser)",
     offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    image: opts.image ?? `${site}${BRAND_MARK_PNG}`,
+    screenshot: opts.screenshot ?? `${site}${OG_IMAGE_PATH}`,
+    featureList: opts.featureList ?? DEFAULT_FEATURE_LIST,
+    inLanguage: routing.locales.map((l) => HREFLANG_MAP[l] ?? l),
+    isAccessibleForFree: true,
+    browserRequirements: "Requires JavaScript. Works in any modern web browser.",
   };
 }
 
@@ -295,7 +352,7 @@ export function organizationJsonLd(opts: {
     "@type": "Organization",
     name: opts.name ?? "WorldTime",
     url: opts.url,
-    logo: opts.logoUrl ?? `${getSiteUrl()}/brand/worldtime-mark.svg`,
+    logo: opts.logoUrl ?? `${getSiteUrl()}${BRAND_MARK_PNG}`,
   };
   if (opts.description) ld.description = opts.description;
   ld.knowsAbout = [
@@ -306,6 +363,39 @@ export function organizationJsonLd(opts: {
     "meeting scheduling",
   ];
   if (opts.aboutUrl) ld.publishingPrinciples = opts.aboutUrl;
+  return ld;
+}
+
+export function websiteJsonLd(opts?: {
+  name?: string;
+  description?: string;
+}): {
+  "@context": string;
+  "@type": "WebSite";
+  name: string;
+  url: string;
+  description?: string;
+  inLanguage: string[];
+  publisher: { "@type": "Organization"; name: string; url: string };
+} {
+  const url = getSiteUrl();
+  const ld: {
+    "@context": string;
+    "@type": "WebSite";
+    name: string;
+    url: string;
+    description?: string;
+    inLanguage: string[];
+    publisher: { "@type": "Organization"; name: string; url: string };
+  } = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: opts?.name ?? "WorldTime",
+    url,
+    inLanguage: routing.locales.map((l) => HREFLANG_MAP[l] ?? l),
+    publisher: { "@type": "Organization", name: "WorldTime", url },
+  };
+  if (opts?.description) ld.description = opts.description;
   return ld;
 }
 

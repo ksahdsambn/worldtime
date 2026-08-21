@@ -24,6 +24,7 @@ import {
   popularCityIds,
   webAppJsonLd,
   organizationJsonLd,
+  websiteJsonLd,
   localeUrl,
   getSiteUrl,
 } from "@/lib/seo";
@@ -197,6 +198,12 @@ export default async function Home({ params }: Props) {
           name: t("title"),
           description: tSeo("introBody"),
           aboutUrl: localeUrl(locale, "/about"),
+        })}
+      />
+      <JsonLd
+        data={websiteJsonLd({
+          name: t("title"),
+          description: tSeo("introBody"),
         })}
       />
     </div>

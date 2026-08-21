@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 64" fill="none">
+  <defs>
+    <linearGradient id="g" x1="10" y1="7" x2="55" y2="59" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/><stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#0F172A"/>
+  <circle cx="32" cy="32" r="20" stroke="url(#g)" stroke-width="4"/>
+  <path d="M12 32h40M32 12c6 5.5 9 12.2 9 20s-3 14.5-9 20M32 12c-6 5.5-9 12.2-9 20s3 14.5 9 20" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+  <path d="M32 21v12l9 5" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="33" r="3" fill="#FBBF24"/>
+  <text x="82" y="43" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="35" font-weight="700" letter-spacing="-1.2">WorldTime</text>
+</svg>

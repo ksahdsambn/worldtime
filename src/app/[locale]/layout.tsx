@@ -6,7 +6,14 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import ThemeRegistry from "@/components/ThemeRegistry";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import { getSiteUrl, buildAlternates, buildOpenGraph } from "@/lib/seo";
+import {
+  getSiteUrl,
+  buildAlternates,
+  buildOpenGraph,
+  buildTwitterCard,
+  SEO_KEYWORDS,
+  APPLE_TOUCH_ICON,
+} from "@/lib/seo";
 import "../globals.css";
 
 const sora = Sora({
@@ -60,15 +67,45 @@ export async function generateMetadata({
     },
     description,
     applicationName: brand,
+    keywords: SEO_KEYWORDS,
+    category: "utilities",
+    formatDetection: { telephone: false, email: false, address: false },
+    robots: { index: true, follow: true },
+    appleWebApp: {
+      capable: true,
+      title: brand,
+      // default：深色状态栏文字。本站亮/暗主题并存，black-translucent 会在浅色顶栏上出白字。
+      statusBarStyle: "default",
+    },
+    icons: {
+      icon: [
+        { url: "/favicon.ico" },
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/icons/icon-32.png", sizes: "32x32", type: "image/png" },
+      ],
+      apple: [{ url: APPLE_TOUCH_ICON, sizes: "180x180", type: "image/png" }],
+      other: [
+        {
+          rel: "mask-icon",
+          url: "/brand/safari-pinned-tab.svg",
+          color: "#2563EB",
+        },
+      ],
+    },
     // 首页 canonical/hreflang；子页面各自覆盖
-    alternates: buildAlternates(locale, ""),
+    alternates: {
+      ...buildAlternates(locale, ""),
+      types: {
+        "text/plain": `${getSiteUrl()}/llms.txt`,
+      },
+    },
     openGraph: buildOpenGraph(locale, {
       title: homeTitle,
       description,
       path: "",
       type: "website",
     }),
-    twitter: { card: "summary_large_image" },
+    twitter: buildTwitterCard(),
     manifest: "/manifest.webmanifest",
   };
 }

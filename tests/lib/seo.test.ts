@@ -24,6 +24,11 @@ import {
   SEO_DEFAULT_LOCALE,
   SITEMAP_LASTMOD,
   popularCityIds,
+  websiteJsonLd,
+  OG_IMAGE_PATH,
+  BRAND_MARK_PNG,
+  buildTwitterCard,
+  ogImageUrl,
 } from "@/lib/seo";
 
 describe("getSiteUrl", () => {
@@ -103,11 +108,17 @@ describe("buildOpenGraph", () => {
     expect(og.title).toBe("T");
     expect(og.url).toBe(`${getSiteUrl()}/ja/time-converter/EST--PST`);
     // images 必须显式存在：子页面覆盖 openGraph 时不继承 file-based og 图
-    expect(og.images?.[0]?.url).toBe("/ja/opengraph-image");
+    expect(og.images?.[0]?.url).toBe(OG_IMAGE_PATH);
+    expect(og.images?.[0]?.url).toBe("/og.png");
     expect(og.images?.[0]?.width).toBe(1200);
     expect(og.images?.[0]?.height).toBe(630);
+    expect(og.images?.[0]?.type).toBe("image/png");
     expect(og.alternateLocale).toContain("en_US");
     expect(og.alternateLocale).not.toContain("ja_JP");
+  });
+  it("ogImageUrl 与 locale 无关（静态 /og.png）", () => {
+    expect(ogImageUrl("ja")).toBe("/og.png");
+    expect(ogImageUrl("zh")).toBe(ogImageUrl("en"));
   });
   it("每个 locale 都能映射到 og:locale", () => {
     for (const l of routing.locales) {
@@ -175,6 +186,11 @@ describe("webAppJsonLd", () => {
     expect(ld.name).toBe("WorldTime");
     expect(ld.offers.price).toBe("0");
     expect(ld.operatingSystem).toContain("Web");
+    expect(ld.image).toContain(BRAND_MARK_PNG);
+    expect(ld.screenshot).toContain(OG_IMAGE_PATH);
+    expect(ld.isAccessibleForFree).toBe(true);
+    expect(ld.featureList.length).toBeGreaterThan(0);
+    expect(ld.inLanguage).toContain("en");
   });
 });
 
@@ -206,7 +222,7 @@ describe("organizationJsonLd", () => {
     expect(ld["@type"]).toBe("Organization");
     expect(ld.name).toBe("WorldTime");
     expect(ld.url).toBe("https://x/zh");
-    expect(ld.logo).toContain("worldtime-mark.svg");
+    expect(ld.logo).toContain(BRAND_MARK_PNG);
     expect(JSON.stringify(ld)).not.toContain("sameAs");
   });
   it("未传 name/logo 时回退默认值", () => {
@@ -266,6 +282,22 @@ describe("canonicalLandingSlug", () => {
   it("reverseLandingSlug 对调两段", () => {
     expect(reverseLandingSlug("EST--PST")).toBe("PST--EST");
     expect(reverseLandingSlug("noconverter")).toBeNull();
+  });
+});
+
+describe("websiteJsonLd / twitter card", () => {
+  it("产出 WebSite，含多语言与 publisher", () => {
+    const ld = websiteJsonLd({ name: "WorldTime", description: "d" });
+    expect(ld["@type"]).toBe("WebSite");
+    expect(ld.url).toBe(getSiteUrl());
+    expect(ld.description).toBe("d");
+    expect(ld.inLanguage).toContain("zh-Hans");
+    expect(ld.publisher["@type"]).toBe("Organization");
+  });
+  it("twitter 卡片指向静态 OG PNG", () => {
+    const tw = buildTwitterCard();
+    expect(tw.card).toBe("summary_large_image");
+    expect(tw.images).toEqual(["/og.png"]);
   });
 });
 
