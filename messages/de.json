@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "Weltuhr / Zeitzonen-Rechner / Meeting-Planer",
     "homeTitle": "WorldTime — Weltuhr, Zeitzonenkonverter und Meeting-Planer",
-    "homeDescription": "Kostenlose Weltuhr und Zeitzonenkonverter. Vergleichen Sie die Ortszeit zwischen Städten, planen Sie internationale Meetings und organisieren Sie Termine über Zeitzonen hinweg mit automatischer Sommerzeit-Unterstützung."
+    "homeDescription": "Kostenlose Weltuhr und Zeitzonenkonverter. Vergleichen Sie die Ortszeit zwischen Städten, planen Sie internationale Meetings und organisieren Sie Termine über Zeitzonen hinweg mit automatischer Sommerzeit-Unterstützung.",
+    "openApp": "Weltuhr öffnen"
   },
   "Common": {
     "add": "Hinzufügen",
@@ -112,7 +113,7 @@
     "behindNote": "hinkt hinterher (früher)",
     "bNote": "{b} ist {dir} gegenüber {a}.",
     "currentOffsetNote": "(aktueller Versatz; kann an Sommerzeitumstellungstagen abweichen)",
-    "comparisonNote": "Typischer Stundenvergleich (fester Versatz).",
+    "comparisonNote": "Stundenweiser Vergleich für einen ganzen lokalen Tag (24 Stunden).",
     "updatedAt": "Erzeugt um {time}.",
     "metaDescription": "Zeitunterschied zwischen {a} und {b}: Live-Zeitzonenversatz, stündliche Vergleichstabelle und sommerzeitfähige Meeting-Planung. Sehen Sie sofort, wie spät es jetzt in {b} ist.",
     "intro": "Zeit zwischen {a} und {b} umrechnen: aktueller Zeitunterschied (Versatz), ein vollständiger stündlicher Vergleich und ob Sommerzeit gilt – für Anrufe, Meetings und Reisen zwischen beiden Orten.",
@@ -130,10 +131,22 @@
       },
       {
         "q": "Wann ist die beste Zeit für ein Meeting zwischen {a} und {b}?",
-        "a": "Öffnen Sie die Startseite, fügen Sie beide Städte hinzu und nutzen Sie die Heatmap für gemeinsame Arbeitszeiten; exportieren Sie das Fenster dann in den Kalender."
+        "a": "{overlap} Im Weltuhr-Raster können Sie außerdem ein eigenes Zeitfenster aufziehen."
       }
     ],
-    "relatedTitle": "Verwandte Zeitzonenkonverter"
+    "relatedTitle": "Verwandte Zeitzonenkonverter",
+    "factLead": "Es ist {aTime} in {a} und {bTime} in {b}.",
+    "overlapTitle": "Gemeinsame Arbeitszeiten",
+    "overlapBody": "Stunden, in denen {a} und {b} beide 09:00–18:00 haben: {hours}.",
+    "overlapNone": "Heute überlappen sich 09:00–18:00 in {a} und {b} nicht.",
+    "dstHeading": "Sommerzeit",
+    "dstActive": "{place} hat derzeit Sommerzeit ({abbr}).",
+    "dstInactive": "{place} hat derzeit keine Sommerzeit ({abbr}).",
+    "dstNone": "{place} stellt nicht auf Sommerzeit um.",
+    "nextDst": "Nächste Umstellung: {date}.",
+    "tzAbbrNote": "{label} ist {name} ({zone}). Die Zone verwendet derzeit {abbr}.",
+    "relatedCitiesTitle": "Aktuelle Zeit",
+    "breadcrumbHome": "Start"
   },
   "Seo": {
     "introTitle": "Weltuhr und Zeitzonenkonverter",
@@ -209,9 +222,13 @@
       },
       {
         "q": "Ist die angezeigte Zeit echtzeitig?",
-        "a": "Die aktuelle Zeit aktualisiert sich live im Browser. Die Konverterseiten aktualisieren ihre Tabellen stündlich."
+        "a": "Aktuelle Uhrzeit und Vergleichstabellen werden in Ihrem Browser jede Minute live aktualisiert."
       }
-    ]
+    ],
+    "citiesTitle": "Aktuelle Zeit in beliebten Städten",
+    "aboutLink": "Über uns",
+    "privacyLink": "Datenschutz",
+    "sourceNote": "Ortszeiten nutzen die IANA-Zeitzonendatenbank."
   },
   "Onboarding": {
     "emptyHeadline": "Finde eine Uhrzeit, die für alle passt",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "Wird geladen…"
+  },
+  "City": {
+    "title": "Aktuelle Zeit in {city}",
+    "metaDescription": "Wie spät ist es in {city}, {country}? Ortszeit, UTC-Offset, Sommerzeit und IANA-Zone {zone}.",
+    "intro": "Die aktuelle Ortszeit in {city}, {country} ist {time} ({date}). Zeitzone: {zone}. UTC-Offset: {offset}.",
+    "iana": "IANA-Zeitzone",
+    "utcOffset": "UTC-Offset",
+    "dst": "Sommerzeit",
+    "dstYes": "Derzeit Sommerzeit.",
+    "dstNo": "Derzeit keine Sommerzeit.",
+    "noDst": "Diese Zone stellt nicht auf Sommerzeit um.",
+    "nextDst": "Nächste Sommerzeit-Umstellung: {date}.",
+    "nextDstLabel": "Nächste Sommerzeit-Umstellung",
+    "country": "Land",
+    "workHours": "Übliche Arbeitszeiten",
+    "workHoursBody": "09:00–18:00 Ortszeit in {city}.",
+    "convertersTitle": "Zeitumrechner",
+    "moreInCountry": "Weitere Städte in {country}",
+    "faqTitle": "Häufige Fragen",
+    "faq": [
+      {
+        "q": "Wie spät ist es gerade in {city}?",
+        "a": "In {city} ist es {time} am {date}. UTC-Offset {offset}."
+      },
+      {
+        "q": "In welcher Zeitzone liegt {city}?",
+        "a": "{city} nutzt die IANA-Zone {zone}."
+      },
+      {
+        "q": "Hat {city} Sommerzeit?",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "Start",
+    "openInGrid": "In der Weltuhr vergleichen"
+  },
+  "Country": {
+    "title": "Zeit in {country}",
+    "metaDescription": "Ortszeit und Zeitzonen in {country}. Aktuelle Zeit in Städten.",
+    "intro": "{country} nutzt {zones} Zeitzone(n). Wählen Sie eine Stadt für die Ortszeit.",
+    "citiesTitle": "Städte",
+    "breadcrumbHome": "Start",
+    "zoneCount": "{n} Zeitzonen"
+  },
+  "About": {
+    "title": "Über WorldTime",
+    "metaDescription": "Wie WorldTime Ortszeit, Offsets und Sommerzeit aus der IANA-Zeitzonendatenbank berechnet.",
+    "lead": "WorldTime ist eine kostenlose Weltuhr, ein Zeitzonenrechner und Meeting-Planer. Überlappungen auf einen Blick — kein Konto, keine Bezahlschranke.",
+    "howTitle": "So werden Zeiten berechnet",
+    "howBody": "Jede Stadt ist einer IANA-Zone zugeordnet. Offsets und Daten berechnet Luxon für den jeweiligen Zeitpunkt. Browser und Crawler-HTML nutzen dasselbe Ergebnis.",
+    "dataTitle": "Datenquelle",
+    "dataBody": "Zonenregeln stammen aus der IANA Time Zone Database (tzdb), dem gleichen Datensatz wie Betriebssysteme. Wir scrapen keine anderen Uhren-Websites.",
+    "dstTitle": "Sommerzeit",
+    "dstBody": "Sommerzeit kommt aus den Zonendaten, nicht aus EST/PST in der URL. Im Sommer ist America/New_York EDT. Die Live-Abkürzung auf der Seite gilt.",
+    "privacyBlurb": "Datenschutz: kein Konto nötig. Details",
+    "breadcrumbHome": "Start"
+  },
+  "Privacy": {
+    "title": "Datenschutz",
+    "metaDescription": "WorldTime-Datenschutz: kein Konto, Städtelisten bleiben im Browser.",
+    "breadcrumbHome": "Start",
+    "paragraphs": [
+      "WorldTime verlangt kein Konto und betreibt keine Nutzerdatenbank für die Uhr selbst.",
+      "Hinzugefügte Städte, Theme und Anzeigeoptionen liegen in localStorage, damit das Raster beim nächsten Besuch wiederhergestellt wird. Das Löschen der Sitedaten entfernt sie.",
+      "Die Site ist eine statische/SSR-Web-App. Zeiten werden auf Ihrem Gerät und unseren Servern aus IANA-Zonendaten berechnet. Wir verkaufen keine Profile.",
+      "Als PWA speichert der Service Worker Seiten nur auf diesem Gerät für den Offline-Gebrauch."
+    ]
   }
 }

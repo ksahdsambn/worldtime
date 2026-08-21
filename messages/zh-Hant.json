@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "世界時鐘 / 時區轉換 / 會議排程工具",
     "homeTitle": "WorldTime — 世界時鐘、時區轉換器與會議排程工具",
-    "homeDescription": "免費的世界時鐘與時區轉換器。跨城市對比當地時間，安排國際會議，自動適配夏令時間，跨時區排程更輕鬆。"
+    "homeDescription": "免費的世界時鐘與時區轉換器。跨城市對比當地時間，安排國際會議，自動適配夏令時間，跨時區排程更輕鬆。",
+    "openApp": "開啟世界時鐘"
   },
   "Common": {
     "add": "新增",
@@ -112,7 +113,7 @@
     "behindNote": "時間較早（落後）",
     "bNote": "{b} 相對 {a} {dir}。",
     "currentOffsetNote": "（目前偏移，日光節約時間切換日可能有變動）",
-    "comparisonNote": "以下為固定時差的典型時段對照。",
+    "comparisonNote": "依當地完整一天（24 小時）逐小時對照。",
     "updatedAt": "資料產生於 {time}。",
     "metaDescription": "{a} 與 {b} 的時差：即時時區偏移、逐小時對照表，以及支援夏令時間的會議排程。立即查看 {b} 現在幾點。",
     "intro": "在 {a} 與 {b} 之間換算時間：查看目前時差（偏移）、完整的逐小時對照，以及是否適用夏令時間，用於安排兩地間的通話、會議與出行。",
@@ -130,10 +131,22 @@
       },
       {
         "q": "{a} 與 {b} 之間開會的最佳時間？",
-        "a": "開啟首頁，新增這兩個城市，用熱力圖找到重疊的工作時段，再匯出至日曆。"
+        "a": "{overlap} 也可以打開世界時鐘，在網格上拖選自訂會議時段。"
       }
     ],
-    "relatedTitle": "相關時區轉換"
+    "relatedTitle": "相關時區轉換",
+    "factLead": "現在 {a} 是 {aTime}，{b} 是 {bTime}。",
+    "overlapTitle": "重疊工作時段",
+    "overlapBody": "{a} 與 {b} 均在 09:00–18:00 的時段：{hours}。",
+    "overlapNone": "今天 {a} 與 {b} 的 09:00–18:00 沒有重疊。",
+    "dstHeading": "夏令時間",
+    "dstActive": "{place} 目前處於夏令時間（{abbr}）。",
+    "dstInactive": "{place} 目前不是夏令時間（{abbr}）。",
+    "dstNone": "{place} 不實施夏令時間。",
+    "nextDst": "下次切換：{date}。",
+    "tzAbbrNote": "{label} 是 {name}（{zone}）。該時區目前使用 {abbr}。",
+    "relatedCitiesTitle": "目前時間",
+    "breadcrumbHome": "首頁"
   },
   "Seo": {
     "introTitle": "世界時鐘與時區轉換器",
@@ -209,9 +222,13 @@
       },
       {
         "q": "顯示的時間是即時的嗎？",
-        "a": "目前時間在瀏覽器中即時更新；時區轉換頁的對照表每小時刷新一次。"
+        "a": "目前時間和對照表都在瀏覽器裡每分鐘即時更新。"
       }
-    ]
+    ],
+    "citiesTitle": "熱門城市目前時間",
+    "aboutLink": "關於",
+    "privacyLink": "隱私",
+    "sourceNote": "當地時間依據 IANA 時區資料庫計算。"
   },
   "Onboarding": {
     "emptyHeadline": "找到一個大家都合適的會議時間",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "載入中…"
+  },
+  "City": {
+    "title": "{city}現在幾點",
+    "metaDescription": "{city}（{country}）現在幾點？當地時間、UTC 偏移、夏令時間與 IANA 時區 {zone}。",
+    "intro": "{city}（{country}）目前當地時間是 {time}（{date}）。時區：{zone}。UTC 偏移：{offset}。",
+    "iana": "IANA 時區",
+    "utcOffset": "UTC 偏移",
+    "dst": "夏令時間",
+    "dstYes": "目前處於夏令時間。",
+    "dstNo": "目前不是夏令時間。",
+    "noDst": "此時區不實施夏令時間。",
+    "nextDst": "下次夏令時間切換：{date}。",
+    "nextDstLabel": "下次夏令時間切換",
+    "country": "國家/地區",
+    "workHours": "常見工作時間",
+    "workHoursBody": "{city} 當地時間 09:00–18:00。",
+    "convertersTitle": "時區轉換",
+    "moreInCountry": "{country}的其他城市",
+    "faqTitle": "常見問題",
+    "faq": [
+      {
+        "q": "{city}現在幾點？",
+        "a": "{city} 現在是 {time}（{date}），UTC 偏移 {offset}。"
+      },
+      {
+        "q": "{city}屬於哪個時區？",
+        "a": "{city} 使用 IANA 時區 {zone}。"
+      },
+      {
+        "q": "{city}實施夏令時間嗎？",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "首頁",
+    "openInGrid": "在世界時鐘中對比"
+  },
+  "Country": {
+    "title": "{country}的時間",
+    "metaDescription": "{country} 的當地時間與時區。查看各城市現在幾點。",
+    "intro": "{country} 使用 {zones} 個時區。選擇城市即可查看目前當地時間。",
+    "citiesTitle": "城市",
+    "breadcrumbHome": "首頁",
+    "zoneCount": "{n} 個時區"
+  },
+  "About": {
+    "title": "關於 WorldTime",
+    "metaDescription": "WorldTime 如何用 IANA 時區資料庫計算當地時間、時差與夏令時間。",
+    "lead": "WorldTime 是免費的世界時鐘、時區轉換與會議排程工具。一眼看清重疊時段，無需帳號，沒有付費牆。",
+    "howTitle": "時間如何計算",
+    "howBody": "每座城市對應一個 IANA 時區。偏移和日期由 Luxon 依該時區在某一瞬間計算，瀏覽器與提供給爬蟲的 HTML 使用同一套結果。",
+    "dataTitle": "資料來源",
+    "dataBody": "時區規則來自 IANA Time Zone Database（tzdb），與作業系統使用的是同一套資料。我們不抓取其他時鐘網站。",
+    "dstTitle": "夏令時間",
+    "dstBody": "夏令時間以時區資料為準，不以 URL 裡的 EST/PST 標籤為準。夏季 America/New_York 實際是 EDT。頁面上的即時縮寫才是準確來源。",
+    "privacyBlurb": "隱私：無需帳號。了解詳情",
+    "breadcrumbHome": "首頁"
+  },
+  "Privacy": {
+    "title": "隱私",
+    "metaDescription": "WorldTime 隱私說明：無需帳號，城市列表保存在你的瀏覽器中。",
+    "breadcrumbHome": "首頁",
+    "paragraphs": [
+      "WorldTime 不要求註冊，時鐘本身也沒有使用者資料庫。",
+      "你新增的城市、主題和顯示設定保存在瀏覽器的 localStorage 中，以便下次開啟時還原。清除網站資料即刪除。",
+      "本站是靜態/SSR 網頁。時間在你的裝置和我們的伺服器上依據 IANA 時區資料計算；我們不出售個人檔案。",
+      "若把應用安裝為 PWA，Service Worker 只在這台裝置上快取頁面供離線使用。"
+    ]
   }
 }

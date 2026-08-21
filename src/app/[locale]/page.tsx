@@ -15,9 +15,13 @@ import { JsonLd } from "@/components/JsonLd";
 import LiveUtcClock from "@/components/LiveUtcClock";
 import { Link } from "@/i18n/navigation";
 import { CITY_BY_ID } from "@/data/cities";
+import { localCityName } from "@/lib/cityName";
+import type { AppLocale } from "@/i18n/routing";
+import SiteFooter from "@/components/SiteFooter";
 import {
   POPULAR_CITY_PAIRS,
   POPULAR_TZ_PAIRS,
+  popularCityIds,
   webAppJsonLd,
   faqPageJsonLd,
   organizationJsonLd,
@@ -29,18 +33,14 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
-/**
- * 热门时差对照内链项：供首页底部 SEO 文案区使用。
- * 城市对显示城市英文名；时区缩写对显示缩写。
- */
-function popularConverterLinks() {
+/** 热门时差对照内链：城市名随页面 locale，时区对显示缩写。 */
+function popularConverterLinks(locale: AppLocale) {
   const city = POPULAR_CITY_PAIRS.map(([a, b]) => {
     const ca = CITY_BY_ID[a];
     const cb = CITY_BY_ID[b];
-    return {
-      slug: `${a}--${b}`,
-      label: ca && cb ? `${ca.nameEn} ↔ ${cb.nameEn}` : `${a} ↔ ${b}`,
-    };
+    const la = ca ? localCityName(locale, ca) : a;
+    const lb = cb ? localCityName(locale, cb) : b;
+    return { slug: `${a}--${b}`, label: `${la} ↔ ${lb}` };
   });
   const tz = POPULAR_TZ_PAIRS.map(([a, b]) => ({
     slug: `${a}--${b}`,
@@ -86,9 +86,9 @@ export default async function Home({ params }: Props) {
               <span className="text-[16px] font-semibold tracking-tight text-gradient">
                 {t("title")}
               </span>
-              <span className="hidden text-[11px] tracking-wide text-muted sm:block">
-                {t("tagline")}
-              </span>
+                <span className="text-[11px] tracking-wide text-muted">
+                  {t("tagline")}
+                </span>
             </span>
           </h1>
 
@@ -179,14 +179,37 @@ export default async function Home({ params }: Props) {
             </ul>
           </section>
 
-          {/* 热门时区转换内链 */}
+          <section>
+            <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
+              {tSeo("citiesTitle")}
+            </h3>
+            <nav>
+              <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+                {popularCityIds().map((id) => {
+                  const city = CITY_BY_ID[id];
+                  if (!city) return null;
+                  return (
+                    <li key={id}>
+                      <Link
+                        href={`/time/${id}`}
+                        className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover"
+                      >
+                        {localCityName(locale as AppLocale, city)}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </section>
+
           <section>
             <h3 className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
               {tSeo("popularTitle")}
             </h3>
             <nav>
               <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
-                {popularConverterLinks().map((item) => (
+                {popularConverterLinks(locale as AppLocale).map((item) => (
                   <li key={item.slug}>
                     <Link
                       href={`/time-converter/${item.slug}`}
@@ -199,6 +222,8 @@ export default async function Home({ params }: Props) {
               </ul>
             </nav>
           </section>
+
+          <SiteFooter locale={locale} />
         </Reveal>
       </footer>
 
@@ -210,7 +235,14 @@ export default async function Home({ params }: Props) {
           description: t("tagline"),
         })}
       />
-      <JsonLd data={organizationJsonLd({ url: getSiteUrl(), name: t("title") })} />
+      <JsonLd
+        data={organizationJsonLd({
+          url: getSiteUrl(),
+          name: t("title"),
+          description: tSeo("introBody"),
+          aboutUrl: localeUrl(locale, "/about"),
+        })}
+      />
       <JsonLd
         data={faqPageJsonLd(faq.map((it) => ({ question: it.q, answer: it.a })))}
       />

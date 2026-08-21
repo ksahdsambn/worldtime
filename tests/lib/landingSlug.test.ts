@@ -1,6 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { DateTime } from "luxon";
-import { parseSlug, buildComparisonState } from "@/lib/landingSlug";
+import {
+  parseSlug,
+  buildComparisonState,
+  overlappingWorkHours,
+  collapseHourRanges,
+  formatHourRange,
+  localizedPairLabels,
+  zoneDstFacts,
+} from "@/lib/landingSlug";
 
 describe("parseSlug 时区缩写对", () => {
   it("双连字符缩写对 EST--PST", () => {
@@ -37,6 +45,8 @@ describe("parseSlug 城市对", () => {
     expect(info?.kind).toBe("city");
     expect(info?.aLabel).toBe("Beijing");
     expect(info?.bLabel).toBe("New York");
+    expect(info?.aId).toBe("cn-beijing");
+    expect(info?.bId).toBe("us-new-york");
   });
 
   it("含连字符的城市 id 正确切分（如 cn-hohhot）", () => {
@@ -87,13 +97,16 @@ describe("buildComparisonState（着陆页实时对照，审查报告 P3 修复�
   it("北京 ↔ 纽约（8 月 EDT）：diff = -720 分钟，首行 00:00 对齐", () => {
     const s = buildComparisonState(now, "Asia/Shanghai", "America/New_York");
     expect(s.diffMinutes).toBe(-720);
-    expect(s.rows).toHaveLength(7);
-    // 北京 8/15 00:00 (+08)；纽约（EDT -04）= 8/14 12:00 周五
+    expect(s.rows).toHaveLength(24);
+    expect(s.aNow).toBe("20:00");
+    expect(s.bNow).toBe("08:00");
     expect(s.rows[0]).toEqual({ aHour: "00:00", bHour: "12:00", bDay: "Fri" });
-    // 北京 9:00 → 纽约前一日 21:00（下标 2 对应小时序列 [0,6,9,12,…] 中的 9）
-    expect(s.rows[2]).toEqual({ aHour: "09:00", bHour: "21:00", bDay: "Fri" });
-    // 北京 12:00 → 纽约当日 00:00（周六）
-    expect(s.rows[3]).toEqual({ aHour: "12:00", bHour: "00:00", bDay: "Sat" });
+    expect(s.rows[9]).toEqual({ aHour: "09:00", bHour: "21:00", bDay: "Fri" });
+    expect(s.rows[12]).toEqual({ aHour: "12:00", bHour: "00:00", bDay: "Sat" });
+  });
+  it("传入 locale 时星期字段非空（ICU 完整时为中文）", () => {
+    const s = buildComparisonState(now, "Asia/Shanghai", "America/New_York", "zh");
+    expect(s.rows[0].bDay.length).toBeGreaterThan(0);
   });
 
   it("相同时区 pair diff = 0，各行 B 与 A 一致", () => {
@@ -109,5 +122,56 @@ describe("buildComparisonState（着陆页实时对照，审查报告 P3 修复�
     expect(s.updatedAt).toMatch(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC$/);
     // 固定 now → 生成时刻确定
     expect(s.updatedAt).toBe("2026-08-15 12:00 UTC");
+  });
+});
+
+describe("overlappingWorkHours / collapseHourRanges", () => {
+  const now = DateTime.fromISO("2026-08-15T12:00:00Z").toMillis();
+
+  it("伦敦 ↔ 纽约 8 月有重叠工作时段", () => {
+    const slots = overlappingWorkHours(now, "Europe/London", "America/New_York");
+    expect(slots.length).toBeGreaterThan(0);
+    for (const s of slots) {
+      expect(s.aHourNum).toBeGreaterThanOrEqual(9);
+      expect(s.aHourNum).toBeLessThan(18);
+    }
+  });
+  it("北京 ↔ 纽约 工作时段无重叠", () => {
+    const slots = overlappingWorkHours(now, "Asia/Shanghai", "America/New_York");
+    expect(slots).toHaveLength(0);
+  });
+  it("collapseHourRanges 合并连续小时", () => {
+    expect(collapseHourRanges([9, 10, 11, 14])).toEqual([
+      { start: 9, end: 12 },
+      { start: 14, end: 15 },
+    ]);
+    expect(formatHourRange(9, 12)).toBe("09:00–12:00");
+  });
+});
+
+describe("localizedPairLabels / zoneDstFacts", () => {
+  it("中文 locale 城市对显示中文名", () => {
+    const info = parseSlug("cn-beijing--us-new-york");
+    expect(info).not.toBeNull();
+    const labels = localizedPairLabels(info!, "zh");
+    expect(labels.a).toBe("北京");
+    expect(labels.b).toBe("纽约");
+  });
+  it("英文 locale 显示英文名", () => {
+    const info = parseSlug("cn-beijing--us-new-york");
+    const labels = localizedPairLabels(info!, "en");
+    expect(labels.a).toBe("Beijing");
+  });
+  it("上海不观察 DST", () => {
+    const now = DateTime.fromISO("2026-08-15T12:00:00Z").toMillis();
+    const f = zoneDstFacts("Asia/Shanghai", now);
+    expect(f.observesDst).toBe(false);
+    expect(f.inDst).toBe(false);
+  });
+  it("纽约 8 月处于 DST", () => {
+    const now = DateTime.fromISO("2026-08-15T12:00:00Z").toMillis();
+    const f = zoneDstFacts("America/New_York", now);
+    expect(f.inDst).toBe(true);
+    expect(f.observesDst).toBe(true);
   });
 });

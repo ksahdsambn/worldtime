@@ -1,7 +1,7 @@
 import { defineRouting } from "next-intl/routing";
 
 export const routing = defineRouting({
-  // 中文为默认语言，英文为备选，其余为全球主流语言
+  // UX 无 Accept-Language 时回退中文；搜索 x-default / SEO_DEFAULT_LOCALE 为英文。
   locales: ["zh", "zh-Hant", "en", "es", "fr", "de", "ja", "ko", "pt", "ru", "vi"],
   defaultLocale: "zh",
 });

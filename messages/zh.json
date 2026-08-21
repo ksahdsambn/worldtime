@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "世界时钟 / 时区转换 / 会议排期工具",
     "homeTitle": "WorldTime — 世界时钟、时区转换器与会议排期工具",
-    "homeDescription": "免费的世界时钟与时区转换器。跨城市对比当地时间，安排国际会议，自动适配夏令时，跨时区排期更轻松。"
+    "homeDescription": "免费的世界时钟与时区转换器。跨城市对比当地时间，安排国际会议，自动适配夏令时，跨时区排期更轻松。",
+    "openApp": "打开世界时钟"
   },
   "Common": {
     "add": "添加",
@@ -112,7 +113,7 @@
     "behindNote": "时间更早（落后）",
     "bNote": "{b} 相对 {a} {dir}。",
     "currentOffsetNote": "（当前偏移，夏令时切换日可能有变化）",
-    "comparisonNote": "以下为固定时差的典型时段对照。",
+    "comparisonNote": "按当地完整一天（24 小时）逐小时对照。",
     "updatedAt": "数据生成于 {time}。",
     "metaDescription": "{a} 与 {b} 的时差：实时时区偏移、逐小时对照表，以及支持夏令时的会议排期。立即查看 {b} 现在几点。",
     "intro": "在 {a} 与 {b} 之间换算时间：查看当前时差（偏移）、完整的逐小时对照，以及是否适用夏令时，用于安排两地间的通话、会议与出行。",
@@ -130,10 +131,22 @@
       },
       {
         "q": "{a} 与 {b} 之间开会的最佳时间？",
-        "a": "打开首页，添加这两个城市，用热力图找到重叠的工作时段，再导出到日历。"
+        "a": "{overlap} 也可以打开世界时钟，在网格上拖选自定义会议时段。"
       }
     ],
-    "relatedTitle": "相关时区转换"
+    "relatedTitle": "相关时区转换",
+    "factLead": "现在 {a} 是 {aTime}，{b} 是 {bTime}。",
+    "overlapTitle": "重叠工作时段",
+    "overlapBody": "{a} 与 {b} 均在 09:00–18:00 的时段：{hours}。",
+    "overlapNone": "今天 {a} 与 {b} 的 09:00–18:00 没有重叠。",
+    "dstHeading": "夏令时",
+    "dstActive": "{place} 当前处于夏令时（{abbr}）。",
+    "dstInactive": "{place} 当前不是夏令时（{abbr}）。",
+    "dstNone": "{place} 不实行夏令时。",
+    "nextDst": "下次切换：{date}。",
+    "tzAbbrNote": "{label} 是 {name}（{zone}）。该时区当前使用 {abbr}。",
+    "relatedCitiesTitle": "当前时间",
+    "breadcrumbHome": "首页"
   },
   "Seo": {
     "introTitle": "世界时钟与时区转换器",
@@ -209,9 +222,13 @@
       },
       {
         "q": "显示的时间是实时的吗？",
-        "a": "当前时间在浏览器中实时更新；时区转换页的对照表每小时刷新一次。"
+        "a": "当前时间和对照表都在浏览器里每分钟实时更新。"
       }
-    ]
+    ],
+    "citiesTitle": "热门城市当前时间",
+    "aboutLink": "关于",
+    "privacyLink": "隐私",
+    "sourceNote": "当地时间依据 IANA 时区数据库计算。"
   },
   "Onboarding": {
     "emptyHeadline": "找到一个大家都合适的会议时间",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "加载中…"
+  },
+  "City": {
+    "title": "{city}现在几点",
+    "metaDescription": "{city}（{country}）现在几点？当地时间、UTC 偏移、夏令时与 IANA 时区 {zone}。",
+    "intro": "{city}（{country}）当前当地时间是 {time}（{date}）。时区：{zone}。UTC 偏移：{offset}。",
+    "iana": "IANA 时区",
+    "utcOffset": "UTC 偏移",
+    "dst": "夏令时",
+    "dstYes": "当前处于夏令时。",
+    "dstNo": "当前不是夏令时。",
+    "noDst": "该时区不实行夏令时。",
+    "nextDst": "下次夏令时切换：{date}。",
+    "nextDstLabel": "下次夏令时切换",
+    "country": "国家/地区",
+    "workHours": "常见工作时间",
+    "workHoursBody": "{city} 当地时间 09:00–18:00。",
+    "convertersTitle": "时区转换",
+    "moreInCountry": "{country}的其他城市",
+    "faqTitle": "常见问题",
+    "faq": [
+      {
+        "q": "{city}现在几点？",
+        "a": "{city} 现在是 {time}（{date}），UTC 偏移 {offset}。"
+      },
+      {
+        "q": "{city}属于哪个时区？",
+        "a": "{city} 使用 IANA 时区 {zone}。"
+      },
+      {
+        "q": "{city}实行夏令时吗？",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "首页",
+    "openInGrid": "在世界时钟中对比"
+  },
+  "Country": {
+    "title": "{country}的时间",
+    "metaDescription": "{country} 的当地时间与时区。查看各城市现在几点。",
+    "intro": "{country} 使用 {zones} 个时区。选择城市即可查看当前当地时间。",
+    "citiesTitle": "城市",
+    "breadcrumbHome": "首页",
+    "zoneCount": "{n} 个时区"
+  },
+  "About": {
+    "title": "关于 WorldTime",
+    "metaDescription": "WorldTime 如何用 IANA 时区数据库计算当地时间、时差与夏令时。",
+    "lead": "WorldTime 是免费的世界时钟、时区转换与会议排期工具。一眼看清重叠时段，无需账号，没有付费墙。",
+    "howTitle": "时间如何计算",
+    "howBody": "每座城市对应一个 IANA 时区。偏移和日期由 Luxon 按该时区在某一瞬间计算，浏览器与提供给爬虫的 HTML 使用同一套结果。",
+    "dataTitle": "数据来源",
+    "dataBody": "时区规则来自 IANA Time Zone Database（tzdb），与操作系统使用的是同一套数据。我们不抓取其他时钟网站。",
+    "dstTitle": "夏令时",
+    "dstBody": "夏令时以时区数据为准，不以 URL 里的 EST/PST 标签为准。夏季 America/New_York 实际是 EDT。页面上的实时缩写才是准确来源。",
+    "privacyBlurb": "隐私：无需账号。了解详情",
+    "breadcrumbHome": "首页"
+  },
+  "Privacy": {
+    "title": "隐私",
+    "metaDescription": "WorldTime 隐私说明：无需账号，城市列表保存在你的浏览器中。",
+    "breadcrumbHome": "首页",
+    "paragraphs": [
+      "WorldTime 不要求注册，时钟本身也没有用户数据库。",
+      "你添加的城市、主题和显示设置保存在浏览器的 localStorage 中，以便下次打开时恢复。清除站点数据即删除。",
+      "本站是静态/SSR 网页。时间在你的设备和我们的服务器上依据 IANA 时区数据计算；我们不出售个人档案。",
+      "若把应用安装为 PWA，Service Worker 只在这台设备上缓存页面供离线使用。"
+    ]
   }
 }

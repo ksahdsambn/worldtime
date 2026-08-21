@@ -1,61 +1,35 @@
 /**
- * SEO 纯函数助手（第 11 轮：SEO 基建层）。
+ * SEO 纯函数助手。
  *
- * 设计目标：把所有可在构建期确定的 SEO 派生数据（站点 URL、hreflang
- * alternates、OpenGraph 对象、JSON-LD、热门配对枚举）抽为纯函数，
- * 便于在 `tests/lib/seo.test.ts` 中脱离 Next 运行时单元测试；
- * 各路由的 `generateMetadata` / `sitemap.ts` / `robots.ts` 只做薄封装。
+ * 把可在构建期确定的 SEO 派生数据抽为纯函数，便于脱离 Next 运行时单测；
+ * 各路由的 generateMetadata / sitemap.ts / robots.ts 只做薄封装。
  */
 
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
 
-/**
- * 站点根 URL。
- *
- * 生产环境必须通过 `NEXT_PUBLIC_SITE_URL` 环境变量提供真实域名，
- * 否则 metadataBase / canonical / sitemap 都会回退到占位域名。
- * 末尾斜杠会被统一裁掉，确保拼接出的 URL 形如 `https://x/zh`。
- */
 export function getSiteUrl(): string {
   const env = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   const raw = env && env.length > 0 ? env : "https://worldtime.app";
   return raw.replace(/\/+$/, "");
 }
 
-/**
- * 构造某语言下的绝对 URL。
- * @param locale 语言代码（routing.locales 之一）
- * @param path   语言前缀之后的路径，以 `/` 开头或为空串（首页）
- */
 export function localeUrl(locale: string, path = ""): string {
   const p = path.startsWith("/") ? path : path.length > 0 ? `/${path}` : "";
   return `${getSiteUrl()}/${locale}${p}`;
 }
 
-/**
- * OG 分享图尺寸与 alt（与 `[locale]/opengraph-image.tsx` 共用同一份常量，
- * 确保注入的 meta 与实际生成图一致）。
- */
 export const OG_IMAGE = {
   width: 1200,
   height: 630,
   alt: "WorldTime — World Clock & Time Zone Converter",
 };
 
-/**
- * 某 locale 的 OG 图路由（相对路径，由 metadataBase 解析为绝对 URL）。
- * 注意：Next.js 中 `openGraph` 字段在子页面显式设置时会整体替换父段，
- * 不继承父段 file-based og 图；故需在每个自定义 openGraph 里显式引用。
- */
 export function ogImageUrl(locale: string): string {
   return `/${locale}/opengraph-image`;
 }
 
-/**
- * 各 locale → OpenGraph `og:locale`（`language_REGION` 形式）。
- * 用于社交平台识别内容语言。
- */
+/** 社交 og:locale。葡语面向更大的 pt-BR 市场。 */
 export const LOCALE_OG_MAP: Record<string, string> = {
   zh: "zh_CN",
   "zh-Hant": "zh_TW",
@@ -65,75 +39,87 @@ export const LOCALE_OG_MAP: Record<string, string> = {
   de: "de_DE",
   ja: "ja_JP",
   ko: "ko_KR",
-  pt: "pt_PT",
+  pt: "pt_BR",
   ru: "ru_RU",
   vi: "vi_VN",
 };
 
 /**
- * 为某语言/路径生成 canonical 与 hreflang alternates。
- *
- * - `canonical` 指向当前语言本页；
- * - `languages` 覆盖全部支持语言（含 `x-default` 指向默认语言），
- *   供搜索引擎做语言/区域收束，避免重复内容惩罚。
- *
- * @param locale 当前语言
- * @param path   语言前缀之后的路径（首页传空串）
+ * 应用 locale → hreflang（BCP 47）。
+ * `zh` 输出 zh-Hans；葡语输出 pt-BR。URL 路径仍用应用 locale。
  */
+export const HREFLANG_MAP: Record<string, string> = {
+  zh: "zh-Hans",
+  "zh-Hant": "zh-Hant",
+  en: "en",
+  es: "es",
+  fr: "fr",
+  de: "de",
+  ja: "ja",
+  ko: "ko",
+  pt: "pt-BR",
+  ru: "ru",
+  vi: "vi",
+};
+
+/** 搜索引擎 x-default：全球工具站指向英文。UX 默认语言仍由 routing.defaultLocale 决定。 */
+export const SEO_DEFAULT_LOCALE = "en";
+
+/** sitemap lastmod：内容指纹日。勿用 Date.now()，否则每次构建全站“刚更新”。 */
+export const SITEMAP_LASTMOD = "2026-08-21";
+
+export function sitemapLastModDate(): Date {
+  return new Date(`${SITEMAP_LASTMOD}T00:00:00.000Z`);
+}
+
+export function hreflangLanguages(path = ""): Record<string, string> {
+  const languages: Record<string, string> = {};
+  for (const l of routing.locales) {
+    languages[HREFLANG_MAP[l] ?? l] = localeUrl(l, path);
+  }
+  languages["x-default"] = localeUrl(SEO_DEFAULT_LOCALE, path);
+  return languages;
+}
+
 export function buildAlternates(
   locale: string,
   path = "",
 ): NonNullable<Metadata["alternates"]> {
-  const languages: Record<string, string> = {};
-  for (const l of routing.locales) {
-    languages[l] = localeUrl(l, path);
-  }
-  languages["x-default"] = localeUrl(routing.defaultLocale, path);
   return {
     canonical: localeUrl(locale, path),
-    languages,
+    languages: hreflangLanguages(path),
   };
 }
 
-/**
- * 构造 OpenGraph 对象（type / locale / siteName / title / description / url / images）。
- *
- * `images` 显式引用 `/{locale}/opengraph-image` 路由：Next.js 中 `openGraph`
- * 在子页面显式设置时会整体替换父段，不继承 file-based og 图，故必须在此显式注入，
- * 否则覆盖了 openGraph 的页面（如时差对照页、事件页）会缺失 og:image。
- *
- * 返回类型交由推断（具体对象类型），使 `type` 为字面量 `"website"`，
- * 既便于测试直接读取字段，又可在各路由作为 `Metadata.openGraph` 赋值。
- */
 export function buildOpenGraph(locale: string, opts: {
   title: string;
   description: string;
   path?: string;
   type?: "website";
 }) {
+  const alternateLocale = routing.locales
+    .filter((l) => l !== locale)
+    .map((l) => LOCALE_OG_MAP[l] ?? l);
   return {
     type: (opts.type ?? "website") as "website",
     locale: LOCALE_OG_MAP[locale] ?? locale,
+    alternateLocale,
     siteName: "WorldTime",
     title: opts.title,
     description: opts.description,
     url: localeUrl(locale, opts.path ?? ""),
-    // 显式引用 OG 图：子页面覆盖 openGraph 时不会继承 file-based og 图
     images: [{ url: ogImageUrl(locale), ...OG_IMAGE }],
   };
 }
 
-/**
- * 热门城市对（构建期预生成 + sitemap 内链）。
- * 与 `time-converter/[slug]/page.tsx` 共用同一数据源，避免重复维护。
- *
- * 第 14 轮扩充：覆盖主要经济体/金融中心间的高商业价值时差对照，
- * 拉宽 sitemap 长尾与首页内链面。所有 id 均经 `CITY_BY_ID` 校验存在。
- */
 export const POPULAR_CITY_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["cn-beijing", "us-new-york"],
   ["cn-beijing", "gb-london"],
   ["cn-beijing", "jp-tokyo"],
+  ["cn-beijing", "us-los-angeles"],
+  ["cn-beijing", "au-sydney"],
+  ["cn-beijing", "sg-singapore"],
+  ["cn-beijing", "de-berlin"],
   ["gb-london", "us-new-york"],
   ["us-new-york", "us-los-angeles"],
   ["gb-london", "jp-tokyo"],
@@ -147,12 +133,23 @@ export const POPULAR_CITY_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["hk-hong-kong", "gb-london"],
   ["us-chicago", "de-frankfurt"],
   ["au-sydney", "gb-london"],
+  ["us-new-york", "jp-tokyo"],
+  ["us-new-york", "au-sydney"],
+  ["us-new-york", "br-sao-paulo"],
+  ["gb-london", "in-mumbai"],
+  ["jp-tokyo", "au-sydney"],
+  ["jp-tokyo", "sg-singapore"],
+  ["ru-moscow", "gb-london"],
+  ["ca-toronto", "gb-london"],
+  ["mx-mexico-city", "us-new-york"],
+  ["za-johannesburg", "gb-london"],
+  ["es-madrid", "us-new-york"],
+  ["it-rome", "us-new-york"],
+  ["nl-amsterdam", "us-new-york"],
+  ["br-sao-paulo", "gb-london"],
+  ["de-berlin", "gb-london"],
 ];
 
-/**
- * 热门时区缩写对（构建期预生成 + sitemap 内链）。
- * 第 14 轮扩充：补充跨洲主要时区缩写对照。
- */
 export const POPULAR_TZ_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["EST", "PST"],
   ["GMT", "CET"],
@@ -162,12 +159,11 @@ export const POPULAR_TZ_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["GMT", "EST"],
   ["PST", "GMT"],
   ["AEST", "PST"],
+  ["CST_CN", "EST"],
+  ["KST", "GMT"],
+  ["NZST", "GMT"],
 ];
 
-/**
- * 枚举全部热门配对的 slug（以 `--` 双连号分隔）。
- * 供 sitemap 与首页内链区复用。
- */
 export function buildLandingSlugs(): string[] {
   const slugs: string[] = [];
   for (const [a, b] of POPULAR_CITY_PAIRS) slugs.push(`${a}--${b}`);
@@ -175,9 +171,51 @@ export function buildLandingSlugs(): string[] {
   return slugs;
 }
 
+export function popularCityIds(): string[] {
+  const ids = new Set<string>();
+  for (const [a, b] of POPULAR_CITY_PAIRS) {
+    ids.add(a);
+    ids.add(b);
+  }
+  return [...ids];
+}
+
+export function reverseLandingSlug(slug: string): string | null {
+  const i = slug.indexOf("--");
+  if (i <= 0) return null;
+  const a = slug.slice(0, i);
+  const b = slug.slice(i + 2);
+  if (!a || !b) return null;
+  return `${b}--${a}`;
+}
+
 /**
- * WebApplication JSON-LD 结构化数据（供富结果识别应用类型）。
+ * 对照页 canonical slug：热门表优先（含反向命中热门），否则按字典序收束 A--B / B--A。
  */
+export function canonicalLandingSlug(slug: string): string {
+  const popular = new Set(buildLandingSlugs());
+  if (popular.has(slug)) return slug;
+  const rev = reverseLandingSlug(slug);
+  if (rev && popular.has(rev)) return rev;
+  const i = slug.indexOf("--");
+  if (i <= 0) return slug;
+  const a = slug.slice(0, i);
+  const b = slug.slice(i + 2);
+  return a.toLowerCase() <= b.toLowerCase() ? `${a}--${b}` : `${b}--${a}`;
+}
+
+export function stringifyJsonLd(data: object): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+export function interp(tpl: string, vars: Record<string, string>): string {
+  let out = tpl;
+  for (const [k, v] of Object.entries(vars)) {
+    out = out.replaceAll(`{${k}}`, v);
+  }
+  return out;
+}
+
 export function webAppJsonLd(opts: {
   name: string;
   url: string;
@@ -205,11 +243,6 @@ export function webAppJsonLd(opts: {
   };
 }
 
-/**
- * FAQPage JSON-LD（首页/着陆页 FAQ 模块的结构化数据，触发 FAQ 富结果）。
- *
- * @param items 问答列表（question / answer 均为纯文本）
- */
 export function faqPageJsonLd(
   items: ReadonlyArray<{ question: string; answer: string }>,
 ): {
@@ -232,28 +265,130 @@ export function faqPageJsonLd(
   };
 }
 
-/**
- * Organization JSON-LD（站点发布者实体，辅助知识图谱识别）。
- *
- * 仅声明可核实字段：名称、官网、logo。不编造 sameAs 社交账号
- * （站点目前无官方社交主页，虚假 sameAs 会损害实体可信度）。
- */
 export function organizationJsonLd(opts: {
   url: string;
   name?: string;
   logoUrl?: string;
+  description?: string;
+  aboutUrl?: string;
 }): {
   "@context": string;
-  "@type": "Organization";
+  "@type": string;
   name: string;
   url: string;
   logo: string;
+  description?: string;
+  knowsAbout?: string[];
+  publishingPrinciples?: string;
 } {
-  return {
+  const ld: {
+    "@context": string;
+    "@type": string;
+    name: string;
+    url: string;
+    logo: string;
+    description?: string;
+    knowsAbout?: string[];
+    publishingPrinciples?: string;
+  } = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: opts.name ?? "WorldTime",
     url: opts.url,
     logo: opts.logoUrl ?? `${getSiteUrl()}/brand/worldtime-mark.svg`,
+  };
+  if (opts.description) ld.description = opts.description;
+  ld.knowsAbout = [
+    "time zones",
+    "world clock",
+    "daylight saving time",
+    "IANA Time Zone Database",
+    "meeting scheduling",
+  ];
+  if (opts.aboutUrl) ld.publishingPrinciples = opts.aboutUrl;
+  return ld;
+}
+
+export function webPageJsonLd(opts: {
+  name: string;
+  url: string;
+  description: string;
+  inLanguage: string;
+  dateModified?: string;
+}): {
+  "@context": string;
+  "@type": "WebPage";
+  name: string;
+  url: string;
+  description: string;
+  inLanguage: string;
+  isPartOf: { "@type": "WebSite"; name: string; url: string };
+  dateModified?: string;
+} {
+  const ld: {
+    "@context": string;
+    "@type": "WebPage";
+    name: string;
+    url: string;
+    description: string;
+    inLanguage: string;
+    isPartOf: { "@type": "WebSite"; name: string; url: string };
+    dateModified?: string;
+  } = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: opts.name,
+    url: opts.url,
+    description: opts.description,
+    inLanguage: opts.inLanguage,
+    isPartOf: { "@type": "WebSite", name: "WorldTime", url: getSiteUrl() },
+  };
+  if (opts.dateModified) ld.dateModified = opts.dateModified;
+  return ld;
+}
+
+export function breadcrumbJsonLd(
+  items: ReadonlyArray<{ name: string; url: string }>,
+): {
+  "@context": string;
+  "@type": "BreadcrumbList";
+  itemListElement: Array<{
+    "@type": "ListItem";
+    position: number;
+    name: string;
+    item: string;
+  }>;
+} {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      item: it.url,
+    })),
+  };
+}
+
+export function placeJsonLd(opts: {
+  name: string;
+  countryName: string;
+  timeZone: string;
+}): {
+  "@context": string;
+  "@type": "Place";
+  name: string;
+  containedInPlace: { "@type": "Country"; name: string };
+  additionalProperty: Array<{ "@type": "PropertyValue"; name: string; value: string }>;
+} {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Place",
+    name: opts.name,
+    containedInPlace: { "@type": "Country", name: opts.countryName },
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "ianaTimeZone", value: opts.timeZone },
+    ],
   };
 }

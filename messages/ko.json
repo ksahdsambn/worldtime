@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "세계 시계 / 시간대 변환 / 회의 일정 도구",
     "homeTitle": "WorldTime — 세계 시계, 시간대 변환기 및 회의 일정 도구",
-    "homeDescription": "무료 세계 시계 및 시간대 변환기입니다. 도시 간 현지 시간을 비교하고, 국제 회의를 계획하며, 일광절약시간을 자동으로 지원하여 시간대 간 일정을 쉽게 관리하세요."
+    "homeDescription": "무료 세계 시계 및 시간대 변환기입니다. 도시 간 현지 시간을 비교하고, 국제 회의를 계획하며, 일광절약시간을 자동으로 지원하여 시간대 간 일정을 쉽게 관리하세요.",
+    "openApp": "세계 시계 열기"
   },
   "Common": {
     "add": "추가",
@@ -112,7 +113,7 @@
     "behindNote": "뒤짐 (더 이른 시간)",
     "bNote": "{b}은(는) {a}에 비해 {dir}.",
     "currentOffsetNote": "(현재 오프셋, 서머타임 전환일에는 다를 수 있음)",
-    "comparisonNote": "고정 오프셋 기준 대표 시간 비교.",
+    "comparisonNote": "현지 하루 전체(24시간)를 시간별로 대조합니다.",
     "updatedAt": "{time}에 생성.",
     "metaDescription": "{a}와(과) {b}의 시차: 실시간 시간대 오프셋, 시간별 비교표, 일광절약시간을 지원하는 회의 계획. 지금 {b}의 현지 시간을 확인하세요.",
     "intro": "{a}와(과) {b} 사이 시간 변환: 현재 시차(오프셋), 전체 시간별 비교, 일광절약시간 적용 여부를 확인하세요. 두 지역 간 통화·회의·여행 일정에 활용하세요.",
@@ -130,10 +131,22 @@
       },
       {
         "q": "{a}와(과) {b} 회의의 최적 시간은?",
-        "a": "홈페이지를 열고 두 도시를 추가한 뒤 히트맵으로 겹치는 근무 시간을 찾고 캘린더로 내보내세요."
+        "a": "{overlap} 세계 시계를 열고 그리드에서 회의 시간을 직접 드래그할 수도 있습니다."
       }
     ],
-    "relatedTitle": "관련 시간대 변환"
+    "relatedTitle": "관련 시간대 변환",
+    "factLead": "지금 {a}는 {aTime}, {b}는 {bTime}입니다.",
+    "overlapTitle": "겹치는 근무 시간",
+    "overlapBody": "{a}와 {b}가 모두 09:00–18:00인 시간: {hours}.",
+    "overlapNone": "오늘 {a}와 {b}의 09:00–18:00은 겹치지 않습니다.",
+    "dstHeading": "일광 절약 시간",
+    "dstActive": "{place}는 현재 일광 절약 시간입니다({abbr}).",
+    "dstInactive": "{place}는 현재 일광 절약 시간이 아닙니다({abbr}).",
+    "dstNone": "{place}는 일광 절약 시간을 쓰지 않습니다.",
+    "nextDst": "다음 변경: {date}.",
+    "tzAbbrNote": "{label}는 {name}({zone})입니다. 이 구역은 현재 {abbr}를 사용합니다.",
+    "relatedCitiesTitle": "현재 시각",
+    "breadcrumbHome": "홈"
   },
   "Seo": {
     "introTitle": "세계 시계 및 시간대 변환기",
@@ -209,9 +222,13 @@
       },
       {
         "q": "표시되는 시간이 실시간인가요?",
-        "a": "현재 시간은 브라우저에서 실시간으로 업데이트됩니다. 변환 페이지의 표는 매시간 새로고침됩니다."
+        "a": "현재 시각과 대조표는 브라우저에서 1분마다 실시간으로 업데이트됩니다."
       }
-    ]
+    ],
+    "citiesTitle": "주요 도시 현재 시각",
+    "aboutLink": "소개",
+    "privacyLink": "개인정보",
+    "sourceNote": "현지 시각은 IANA 시간대 데이터베이스를 사용합니다."
   },
   "Onboarding": {
     "emptyHeadline": "모두에게 맞는 회의 시간 찾기",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "불러오는 중…"
+  },
+  "City": {
+    "title": "{city} 현재 시각",
+    "metaDescription": "{city}({country})는 지금 몇 시인가요? 현지 시각, UTC 오프셋, 일광 절약, IANA 구역 {zone}.",
+    "intro": "{city}({country})의 현재 현지 시각은 {time}({date})입니다. 시간대: {zone}. UTC 오프셋: {offset}.",
+    "iana": "IANA 시간대",
+    "utcOffset": "UTC 오프셋",
+    "dst": "일광 절약 시간",
+    "dstYes": "현재 일광 절약 시간입니다.",
+    "dstNo": "현재 일광 절약 시간이 아닙니다.",
+    "noDst": "이 시간대는 일광 절약 시간을 쓰지 않습니다.",
+    "nextDst": "다음 DST 변경: {date}.",
+    "nextDstLabel": "다음 DST 변경",
+    "country": "국가/지역",
+    "workHours": "일반적인 근무 시간",
+    "workHoursBody": "{city} 현지 시각 09:00–18:00.",
+    "convertersTitle": "시차 변환",
+    "moreInCountry": "{country}의 다른 도시",
+    "faqTitle": "자주 묻는 질문",
+    "faq": [
+      {
+        "q": "{city}는 지금 몇 시인가요?",
+        "a": "{city}는 {time}({date}), UTC 오프셋 {offset}입니다."
+      },
+      {
+        "q": "{city}의 시간대는?",
+        "a": "{city}는 IANA 시간대 {zone}을 사용합니다."
+      },
+      {
+        "q": "{city}는 일광 절약 시간을 쓰나요?",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "홈",
+    "openInGrid": "세계 시계에서 비교"
+  },
+  "Country": {
+    "title": "{country}의 시각",
+    "metaDescription": "{country}의 현지 시각과 시간대. 도시별 현재 시각.",
+    "intro": "{country}는 {zones}개의 시간대를 사용합니다. 도시를 선택하면 현지 시각을 볼 수 있습니다.",
+    "citiesTitle": "도시",
+    "breadcrumbHome": "홈",
+    "zoneCount": "시간대 {n}개"
+  },
+  "About": {
+    "title": "WorldTime 소개",
+    "metaDescription": "WorldTime이 IANA 시간대 데이터베이스로 현지 시각, 시차, 일광 절약을 계산하는 방법.",
+    "lead": "WorldTime은 무료 세계 시계, 시차 변환, 회의 일정 도구입니다. 겹치는 시간을 한눈에 봅니다. 계정 없음, 결제 장벽 없음.",
+    "howTitle": "시각 계산 방식",
+    "howBody": "각 도시는 IANA 시간대 하나에 매핑됩니다. 오프셋과 날짜는 Luxon이 해당 순간 구역에서 계산하며, 브라우저와 크롤러 HTML이 같은 결과를 씁니다.",
+    "dataTitle": "데이터 출처",
+    "dataBody": "구역 규칙은 OS와 같은 IANA Time Zone Database(tzdb)입니다. 다른 시계 사이트는 수집하지 않습니다.",
+    "dstTitle": "일광 절약 시간",
+    "dstBody": "DST는 URL의 EST/PST 라벨이 아니라 구역 데이터를 따릅니다. 여름 America/New_York은 EDT입니다. 페이지의 실시간 약어가 기준입니다.",
+    "privacyBlurb": "개인정보: 계정이 필요 없습니다. 자세히",
+    "breadcrumbHome": "홈"
+  },
+  "Privacy": {
+    "title": "개인정보",
+    "metaDescription": "WorldTime 개인정보: 계정 없음. 도시 목록은 브라우저에 저장됩니다.",
+    "breadcrumbHome": "홈",
+    "paragraphs": [
+      "WorldTime은 계정을 요구하지 않으며 시계 자체의 사용자 데이터베이스가 없습니다.",
+      "추가한 도시, 테마, 표시 설정은 브라우저 localStorage에 저장되어 다음 방문 시 복원됩니다. 사이트 데이터를 지우면 삭제됩니다.",
+      "정적/SSR 웹 앱입니다. 시각은 IANA 구역 데이터로 기기와 서버에서 계산합니다. 개인 프로필을 판매하지 않습니다.",
+      "PWA로 설치하면 Service Worker가 해당 기기에서만 페이지를 캐시합니다."
+    ]
   }
 }

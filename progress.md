@@ -1,5 +1,109 @@
 # 开发进度记录
 
+## 第 36 轮：SEO/GEO 未提交改动三轮审查 + 合入 main
+
+> 时间：2026-08-21
+> 范围：对第 35 轮全部未提交 diff 做三轮走读；修复审查项；全套验证后提交 `main` 并推送 GitHub。无其他本地/远程分支可删。
+
+### 三轮独立审查
+
+**第一轮（正确性）**：走读 `seo.ts` / `landingSlug.ts` / `cityFacts.ts` / 城市页 / 对照页 / sitemap / llms.txt。发现并修复：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P1 | 城市页 `localCountryName(locale, city)` 读的是 `nameZh/nameEn`（城市名），国家面包屑/文案变成「北京」而非「中国」 | 新增 `cityCountryName`，只读 `countryZh/countryEn`；补单测防回归 |
+| 2 | P2 | DST 句 `abbr` 为空时出现「（）」 | 回退到 `offsetLabel` |
+| 3 | P3 | `cityId` 大小写不匹配会 404 | 查找前 `toLowerCase()`；未知 id metadata `noindex` |
+
+**第二轮（边界 + a11y）**：对照页/国家页无效 slug 的 metadata 可能被当索引页；面包屑当前页无 `aria-current`；Privacy 段 key 用文案切片。
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 4 | P3 | 无法解析的对照 slug / 空国家码仍输出可索引 metadata | `robots: noindex, nofollow` |
+| 5 | P3 | 面包屑当前项无 `aria-current` | 最后一项加 `aria-current="page"` |
+| 6 | P3 | Privacy 段落 `key={p.slice(0,24)}` | 改用稳定下标 |
+| 7 | P3 | ContentHeader 品牌图无 `priority` | 加上（内容页 LCP） |
+
+**第三轮（复验）**：`localCountryName` 仅国家页 + 测试使用；城市页全部走 `cityCountryName`。远程仅 `origin/main`，无其它分支。全套验证通过。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npx vitest run` | ✅ 189/189 |
+| `npx tsc --noEmit` | ✅ 0 错误 |
+| `npx next lint` | ✅ 无警告/错误 |
+
+### Git
+
+- 当前已在 `main`（与 `origin/main` 同步）。
+- 无其它本地分支、无其它 `origin` 分支，故无合并/删分支操作。
+- 本轮提交后推送 `origin/main`。
+
+---
+
+## 第 35 轮：搜索 SEO + AI GEO 全量补齐
+
+> 时间：2026-08-21
+> 范围：按审计清单落地城市页 / 国家页 / About·Privacy / 对照页加厚 / hreflang·schema / llms.txt，并修正事实性文案。零新增 npm 依赖。
+
+### 背景
+
+第 11 / 14 轮已有 sitemap、hreflang、OG、FAQPage，但索引面只有首页 + 24 组对照页；最高频「某城现在几点」没有落地页；对照页偏薄且城市名永远英文；`x-default` 指向中文；无 `llms.txt`、无方法论页。本轮把可索引事实页和 AI 可引用文本补齐。
+
+### 架构决策
+
+1. **城市页 ISR、热门 SSG**：`/[locale]/time/[cityId]` 对热门城市 `generateStaticParams`，其余 `dynamicParams` + `revalidate=300`。sitemap 收录全部城市（×11 语言），对准 “what time is it in …” 主流量而不把 1172×11 全部打进构建。
+2. **对照页加厚仍共用 `buildComparisonState`**：24 小时表、当前两地时刻、工作重叠、DST 事实；客户端每分钟重算，SSR 首帧给爬虫。
+3. **hreflang 与 UX 默认分离**：`routing.defaultLocale` 仍为 `zh`（无 Accept-Language 的用户）；`SEO_DEFAULT_LOCALE` / `x-default` 为 `en`。`zh` → `zh-Hans`，`pt` → `pt-BR`。
+4. **对照页不再冒充 WebApplication**：仅首页保留；内容页用 `WebPage` + `BreadcrumbList`（城市页另加 `Place`）。FAQ 仍输出，供 GEO 抽取，不指望 Google FAQ 富结果。
+5. **反向 pair canonical**：热门表优先，否则字典序收束 `A--B` / `B--A`，不 301。
+6. **sitemap lastmod 用内容日 `SITEMAP_LASTMOD`**，禁止 `new Date()`。
+
+### 改动清单
+
+#### 新增
+- `src/app/[locale]/time/[cityId]/page.tsx`：当前时刻、IANA、UTC 偏移、DST、工作时间、相关转换器、同国城市、FAQ。
+- `src/app/[locale]/country/[code]/page.tsx`：国家时区与城市索引。
+- `src/app/[locale]/about/page.tsx`、`privacy/page.tsx`：方法论（IANA/Luxon/DST）与隐私。
+- `src/app/llms.txt/route.ts`、`llms-full.txt/route.ts`：AI 爬虫入口。
+- `src/lib/cityFacts.ts`、`ContentHeader` / `SiteFooter` / `PageBreadcrumb` / `CityNow`。
+- `scripts/seo-geo-content.mjs`：11 语文案幂等注入。
+- `tests/lib/cityFacts.test.ts`、`tests/lib/messages-shape.test.ts`。
+
+#### 修改
+- `src/lib/seo.ts`：hreflang 映射、x-default=en、canonical slug、stringifyJsonLd、WebPage/Breadcrumb/Place、热门对扩充（35 城对 + 11 时区对）、`og:locale` pt_BR、`alternateLocale`。
+- `src/lib/landingSlug.ts`：24h 表、locale 星期、aNow/bNow、重叠工作小时、DST 事实、本地化城市名。
+- `src/lib/cityName.ts`：`localCountryName`。
+- `JsonLd`：`<` → `\u003c`。
+- 对照页：顶栏 CTA、面包屑、当前时刻、重叠/DST、本地化 h1 与内链、WebPage schema、回链城市页。
+- 首页：标语始终可见、热门城市当前时间内链、本地化转换锚文本、About/Privacy/IANA 页脚、Organization 补 description/knowsAbout。
+- `sitemap.ts`：首页/about/privacy/对照/全部城市/全部有城市的国家；hreflang 与 lastmod 固定日。
+- `messages/*.json`（11）：FAQ「每分钟实时」；对照页 FAQ 不再只叫回首页。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npx tsc --noEmit` | ✅ 0 错误 |
+| `npx next lint` | ✅ 无警告/错误 |
+| `npx vitest run` | ✅ 185/185 |
+| `npx next build` | ✅ 1033 静态页（含 about/privacy/城市/国家/对照）；`/llms.txt`、`/llms-full.txt` 为 ƒ |
+| messages 键对齐 | ✅ 11 文件 shape 一致 |
+
+### 遗留（有意不做）
+
+- **未改 `defaultLocale`**：Googlebot 打 `/` 仍 307 到 `/zh`；靠 hreflang `x-default` → `/en` 收束。若以后要让无语言头的爬虫直接进英文，再改 defaultLocale。
+- **未 SSG 全部 1172 座城市**：sitemap 可发现，首访 ISR。
+- **未写博客/指南长文**：About + 城市/对照事实块先覆盖引用需求。
+- **生产域名**：仍须设置 `NEXT_PUBLIC_SITE_URL`，占位 `worldtime.app` 未改（与 `.env.example` 的 `time.eqde.de` 以部署为准）。
+
+### 提交与发布
+
+- 工作在当前分支进行；本轮未自动 commit。
+
+---
+
 ## 第 34 轮：未提交更改三轮审查
 
 > 时间：2026-08-21

@@ -1,23 +1,38 @@
 import { DateTime } from "luxon";
 import { CITY_BY_ID } from "@/data/cities";
 import { TIME_ZONE_ABBREVIATIONS } from "@/data/timeZoneAbbreviations";
-import { diffOffsetMinutes } from "@/lib/time";
+import { localCityName } from "@/lib/cityName";
+import type { AppLocale } from "@/i18n/routing";
+import {
+  diffOffsetMinutes,
+  formatOffset,
+  isDST,
+  nextDSTChange,
+  timeZoneAbbrev,
+} from "@/lib/time";
 
-/**
- * SEO 着陆页 slug 解析（第五章 LP-1~5）。
- *
- * 从 time-converter/[slug]/page.tsx 抽取为纯函数，便于单元测试。
- *
- * slug 采用「--」（双连字符）作为两段分隔符，避免与城市 id 内的
- * 单连字符（如 cn-hohhot-east）冲突。形如：
- * - 城市对："cn-beijing--us-new-york"
- * - 时区缩写对："EST--PST"
- *
- * 兼容：旧式以单连字符拼接的缩写对（如 "EST-PST"）仍可解析，
- * 因为时区缩写不含连字符。
- */
+export const LUXON_LOCALE: Record<string, string> = {
+  zh: "zh-CN",
+  "zh-Hant": "zh-TW",
+  en: "en",
+  es: "es",
+  fr: "fr",
+  de: "de",
+  ja: "ja",
+  ko: "ko",
+  pt: "pt-BR",
+  ru: "ru",
+  vi: "vi",
+};
+
+export function toLuxonLocale(locale: string): string {
+  return LUXON_LOCALE[locale] ?? locale;
+}
+
 export interface PairInfo {
   kind: "city" | "tz";
+  aId: string;
+  bId: string;
   aName: string;
   bName: string;
   aZone: string;
@@ -27,19 +42,7 @@ export interface PairInfo {
   diffMinutes: number;
 }
 
-/**
- * 解析 slug 为配对信息。
- *
- * 用「--」（双连字符）切分两段，保证城市 id 内的单连字符不被误切：
- * - 时区缩写对：两段均为全大写缩写，按 TIME_ZONE_ABBREVIATIONS 反查；
- * - 城市对：两段按 CITY_BY_ID 精确反查。
- *
- * 兼容旧式单连字符缩写对（缩写不含连字符，split("-") 安全）。
- * 无法识别时返回 null（调用方 notFound）。
- */
 export function parseSlug(slug: string): PairInfo | null {
-  // 1) 时区缩写对：优先用双连号切分；若无双连号则按单连号切分（缩写不含连字符，安全）
-  //    缩写正则允许字母与下划线（如 BST_BD、CST_CN、TW_T 等消歧变体）。
   const sepIndex = slug.indexOf("--");
   const tzParts =
     sepIndex >= 0
@@ -55,6 +58,8 @@ export function parseSlug(slug: string): PairInfo | null {
     if (a && b) {
       return {
         kind: "tz",
+        aId: a.abbr,
+        bId: b.abbr,
         aName: a.nameEn,
         bName: b.nameEn,
         aZone: a.timeZone,
@@ -66,7 +71,6 @@ export function parseSlug(slug: string): PairInfo | null {
     }
   }
 
-  // 2) 城市对：必须以「--」分隔，按 id 精确反查（避免子串误匹配）
   if (sepIndex >= 0) {
     const aId = slug.slice(0, sepIndex).toLowerCase();
     const bId = slug.slice(sepIndex + 2).toLowerCase();
@@ -75,6 +79,8 @@ export function parseSlug(slug: string): PairInfo | null {
     if (a && b) {
       return {
         kind: "city",
+        aId,
+        bId,
         aName: `${a.nameEn}, ${a.countryEn}`,
         bName: `${b.nameEn}, ${b.countryEn}`,
         aZone: a.timeZone,
@@ -89,51 +95,145 @@ export function parseSlug(slug: string): PairInfo | null {
   return null;
 }
 
-/** 对照表一行：「A 地整点 → B 地时间与星期」。 */
 export interface ComparisonRow {
   aHour: string;
   bHour: string;
   bDay: string;
 }
 
-/** 着陆页全部时间相关状态（时差、典型时段对照、生成时刻标注）。 */
 export interface ComparisonState {
   diffMinutes: number;
   rows: ComparisonRow[];
   updatedAt: string;
+  aNow: string;
+  bNow: string;
 }
 
-/**
- * 计算对照页的时间相关状态。
- * 服务端（ISR 烘焙，供首帧 SSR/爬虫）与客户端（挂载后每分钟重算，
- * LandingComparison 组件）共用同一实现，保证二者输出一致、无水合差异。
- *
- * 动机（审查报告 P3）：原页面仅靠 ISR `revalidate=3600` 刷新，长尾页的
- * 「当前偏移 / 对照表日期」最多滞后 1 小时；客户端实时接管后纠偏。
- */
 export function buildComparisonState(
   nowMs: number,
   aZone: string,
   bZone: string,
+  locale = "en",
 ): ComparisonState {
-  // diffMinutes 基于「当前」单一时刻；DST 切换日各小时偏移可能不同，仅作顶部概览，
-  // 对照表逐行用 setZone 精确换算（与旧实现保持一致，避免行为回归）。
-  const rows: ComparisonRow[] = [0, 6, 9, 12, 15, 18, 22].map((h) => {
+  const luxonLoc = toLuxonLocale(locale);
+  const rows: ComparisonRow[] = [];
+  for (let h = 0; h < 24; h++) {
     const aDt = DateTime.fromMillis(nowMs, { zone: aZone })
       .startOf("day")
       .plus({ hours: h });
-    const bDt = aDt.setZone(bZone);
-    return {
+    const bDt = aDt.setZone(bZone).setLocale(luxonLoc);
+    rows.push({
       aHour: aDt.toFormat("HH:mm"),
       bHour: bDt.toFormat("HH:mm"),
       bDay: bDt.toFormat("EEE"),
-    };
-  });
+    });
+  }
+  const aNowDt = DateTime.fromMillis(nowMs, { zone: aZone });
+  const bNowDt = DateTime.fromMillis(nowMs, { zone: bZone });
   return {
     diffMinutes: diffOffsetMinutes(aZone, bZone, nowMs),
     rows,
     updatedAt: DateTime.fromMillis(nowMs, { zone: "utc" }).toFormat(
       "yyyy-MM-dd HH:mm 'UTC'",
     ),
+    aNow: aNowDt.toFormat("HH:mm"),
+    bNow: bNowDt.toFormat("HH:mm"),
   };
+}
+
+export interface WorkSlot {
+  aHour: string;
+  bHour: string;
+  aHourNum: number;
+}
+
+export function overlappingWorkHours(
+  nowMs: number,
+  aZone: string,
+  bZone: string,
+  workStart = 9,
+  workEnd = 18,
+): WorkSlot[] {
+  const slots: WorkSlot[] = [];
+  for (let h = 0; h < 24; h++) {
+    const aDt = DateTime.fromMillis(nowMs, { zone: aZone })
+      .startOf("day")
+      .plus({ hours: h });
+    const bDt = aDt.setZone(bZone);
+    const aH = aDt.hour;
+    const bH = bDt.hour;
+    if (aH >= workStart && aH < workEnd && bH >= workStart && bH < workEnd) {
+      slots.push({
+        aHour: aDt.toFormat("HH:mm"),
+        bHour: bDt.toFormat("HH:mm"),
+        aHourNum: aH,
+      });
+    }
+  }
+  return slots;
+}
+
+export function collapseHourRanges(hours: number[]): Array<{ start: number; end: number }> {
+  if (hours.length === 0) return [];
+  const sorted = [...hours].sort((a, b) => a - b);
+  const ranges: Array<{ start: number; end: number }> = [];
+  let start = sorted[0];
+  let prev = sorted[0];
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] === prev + 1) {
+      prev = sorted[i];
+      continue;
+    }
+    ranges.push({ start, end: prev + 1 });
+    start = sorted[i];
+    prev = sorted[i];
+  }
+  ranges.push({ start, end: prev + 1 });
+  return ranges;
+}
+
+export function formatHourRange(start: number, end: number): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(start)}:00–${pad(end)}:00`;
+}
+
+export interface ZoneDstFacts {
+  inDst: boolean;
+  nextMs: number | null;
+  abbrev: string | null;
+  observesDst: boolean;
+  offsetLabel: string;
+}
+
+export function zoneDstFacts(zone: string, nowMs: number): ZoneDstFacts {
+  const inDst = isDST(zone, nowMs);
+  const nextMs = nextDSTChange(zone, nowMs);
+  return {
+    inDst,
+    nextMs,
+    abbrev: timeZoneAbbrev(zone, nowMs),
+    observesDst: inDst || nextMs != null,
+    offsetLabel: formatOffset(DateTime.fromMillis(nowMs, { zone }).offset),
+  };
+}
+
+export function formatDstDate(ms: number, zone: string, locale: string): string {
+  return DateTime.fromMillis(ms, { zone })
+    .setLocale(toLuxonLocale(locale))
+    .toFormat("yyyy-MM-dd");
+}
+
+export function localizedPairLabels(
+  info: PairInfo,
+  locale: AppLocale,
+): { a: string; b: string } {
+  if (info.kind === "city") {
+    const a = CITY_BY_ID[info.aId];
+    const b = CITY_BY_ID[info.bId];
+    return {
+      a: a ? localCityName(locale, a) : info.aLabel,
+      b: b ? localCityName(locale, b) : info.bLabel,
+    };
+  }
+  return { a: info.aLabel, b: info.bLabel };
 }

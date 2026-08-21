@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "Reloj mundial / conversor de zonas horarias / planificador de reuniones",
     "homeTitle": "WorldTime — Reloj mundial, conversor de zonas horarias y planificador de reuniones",
-    "homeDescription": "Reloj mundial y conversor de zonas horarias gratuito. Compara la hora local entre ciudades, planifica reuniones internacionales y organiza tu agenda entre zonas horarias con soporte automático del horario de verano."
+    "homeDescription": "Reloj mundial y conversor de zonas horarias gratuito. Compara la hora local entre ciudades, planifica reuniones internacionales y organiza tu agenda entre zonas horarias con soporte automático del horario de verano.",
+    "openApp": "Abrir reloj mundial"
   },
   "Common": {
     "add": "Añadir",
@@ -112,7 +113,7 @@
     "behindNote": "está por detrás (más temprano)",
     "bNote": "{b} está {dir} respecto a {a}.",
     "currentOffsetNote": "(diferencia actual; puede variar los días de cambio de horario de verano)",
-    "comparisonNote": "Comparación típica de horas (diferencia fija).",
+    "comparisonNote": "Comparación hora a hora de un día local completo (24 horas).",
     "updatedAt": "Generado a las {time}.",
     "metaDescription": "Diferencia horaria entre {a} y {b}: desfase de zona horaria en vivo, tabla de comparación hora por hora y planificación de reuniones con horario de verano. Consulta qué hora es ahora en {b}.",
     "intro": "Convierte la hora entre {a} y {b}: consulta la diferencia horaria actual (desfase), una comparación completa hora por hora y si aplica el horario de verano. Úsalo para organizar llamadas, reuniones y viajes entre ambas ubicaciones.",
@@ -130,10 +131,22 @@
       },
       {
         "q": "¿Cuál es la mejor hora para una reunión entre {a} y {b}?",
-        "a": "Abre la página principal, añade ambas ciudades y usa el mapa de calor para encontrar horas laborables que se solapen; luego exporta la franja al calendario."
+        "a": "{overlap} También puede abrir el reloj mundial y arrastrar una franja personalizada."
       }
     ],
-    "relatedTitle": "Conversores de zona horaria relacionados"
+    "relatedTitle": "Conversores de zona horaria relacionados",
+    "factLead": "Son las {aTime} en {a} y las {bTime} en {b}.",
+    "overlapTitle": "Horario laboral compartido",
+    "overlapBody": "Horas en que {a} y {b} están en 09:00–18:00: {hours}.",
+    "overlapNone": "Hoy no hay solapamiento entre 09:00–18:00 en {a} y {b}.",
+    "dstHeading": "Horario de verano",
+    "dstActive": "{place} está ahora en horario de verano ({abbr}).",
+    "dstInactive": "{place} no está en horario de verano ahora ({abbr}).",
+    "dstNone": "{place} no observa horario de verano.",
+    "nextDst": "Próximo cambio: {date}.",
+    "tzAbbrNote": "{label} es {name} ({zone}). La zona usa ahora {abbr}.",
+    "relatedCitiesTitle": "Hora actual",
+    "breadcrumbHome": "Inicio"
   },
   "Seo": {
     "introTitle": "Reloj mundial y conversor de zonas horarias",
@@ -209,9 +222,13 @@
       },
       {
         "q": "¿La hora que se muestra es en tiempo real?",
-        "a": "La hora actual se actualiza en vivo en tu navegador. Las páginas de conversión actualizan sus tablas cada hora."
+        "a": "La hora actual y las tablas del conversor se actualizan en vivo en el navegador cada minuto."
       }
-    ]
+    ],
+    "citiesTitle": "Hora actual en ciudades populares",
+    "aboutLink": "Acerca de",
+    "privacyLink": "Privacidad",
+    "sourceNote": "Las horas locales usan la base IANA de zonas horarias."
   },
   "Onboarding": {
     "emptyHeadline": "Encuentra una hora que funcione para todos",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "Cargando…"
+  },
+  "City": {
+    "title": "Hora actual en {city}",
+    "metaDescription": "¿Qué hora es en {city}, {country}? Hora local, desfase UTC, horario de verano y zona IANA {zone}.",
+    "intro": "La hora local actual en {city}, {country} es {time} ({date}). Zona: {zone}. Desfase UTC: {offset}.",
+    "iana": "Zona IANA",
+    "utcOffset": "Desfase UTC",
+    "dst": "Horario de verano",
+    "dstYes": "Ahora en horario de verano.",
+    "dstNo": "Ahora no está en horario de verano.",
+    "noDst": "Esta zona no observa horario de verano.",
+    "nextDst": "Próximo cambio DST: {date}.",
+    "nextDstLabel": "Próximo cambio DST",
+    "country": "País",
+    "workHours": "Horario laboral habitual",
+    "workHoursBody": "09:00–18:00 hora local en {city}.",
+    "convertersTitle": "Conversores",
+    "moreInCountry": "Otras ciudades de {country}",
+    "faqTitle": "Preguntas frecuentes",
+    "faq": [
+      {
+        "q": "¿Qué hora es ahora en {city}?",
+        "a": "En {city} son las {time} del {date}. Desfase UTC {offset}."
+      },
+      {
+        "q": "¿En qué zona horaria está {city}?",
+        "a": "{city} usa la zona IANA {zone}."
+      },
+      {
+        "q": "¿{city} usa horario de verano?",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "Inicio",
+    "openInGrid": "Comparar en el reloj mundial"
+  },
+  "Country": {
+    "title": "Hora en {country}",
+    "metaDescription": "Hora local y zonas horarias en {country}. Hora actual en sus ciudades.",
+    "intro": "{country} usa {zones} zona(s) horaria(s). Elija una ciudad para ver la hora local.",
+    "citiesTitle": "Ciudades",
+    "breadcrumbHome": "Inicio",
+    "zoneCount": "{n} zonas horarias"
+  },
+  "About": {
+    "title": "Acerca de WorldTime",
+    "metaDescription": "Cómo WorldTime calcula la hora local, los desfases y el horario de verano con la base IANA.",
+    "lead": "WorldTime es un reloj mundial, conversor de zonas y planificador de reuniones gratuito. El solapamiento se lee de un vistazo: sin cuenta ni muro de pago.",
+    "howTitle": "Cómo se calculan las horas",
+    "howBody": "Cada ciudad se asocia a una zona IANA. Luxon calcula desfases y fechas en ese instante. El navegador y el HTML para rastreadores usan el mismo resultado.",
+    "dataTitle": "Fuente de datos",
+    "dataBody": "Las reglas de zona salen de IANA Time Zone Database (tzdb), el mismo conjunto que los sistemas operativos. No rastreamos otros relojes.",
+    "dstTitle": "Horario de verano",
+    "dstBody": "El DST sale de la zona, no de la etiqueta EST/PST de la URL. En verano America/New_York es EDT. La abreviatura en vivo de la página es la referencia.",
+    "privacyBlurb": "Privacidad: no hace falta cuenta. Detalles",
+    "breadcrumbHome": "Inicio"
+  },
+  "Privacy": {
+    "title": "Privacidad",
+    "metaDescription": "Privacidad de WorldTime: sin cuenta; las ciudades quedan en el navegador.",
+    "breadcrumbHome": "Inicio",
+    "paragraphs": [
+      "WorldTime no exige cuenta ni mantiene una base de usuarios para el reloj.",
+      "Las ciudades, el tema y las opciones se guardan en localStorage para restaurar la cuadrícula. Borrar los datos del sitio las elimina.",
+      "Es una web estática/SSR. Las horas se calculan en su dispositivo y en nuestros servidores con datos IANA. No vendemos perfiles.",
+      "Si instala la PWA, el service worker guarda páginas solo en ese dispositivo para uso sin conexión."
+    ]
   }
 }

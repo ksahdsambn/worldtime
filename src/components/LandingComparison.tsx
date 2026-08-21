@@ -9,34 +9,30 @@ import {
 } from "@/lib/landingSlug";
 import { Reveal } from "./Reveal";
 
-/**
- * 着陆页时间相关区块（实时版）—— 审查报告 P3 修复。
- *
- * 背景：`time-converter/[slug]` 依赖 ISR（revalidate=3600）烘焙 `Date.now()`，
- * 长尾页的「当前偏移 / 对照表日期」最多滞后 1 小时。现把时间相关 UI 拆为两个
- * 客户端组件（LandingHero / LandingTable），挂载后每分钟用 useNow 重算，
- * 偏移与对照表即实时；服务端仍先渲染 initial（同为 buildComparisonState 产物，
- * 复用同一纯函数输出一致），保证首帧 SSR 与爬虫可见内容不变、无水合差异。
- */
 export function LandingHero({
   aZone,
   bZone,
   aLabel,
   bLabel,
+  locale,
   initial,
 }: {
   aZone: string;
   bZone: string;
   aLabel: string;
   bLabel: string;
+  locale: string;
   initial: ComparisonState;
 }) {
   const t = useTranslations("Landing");
   const now = useNow(60_000);
-  const live = now ? buildComparisonState(now, aZone, bZone) : initial;
+  const live = now ? buildComparisonState(now, aZone, bZone, locale) : initial;
   const bAhead = live.diffMinutes >= 0;
   return (
     <>
+      <p className="mt-4 text-base leading-relaxed text-ink">
+        {t("factLead", { a: aLabel, b: bLabel, aTime: live.aNow, bTime: live.bNow })}
+      </p>
       <div className="hud-frame shadow-glow mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-6 py-5">
         <span className="text-gradient chrono text-4xl font-bold sm:text-5xl">
           {formatOffset(live.diffMinutes)}
@@ -45,6 +41,20 @@ export function LandingHero({
           {bLabel} {bAhead ? t("isAhead") : t("lags")} {t("vs")} {aLabel}
         </span>
         <span className="text-xs text-faint">{t("currentOffsetNote")}</span>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-6 text-sm">
+        <p>
+          <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
+            {aLabel}
+          </span>
+          <span className="chrono text-2xl font-semibold text-ink">{live.aNow}</span>
+        </p>
+        <p>
+          <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
+            {bLabel}
+          </span>
+          <span className="chrono text-2xl font-semibold text-ink">{live.bNow}</span>
+        </p>
       </div>
       <p className="mt-4 text-sm leading-relaxed text-muted">
         {t("bNote", {
@@ -62,17 +72,19 @@ export function LandingTable({
   bZone,
   aLabel,
   bLabel,
+  locale,
   initial,
 }: {
   aZone: string;
   bZone: string;
   aLabel: string;
   bLabel: string;
+  locale: string;
   initial: ComparisonState;
 }) {
   const t = useTranslations("Landing");
   const now = useNow(60_000);
-  const live = now ? buildComparisonState(now, aZone, bZone) : initial;
+  const live = now ? buildComparisonState(now, aZone, bZone, locale) : initial;
   return (
     <Reveal className="mt-10">
       <section>

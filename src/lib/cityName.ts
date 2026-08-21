@@ -16,3 +16,17 @@ import { isChineseLocale, type AppLocale } from "@/i18n/routing";
 export function localCityName(locale: AppLocale, city: Pick<CityRecord, "nameZh" | "nameEn">): string {
   return isChineseLocale(locale) ? city.nameZh : city.nameEn;
 }
+
+export function localCountryName(
+  locale: AppLocale,
+  country: { nameZh: string; nameEn: string },
+): string {
+  return isChineseLocale(locale) ? country.nameZh : country.nameEn;
+}
+
+export function cityCountryName(
+  locale: AppLocale,
+  city: Pick<CityRecord, "countryZh" | "countryEn">,
+): string {
+  return isChineseLocale(locale) ? city.countryZh : city.countryEn;
+}

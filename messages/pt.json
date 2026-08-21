@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "Relógio mundial / conversor de fusos / agendador de reuniões",
     "homeTitle": "WorldTime — Relógio mundial, conversor de fusos horários e agenda de reuniões",
-    "homeDescription": "Relógio mundial e conversor de fusos horários gratuito. Compare o horário local entre cidades, planeje reuniões internacionais e organize sua agenda entre fusos com suporte automático ao horário de verão."
+    "homeDescription": "Relógio mundial e conversor de fusos horários gratuito. Compare o horário local entre cidades, planeje reuniões internacionais e organize sua agenda entre fusos com suporte automático ao horário de verão.",
+    "openApp": "Abrir relógio mundial"
   },
   "Common": {
     "add": "Adicionar",
@@ -112,7 +113,7 @@
     "behindNote": "está atrás (mais cedo)",
     "bNote": "{b} está {dir} em relação a {a}.",
     "currentOffsetNote": "(diferença atual; pode variar nos dias de mudança de horário de verão)",
-    "comparisonNote": "Comparação típica de horas (diferença fixa).",
+    "comparisonNote": "Comparação hora a hora de um dia local completo (24 horas).",
     "updatedAt": "Gerado às {time}.",
     "metaDescription": "Diferença de horário entre {a} e {b}: defasagem de fuso ao vivo, tabela de comparação hora a hora e planejamento de reuniões com horário de verão. Veja que horas são agora em {b}.",
     "intro": "Converta a hora entre {a} e {b}: veja a diferença de horário atual (defasagem), uma comparação completa hora a hora e se o horário de verão se aplica, para organizar ligações, reuniões e viagens entre os dois locais.",
@@ -130,10 +131,22 @@
       },
       {
         "q": "Qual o melhor horário para uma reunião entre {a} e {b}?",
-        "a": "Abra a página inicial, adicione ambas as cidades e use o mapa de calor para encontrar horários úteis sobrepostos; depois exporte o slot ao calendário."
+        "a": "{overlap} Também pode abrir o relógio mundial e arrastar uma janela personalizada."
       }
     ],
-    "relatedTitle": "Conversores de fuso horário relacionados"
+    "relatedTitle": "Conversores de fuso horário relacionados",
+    "factLead": "São {aTime} em {a} e {bTime} em {b}.",
+    "overlapTitle": "Horário de trabalho em comum",
+    "overlapBody": "Horas em que {a} e {b} estão em 09:00–18:00: {hours}.",
+    "overlapNone": "Hoje não há sobreposição entre 09:00–18:00 em {a} e {b}.",
+    "dstHeading": "Horário de verão",
+    "dstActive": "{place} está no horário de verão ({abbr}).",
+    "dstInactive": "{place} não está no horário de verão agora ({abbr}).",
+    "dstNone": "{place} não observa horário de verão.",
+    "nextDst": "Próxima mudança: {date}.",
+    "tzAbbrNote": "{label} é {name} ({zone}). O fuso usa agora {abbr}.",
+    "relatedCitiesTitle": "Hora atual",
+    "breadcrumbHome": "Início"
   },
   "Seo": {
     "introTitle": "Relógio mundial e conversor de fusos horários",
@@ -209,9 +222,13 @@
       },
       {
         "q": "A hora mostrada é em tempo real?",
-        "a": "A hora atual é atualizada ao vivo no seu navegador. As páginas de conversão atualizam suas tabelas a cada hora."
+        "a": "A hora atual e as tabelas do conversor atualizam ao vivo no navegador a cada minuto."
       }
-    ]
+    ],
+    "citiesTitle": "Hora atual em cidades populares",
+    "aboutLink": "Sobre",
+    "privacyLink": "Privacidade",
+    "sourceNote": "Os horários locais usam o banco IANA de fusos."
   },
   "Onboarding": {
     "emptyHeadline": "Encontre um horário que funciona para todos",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "Carregando…"
+  },
+  "City": {
+    "title": "Hora atual em {city}",
+    "metaDescription": "Que horas são em {city}, {country}? Hora local, offset UTC, horário de verão e fuso IANA {zone}.",
+    "intro": "A hora local atual em {city}, {country} é {time} ({date}). Fuso: {zone}. Offset UTC: {offset}.",
+    "iana": "Fuso IANA",
+    "utcOffset": "Offset UTC",
+    "dst": "Horário de verão",
+    "dstYes": "Atualmente no horário de verão.",
+    "dstNo": "Não está no horário de verão agora.",
+    "noDst": "Este fuso não observa horário de verão.",
+    "nextDst": "Próxima mudança de DST: {date}.",
+    "nextDstLabel": "Próxima mudança de DST",
+    "country": "País",
+    "workHours": "Horário de trabalho típico",
+    "workHoursBody": "09:00–18:00 hora local em {city}.",
+    "convertersTitle": "Conversores",
+    "moreInCountry": "Outras cidades em {country}",
+    "faqTitle": "Perguntas frequentes",
+    "faq": [
+      {
+        "q": "Que horas são agora em {city}?",
+        "a": "Em {city} são {time} em {date}. Offset UTC {offset}."
+      },
+      {
+        "q": "Qual é o fuso de {city}?",
+        "a": "{city} usa o fuso IANA {zone}."
+      },
+      {
+        "q": "{city} usa horário de verão?",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "Início",
+    "openInGrid": "Comparar no relógio mundial"
+  },
+  "Country": {
+    "title": "Hora em {country}",
+    "metaDescription": "Hora local e fusos em {country}. Hora atual nas cidades.",
+    "intro": "{country} usa {zones} fuso(s). Escolha uma cidade para ver a hora local.",
+    "citiesTitle": "Cidades",
+    "breadcrumbHome": "Início",
+    "zoneCount": "{n} fusos"
+  },
+  "About": {
+    "title": "Sobre o WorldTime",
+    "metaDescription": "Como o WorldTime calcula hora local, offsets e horário de verão com a base IANA.",
+    "lead": "WorldTime é um relógio mundial, conversor de fusos e planejador de reuniões gratuito. A sobreposição se lê de relance — sem conta nem paywall.",
+    "howTitle": "Como as horas são calculadas",
+    "howBody": "Cada cidade mapeia um fuso IANA. O Luxon calcula offsets e datas naquele instante. O navegador e o HTML para crawlers usam o mesmo resultado.",
+    "dataTitle": "Fonte dos dados",
+    "dataBody": "As regras de fuso vêm da IANA Time Zone Database (tzdb), o mesmo conjunto dos sistemas operacionais. Não raspamos outros relógios.",
+    "dstTitle": "Horário de verão",
+    "dstBody": "O DST vem do fuso, não do rótulo EST/PST da URL. No verão, America/New_York é EDT. A abreviação ao vivo na página é a referência.",
+    "privacyBlurb": "Privacidade: não é preciso conta. Detalhes",
+    "breadcrumbHome": "Início"
+  },
+  "Privacy": {
+    "title": "Privacidade",
+    "metaDescription": "Privacidade do WorldTime: sem conta; as cidades ficam no navegador.",
+    "breadcrumbHome": "Início",
+    "paragraphs": [
+      "O WorldTime não exige conta e não tem banco de usuários para o relógio.",
+      "Cidades, tema e opções ficam no localStorage para restaurar a grade. Limpar os dados do site remove-os.",
+      "É um app web estático/SSR. Os horários são calculados no seu dispositivo e nos nossos servidores com dados IANA. Não vendemos perfis.",
+      "Como PWA, o service worker guarda páginas só neste dispositivo para uso offline."
+    ]
   }
 }

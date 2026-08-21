@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "World clock / time zone converter / meeting scheduler",
     "homeTitle": "WorldTime — World Clock, Time Zone Converter & Meeting Planner",
-    "homeDescription": "Free world clock and time zone converter. Compare local time across cities, plan international meetings, and schedule across time zones with automatic daylight saving support."
+    "homeDescription": "Free world clock and time zone converter. Compare local time across cities, plan international meetings, and schedule across time zones with automatic daylight saving support.",
+    "openApp": "Open world clock"
   },
   "Common": {
     "add": "Add",
@@ -112,7 +113,7 @@
     "behindNote": "is behind (earlier)",
     "bNote": "{b} is {dir} relative to {a}.",
     "currentOffsetNote": "(current offset; may differ on DST transition days)",
-    "comparisonNote": "Typical hours comparison (fixed offset).",
+    "comparisonNote": "Hour-by-hour comparison for a full local day (24 hours).",
     "updatedAt": "Generated at {time}.",
     "metaDescription": "{a} to {b} time difference: live time zone offset, an hour-by-hour comparison table, and DST-aware meeting planning. See what time it is in {b} right now.",
     "intro": "Convert time between {a} and {b}: see the current time difference (offset), a full hour-by-hour comparison, and whether daylight saving time applies. Use it to schedule calls, meetings, and travel between the two locations.",
@@ -130,10 +131,22 @@
       },
       {
         "q": "What is the best time for a meeting between {a} and {b}?",
-        "a": "Open the home page, add both cities, and use the heatmap to find overlapping working hours, then export the slot to your calendar."
+        "a": "{overlap} You can also open the world clock and drag a custom window across both cities."
       }
     ],
-    "relatedTitle": "Related time zone converters"
+    "relatedTitle": "Related time zone converters",
+    "factLead": "It is {aTime} in {a} and {bTime} in {b}.",
+    "overlapTitle": "Shared working hours",
+    "overlapBody": "Hours when both {a} and {b} are in 09:00–18:00: {hours}.",
+    "overlapNone": "There is no overlap between 09:00–18:00 in {a} and {b} today.",
+    "dstHeading": "Daylight saving",
+    "dstActive": "{place} is currently on daylight saving time ({abbr}).",
+    "dstInactive": "{place} is not on daylight saving time right now ({abbr}).",
+    "dstNone": "{place} does not observe daylight saving time.",
+    "nextDst": "Next change: {date}.",
+    "tzAbbrNote": "{label} is {name} ({zone}). The zone currently uses {abbr}.",
+    "relatedCitiesTitle": "Current time",
+    "breadcrumbHome": "Home"
   },
   "Seo": {
     "introTitle": "World clock & time zone converter",
@@ -209,9 +222,13 @@
       },
       {
         "q": "Is the time shown in real time?",
-        "a": "The current time updates live in your browser. The converter pages refresh their tables hourly."
+        "a": "The current time and converter tables update live in your browser every minute."
       }
-    ]
+    ],
+    "citiesTitle": "Current time in popular cities",
+    "aboutLink": "About",
+    "privacyLink": "Privacy",
+    "sourceNote": "Local times use the IANA Time Zone Database."
   },
   "Onboarding": {
     "emptyHeadline": "Find a meeting time that works for everyone",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "Loading…"
+  },
+  "City": {
+    "title": "Current time in {city}",
+    "metaDescription": "What time is it in {city}, {country}? Local time, UTC offset, daylight saving, and IANA time zone {zone}.",
+    "intro": "The current local time in {city}, {country} is {time} ({date}). Time zone: {zone}. UTC offset: {offset}.",
+    "iana": "IANA time zone",
+    "utcOffset": "UTC offset",
+    "dst": "Daylight saving",
+    "dstYes": "Currently on daylight saving time.",
+    "dstNo": "Not on daylight saving time right now.",
+    "noDst": "This time zone does not observe daylight saving time.",
+    "nextDst": "Next DST change: {date}.",
+    "nextDstLabel": "Next DST change",
+    "country": "Country",
+    "workHours": "Typical work hours",
+    "workHoursBody": "09:00–18:00 local time in {city}.",
+    "convertersTitle": "Time converters",
+    "moreInCountry": "Other cities in {country}",
+    "faqTitle": "Frequently asked questions",
+    "faq": [
+      {
+        "q": "What time is it in {city} right now?",
+        "a": "It is {time} in {city} on {date}. UTC offset {offset}."
+      },
+      {
+        "q": "What time zone is {city} in?",
+        "a": "{city} uses the IANA time zone {zone}."
+      },
+      {
+        "q": "Does {city} use daylight saving time?",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "Home",
+    "openInGrid": "Compare in the world clock"
+  },
+  "Country": {
+    "title": "Time in {country}",
+    "metaDescription": "Local time and time zones in {country}. Current time for cities across {country}.",
+    "intro": "{country} uses {zones} time zone(s). Select a city to see the current local time.",
+    "citiesTitle": "Cities",
+    "breadcrumbHome": "Home",
+    "zoneCount": "{n} time zones"
+  },
+  "About": {
+    "title": "About WorldTime",
+    "metaDescription": "How WorldTime calculates local time, time-zone offsets, and daylight saving from the IANA Time Zone Database.",
+    "lead": "WorldTime is a free world clock, time-zone converter, and meeting planner. It is built for reading overlap at a glance — no account, no paywall.",
+    "howTitle": "How times are calculated",
+    "howBody": "Each city is mapped to one IANA time zone. Offsets and calendar dates are computed with Luxon from that zone at a given instant, in the browser and in the HTML we send to crawlers.",
+    "dataTitle": "Data source",
+    "dataBody": "Zone rules come from the IANA Time Zone Database (tzdb), the same dataset used by operating systems. We do not scrape other clock websites.",
+    "dstTitle": "Daylight saving time",
+    "dstBody": "DST is taken from the zone, not from a URL label. A slug like EST--PST is a search alias; in summer America/New_York is EDT. The live abbreviation on each page is authoritative.",
+    "privacyBlurb": "Privacy: we do not require an account. Details",
+    "breadcrumbHome": "Home"
+  },
+  "Privacy": {
+    "title": "Privacy",
+    "metaDescription": "WorldTime privacy notes: no account, city lists stay in your browser.",
+    "breadcrumbHome": "Home",
+    "paragraphs": [
+      "WorldTime does not require an account and does not run a user database for the clock itself.",
+      "Cities you add, theme, and display settings are stored in your browser (localStorage) so the grid can restore on the next visit. Clearing site data removes them.",
+      "The site is a static/SSR web app. Times are calculated on your device and on our servers from IANA zone data; we do not sell personal profiles.",
+      "If you install the app as a PWA, the service worker caches pages for offline use on that device only."
+    ]
   }
 }

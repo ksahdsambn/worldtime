@@ -14,6 +14,16 @@ import {
   webAppJsonLd,
   faqPageJsonLd,
   organizationJsonLd,
+  webPageJsonLd,
+  breadcrumbJsonLd,
+  stringifyJsonLd,
+  interp,
+  canonicalLandingSlug,
+  reverseLandingSlug,
+  HREFLANG_MAP,
+  SEO_DEFAULT_LOCALE,
+  SITEMAP_LASTMOD,
+  popularCityIds,
 } from "@/lib/seo";
 
 describe("getSiteUrl", () => {
@@ -60,17 +70,18 @@ describe("buildAlternates", () => {
     const a = buildAlternates("zh", "/time-converter/EST--PST");
     expect(a.canonical).toBe(`${getSiteUrl()}/zh/time-converter/EST--PST`);
   });
-  it("languages 覆盖全部支持语言", () => {
+  it("languages 使用 BCP 47 hreflang（zh-Hans / pt-BR）", () => {
     const a = buildAlternates("en");
-    for (const l of routing.locales) {
-      expect(a.languages?.[l]).toBe(`${getSiteUrl()}/${l}`);
-    }
+    expect(a.languages?.["zh-Hans"]).toBe(`${getSiteUrl()}/zh`);
+    expect(a.languages?.["zh-Hant"]).toBe(`${getSiteUrl()}/zh-Hant`);
+    expect(a.languages?.["en"]).toBe(`${getSiteUrl()}/en`);
+    expect(a.languages?.["pt-BR"]).toBe(`${getSiteUrl()}/pt`);
+    expect(a.languages?.["zh"]).toBeUndefined();
+    expect(a.languages?.["pt"]).toBeUndefined();
   });
-  it("languages 包含 x-default 指向默认语言", () => {
-    const a = buildAlternates("en");
-    expect(a.languages?.["x-default"]).toBe(
-      `${getSiteUrl()}/${routing.defaultLocale}`,
-    );
+  it("x-default 指向英文", () => {
+    const a = buildAlternates("zh");
+    expect(a.languages?.["x-default"]).toBe(`${getSiteUrl()}/en`);
   });
   it("首页（空 path）每语言 URL 不含多余斜杠", () => {
     const a = buildAlternates("zh");
@@ -95,6 +106,8 @@ describe("buildOpenGraph", () => {
     expect(og.images?.[0]?.url).toBe("/ja/opengraph-image");
     expect(og.images?.[0]?.width).toBe(1200);
     expect(og.images?.[0]?.height).toBe(630);
+    expect(og.alternateLocale).toContain("en_US");
+    expect(og.alternateLocale).not.toContain("ja_JP");
   });
   it("每个 locale 都能映射到 og:locale", () => {
     for (const l of routing.locales) {
@@ -111,10 +124,12 @@ describe("buildLandingSlugs", () => {
       POPULAR_CITY_PAIRS.length + POPULAR_TZ_PAIRS.length,
     );
   });
-  it("第 14 轮扩充后共 24 条（16 城市对 + 8 时区对）", () => {
-    expect(POPULAR_CITY_PAIRS.length).toBe(16);
-    expect(POPULAR_TZ_PAIRS.length).toBe(8);
-    expect(buildLandingSlugs()).toHaveLength(24);
+  it("热门配对数量与 slug 一致且多于第 14 轮基线", () => {
+    expect(POPULAR_CITY_PAIRS.length).toBeGreaterThanOrEqual(35);
+    expect(POPULAR_TZ_PAIRS.length).toBeGreaterThanOrEqual(11);
+    expect(buildLandingSlugs()).toHaveLength(
+      POPULAR_CITY_PAIRS.length + POPULAR_TZ_PAIRS.length,
+    );
   });
   it("城市对 slug 以 -- 分隔且保留城市 id 内的单连号", () => {
     const slugs = buildLandingSlugs();
@@ -198,5 +213,83 @@ describe("organizationJsonLd", () => {
     const ld = organizationJsonLd({ url: "https://x/zh" });
     expect(ld.name).toBe("WorldTime");
     expect(ld.logo).toBeTruthy();
+  });
+  it("可选 description / publishingPrinciples，且含 knowsAbout", () => {
+    const ld = organizationJsonLd({
+      url: "https://x",
+      description: "d",
+      aboutUrl: "https://x/en/about",
+    });
+    expect(ld.description).toBe("d");
+    expect(ld.publishingPrinciples).toBe("https://x/en/about");
+    expect(ld.knowsAbout?.length).toBeGreaterThan(0);
+  });
+});
+
+describe("hreflang / GEO helpers", () => {
+  it("每个应用 locale 都有 hreflang 映射", () => {
+    for (const l of routing.locales) {
+      expect(HREFLANG_MAP[l]).toBeTruthy();
+    }
+    expect(HREFLANG_MAP.zh).toBe("zh-Hans");
+    expect(HREFLANG_MAP.pt).toBe("pt-BR");
+    expect(SEO_DEFAULT_LOCALE).toBe("en");
+  });
+  it("stringifyJsonLd 转义 < 防止打破 script", () => {
+    const s = stringifyJsonLd({ a: "</script><b>x" });
+    expect(s).not.toContain("</script>");
+    expect(s).toContain("\\u003c");
+  });
+  it("interp 替换全部占位符", () => {
+    expect(interp("{a} vs {b}", { a: "Beijing", b: "London" })).toBe("Beijing vs London");
+  });
+  it("sitemap lastmod 为固定日期而非每次构建的 now", () => {
+    expect(SITEMAP_LASTMOD).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+  it("popularCityIds 去重且均可解析", () => {
+    const ids = popularCityIds();
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) expect(CITY_BY_ID[id], id).toBeDefined();
+  });
+});
+
+describe("canonicalLandingSlug", () => {
+  it("热门 slug 保持自身", () => {
+    expect(canonicalLandingSlug("cn-beijing--us-new-york")).toBe("cn-beijing--us-new-york");
+  });
+  it("热门对的反向收束到热门表", () => {
+    expect(canonicalLandingSlug("us-new-york--cn-beijing")).toBe("cn-beijing--us-new-york");
+  });
+  it("非热门对按字典序收束", () => {
+    expect(canonicalLandingSlug("zz-b--aa-a")).toBe("aa-a--zz-b");
+  });
+  it("reverseLandingSlug 对调两段", () => {
+    expect(reverseLandingSlug("EST--PST")).toBe("PST--EST");
+    expect(reverseLandingSlug("noconverter")).toBeNull();
+  });
+});
+
+describe("webPageJsonLd / breadcrumbJsonLd", () => {
+  it("产出 WebPage 并挂 WebSite", () => {
+    const ld = webPageJsonLd({
+      name: "N",
+      url: "https://x/en/time/jp-tokyo",
+      description: "d",
+      inLanguage: "en",
+      dateModified: "2026-08-21",
+    });
+    expect(ld["@type"]).toBe("WebPage");
+    expect(ld.isPartOf["@type"]).toBe("WebSite");
+    expect(ld.dateModified).toBe("2026-08-21");
+    expect(ld.inLanguage).toBe("en");
+  });
+  it("面包屑 position 从 1 起", () => {
+    const ld = breadcrumbJsonLd([
+      { name: "Home", url: "https://x/en" },
+      { name: "Tokyo", url: "https://x/en/time/jp-tokyo" },
+    ]);
+    expect(ld["@type"]).toBe("BreadcrumbList");
+    expect(ld.itemListElement[0].position).toBe(1);
+    expect(ld.itemListElement[1].name).toBe("Tokyo");
   });
 });

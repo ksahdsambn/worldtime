@@ -3,7 +3,8 @@
     "title": "WorldTime",
     "tagline": "Đồng hồ thế giới / chuyển đổi múi giờ / lập lịch họp",
     "homeTitle": "WorldTime — Đồng hồ thế giới, trình chuyển đổi múi giờ và lên lịch họp",
-    "homeDescription": "Đồng hồ thế giới và trình chuyển đổi múi giờ miễn phí. So sánh giờ địa phương giữa các thành phố, lên lịch họp quốc tế và sắp xếp thời gian biểu giữa các múi giờ với hỗ trợ giờ mùa hè tự động."
+    "homeDescription": "Đồng hồ thế giới và trình chuyển đổi múi giờ miễn phí. So sánh giờ địa phương giữa các thành phố, lên lịch họp quốc tế và sắp xếp thời gian biểu giữa các múi giờ với hỗ trợ giờ mùa hè tự động.",
+    "openApp": "Mở đồng hồ thế giới"
   },
   "Common": {
     "add": "Thêm",
@@ -112,7 +113,7 @@
     "behindNote": "chậm hơn (sớm hơn)",
     "bNote": "{b} {dir} so với {a}.",
     "currentOffsetNote": "(chênh lệch hiện tại; có thể khác trong ngày chuyển giờ mùa hè)",
-    "comparisonNote": "So sánh giờ tiêu biểu (chênh lệch cố định).",
+    "comparisonNote": "Đối chiếu từng giờ trong một ngày địa phương đầy đủ (24 giờ).",
     "updatedAt": "Tạo lúc {time}.",
     "metaDescription": "Chênh lệch giờ giữa {a} và {b}: độ bù múi giờ trực tiếp, bảng so sánh từng giờ và lên lịch họp có hỗ trợ giờ mùa hè. Xem ngay bây giờ là mấy giờ ở {b}.",
     "intro": "Chuyển đổi giờ giữa {a} và {b}: xem chênh lệch giờ hiện tại (độ bù), bảng so sánh từng giờ đầy đủ và việc có áp dụng giờ mùa hè, để sắp xếp cuộc gọi, họp và chuyến đi giữa hai địa điểm.",
@@ -130,10 +131,22 @@
       },
       {
         "q": "Giờ tốt nhất cho cuộc họp giữa {a} và {b}?",
-        "a": "Mở trang chủ, thêm cả hai thành phố và dùng bản đồ nhiệt tìm giờ làm việc chồng lấp, sau đó xuất khung giờ sang lịch."
+        "a": "{overlap} Bạn cũng có thể mở đồng hồ thế giới và kéo chọn khung giờ riêng."
       }
     ],
-    "relatedTitle": "Trình chuyển đổi múi giờ liên quan"
+    "relatedTitle": "Trình chuyển đổi múi giờ liên quan",
+    "factLead": "Bây giờ là {aTime} ở {a} và {bTime} ở {b}.",
+    "overlapTitle": "Giờ làm việc trùng nhau",
+    "overlapBody": "Các giờ cả {a} và {b} đều trong 09:00–18:00: {hours}.",
+    "overlapNone": "Hôm nay 09:00–18:00 ở {a} và {b} không trùng.",
+    "dstHeading": "Giờ mùa hè",
+    "dstActive": "{place} đang ở giờ mùa hè ({abbr}).",
+    "dstInactive": "{place} hiện không ở giờ mùa hè ({abbr}).",
+    "dstNone": "{place} không dùng giờ mùa hè.",
+    "nextDst": "Lần đổi tiếp theo: {date}.",
+    "tzAbbrNote": "{label} là {name} ({zone}). Múi giờ hiện dùng {abbr}.",
+    "relatedCitiesTitle": "Giờ hiện tại",
+    "breadcrumbHome": "Trang chủ"
   },
   "Seo": {
     "introTitle": "Đồng hồ thế giới và trình chuyển đổi múi giờ",
@@ -209,9 +222,13 @@
       },
       {
         "q": "Giờ hiển thị có theo thời gian thực không?",
-        "a": "Giờ hiện tại cập nhật trực tiếp trong trình duyệt. Các trang chuyển đổi làm mới bảng mỗi giờ."
+        "a": "Giờ hiện tại và bảng đối chiếu được cập nhật trực tiếp trên trình duyệt mỗi phút."
       }
-    ]
+    ],
+    "citiesTitle": "Giờ hiện tại ở các thành phố phổ biến",
+    "aboutLink": "Giới thiệu",
+    "privacyLink": "Quyền riêng tư",
+    "sourceNote": "Giờ địa phương dùng cơ sở múi giờ IANA."
   },
   "Onboarding": {
     "emptyHeadline": "Tìm giờ họp phù hợp với mọi người",
@@ -255,5 +272,72 @@
   },
   "Loading": {
     "label": "Đang tải…"
+  },
+  "City": {
+    "title": "Giờ hiện tại ở {city}",
+    "metaDescription": "{city}, {country} bây giờ là mấy giờ? Giờ địa phương, lệch UTC, giờ mùa hè và múi IANA {zone}.",
+    "intro": "Giờ địa phương hiện tại ở {city}, {country} là {time} ({date}). Múi giờ: {zone}. Lệch UTC: {offset}.",
+    "iana": "Múi giờ IANA",
+    "utcOffset": "Lệch UTC",
+    "dst": "Giờ mùa hè",
+    "dstYes": "Đang ở giờ mùa hè.",
+    "dstNo": "Hiện không ở giờ mùa hè.",
+    "noDst": "Múi giờ này không dùng giờ mùa hè.",
+    "nextDst": "Lần đổi DST tiếp theo: {date}.",
+    "nextDstLabel": "Lần đổi DST tiếp theo",
+    "country": "Quốc gia",
+    "workHours": "Giờ làm việc thông thường",
+    "workHoursBody": "09:00–18:00 giờ địa phương ở {city}.",
+    "convertersTitle": "Bộ chuyển đổi",
+    "moreInCountry": "Thành phố khác ở {country}",
+    "faqTitle": "Câu hỏi thường gặp",
+    "faq": [
+      {
+        "q": "{city} bây giờ là mấy giờ?",
+        "a": "Ở {city} là {time} ngày {date}. Lệch UTC {offset}."
+      },
+      {
+        "q": "{city} thuộc múi giờ nào?",
+        "a": "{city} dùng múi IANA {zone}."
+      },
+      {
+        "q": "{city} có dùng giờ mùa hè không?",
+        "a": "{dstAnswer}"
+      }
+    ],
+    "breadcrumbHome": "Trang chủ",
+    "openInGrid": "So sánh trên đồng hồ thế giới"
+  },
+  "Country": {
+    "title": "Giờ ở {country}",
+    "metaDescription": "Giờ địa phương và múi giờ ở {country}. Giờ hiện tại các thành phố.",
+    "intro": "{country} dùng {zones} múi giờ. Chọn thành phố để xem giờ địa phương.",
+    "citiesTitle": "Thành phố",
+    "breadcrumbHome": "Trang chủ",
+    "zoneCount": "{n} múi giờ"
+  },
+  "About": {
+    "title": "Về WorldTime",
+    "metaDescription": "Cách WorldTime tính giờ địa phương, lệch múi và giờ mùa hè từ cơ sở IANA.",
+    "lead": "WorldTime là đồng hồ thế giới, bộ chuyển múi giờ và công cụ xếp lịch họp miễn phí. Nhìn là thấy giờ trùng — không tài khoản, không tường phí.",
+    "howTitle": "Cách tính giờ",
+    "howBody": "Mỗi thành phố gắn một múi IANA. Luxon tính lệch và ngày tại một thời điểm. Trình duyệt và HTML cho crawler dùng cùng kết quả.",
+    "dataTitle": "Nguồn dữ liệu",
+    "dataBody": "Quy tắc múi giờ đến từ IANA Time Zone Database (tzdb), cùng bộ dữ liệu với hệ điều hành. Chúng tôi không cào các trang đồng hồ khác.",
+    "dstTitle": "Giờ mùa hè",
+    "dstBody": "DST lấy từ dữ liệu múi, không từ nhãn EST/PST trên URL. Mùa hè America/New_York là EDT. Viết tắt trực tiếp trên trang mới là nguồn chính xác.",
+    "privacyBlurb": "Quyền riêng tư: không cần tài khoản. Chi tiết",
+    "breadcrumbHome": "Trang chủ"
+  },
+  "Privacy": {
+    "title": "Quyền riêng tư",
+    "metaDescription": "Quyền riêng tư WorldTime: không tài khoản; danh sách thành phố nằm trong trình duyệt.",
+    "breadcrumbHome": "Trang chủ",
+    "paragraphs": [
+      "WorldTime không yêu cầu tài khoản và không có cơ sở người dùng cho chính đồng hồ.",
+      "Thành phố, giao diện và tùy chọn lưu trong localStorage để khôi phục lưới. Xóa dữ liệu trang web sẽ xóa chúng.",
+      "Đây là ứng dụng web tĩnh/SSR. Giờ được tính trên thiết bị của bạn và máy chủ của chúng tôi từ dữ liệu IANA. Chúng tôi không bán hồ sơ.",
+      "Nếu cài PWA, service worker chỉ lưu trang trên thiết bị đó để dùng ngoại tuyến."
+    ]
   }
 }
