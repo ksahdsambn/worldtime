@@ -3,7 +3,7 @@ import { type ReactNode } from "react";
 /**
  * 统一的状态 / 空状态表面（科技 premium）。
  *
- * 居中磨砂玻璃卡 + 动效图标（scale-in）+ 渐变标题，用于 loading / error /
+ * 居中不透明 HUD 卡 + 动效图标（scale-in）+ 渐变标题，用于 loading / error /
  * not-found / 事件失效态等，统一这些「边缘界面」的视觉语言。纯展示（动效由
  * CSS 提供），无 hook，可被 server 或 client 组件直接渲染。
  *

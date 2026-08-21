@@ -88,10 +88,38 @@
     /* —— 品牌轨道线（logo .brand-orbit 的描边色）—— */
     --orbit-line: rgba(37, 99, 235, 0.18);
 
-    /* —— 玻璃（Glass）—— 抬升浮层/顶栏磨砂质感 —— */
-    --glass-bg: rgba(255, 255, 255, 0.72);
-    --glass-border: rgba(255, 255, 255, 0.65);
-    --glass-blur: 14px;
+    /* —— Liquid Glass（CSS 层：tint / rim / 环境网格。
+       折射是 opt-in：client 节点 ref={useLiquidGlass()}，见 src/lib/useLiquidGlass.ts）—— */
+    --glass-radius: 12px;
+    --glass-radius-lg: 20px;
+    --glass-radius-full: 9999px;
+    --glass-duration: 180ms;
+    --glass-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    --glass-tint-top: rgba(255, 255, 255, 0.06);
+    --glass-tint-bottom: rgba(179, 179, 179, 0.06);
+    --glass-tint-top-hover: rgba(255, 255, 255, 0.11);
+    --glass-tint-bottom-hover: rgba(179, 179, 179, 0.11);
+
+    --glass-rim-top: rgba(255, 255, 255, 0.55);
+    --glass-rim-hairline: rgba(255, 255, 255, 0.12);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.06);
+
+    --glass-border: rgba(30, 33, 45, 0.12);
+    --glass-shadow: 0 10px 30px rgba(30, 33, 45, 0.1);
+
+    --glass-menu-surface: #f6f7f9;
+    --glass-menu-shadow: 0 12px 32px rgba(20, 22, 30, 0.14),
+      0 4px 10px rgba(20, 22, 30, 0.07);
+
+    --glass-modal-tint: rgba(255, 255, 255, 0.44);
+    --glass-scrim: rgba(20, 22, 30, 0.35);
+
+    --glass-mesh-sky: rgba(56, 189, 248, 0.16);
+    --glass-mesh-blue: rgba(37, 99, 235, 0.2);
+    --glass-mesh-amber: rgba(251, 191, 36, 0.16);
+    --glass-mesh-corner-top: rgba(56, 189, 248, 0.06);
+    --glass-mesh-corner-bottom: rgba(37, 99, 235, 0.08);
 
     /* —— 发光（Glow）—— 主色/暖色染色外发光，用于交互高亮 —— */
     --glow-accent: rgba(37, 99, 235, 0.35);
@@ -107,8 +135,8 @@
       rgba(56, 189, 248, 0.5),
       rgba(37, 99, 235, 0.5)
     );
-    --text-gradient-from: #2563eb; /* 品牌蓝（白底 ~5.2:1）*/
-    --text-gradient-to: #0369a1; /* sky-700：白底 ~5.9:1，达 WCAG AA 正文（含 14–16px 标题）*/
+    --text-gradient-from: #1e40af; /* 蓝-800：最亮网格斑 ~5.9:1 ≥ AA 正文 */
+    --text-gradient-to: #075985; /* sky-800：最亮网格斑 ~5.1:1 ≥ AA 正文 */
 
     color-scheme: light;
   }
@@ -161,10 +189,30 @@
     /* —— 品牌轨道线（暗色提亮）—— */
     --orbit-line: rgba(96, 165, 250, 0.22);
 
-    /* 玻璃：对齐新抬升面 #10182a，半透明 + 更强 blur */
-    --glass-bg: rgba(16, 24, 42, 0.62);
+    --glass-tint-top: rgba(255, 255, 255, 0.06);
+    --glass-tint-bottom: rgba(179, 179, 179, 0.06);
+    --glass-tint-top-hover: rgba(255, 255, 255, 0.11);
+    --glass-tint-bottom-hover: rgba(179, 179, 179, 0.11);
+
+    --glass-rim-top: rgba(255, 255, 255, 0.5);
+    --glass-rim-hairline: rgba(255, 255, 255, 0.1);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.06);
+
     --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-blur: 16px;
+    --glass-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+
+    --glass-menu-surface: #16161b;
+    --glass-menu-shadow: 0 16px 40px rgba(0, 0, 0, 0.55),
+      0 4px 12px rgba(0, 0, 0, 0.35);
+
+    --glass-modal-tint: rgba(0, 0, 0, 0.3);
+    --glass-scrim: rgba(0, 0, 0, 0.55);
+
+    --glass-mesh-sky: rgba(56, 189, 248, 0.18);
+    --glass-mesh-blue: rgba(37, 99, 235, 0.26);
+    --glass-mesh-amber: rgba(251, 191, 36, 0.2);
+    --glass-mesh-corner-top: rgba(56, 189, 248, 0.14);
+    --glass-mesh-corner-bottom: rgba(37, 99, 235, 0.22);
 
     /* 发光：暗色下外发光更显著（「秀场」）*/
     --glow-accent: rgba(59, 130, 246, 0.45);
@@ -341,13 +389,10 @@
       border-color var(--dur-base) var(--ease-out-quint);
   }
 
-  /* —— 标签 / 徽章 —— */
+  /* —— 标签 / 徽章 —— 字号/字色；浮层 chrome 另加 .liquid-glass-chip，不透明衬底上不要套玻璃 */
   .chip {
-    @apply inline-flex items-center gap-1 rounded-full text-[11px] font-medium leading-none;
-    padding: 0.28rem 0.55rem;
-    background-color: var(--surface-hover);
+    @apply inline-flex items-center text-[11px] font-medium leading-none;
     color: var(--text-muted);
-    border: 1px solid var(--border);
   }
 
   /* —— 文本输入 —— */
@@ -475,50 +520,202 @@
      科技 premium · 玻璃 / 发光 / 渐变 组件类
      ========================================================================== */
 
-  /* —— 玻璃表面（frosted glass）—— 抬升卡片 / 关键浮层。
-     半透明 + backdrop-blur + 顶部高光 hairline。backdrop-filter 有性能成本，
-     仅用于顶栏 / 关键浮层 / 选区栏 / 对话框；默认仍用不透明 .surface。
-     注意：基类不声明 transition——否则其简写会覆盖 .motion-* 的 opacity/transform
-     过渡（如 SelectionBar 的 motion-sheet 进/出场）。主题切换的视觉过渡由
-     View Transition（圆形揭示）整体覆盖，玻璃面无需自带 morph。*/
-  .surface-glass {
-    background-color: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  /* —— Liquid Glass —— CSS 磨砂层。
+     折射为 opt-in：client 节点 `ref={useLiquidGlass()}` 在 Chromium 下把
+     backdrop-filter 换成 url(#svg)。未挂 hook / 非 Chromium 时本声明的
+     blur(3px) saturate(125%) 回退生效。
+     基类不声明 transition，以免覆盖 .motion-* 的 opacity/transform。*/
+  .liquid-glass-backdrop {
+    position: relative;
+    isolation: isolate;
+    background-color: var(--app-bg);
+  }
+
+  .liquid-glass-backdrop::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(40rem 32rem at 42% 38%, var(--glass-mesh-blue), transparent 60%),
+      radial-gradient(34rem 30rem at 62% 52%, var(--glass-mesh-amber), transparent 62%),
+      radial-gradient(38rem 34rem at 48% 66%, var(--glass-mesh-sky), transparent 62%),
+      radial-gradient(60rem 40rem at 12% -10%, var(--glass-mesh-corner-top), transparent 60%),
+      radial-gradient(50rem 36rem at 95% 110%, var(--glass-mesh-corner-bottom), transparent 60%);
+  }
+
+  .liquid-glass {
+    position: relative;
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-    /* 顶部 1px 高光：模拟「光自上方打下来」的玻璃边缘 */
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), var(--shadow-sm);
+    border-radius: var(--glass-radius);
+    background: linear-gradient(180deg, var(--glass-tint-top), var(--glass-tint-bottom));
+    box-shadow:
+      var(--glass-shadow),
+      inset 0 1px 0 var(--glass-rim-top),
+      inset 0 0 0 1px var(--glass-rim-hairline),
+      inset 0 -1px 0 var(--glass-rim-bottom);
+    backdrop-filter: blur(3px) saturate(125%);
+    -webkit-backdrop-filter: blur(3px) saturate(125%);
   }
-  /* 交互式玻璃卡：悬停轻浮起 + 主色发光（仅用于可点击卡片；不与 motion-* 同用）*/
-  .surface-glass-interactive {
-    cursor: pointer;
-    transition: box-shadow var(--dur-base) var(--ease-out-quint),
-      transform var(--dur-base) var(--ease-out-quint);
+
+  .liquid-glass--hover {
+    transition:
+      transform var(--glass-duration) var(--glass-ease),
+      box-shadow var(--glass-duration) var(--glass-ease),
+      background var(--glass-duration) var(--glass-ease);
   }
-  .surface-glass-interactive:hover {
-    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1), var(--shadow-glow);
+
+  .liquid-glass--hover:hover {
+    background: linear-gradient(
+      180deg,
+      var(--glass-tint-top-hover),
+      var(--glass-tint-bottom-hover)
+    );
     transform: translateY(-2px);
   }
 
-  /* —— 粘性玻璃栏（顶栏 / 工具条）—— 底部主色渐变 hairline —— */
-  .glass-bar {
-    position: relative;
-    background-color: var(--glass-bg);
-    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  .liquid-glass-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.22rem 0.6rem;
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius-full);
+    background: linear-gradient(180deg, var(--glass-tint-top), var(--glass-tint-bottom));
+    box-shadow: inset 0 1px 0 var(--glass-rim-top);
+    backdrop-filter: blur(6px) saturate(125%);
+    -webkit-backdrop-filter: blur(6px) saturate(125%);
   }
-  /* 底部主色→青 渐变发丝线（取代普通 border-b，更「科技」）*/
-  .glass-bar::after {
+  .liquid-glass-chip--success {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--success) 72%, transparent),
+      color-mix(in srgb, var(--success) 58%, transparent)
+    );
+    border-color: color-mix(in srgb, var(--success) 50%, transparent);
+    color: var(--success-fg);
+    box-shadow: inset 0 1px 0 var(--glass-rim-top);
+  }
+  .liquid-glass-chip--danger {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--danger) 72%, transparent),
+      color-mix(in srgb, var(--danger) 58%, transparent)
+    );
+    border-color: color-mix(in srgb, var(--danger) 50%, transparent);
+    color: var(--danger-fg);
+    box-shadow: inset 0 1px 0 var(--glass-rim-top);
+  }
+
+  .liquid-glass-menu {
+    background: color-mix(in srgb, var(--glass-menu-surface) 55%, transparent);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-radius);
+    box-shadow: var(--glass-menu-shadow), inset 0 1px 0 var(--glass-rim-top);
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+  }
+
+  .liquid-glass--modal {
+    border-radius: var(--glass-radius-lg);
+    background:
+      linear-gradient(180deg, var(--glass-modal-tint), var(--glass-modal-tint)),
+      linear-gradient(180deg, var(--glass-tint-top), var(--glass-tint-bottom));
+  }
+
+  .liquid-glass-scrim {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-scrim);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  /* 全宽贴顶/贴工具条：去掉左右与顶硬边，避免与发丝线叠出双线 */
+  .liquid-glass--bar {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+  }
+  header.liquid-glass--bar {
+    border-bottom: none;
+  }
+  header.liquid-glass--bar::after {
     content: "";
     position: absolute;
-    left: 0;
-    right: 0;
+    inset-inline: 0;
     bottom: 0;
     height: 1px;
     background: var(--border-gradient);
     opacity: 0.7;
     pointer-events: none;
+  }
+
+  /* 玻璃菜单内的行高亮：透明 wash，不要再铺一层 surface */
+  .glass-row-active {
+    background: color-mix(in srgb, var(--text) 6%, transparent);
+  }
+
+  /* 玻璃面板子级：键帽改字重分层，去掉第二层底/边/圆角 */
+  .liquid-glass-menu .kbd,
+  .liquid-glass .kbd {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding-inline: 0;
+    font-weight: 600;
+  }
+
+  .liquid-glass .input,
+  .liquid-glass-menu .input {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .liquid-glass .input:focus,
+  .liquid-glass-menu .input:focus {
+    box-shadow: none;
+    border-color: transparent;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .liquid-glass .btn-ghost,
+  .liquid-glass-menu .btn-ghost {
+    background: transparent;
+    border-color: transparent;
+  }
+  .liquid-glass .btn-ghost:hover,
+  .liquid-glass-menu .btn-ghost:hover {
+    background: color-mix(in srgb, var(--text) 6%, transparent);
+  }
+  .liquid-glass .icon-btn:hover,
+  .liquid-glass .icon-btn:active,
+  .liquid-glass-menu .icon-btn:hover,
+  .liquid-glass-menu .icon-btn:active {
+    background: color-mix(in srgb, var(--text) 6%, transparent);
+  }
+
+  .liquid-glass:not(.liquid-glass--modal) .btn-primary,
+  .liquid-glass-menu .btn-primary {
+    background: transparent;
+    box-shadow: none;
+    color: var(--accent-soft-fg);
+  }
+  .liquid-glass:not(.liquid-glass--modal) .btn-primary:hover,
+  .liquid-glass-menu .btn-primary:hover {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    box-shadow: none;
+    color: var(--accent-hover);
+  }
+  .liquid-glass:not(.liquid-glass--modal) .btn-primary::after,
+  .liquid-glass-menu .btn-primary::after {
+    content: none;
   }
 
   /* —— 悬停发光 —— 交互元素的轻主色辉光（与按压反馈叠加）—— */
@@ -626,6 +823,8 @@
   font-weight: 600;
 }
 
+/* 阅读面：对照表 / 网格 / 状态卡。逐字读数，绝不玻璃化。
+   四角 HUD 描边是品牌 chrome，叠在不透明 --surface 上。 */
 .hud-frame {
   position: relative;
   border: 1px solid var(--border);
@@ -651,6 +850,7 @@
     linear-gradient(var(--accent), var(--accent)) 100% 100% / 1.5px 16px no-repeat;
 }
 
+/* SEO 功能卡：长文阅读面，保持不透明。hover 只加 rim 高光，不做折射。 */
 .feature-card {
   position: relative;
   padding: 0.95rem 1rem 0.95rem 1.15rem;
@@ -674,7 +874,9 @@
 .feature-card:hover {
   transform: translateY(-2px);
   border-color: var(--border-strong);
-  box-shadow: var(--shadow-glow);
+  box-shadow:
+    var(--shadow-glow),
+    inset 0 1px 0 var(--glass-rim-top);
 }
 
 .chrono-spinner {
@@ -708,6 +910,7 @@
   animation: orbit-ring 1.35s linear infinite;
 }
 
+/* 侧栏 UTC 条：衬底是地点列表而非环境网格，保持不透明（JSX 挂 .surface）。 */
 .utc-strip {
   display: flex;
   align-items: center;
@@ -752,14 +955,12 @@
   border-spacing: 0;
 }
 
-/* 表头 / 冻结列：滚动时遮住下层内容。
-   科技 premium：表头用磨砂玻璃（仅 thead，元素少、成本可控），滚动时
-   下层内容经模糊透出，呈「frosted header」质感。冻结首列逐行较多、保持
-   不透明以控制 backdrop-filter 成本与对比度。*/
+/* 表头 / 冻结列：不透明 --surface。
+   表头是日期读数面。衬底是不透明 hud-frame，玻璃化没有网格可采、只会发灰；
+   表头也未 sticky-top（纵向滚动整表一起走）。若将来改吸顶，半透明才会把
+   热力三色透进日期行——现在就保持实色，与单元格一致。 */
 .wt-grid thead th {
-  background-color: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  background-color: var(--surface);
   color: var(--text-muted);
   font-weight: 600;
   border-bottom: 1px solid var(--border-strong);
@@ -983,6 +1184,31 @@
   }
 }
 
+/* View Transition 快照采不到 backdrop-filter 衬底，面板会空白。
+   关掉滤镜（含 hook 写入的 url(#id)），用实色 wash 顶上；结束后恢复。 */
+html.vt-busy .liquid-glass,
+html.vt-busy .liquid-glass-menu,
+html.vt-busy .liquid-glass-chip,
+html.vt-busy .liquid-glass-scrim {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+html.vt-busy .liquid-glass:not(.liquid-glass--modal) {
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+}
+html.vt-busy .liquid-glass-menu {
+  background: color-mix(in srgb, var(--glass-menu-surface) 88%, transparent);
+}
+html.vt-busy .liquid-glass-chip {
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+}
+html.vt-busy .liquid-glass-chip--success {
+  background: color-mix(in srgb, var(--success) 82%, transparent);
+}
+html.vt-busy .liquid-glass-chip--danger {
+  background: color-mix(in srgb, var(--danger) 82%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -991,6 +1217,10 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+  .liquid-glass--hover:hover,
+  .feature-card:hover {
+    transform: none;
   }
 }
 

@@ -86,22 +86,13 @@ function ToastCard({
     <div
       data-state={state}
       role={item.kind === "error" ? "alert" : "status"}
-      className="motion-toast pointer-events-auto flex max-w-sm items-start gap-2 rounded-md px-3 py-2 text-sm shadow-lg"
-      style={{
-        backgroundColor:
-          item.kind === "error"
-            ? "var(--danger)"
-            : item.kind === "success"
-              ? "var(--success)"
-              : "var(--surface)",
-        color:
-          item.kind === "error"
-            ? "var(--danger-fg)"
-            : item.kind === "success"
-              ? "var(--success-fg)"
-              : "var(--text)",
-        border: item.kind === "info" ? "1px solid var(--border)" : "1px solid transparent",
-      }}
+      className={`motion-toast liquid-glass-chip pointer-events-auto flex max-w-sm items-start gap-2 px-3 py-2 text-sm ${
+        item.kind === "error"
+          ? "liquid-glass-chip--danger"
+          : item.kind === "success"
+            ? "liquid-glass-chip--success"
+            : ""
+      }`}
     >
       <span className="flex-1 break-words">{item.message}</span>
       <button

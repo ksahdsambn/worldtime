@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useWorldTimeStore, type HourFormat } from "@/store/useWorldTimeStore";
 import { usePresence } from "@/lib/usePresence";
+import GlassMenu from "./GlassMenu";
 
 /**
  * 设置面板（小时格式等）。
@@ -20,6 +21,7 @@ export default function SettingsPanel() {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLElement>(null);
   // 弹层进出过渡（关闭时多挂载一帧播放退出）
   const presence = usePresence(open, 200);
 
@@ -32,9 +34,14 @@ export default function SettingsPanel() {
   useEffect(() => {
     if (!open) return;
     function onPointerDown(e: PointerEvent) {
-      if (!containerRef.current?.contains(e.target as Node)) {
-        setOpen(false);
+      const t = e.target as Node;
+      if (
+        containerRef.current?.contains(t) ||
+        menuRef.current?.contains(t)
+      ) {
+        return;
       }
+      setOpen(false);
     }
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -63,11 +70,15 @@ export default function SettingsPanel() {
         {tCom("settings")}
       </button>
       {presence.mounted && (
-        <div
+        <GlassMenu
+          ref={menuRef}
+          anchorRef={buttonRef}
+          align="end"
+          width={224}
           data-state={presence.state}
           role="menu"
           aria-label={t("hourFormat")}
-          className="motion-pop surface absolute right-0 z-30 mt-1 w-56 p-3 shadow-lg"
+          className="motion-pop p-3"
         >
           <p className="mb-2 text-xs font-semibold text-ink">
             {t("hourFormat")}
@@ -90,7 +101,7 @@ export default function SettingsPanel() {
               </label>
             ))}
           </div>
-        </div>
+        </GlassMenu>
       )}
     </div>
   );

@@ -7,6 +7,7 @@ import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import type { CityRecord } from "@/lib/types";
 import { toast } from "@/lib/toast";
 import { usePresence } from "@/lib/usePresence";
+import GlassMenu from "./GlassMenu";
 import { IconSearch } from "./icons";
 
 /**
@@ -93,6 +94,7 @@ export default function CitySearch() {
   const [open, setOpen] = useState(false);
   const [highlight, setHighlight] = useState(0);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   const listboxId = "city-search-listbox";
   // 下拉可见 = 聚焦/输入且非空查询；进出过渡由 presence 驱动
   const dropdownVisible = open && query.trim().length > 0;
@@ -161,7 +163,7 @@ export default function CitySearch() {
   }
 
   return (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full max-w-md" ref={anchorRef}>
       <div className="relative">
         <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
         <input
@@ -194,46 +196,52 @@ export default function CitySearch() {
         />
       </div>
       {presence.mounted && (
-        <ul
-              id={listboxId}
-              role="listbox"
-              data-state={presence.state}
-              className="motion-pop motion-pop-left surface absolute z-20 mt-1 max-h-72 w-full overflow-auto p-1 shadow-lg"
+        <GlassMenu
+          as="ul"
+          anchorRef={anchorRef}
+          matchAnchorWidth
+          id={listboxId}
+          role="listbox"
+          data-state={presence.state}
+          className="motion-pop motion-pop-left max-h-72 overflow-auto p-1"
+          onMouseDown={(e) => e.preventDefault()}
+        >
+          {results.length === 0 && (
+            <li className="px-2.5 py-1.5 text-sm text-faint">{t("noResults")}</li>
+          )}
+          {results.map((c, i) => (
+            <li
+              key={c.id}
+              id={`${listboxId}-opt-${i}`}
+              role="option"
+              aria-selected={i === highlight}
             >
-              {results.length === 0 && (
-                <li className="px-2.5 py-1.5 text-sm text-faint">{t("noResults")}</li>
-              )}
-              {results.map((c, i) => (
-                <li
-                  key={c.id}
-                  id={`${listboxId}-opt-${i}`}
-                  role="option"
-                  aria-selected={i === highlight}
-                >
-                  <button
-                    type="button"
-                    onMouseEnter={() => setHighlight(i)}
-                    onClick={() => handleSelect(c)}
-                    className={`flex w-full items-center gap-2 rounded-sm px-2.5 py-1.5 text-left text-sm ${
-                      i === highlight ? "bg-surface-hover" : ""
-                    }`}
-                  >
-                    <span className="text-lg" aria-hidden>
-                      {c.flag}
-                    </span>
-                    <span className="flex-1">
-                      <span className="font-medium text-ink">{c.nameZh}</span>
-                      <span className="ml-1 text-faint">({c.nameEn})</span>
-                      <span className="block text-xs text-faint">
-                        {c.countryZh} · {c.timeZone}
-                      </span>
-                    </span>
-                    <span className="chip">UTC{describeOffset(c)}</span>
+              <button
+                type="button"
+                onMouseEnter={() => setHighlight(i)}
+                onClick={() => handleSelect(c)}
+                className={`flex w-full items-center gap-2 px-2.5 py-1.5 text-left text-sm ${
+                  i === highlight ? "glass-row-active" : ""
+                }`}
+              >
+                <span className="text-lg" aria-hidden>
+                  {c.flag}
+                </span>
+                <span className="flex-1">
+                  <span className="font-medium text-ink">{c.nameZh}</span>
+                  <span className="ml-1 text-faint">({c.nameEn})</span>
+                  <span className="block text-xs text-faint">
+                    {c.countryZh} · {c.timeZone}
+                  </span>
+                </span>
+                <span className="shrink-0 text-[11px] font-medium tabular-nums text-muted">
+                  UTC{describeOffset(c)}
+                </span>
                 <span className="sr-only">{tCom("add")}</span>
               </button>
             </li>
           ))}
-        </ul>
+        </GlassMenu>
       )}
     </div>
   );

@@ -46,7 +46,7 @@ export default function DragHintCoachmark() {
       role="dialog"
       aria-label={t("dragHint")}
       data-state={presence.state}
-      className="motion-fade surface absolute left-1/2 top-3 z-20 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center gap-3 px-3.5 py-2 shadow-md"
+      className="motion-fade liquid-glass-menu absolute left-1/2 top-3 z-20 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 items-center gap-3 px-3.5 py-2"
     >
       <span className="text-left text-sm text-ink">{t("dragHint")}</span>
       <button

@@ -1,6 +1,7 @@
 "use client";
 
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
+import { useLiquidGlass } from "@/lib/useLiquidGlass";
 import HeatmapLegend from "./HeatmapLegend";
 import DateJump from "./DateJump";
 import CursorBar from "./CursorBar";
@@ -15,10 +16,14 @@ import NowButton from "./NowButton";
  */
 export default function GridToolbar() {
   const places = useWorldTimeStore((s) => s.places);
+  const glassRef = useLiquidGlass();
   if (places.length === 0) return null;
 
   return (
-    <div className="animate-fade-up glass-bar flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5">
+    <div
+      ref={glassRef}
+      className="animate-fade-in liquid-glass liquid-glass--bar flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5"
+    >
       <HeatmapLegend />
       <div className="flex flex-wrap items-center gap-1.5">
         <DateJump />

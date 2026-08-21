@@ -94,3 +94,9 @@ grid).
 5. **Global by design.** 11 locales including CJK and Cyrillic. Design for text
    expansion (EN is often the shortest), keep flexible containers, and verify
    layouts against the widest non-Latin strings — not just English.
+6. **Glass is chrome, not copy.** Overlay chrome (topbar, menus, dialogs, toasts)
+   uses liquid-glass. Long-form and data-reading surfaces stay opaque `--surface`:
+   the time grid (including thead), comparison tables, places list, UTC strip,
+   and SEO feature cards. If a card holds tables or numbers that must be read
+   character-by-character, never glassify it. Feature-card hover may add a rim
+   highlight only — no refraction.

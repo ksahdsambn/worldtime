@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import HeatmapLegend from "./HeatmapLegend";
 import { usePresence } from "@/lib/usePresence";
+import GlassMenu from "./GlassMenu";
 import { IconHelp, IconClose } from "./icons";
 
 /**
@@ -20,14 +21,14 @@ export default function HelpPopover() {
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
   // 浮层进/出过渡
   const presence = usePresence(open, 200);
 
   useEffect(() => {
     if (!open) return;
-    // 打开时聚焦关闭按钮，便于键盘用户立刻定位
-    closeRef.current?.focus();
+    // 打开时聚焦关闭按钮。菜单 portal 后同一帧 ref 已挂上；rAF 兜住首帧 measure 失败。
+    const focusId = requestAnimationFrame(() => closeRef.current?.focus());
 
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
@@ -47,6 +48,7 @@ export default function HelpPopover() {
     document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onPointerDown);
     return () => {
+      cancelAnimationFrame(focusId);
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("mousedown", onPointerDown);
     };
@@ -81,13 +83,16 @@ export default function HelpPopover() {
       </button>
 
       {presence.mounted && (
-        <div
+        <GlassMenu
           ref={panelRef}
+          anchorRef={btnRef}
+          align="end"
+          width={320}
           data-state={presence.state}
           role="dialog"
           aria-modal="false"
           aria-label={t("title")}
-          className="motion-pop surface absolute right-0 top-full z-40 mt-1 w-80 max-w-[calc(100vw-1.5rem)] p-4 shadow-lg"
+          className="motion-pop p-4"
         >
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-sm font-semibold text-ink">{t("title")}</h2>
@@ -114,14 +119,14 @@ export default function HelpPopover() {
             ))}
           </ol>
 
-          <div className="mt-4 border-t border-line pt-3">
+          <div className="mt-4 pt-3">
             <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-faint">
               {t("legendTitle")}
             </h3>
             <HeatmapLegend />
           </div>
 
-          <div className="mt-3 border-t border-line pt-3">
+          <div className="mt-3 pt-3">
             <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-faint">
               {t("shortcutsTitle")}
             </h3>
@@ -134,7 +139,7 @@ export default function HelpPopover() {
               ))}
             </ul>
           </div>
-        </div>
+        </GlassMenu>
       )}
     </div>
   );

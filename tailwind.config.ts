@@ -59,11 +59,6 @@ const config: Config = {
           hover: "var(--danger-hover)",
           fg: "var(--danger-fg)",
         },
-        // —— 科技 premium 玻璃面 —— 令牌映射（亮暗各自声明，见 globals.css）——
-        glass: {
-          DEFAULT: "var(--glass-bg)",
-          border: "var(--glass-border)",
-        },
       },
       fontFamily: {
         // 保留 CJK 回退（11 语种含中日韩），仅精简排序以优先取各平台最佳原生无衬线。

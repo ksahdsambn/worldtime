@@ -38,6 +38,7 @@ next-env.d.ts
 # playwright-cli 本地调试输出（浏览器日志与快照、截图）
 .playwright-cli/
 output/
+audit/
 
 # zcode 会话/计划本地元数据
 .zcode/

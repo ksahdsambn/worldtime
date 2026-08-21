@@ -7,6 +7,7 @@ import { formatDuration, defaultSep } from "@/lib/duration";
 import { summaryText } from "@/lib/summary";
 import { encodeState, copyText } from "@/lib/shareUrl";
 import { usePresence } from "@/lib/usePresence";
+import { useLiquidGlass } from "@/lib/useLiquidGlass";
 import type { AppLocale } from "@/i18n/routing";
 
 /**
@@ -25,6 +26,7 @@ export default function SelectionBar() {
   const cursorMs = useWorldTimeStore((s) => s.cursorMs);
   const locale = useLocale() as AppLocale;
   const [flash, setFlash] = useState<string | null>(null);
+  const glassRef = useLiquidGlass();
 
   // 选区清除时延迟卸载，播放退出（下滑 + 淡出）。退出期间仍引用上一次的选区渲染。
   const presence = usePresence(!!selection, 320);
@@ -79,11 +81,12 @@ export default function SelectionBar() {
   return (
     <div className="safe-bottom sticky bottom-3 z-30 px-3">
       <div
+        ref={glassRef}
         data-state={presence.state}
-        className="motion-sheet surface-glass shadow-glow mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
+        className="motion-sheet liquid-glass mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
       >
         <div className="flex shrink-0 items-baseline gap-2">
-          <span className="text-[11px] uppercase tracking-wide text-faint">
+          <span className="text-[11px] uppercase tracking-wide text-muted">
             {t("duration")}
           </span>
           <span

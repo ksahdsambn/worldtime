@@ -165,7 +165,8 @@ export default async function LandingPage({ params }: Props) {
   const pairKind = info.kind === "city" ? t("cityPair") : t("tzPair");
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-10 text-ink sm:py-16">
+    <div className="liquid-glass-backdrop min-h-screen">
+      <main className="mx-auto max-w-2xl px-4 py-10 text-ink sm:py-16">
       <header className="animate-fade-up mb-8">
         <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
           {pairKind}
@@ -248,6 +249,7 @@ export default async function LandingPage({ params }: Props) {
       <JsonLd
         data={faqPageJsonLd(faqItems.map((it) => ({ question: it.q, answer: it.a })))}
       />
-    </main>
+      </main>
+    </div>
   );
 }

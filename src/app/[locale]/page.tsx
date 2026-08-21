@@ -5,6 +5,7 @@ import PlacesPanel from "@/components/PlacesPanel";
 import TimeGrid from "@/components/TimeGrid";
 import SelectionBar from "@/components/SelectionBar";
 import HeaderActions from "@/components/HeaderActions";
+import GlassHeader from "@/components/GlassHeader";
 import GridToolbar from "@/components/GridToolbar";
 import DragHintCoachmark from "@/components/DragHintCoachmark";
 import UrlStateSync from "@/components/UrlStateSync";
@@ -61,14 +62,13 @@ export default async function Home({ params }: Props) {
   const faq = tSeo.raw("faq") as Array<{ q: string; a: string }>;
 
   return (
-    <div className="flex min-h-screen flex-col text-ink">
+    <div className="liquid-glass-backdrop flex min-h-screen flex-col text-ink">
       <UrlStateSync />
       <KeyboardShortcuts />
 
       {/* 顶部导航栏：品牌 · 城市搜索 · 语言/设置/主题。
-          抬升表面（bg-surface）+ 发丝底边 + 极淡阴影，与内凹网格区形成层次。
-          safe-top：notched / 全面屏下避开顶部安全区。 */}
-      <header className="safe-top animate-blur-in glass-bar sticky top-0 z-30 shadow-sm">
+          panel 层玻璃 + 折射（GlassHeader）；safe-top 避开全面屏安全区。 */}
+      <GlassHeader>
         <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
           <h1 className="flex shrink-0 items-center gap-3">
             <span className="brand-orbit brand-orbit--sm">
@@ -86,7 +86,7 @@ export default async function Home({ params }: Props) {
               <span className="text-[16px] font-semibold tracking-tight text-gradient">
                 {t("title")}
               </span>
-              <span className="hidden text-[11px] tracking-wide text-faint sm:block">
+              <span className="hidden text-[11px] tracking-wide text-muted sm:block">
                 {t("tagline")}
               </span>
             </span>
@@ -99,7 +99,7 @@ export default async function Home({ params }: Props) {
           <LiveUtcClock />
           <HeaderActions />
         </div>
-      </header>
+      </GlassHeader>
 
       {/* 主体：左侧地点列表面板 + 右侧网格工作区。
           面板与表头为抬升表面，网格区为内凹表面，构成「分层」深度。 */}

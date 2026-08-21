@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePresence } from "@/lib/usePresence";
+import { useLiquidGlass } from "@/lib/useLiquidGlass";
 
 /**
  * 应用内 prompt / confirm 对话框（取代 window.prompt / window.confirm）。
@@ -57,7 +59,15 @@ export function useDialog(cancelLabel: string, confirmLabel: string) {
   const pendingRef = useRef<Pending | null>(null);
   // 打开对话框前持有焦点的元素，关闭时归还焦点。
   const triggerRef = useRef<HTMLElement | null>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const glassRef = useLiquidGlass();
+  const setPanelRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      panelRef.current = node;
+      glassRef(node);
+    },
+    [glassRef],
+  );
 
   // 可见 = 有挂起且未在关闭中；presence 负责进/出场过渡与延迟卸载
   const presence = usePresence(!!pending && !closing, EXIT_MS);
@@ -180,12 +190,12 @@ export function useDialog(cancelLabel: string, confirmLabel: string) {
   }, [pending, presence.mounted, close]);
 
   let dialog: React.ReactNode = null;
-  if (pending && presence.mounted) {
+  if (pending && presence.mounted && typeof document !== "undefined") {
     const isPrompt = pending.kind === "prompt";
     const onCancel = () => close(isPrompt ? null : false);
     const onConfirm = () => close(isPrompt ? value : true);
     const opts = pending.opts as PromptOpts & ConfirmOpts;
-    dialog = (
+    dialog = createPortal(
       <div
         className="fixed inset-0 z-[60] flex items-end justify-center md:items-center"
         role="dialog"
@@ -196,12 +206,12 @@ export function useDialog(cancelLabel: string, confirmLabel: string) {
           data-state={presence.state}
           onClick={onCancel}
           aria-hidden
-          className="motion-overlay absolute inset-0 bg-black/40"
+          className="liquid-glass-scrim motion-overlay"
         />
         <div
-          ref={panelRef}
+          ref={setPanelRef}
           data-state={presence.state}
-          className="motion-sheet surface relative z-10 m-3 w-full max-w-md p-4 shadow-lg md:m-4"
+          className="motion-sheet liquid-glass liquid-glass--modal relative z-10 m-3 w-full max-w-md p-4 md:m-4"
         >
           {/* 整体包裹 form：两种模式都支持回车提交 */}
           <form
@@ -244,7 +254,8 @@ export function useDialog(cancelLabel: string, confirmLabel: string) {
             </div>
           </form>
         </div>
-      </div>
+      </div>,
+      document.body,
     );
   }
 

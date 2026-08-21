@@ -57,6 +57,11 @@ export function useViewTransition() {
           finished: Promise<void>;
         };
       };
+      const root = document.documentElement;
+      // 快照期间 backdrop-filter（含 SVG url）采不到衬底，玻璃面板会空白。
+      // .vt-busy 关掉滤镜、换成实色 wash，finished 后再恢复折射。
+      root.classList.add("vt-busy");
+      const clearBusy = () => root.classList.remove("vt-busy");
       try {
         // 注意：fn 应在其内部用 flushSync 同步提交 DOM（见 ThemeToggle），
         // 否则 React 异步渲染会使过渡捕获到旧==新快照，过渡不可见。
@@ -64,10 +69,13 @@ export function useViewTransition() {
         const transition = doc.startViewTransition!(async () => {
           await fn();
         });
-        return transition.finished.catch(() => {
-          /* transition 被打断时静默 */
-        });
+        return transition.finished
+          .catch(() => {
+            /* transition 被打断时静默 */
+          })
+          .finally(clearBusy);
       } catch {
+        clearBusy();
         // startViewTransition 同步抛出（某些嵌入 WebView）：回退到直接执行，
         // 保证状态变更一定发生，绝不阻塞功能。
         try {

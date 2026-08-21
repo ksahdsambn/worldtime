@@ -1,5 +1,451 @@
 # 开发进度记录
 
+## 第 34 轮：未提交更改三轮审查
+
+> 时间：2026-08-21
+> 范围：对工作区全部未提交改动（第 28–33 轮 Liquid Glass 落地 + 本轮续修）做三轮连续走读。零新增 npm 依赖。
+
+### 完成内容
+
+- 通读 19 个已改文件 + 4 个未跟踪文件（`GlassHeader` / `GlassMenu` / `useLiquidGlass` / hook 测试）。
+- 第一轮发现并修复 1 项；第二轮无新缺陷；第三轮全套验证通过。
+
+### 三轮独立审查（提交前，对全部未提交 diff）
+
+**第一轮（通读全量 diff + 技能四规则对照）**：走读 `globals.css` 四层 tier / 品牌网格、`useLiquidGlass.ts` 转写与生命周期、`GlassHeader` / `GlassMenu` / Dialog portal、CitySearch / HeaderActions / Help / Settings、Toaster chip、`useViewTransition` `.vt-busy`、阅读面（hud-frame / feature-card / thead / PlacesPanel）。旧类名 `surface-glass` / `glass-bar` / `--glass-bg` / `--glass-blur` / `bg-glass` 零命中。折射仅 4 处。发现并修复：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P3 | `loading.tsx` 在 `min-h-[40vh]` 上挂 `.liquid-glass-backdrop`（`isolation` + `::before { position:fixed }`）。非整页壳时网格可溢出 40vh 盒、与 body 画布叠错——第 28 轮已标过，第 32 轮补 backdrop 时未改高度 | 改为 `min-h-screen`，与首页 / converter 同为整页壳；spinner 仍 CSS-only、不挂折射 |
+
+第 33 轮 PlacesPanel 计数去掉 `.liquid-glass-chip` 后该文件与 HEAD 无净 diff，结论保持。
+
+**第二轮（修复质量 + 边界复查）**：对 loading 全屏壳再审，并核对层叠 / 主题 / 动效 / 嵌套玻璃。无新缺陷。重点核对：
+
+- **loading**：layout 不含顶栏，Suspense 回退即整页；`isolation` 现覆盖视口，`::before` 网格与 page.tsx 同构。胶囊仍 `.liquid-glass`、RSC 不挂 hook。
+- **hooks 顺序**：`GridToolbar` / `SelectionBar` 的 `useLiquidGlass` 均在 early return 之前；Dialog 始终调 hook，面板挂载才 attach。
+- **portal 层叠**：菜单 `z-index:50`（高于顶栏 30、低于 Dialog 60 / Toast 70）；HeaderActions 遮罩 40。Dialog / 四个下拉均 portal 出顶栏 filter 子树。
+- **嵌套玻璃**：菜单内 UTC 为字重分层；Help 去 `border-t`；`.kbd` / 玻璃内 `.input` 去底边。HeatmapLegend 色块是数据色点，不是第二层玻璃板。
+- **VT**：`.vt-busy` 用 `!important` 盖过 hook 内联 `url(#id)`；`finished.finally` / `catch` 都会清 class。
+- **阅读面**：hud-frame / feature-card / PlacesPanel / thead / 网格单元格仍不透明；单元格无 `backdrop-filter`。
+- **未扩大 diff**：着陆页 `<main>` 子级仍未随外包 div 再缩进（JSX 合法）；滤镜引用归零后空 `<svg defs>` 留在 body（0×0，不修）。
+
+**第三轮（最终检查 + 全套验证）**：残留扫描零命中；hooks 均在 early return 之前。全套验证：
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 155/155 通过 |
+| 生产构建（`next build`） | ✅ 成功（283 页 SSG） |
+| 残留扫描 | ✅ `surface-glass` / `glass-bar` / `--glass-bg` / `--glass-blur` / `bg-glass` 零命中 |
+| 折射 / chip | ✅ hook 4 处（顶栏 / 工具条 / 选区 / Dialog）；chip 仅 Toaster |
+
+### 涉及文件
+
+- 本轮代码：`src/app/[locale]/loading.tsx`（`min-h-screen`）
+- 本轮复核未改：第 28–33 轮其余 diff（`globals.css`、`useLiquidGlass.ts`、`GlassHeader` / `GlassMenu`、Dialog / 下拉 / Toaster / page.tsx / converter）
+
+### 设计说明 / 遗留
+
+- **玻璃仍只用于 chrome**：顶栏 / 工具条 / 选区栏 / Dialog / 下拉 / Toast。网格、对照表、地点列表、SEO 卡、表头、侧栏计数保持实色/纯文字。
+- **modal 主按钮** 保持实心（frost 上的 CTA）。
+- **1px divider 与热力色标** 不是嵌套面板，保留底/边。
+
+## 第 33 轮：PlacesPanel 计数去掉玻璃 chip
+
+> 时间：2026-08-21
+> 范围：不透明侧栏上的地点计数不再套 `.liquid-glass-chip`（采不到环境网格会发灰）。零新增 npm 依赖。
+
+### 完成内容
+
+- `PlacesPanel.tsx` 移动端折叠条计数：`chip liquid-glass-chip` → `chip`（仅字号/字色）。
+- `globals.css` `.chip` 注释改为：浮层 chrome 才加 `.liquid-glass-chip`；不透明衬底不要套玻璃。
+- Toast 仍是唯一 `.liquid-glass-chip` 消费方（浮于页面，可采网格）。
+
+未改：modal 实心主按钮、thead 不透明（读数面）。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 155/155 通过 |
+| `liquid-glass-chip` 组件引用 | ✅ 仅 `Toaster.tsx` |
+
+### 涉及文件
+
+- `src/components/PlacesPanel.tsx`
+- `src/app/globals.css`（注释）
+
+### 设计说明 / 遗留
+
+- 第 30–32 轮「PlacesPanel 计数 chip 落在不透明侧栏上偏灰」已消化。
+- 玻璃仍只用于 chrome：顶栏 / 工具条 / 选区栏 / Dialog / 下拉 / Toast。网格、对照表、地点列表、SEO 卡、表头、侧栏计数保持实色/纯文字。
+
+## 第 32 轮：Liquid Glass 技能 Checklist 验收 + 三轮审查
+
+> 时间：2026-08-21
+> 范围：按 liquid-glass 技能 SKILL.md Checklist 逐条验收第 28–31 轮未提交的玻璃落地；FAIL 项当场修。随后对**全部未提交更改**做三轮连续走读。零新增 npm 依赖。
+
+### 完成内容（Checklist 验收）
+
+截图证据：`audit/liquid-glass/`（已 `.gitignore`，不入库）。
+
+| 项 | 结果 | 证据 / 处理 |
+| --- | --- | --- |
+| 环境网格（去玻璃后仍有品牌色斑） | PASS | `01-mesh-light.png` 中心斑 rgb(195,214,244)；`01-mesh-dark.png` 蓝/琥珀/青 |
+| 子元素无 bg/border/二次圆角 | PASS（已修） | 玻璃内 `.input` / `.btn-ghost` / `.icon-btn:hover` 去嵌套表面；非 modal `.btn-primary` 改为强调色文字。残留：1px `divider`、8×14 热力色标、modal 实心主按钮 |
+| 双主题令牌 + 浅色 rim 不消失 | PASS | `:root` / `.dark` 令牌齐全。浅：`03-header-light.png` 底沿渐变发丝；深：`03-header-dark.png` 白 rim |
+| 文字对比（最亮网格斑） | PASS（已修） | 浅色 `--text-gradient-from/to` 改为 `#1e40af` / `#075985`（最亮斑 5.92 / 5.13 ≥ 4.5）。选区摘要 15.5；对话框 10.4；搜索下拉 10.6 |
+| 热力三色 + 文字冗余 | PASS | `06-heatmap-light.png` 格内时刻 + 工具条图例 |
+| 非 Chromium 磨砂、不烘焙 | PASS | UA 模拟 Firefox：`bakes=0`，CSS `blur(3px) saturate(1.25)`。`07-firefox-sim-*.png` 非空白 |
+| chip 无折射，折射面 ≤5 | PASS | 顶栏/工具条/选区 + 对话框打开 =4。chip `chipHasUrl: false` |
+| 无令牌处硬编码 hex | PASS | 组件层无 `bg-[#…]`；hex 仅在令牌定义 / OG / manifest |
+| reduced-motion | PASS | 过渡 `1e-06s`；`--hover` transform none |
+| 移动端网格无 backdrop-filter | PASS | 单元格 `backdrop-filter: none`。`09-mobile.png` |
+| PWA safe-area | PASS | `viewport-fit=cover` + `.safe-top/bottom`。`09-mobile-safe-area.png` |
+| zh-Hant / ru 不溢出 | PASS | `scrollWidth` 无溢出。`10-zh-Hant.png` `10-ru.png` |
+
+**本轮代码改动（相对第 31 轮）：**
+- `loading.tsx`：补 `liquid-glass-backdrop`，spinner 从旧 `surface-glass` 改为 `.liquid-glass`（CSS-only，不挂折射）。
+- `globals.css`：玻璃子级去嵌套表面；浅色标题渐变加深过 AA。
+- 三轮审查续修：玻璃内主按钮改 `--accent-soft-fg`（`--accent` #2563eb 在最亮斑仅 3.51:1）；`GridToolbar` 进场从 `animate-fade-up`（残留 `translateY(0)`）改为 `animate-fade-in`，与 `GlassHeader` 同一理由；`.gitignore` 增加 `audit/`。
+
+### 三轮独立审查（提交前，对全部未提交 diff）
+
+**第一轮（通读 diff + Checklist 对照）**：走读 `globals.css` 四层 tier、`useLiquidGlass.ts`、`GlassHeader` / `GlassMenu` / Dialog portal、CitySearch / HeaderActions / Help / Settings 的 portal 菜单、PlacesPanel chip、Toaster chip、`useViewTransition` 的 `.vt-busy`。旧类名 `surface-glass` / `glass-bar` / `--glass-bg` / `--glass-blur` / `bg-glass` 零命中。发现并修复：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P2 | 非 modal `.btn-primary` 去填充后 `color: var(--accent)`（#2563eb）在最亮网格斑上 3.51:1，不达 AA 正文 | 改为 `var(--accent-soft-fg)`（浅 #1e40af ≈5.9:1；深 #bfdbfe 高对比） |
+| 2 | P3 | `GridToolbar` 使用 `animate-fade-up both`，进场结束后 `transform: translateY(0)` 残留在玻璃节点上（`GlassHeader` 已特意避开 transform/filter） | 改为 `animate-fade-in`（仅 opacity） |
+| 3 | P3 | `audit/liquid-glass/` 验收截图未忽略，易被误提交 | `.gitignore` 增加 `audit/` |
+
+**第二轮（修复质量 + 边界复查）**：对第一轮三处再审，并核对层叠 / 主题 / 动效 / 嵌套玻璃。无新缺陷。重点核对：
+
+- **主按钮色**：`.liquid-glass:not(.liquid-glass--modal) .btn-primary` 特异性高于 `.btn-primary`；modal 确认键仍实心 `--accent` + 白字。hover 仍用 `--accent-hover`（浅 #1d4ed8 最亮斑 4.55:1）。
+- **Dialog**：scrim 与 panel 为兄弟（非父子），避免双重 `backdrop-filter` 自成 containing block；panel `z-10` 高于 fixed scrim；portal 到 `body`，折射采页面而非顶栏。
+- **GlassMenu**：portal + `getBoundingClientRect`；Settings 外点关闭同时看 `containerRef` 与 `menuRef`（portal 后菜单不在容器内）；CitySearch `onMouseDown preventDefault` 避免 portal 导致 input blur。
+- **折射面**：`useLiquidGlass` 仅 GlassHeader / GridToolbar / SelectionBar / Dialog 四处；chip / menu / loading spinner / coachmark 均为 CSS-only。`isSupported()` 非 Chromium 直接 return，不烘焙 canvas。
+- **vt-busy**：`!important` 关掉滤镜（含 hook 写入的 `url(#id)`）；结束后去掉 class，inline `backdrop-filter` 恢复。
+- **阅读面**：hud-frame / feature-card / PlacesPanel / thead / 网格单元格仍不透明；单元格无 `backdrop-filter`。
+- **未扩大 diff**：未改 `LiveUtcClock` 的 `text-faint`（装饰标签）；着陆页 `<main>` 子级缩进未动；PlacesPanel 计数 chip 落在不透明侧栏上偏灰（第 30 轮已记录，按小 chrome 保留）。
+
+**第三轮（最终检查 + 全套验证）**：残留扫描零命中；hooks 均在 early return 之前（GridToolbar / SelectionBar）。全套验证：
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 155/155 通过 |
+| 生产构建（`next build`） | ✅ 成功（283 页 SSG；审查续修为 CSS/className，tsc/lint/test 已覆盖） |
+| 残留扫描 | ✅ `surface-glass` / `glass-bar` / `--glass-bg` / `--glass-blur` / `bg-glass` 零命中 |
+| 折射 / chip | ✅ hook 4 处；chip 无 `url(#)` |
+
+### 涉及文件
+
+- 令牌/组件类：`src/app/globals.css`（子级去表面、标题渐变、主按钮 `--accent-soft-fg`）
+- 加载态：`src/app/[locale]/loading.tsx`
+- 工具条进场：`src/components/GridToolbar.tsx`
+- 忽略规则：`.gitignore`（`audit/`）
+- 本轮复核未改、保持第 28–31 轮结论：`useLiquidGlass.ts`、`GlassHeader.tsx`、`GlassMenu.tsx`、Dialog / CitySearch / HeaderActions / Help / Settings / SelectionBar / Toaster / page.tsx / time-converter
+
+### 设计说明 / 遗留
+
+- **玻璃仍只用于 chrome**：顶栏 / GridToolbar / SelectionBar / Dialog / 下拉 / Toast / 计数徽章。网格、对照表、地点列表、SEO 卡、表头保持实色。
+- **1px divider 与热力色标** 不是嵌套面板，保留底/边。
+- **modal 主按钮** 保持实心（frost 层上的 CTA；技能 recipe 2）。
+- **验收截图** 在 `audit/liquid-glass/`，本地可查、不入库。
+
+## 第 31 轮：内容型表面保持不透明 + 三轮审查
+
+> 时间：2026-08-21
+> 范围：按「浮层 chrome 用玻璃，长文/读数面保持不透明」处理剩余内容型表面。并对**本轮未提交更改**做三轮连续走读（第 28–30 轮玻璃地基仍在工作区，本轮只动阅读面边界）。零新增 npm 依赖。
+
+### 完成内容
+
+**① `.hud-frame`（LandingComparison / time-converter / TimeGrid / StateSurface）**
+- 对照表、时差数字、网格外壳、状态卡都是逐字读数面：保持 `background-color: var(--surface)`，四角 HUD 描边不动。
+- 不挂 `.liquid-glass`、不加折射。
+
+**② footer `.feature-card`**
+- 保持不透明 `--surface`。hover 只加 `inset 0 1px 0 var(--glass-rim-top)` 作玻璃反射暗示，无 `backdrop-filter`、无折射。
+- `prefers-reduced-motion` 与 `(hover: none)` 均去掉抬升；触屏额外清掉 box-shadow（含 inset rim）。
+
+**③ PlacesPanel**
+- aside `bg-surface`、`.utc-strip.surface`、地点行 `.surface` 均保持不透明（衬底是列表而非环境网格，玻璃化只会发灰）。
+- 计数徽章仍是第 30 轮的 `.chip.liquid-glass-chip`（小 chrome，非读数面）。
+
+**④ `.wt-grid thead th`**
+- 去掉第 28 轮的 `color-mix` + `backdrop-filter` 磨砂，改回不透明 `--surface`。
+- 表头是日期读数面；衬底是不透明 hud-frame，玻璃化没有网格可采。表头也未 `sticky-top`（纵向滚动整表一起走）。热力三色 / 周末底 / 选区规则未改。
+
+**⑤ 残留扫描**
+- `surface-glass` / `glass-bar` / `--glass-bg` / `--glass-blur` / `bg-glass` 在 ts/tsx/css/js 零命中（`progress.md` 历史叙述除外）。
+- `backdrop-filter` 仅留在四层 glass tier、scrim、`.vt-busy` 关闭规则。
+
+**⑥ 设计上下文**
+- `AGENTS.md` 原则 6：Glass is chrome, not copy。
+- `StateSurface` 注释从「磨砂玻璃卡」改为「不透明 HUD 卡」。
+
+### 三轮独立审查（提交前，对本轮 diff）
+
+**第一轮（通读本轮 diff + 相关表面）**：走读 `globals.css` 阅读面块、`LandingComparison` / `PlacesPanel` / `TimeGrid` thead、`AGENTS.md`。第 28–30 轮玻璃 chrome（顶栏 / 工具条 / 选区栏 / Dialog / GlassMenu / chip）未回退。发现并修复：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P3 | 表头注释写成「半透明会让热力色透进日期行」——thead 并未 `sticky-top`，纵向滚动整表一起走，热力色本就不会透进日期行 | 注释改为：读数面 + 衬底是不透明 hud-frame（玻璃化发灰）；并记下若将来吸顶才有透色风险 |
+
+**第二轮（修复质量 + 边界复查）**：对第一轮注释再审，并核对层叠 / 主题 / 动效 / 嵌套玻璃。无新缺陷。重点核对：
+
+- **hud-frame**：仍是不透明 `--surface` + HUD `::before`；LandingHero 的 `shadow-glow` 不覆盖 rim（本来就没有玻璃 rim）。
+- **feature-card**：不透明；hover 的 `--shadow-glow` + inset rim 同写在 `box-shadow` 里，不会整段盖掉彼此。浅色白底上白 rim 很淡（可接受的「暗示」）；深色可见。触屏 `(hover: none)` 清 `box-shadow`；reduced-motion 只禁 `transform`，rim 仍可出现。
+- **PlacesPanel**：aside / utc-strip / 地点卡无 `liquid-glass*`。计数 chip 在不透明侧栏上会偏灰（技能规则 1），属第 30 轮小徽章，本轮不回退。
+- **thead vs 热力**：`.wt-grid td[data-heat]` / `[data-weekend]` / `[data-selected]` 未改。冻结列仍不透明 `--surface`。thead 不再跑 `backdrop-filter`，`.vt-busy` 不必覆盖它。
+- **嵌套玻璃**：未把阅读面套进 panel 层。Help 里 HeatmapLegend 色块是数据色点，不是第二层玻璃板。
+- **未扩大 diff**：未改 `LiveUtcClock` / `LocaleSwitcher` / `HeatmapLegend` 的 `text-faint`（11px 装饰标签，第 28 轮已修过正文级 tagline / duration）。着陆页 `<main>` 子级仍未再缩进。
+
+**第三轮（最终检查 + 全套验证）**：残留扫描零命中；`.wt-grid` 单元格规则未改。全套验证：
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 155/155 通过 |
+| 生产构建（`next build`） | ✅ 成功（283 页 SSG；注释修订后 tsc/lint/test 已覆盖） |
+| 残留扫描 | ✅ 旧玻璃类名 / `--glass-bg` / `--glass-blur` 零命中 |
+| thead `backdrop-filter` | ✅ 已移除，仅四层 glass + scrim + vt-busy 仍用 |
+
+### 涉及文件
+
+- 令牌/组件类：`src/app/globals.css`（hud-frame / feature-card / utc-strip / thead / reduced-motion）
+- 设计上下文：`AGENTS.md`（原则 6）
+- 注释：`src/components/StateSurface.tsx`
+- 本轮未改、复核保持不透明：`LandingComparison.tsx`、`PlacesPanel.tsx`、`TimeGrid.tsx`、`time-converter/[slug]/page.tsx`
+
+### 设计说明 / 遗留
+
+- **玻璃仍只用于 chrome**：顶栏 / GridToolbar / SelectionBar / Dialog / 下拉 / Toast / 计数徽章。网格、对照表、地点列表、SEO 卡、表头保持实色。
+- **PlacesPanel 计数 chip** 落在不透明侧栏上，磨砂采不到环境网格（第 30 轮挂上，本轮按「小 chrome」保留）。
+- **第 28–30 轮未提交更改仍在工作区**；本轮审查范围是阅读面边界，未重开那三轮的折射/portal 结论。
+
+## 第 30 轮：四层 Liquid Glass 落到生产表面 + 三轮审查
+
+> 时间：2026-08-21
+> 范围：把第 28 轮 CSS 四层 tier + 第 29 轮 `useLiquidGlass` 折射挂到指定生产表面。网格本体（`.wt-grid` 单元格 / 热力三色 / 选区色）禁止玻璃化。并对**全部未提交更改**（第 28–30 轮）做三轮连续走读审查。零新增 npm 依赖。
+
+### 完成内容
+
+**① panel 层 + 折射**
+- 顶栏：`GlassHeader` client 岛（首页是 RSC，不能直接调 hook）+ `.liquid-glass.liquid-glass--bar` + `useLiquidGlass()`。进场用 `animate-fade-in` 而非 `blur-in`（残留 `filter:blur(0)` 会自成 containing block，采空 backdrop-filter）。全宽条 `MAX_MAP_EDGE` 自动降采样。底部品牌渐变发丝线保留，去掉底边硬框以免叠双线。
+- `GridToolbar`：同 panel + `--bar`（无顶边，避免与顶栏发丝线对撞）+ 折射。`useLiquidGlass` 在 `places.length===0` 早退之前调用。
+- `SelectionBar`：panel + 折射，保留 `motion-sheet` 进出场。
+
+**② modal 层 + 折射**
+- `Dialog`：遮罩 `.liquid-glass-scrim` + `motion-overlay`；面板 `.liquid-glass.liquid-glass--modal` + 折射。modal 霜化 tint 未减。`createPortal` 到 `document.body`（避开 `PlacesPanel` `animate-slide-in-left` 残留 transform 把 `position:fixed` 困在 aside 里）。
+
+**③ menu 层（CSS only，不挂折射）**
+- `GlassMenu`：portal 到 body + `position:fixed` 跟锚点。顶栏带 backdrop-filter 后，子树内菜单只能采到顶栏衬底。
+- 四处下拉保留 `motion-pop`：`CitySearch` 结果列表、`HeaderActions` ⋯ 菜单、`SettingsPanel`、`HelpPopover`。
+- `DragHintCoachmark`：menu 层（浮于网格，需要可读性）。
+
+**④ chip 层（CSS only）**
+- `Toaster`：`.liquid-glass-chip` + `--danger` / `--success` 彩色玻璃（只改 tint，rim 保留）。
+- 地点计数徽章：`.chip.liquid-glass-chip`。城市搜索 UTC 偏移改为字重分层（避免菜单里再套一层玻璃）。
+
+**⑤ View Transition × backdrop-filter**
+- `useViewTransition` 在 `startViewTransition` 期间给 `<html>` 加 `.vt-busy`：关掉 backdrop-filter（含 hook 的 `url(#id)`），换成实色 wash；`finished` / 抛错后去掉。切换瞬间面板不空白。
+
+### 三轮独立审查（提交前，对全部未提交 diff：第 28 轮 CSS + 第 29 轮 hook + 本轮表面）
+
+**第一轮（通读全量 diff）**：走读 17 个已改文件 + 3 个新文件（`GlassHeader` / `GlassMenu` / 既有 hook）。第 28 轮令牌与四层 CSS、第 29 轮折射转写复核通过。网格单元格 / 热力 / 选区未改。发现并修复：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P2 | `GlassMenu` 以 capture 听 `scroll`，城市搜索列表 `overflow` 滚动每帧 `setState` 重算锚点 | 改为冒泡 `window.scroll`；坐标未变则返回同一 `prev` |
+| 2 | P3 | `Dialog` `createPortal(document.body)` 未守卫 `document`（client SSR 下 `pending` 虽为 null，与 HeaderActions 不一致） | 条件加 `typeof document !== "undefined"` |
+| 3 | P3 | `HelpPopover` 打开时同步 `closeRef.focus()`：若首帧 `measure` 失败 portal 未挂，焦点落空 | `requestAnimationFrame` 再聚焦，cleanup 取消 rAF |
+
+**第二轮（修复质量 + 边界复查）**：对第一轮修补再审，并核对 portal 层叠 / 钩子顺序 / 嵌套玻璃 / VT。无新缺陷。重点核对：
+
+- **hooks 顺序**：`GridToolbar` / `SelectionBar` 的 `useLiquidGlass` 均在早退之前；`useDialog` 始终调用 hook，面板挂载才 attach。
+- **portal 层叠**：菜单 `z-index:50`（高于顶栏 30、低于 Dialog 60 / Toast 70）；HeaderActions 遮罩 40、菜单 50。
+- **transformed 祖先**：Dialog / 四个下拉均 portal 出 `PlacesPanel` 与顶栏 filter 子树。
+- **嵌套玻璃**：菜单内 UTC 无 chip；Help 内 `border-t border-line` 已改间距+字重；`.kbd` 在玻璃面板内去底/边。`.input` / `.btn` 作为表单控件保留自有表面。
+- **VT**：`.vt-busy` 用 `!important` 盖过 hook 内联 `url(#id)`；modal 霜化背景不覆盖（只关滤镜）；`finished.finally` / `catch` 都会清 class。
+- **引擎门控**：非 Chromium hook no-op，CSS `blur(3px) saturate(125%)` 回退仍在。实测 Chromium `url("#liquid-glass-0")`，去掉内联后 `blur(3px) saturate(1.25)`。
+- **未扩大 diff**：着陆页 `<main>` 子级仍未随外包 div 再缩进（JSX 合法，第 28 轮已记录）；loading 胶囊不套 backdrop（路由切换闪全屏网格更吵）。
+
+**第三轮（最终检查 + 全套验证）**：残留扫描 `glass-bar` / `surface-glass` / `--glass-bg` / `--glass-blur` 零命中；`.wt-grid` 单元格规则未改。全套验证：
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 155/155 通过 |
+| 生产构建（`next build`） | ✅ 成功（283 页 SSG） |
+| Chromium 折射 | ✅ `backdrop-filter: url("#liquid-glass-0")` |
+| 磨砂回退 | ✅ `blur(3px) saturate(1.25)` |
+| 浅/深截图 | ✅ 顶栏 / 选区栏 / 对话框 / 城市搜索下拉 / Toast |
+
+### 涉及文件
+
+- 新增：`src/components/GlassHeader.tsx`、`src/components/GlassMenu.tsx`
+- 表面：`page.tsx`、`GridToolbar.tsx`、`SelectionBar.tsx`、`Dialog.tsx`、`CitySearch.tsx`、`HeaderActions.tsx`、`SettingsPanel.tsx`、`HelpPopover.tsx`、`DragHintCoachmark.tsx`、`Toaster.tsx`、`PlacesPanel.tsx`
+- 主题切换：`src/lib/useViewTransition.ts`、`globals.css`（`--bar` / 发丝线 / `.vt-busy` / chip 语义色 / `.glass-row-active`）
+- 第 28–29 轮已改、本轮复核：`useLiquidGlass.ts`、`loading.tsx`、`time-converter/[slug]/page.tsx`、`tailwind.config.ts`
+
+### 设计说明 / 遗留
+
+- **第 29 轮「生产表面未挂 hook」由本轮消化**：顶栏 / 工具条 / 选区栏 / 对话框已 opt-in 折射；菜单与 chip 按技能档位仍是 CSS-only。
+- **不引入 `data-theme`**：主题仍由 next-themes `class="dark"` 驱动。
+- **`.chip` 只留字号/字色**，表面由 `.liquid-glass-chip` 提供（仅 PlacesPanel 合用）。
+
+## 第 29 轮：Liquid Glass 折射 hook（Angular directive → React）+ 三轮审查
+
+> 时间：2026-08-21
+> 范围：把 liquid-glass 技能的 Angular 折射指令逐行转写为 React hook（`src/lib/useLiquidGlass.ts`），严格按 `references/refraction.md`「transcription, not design」。并对**全部未提交更改**（第 28 轮 CSS 地基 + 本轮 hook）做三轮连续走读审查。零新增 npm 依赖。
+
+### 完成内容
+
+**① 选 hook 不选 `<LiquidGlass>` 包装组件**
+- `.liquid-glass` 已画在现有节点上（顶栏 / GridToolbar / SelectionBar / loading 胶囊）；包装组件会多一层 DOM 或抢 tag。
+- callback-ref 才是 Angular attribute directive 的 1:1；用法：`<div className="liquid-glass" ref={useLiquidGlass()}>…</div>`。
+- 首页是 Server Component，不能直接调 hook；生产表面本轮不挂载（演示面板验证后按要求移除），CSS `blur(3px) saturate(125%)` 回退继续生效。未引用故不进首页 JS bundle。
+
+**② `src/lib/useLiquidGlass.ts`（转写）**
+- 常量一字未改：`GLASS_PRESET`（edge/rim/base 强度与距离、cornerBoost 0.06、ripple 0.26、blurRadius 2、warp false）、`SUPERSAMPLE=2`、`MAX_MAP_EDGE=1400`、`BLUR_STD_PER_RADIUS=0.35`。
+- 位移场 1:1：圆角矩形 SDF `distPx`、edge/rim/base 指数衰减、texcoord 法线、corner boost、ripple、`pageW`/`pageH` 视口比例、`128/255` 解码偏置预减、滤镜区域 `scale/2 + 3·blurRadius·BLUR_STD_PER_RADIUS`。
+- 生命周期：`ResizeObserver` 观察宿主 + `window.resize` 180ms 防抖 + rAF 合帧重建；滤镜按 `[w,h,radius,pageW,pageH,cfg]` 键共享并引用计数，复用前检查 `node.isConnected`；卸载时 disconnect / 摘 listener / 清 debounce / 取消 rAF / 释放滤镜 / 去掉内联 `backdrop-filter`（让 CSS 回退回来；Angular 随宿主销毁不需要这一步）。
+- 引擎门控：`navigator.userAgentData.brands` 检测 Chromium/Chrome/Edge，回退 `/Chrome\//`。不支持则 no-op。不用 `@supports`。
+- 圆角从 `getComputedStyle().borderTopLeftRadius` 读取（含 `%` → `min(w,h)`），不作为参数。
+- 保留 liquid-glass-js（dashersw/liquid-glass-js, MIT © 2025 Armagan Amcalar）署名头。
+
+**③ 测试**：`tests/lib/useLiquidGlass.test.ts` 锁定 preset / 三常量 / 滤镜 margin 公式 / `resolveRadius`（px 与 %）。
+
+**④ CSS 注释**：令牌与 `.liquid-glass` 块标明折射为 opt-in hook，未挂载时 CSS 回退生效。
+
+### 三轮独立审查（提交前，对全部未提交 diff：第 28 轮 CSS + 本轮 hook）
+
+**第一轮（通读全量 diff）**：走读 8 个已改文件 + 2 个新文件。第 28 轮 CSS 地基（令牌双主题、四层 tier、backdrop 网格、消费方 className、thead `color-mix` 回退、对比度改 muted）复核通过。hook 发现并修复：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P2 | hook 用 `useEffect` 清理 callback-ref 的 attach。React 18 Strict Mode 会重跑 effect **而不**再调 ref：滤镜被 release，节点仍挂在 DOM 上，开发态折射消失 | 去掉 `useEffect`；只在 callback ref（含 `ref(null)` 卸载）里 attach/detach |
+| 2 | P3 | `globals.css` 令牌注释仍写「折射未接入」，components 块却写 hook「已接入」——生产表面实际未挂 hook，两处都易误导 | 两处改为「opt-in：`ref={useLiquidGlass()}`；未挂则 CSS 回退」 |
+
+**第二轮（修复质量 + 边界复查）**：对第一轮修补再审，并核对 CSS 层叠 / 引擎门控 / 滤镜共享。无新缺陷。重点核对：
+
+- **转写保真**：preset 十项、三常量、SDF / 衰减 / 法线 / corner / ripple / bias / margin 与 Angular 指令一致；半径仍从 computed style 读。
+- **Strict Mode**：卸载路径只剩 `ref(null)`（React 18 卸载 callback-ref 必调）；`config` 经 ref 读取，callback 身份稳定。
+- **引擎门控**：有 `userAgentData.brands` 走品牌表，否则 `/Chrome\//`；SSR `navigator` 缺失返回 false。无 `@supports`。
+- **滤镜共享**：同 key 且 `isConnected` 才 reuse；defs `<svg>` 被摘掉会重建。卸载 `removeProperty("backdrop-filter")` 恢复 CSS 回退。
+- **第 28 轮 CSS**：`.liquid-glass { position: relative }` 在 components 层，顶栏 `sticky` / `rounded-none` 在 utilities 层仍胜出；Toaster 在 isolate 壳外；`surface-glass` / `glass-bar` / `--glass-bg` / `--glass-blur` 在 ts/tsx/css 零命中。
+- **未扩大 diff**：着陆页 `<main>` 子级仍未随外包 div 再缩进（JSX 合法，第 28 轮已记录）；生产表面不挂 hook（首页为 RSC）。
+
+**第三轮（最终检查 + 全套验证）**：常量再对 refraction.md；残留扫描零命中；hook 无生产 import（有意，不进 bundle）。全套验证：
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 155/155 通过（149 + hook 6） |
+| 生产构建（`next build`） | ✅ 成功（283 页 SSG） |
+| 残留扫描 | ✅ 旧玻璃类名 / `--glass-bg` 零命中 |
+
+### 涉及文件
+
+- 新增：`src/lib/useLiquidGlass.ts`、`tests/lib/useLiquidGlass.test.ts`
+- 注释：`src/app/globals.css`（opt-in 说明）
+- 第 28 轮已改、本轮复核未再动：`src/app/[locale]/page.tsx`、`loading.tsx`、`time-converter/[slug]/page.tsx`、`GridToolbar.tsx`、`SelectionBar.tsx`、`tailwind.config.ts`
+
+### 设计说明 / 遗留
+
+- **生产表面未挂 hook**：顶栏 / 工具条是 RSC 或宽条 `rounded-none`，折射按档应挂在有圆角的 panel 上，且 bakes per size。调用方之后在 client 节点加 `ref={useLiquidGlass()}` 即可。
+- **第 28 轮「折射未接入」遗留由本轮库代码补上**，但默认仍是 CSS 磨砂，直到有节点 opt-in。
+- **不引入 `data-theme`**：主题仍由 next-themes `class="dark"` 驱动（与第 28 轮一致）。
+
+## 第 28 轮：Liquid Glass CSS 地基（令牌 + 四层 tier + 品牌环境网格，无折射 JS）
+
+> 时间：2026-08-21
+> 范围：把 liquid-glass 技能的 CSS 层移植进 Next.js 15 + Tailwind 3 项目：语义令牌按 `:root` 浅色 / `.dark` 深色双写（不引入 `data-theme`、不保留 `prefers-color-scheme` 回退），四层 tier 与环境网格进 `globals.css`，废弃旧玻璃体系，消费方改为 CSS-only 磨砂。不加折射 JS。
+
+### 完成内容
+
+**① 令牌（`globals.css` `@layer base`）**
+- 删除 `--glass-bg` / `--glass-blur` 及旧 `--glass-border` 语义（半透明实色填充）。
+- 新令牌双主题都给值：tint / rim / border / shadow / menu / modal / scrim / mesh。半径与时长仅写在 `:root`（`.dark` 继承）。
+- 环境网格三团改为品牌色：天蓝 `#38BDF8`、品牌蓝 `#2563EB`、琥珀 `#FBBF24`；透明度量级 0.14–0.26，浅色更收敛（0.16/0.20/0.16），深色 0.18/0.26/0.20。不引入 `--glass-page-bg`，画布仍用 `--app-bg`。
+
+**② 四层 tier + 背景（`@layer components`，无 transition 以免盖住 `.motion-*`）**
+- `.liquid-glass-backdrop`：`isolation: isolate` + `background-color: var(--app-bg)`；`::before` 五组 radial-gradient（`position: fixed; z-index: -1`）。
+- `.liquid-glass` / `--hover` / `-chip` / `-menu` / `--modal` / `-scrim` 按技能原样移植。
+- 未加折射；`prefers-reduced-motion` 全局守卫保留，并给 `--hover` 补 `transform: none`。
+
+**③ 页面外壳**
+- 首页最外层、`time-converter/[slug]` 外包 `min-h-screen` 挂 `.liquid-glass-backdrop`。
+
+**④ 旧玻璃消费方（CSS-only，不动布局）**
+- 顶栏 / GridToolbar：`glass-bar` → `liquid-glass rounded-none`（utilities 层盖过 components 的 `position`/`border-radius`，sticky 仍生效）。
+- SelectionBar：`surface-glass shadow-glow` → `liquid-glass`（避免 utilities `shadow-glow` 整段覆盖 rim）。
+- loading 胶囊：`surface-glass` → `liquid-glass`。
+- `.wt-grid thead th`：`color-mix(--glass-menu-surface 72%)` + blur 6px；先写 `background-color: var(--surface)` 作无 `color-mix` 回退。
+
+**⑤ Tailwind**
+- 删除 `colors.glass.DEFAULT → --glass-bg` 死映射；随后审查去掉无人引用的 `glass.border`。
+
+### 两轮独立审查（提交前，对全部未提交 diff）
+
+**第一轮（通读全量 diff）**：7 文件走读 + 旧类名 grep 零残留。发现并修复：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P2 | 顶栏从 72% 实色磨砂改为 6% tint 后，副标题 `text-faint` 落在近 `--app-bg` 上约 **4.24:1**（旧合成底曾 4.60:1），AA 回归 | 副标题改 `text-muted`（画布上 ~6.75:1，同第 23 轮着陆页先例） |
+| 2 | P2 | SelectionBar 时长标签同样 `text-faint`，浮层变透明后对比度回归 | 改 `text-muted` |
+| 3 | P3 | `thead` 仅用 `background: color-mix(...)`，不支持时整条失效、表头变透明 | 先 `background-color: var(--surface)`，再 `color-mix` 覆盖 |
+| 4 | P3 | `tailwind.config.ts` 的 `colors.glass.border` 全站零引用（`bg-glass`/`border-glass` 均无） | 删除整个 `glass` 色板别名 |
+| 5 | P4 | 顶栏注释仍写「bg-surface + 发丝底边」 | 改为 liquid-glass 磨砂顶栏 |
+
+**第二轮（修复质量 + 边界复查）**：对第一轮修补再审，并核对立叠/主题/动效边界。发现 1 项并回退：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 6 | P3 | 第一轮曾给 `loading.tsx`（`min-h-[40vh]`）挂 `liquid-glass-backdrop`：`isolation` + `::before { position: fixed }` 挂在非整页壳上，网格可能溢出 40vh 盒、与 body 画布叠错 | 去掉 loading 的 backdrop，只保留胶囊 `liquid-glass`（短暂加载态、非页面外壳） |
+
+其余核对：
+
+- **层叠**：`.liquid-glass { position: relative }` 在 `@layer components`，`sticky` / `rounded-none` 在 utilities，实测 header `position: sticky; border-radius: 0`。Toaster `z-[70]` 在 ThemeRegistry、位于 isolate 壳之外。
+- **网格可见性**：Playwright 截浅/深空背景；像素抽样浅色蓝团 `rgb(192,210,244)` / 琥珀 `rgb(226,227,214)` 相对画布 `rgb(238,242,248)` 有差，深色蓝团 `rgb(17,40,82)` 相对 `#070b14` 可见。浅色隐约、深色更明显。
+- **动效**：`.liquid-glass` 无 `transition` 简写，SelectionBar `motion-sheet` 进出场不被覆盖；全局 `prefers-reduced-motion` 仍把 `*` 时长归零。
+- **未扩大 diff**：着陆页 `<main>` 子级未随外包 div 再缩进（JSX 合法）；`not-found` 未挂 backdrop（`StateSurface` 不透明，非本轮消费方）。
+- **残留扫描**：`surface-glass` / `glass-bar` / `--glass-bg` / `--glass-blur` 在 ts/tsx/css 零命中（`progress.md` 历史叙述除外）。
+
+### 涉及文件
+
+- 令牌/组件类：`src/app/globals.css`
+- 页面：`src/app/[locale]/page.tsx`、`src/app/[locale]/time-converter/[slug]/page.tsx`、`src/app/[locale]/loading.tsx`
+- 组件：`src/components/GridToolbar.tsx`、`src/components/SelectionBar.tsx`
+- 配置：`tailwind.config.ts`
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| TypeScript（`tsc --noEmit`） | ✅ 0 错误 |
+| ESLint（`next lint`） | ✅ 无警告 / 错误 |
+| 单元测试（`vitest run`） | ✅ 149/149 通过 |
+| 生产构建（`next build`） | ✅ 成功（283 页 SSG；审查修对比度/回退后未再全量构建，改动为 className/CSS 声明，类型与 lint 已覆盖） |
+| 浅/深空背景截图 | ✅ 网格色斑可测；浅色收敛、深色更明显 |
+
+### 设计说明 / 遗留
+
+- **折射未接入**：仅 CSS tint/rim/网格；Chromium SVG displacement 留待后续。无折射时顶栏/选区栏是 3px 磨砂而非旧 14px/72% 实色，这是配方本身，用提高正文对比（muted）而不是加回不透明填充来保 AA。
+- **不引入 `data-theme`**：主题仍由 next-themes `class="dark"` 驱动。
+- **menu / modal / chip / scrim 已进 CSS 但本轮无新挂载**（thead 只复用 menu 令牌）；下拉/对话框后续按档选用，避免玻璃套玻璃。
+- **加载态无网格**：`loading.tsx` 不是页面外壳，胶囊暂时铺在 body `--app-bg` 上。
+
 ## 第 27 轮：功能精简与核心聚焦（删 Google 日历 / Widget / 打印导出 / 氛围背景 / 事件页，精简选区栏与地点面板）
 
 > 时间：2026-08-20

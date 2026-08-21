@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { createPortal } from "react-dom";
 import LocaleSwitcher from "./LocaleSwitcher";
 import HelpPopover from "./HelpPopover";
 import SettingsPanel from "./SettingsPanel";
 import ThemeToggle from "./ThemeToggle";
 import { usePresence } from "@/lib/usePresence";
+import GlassMenu from "./GlassMenu";
 import { IconMore } from "./icons";
 
 /**
@@ -23,6 +25,7 @@ export default function HeaderActions() {
   const t = useTranslations("Common");
   const [isDesktop, setIsDesktop] = useState(true);
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
   // 移动端「⋯」菜单进/出过渡（桌面端不渲染此分支）
   const presence = usePresence(open, 200);
 
@@ -65,6 +68,7 @@ export default function HeaderActions() {
   return (
     <div className="relative ml-auto shrink-0">
       <button
+        ref={btnRef}
         type="button"
         aria-label={t("more")}
         aria-expanded={open}
@@ -76,23 +80,29 @@ export default function HeaderActions() {
       </button>
       {presence.mounted && (
         <>
-          {/* 遮罩：点击关闭 */}
-          <div
-            data-state={presence.state}
-            className="motion-overlay fixed inset-0 z-40 bg-black/30"
-            onClick={() => setOpen(false)}
-            aria-hidden
-          />
+          {typeof document !== "undefined" &&
+            createPortal(
+              <div
+                data-state={presence.state}
+                className="motion-overlay fixed inset-0 z-40 bg-[var(--glass-scrim)]"
+                onClick={() => setOpen(false)}
+                aria-hidden
+              />,
+              document.body,
+            )}
           {/*
             role=group（而非 menu）：内含 select 与混合按钮，并非严格 menuitem
             列表，group 语义更准确；aria-label 复用「更多」。
           */}
-          <div
+          <GlassMenu
             id="header-actions-menu"
+            anchorRef={btnRef}
+            align="end"
+            width={224}
             data-state={presence.state}
             role="group"
             aria-label={t("more")}
-            className="motion-pop surface absolute right-0 top-full z-50 mt-1 w-56 p-3 shadow-lg"
+            className="motion-pop p-3"
           >
             <div className="flex flex-col gap-3">
               <LocaleSwitcher />
@@ -103,7 +113,7 @@ export default function HeaderActions() {
                 <ThemeToggle />
               </div>
             </div>
-          </div>
+          </GlassMenu>
         </>
       )}
     </div>
