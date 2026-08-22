@@ -1,5 +1,144 @@
 # 开发进度记录
 
+## 第 45c 轮：未提交更改三轮审查与修复，合入 main 并推送
+
+> 时间：2026-08-23
+> 范围：对第 45/45b 轮全部未提交更改做提交前三轮走读（R1 广度 diff 扫描 / R2 逐单元边界推理 / R3 浏览器实证）。发现并修复 3 处问题（其中 1 处为第 44 轮遗留潜伏缺陷）；修复后四道门槛重跑全绿、浏览器专项断言 4/4，随后按仓库惯例分 feat/docs 两提交推送 origin/main。
+
+### 发现与修复
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | **P1** | **Esc 清选区永久失效**：KeyboardShortcuts 的 Esc 守卫把 `[role="group"]` 视为「浮层打开」，而常驻控件携带该 role 时守卫被永久短路。本轮 seg 分段控件引入了常驻 group；复查发现 **WeekPager 容器的 role="group" 自第 44 轮守卫扩展起就已常驻**（当时断言未覆盖「Esc 成功清选区」路径，潜伏至今）——即拖选后按 Esc 无效的存量缺陷 | 移除三处常驻 role="group"（Workspace 模式分段、GridToolbar 跨度分段、WeekPager 容器），按钮各自 aria-pressed/aria-label 已承载语义；HeaderActions/SettingsPanel 的 group 均在弹层内按需挂载，合规保留。守卫「仅打开时存在」前提恢复成立，浏览器断言 Esc 清选区通过 |
+| 2 | P3 | TimeCards 首帧占位缺失：水合前 viewingMs=0 会显示 1970-01-01 的时间/日期（旧面板为 `--:--`） | `viewingMs > 0` 哨兵：非正时显示 `--:--` / `—`；TimeControlBar 实时标签同步对齐 LiveUtcClock 的 `--:--:--` 先例 |
+| 3 | P3 | TimeControlBar 重构残留：`dtView` 引用已删除变量（type-check 拦截于提交前） | 改为按 pinnedMs 直接构造 pinnedLabel |
+
+### R1/R2 其余核对（无问题确认）
+
+- 残留扫描零命中；i18n 键树一致；`git diff` 净 +762/−1354。
+- 边界复核：TimeControlBar Enter/blur 双触发防护（✓ 按钮 onMouseDown preventDefault）、draft 失效静默关闭语义、Luxon 对春进不存在时刻的解释；TimeGrid 单击 sticky 列不误设 pin、拖拽卸载 rAF 清理；useLocalPersist 旧 cursorMs→pinnedMs 迁移与 `[?&][ct]=\d` URL 优先级；shareUrl 空 t= 参数「视为未携带」语义一致、epoch 0 round-trip；useUrlState ready 门控下 legacy c=→t= 归一化符合预期。
+
+### R3 实证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` / `lint` / `test` | ✅ 0 错误 / 无警告 / 224/224 |
+| `npm run build` | ✅ 1045 静态页 |
+| 浏览器专项断言（playwright-core + 缓存 Chromium） | ✅ 4/4：seg 无常驻 group、拖选出栏、**Esc 成功清除选区**、时间卡无 1970 泄漏 |
+
+### Git
+
+- 全程直接在 main 工作（与第 42–44 轮同惯例）；按仓库惯例分 2 个提交：feat（代码+11 语 messages）+ docs(progress)。
+- 提交前终审四道门槛确认全绿；浏览器专项断言 4/4 与此前 26/26 主套件、多语言套件共同覆盖。
+- 本条补记后提交并推送 origin/main。
+
+## 第 45b 轮：两态改造三轮审查（进度确认 · 缺陷甄别 · 三处修复）
+
+> 时间：2026-08-23
+> 范围：对第 45 轮改造做全面审查确认。R1 对照原方案逐项核对 + 残留引用扫描；R2 多语言/移动端实测（11 语言）；R3 浏览器行为断言复跑。发现并修复 3 处问题、甄别 2 处「疑似缺陷实为预期」，全部修复后四道门槛重跑全绿。
+
+### R1 方案对照与残留扫描
+
+- 原方案 P0/P1 全部落地；P2「色带式网格」确认为**有意延后**（1 天默认视图已消除横滚痛点，留待真实反馈）。
+- 残留扫描零命中：已删组件/游标概念/死样式在 src 无任何引用；`git diff` 净变化 **+698 / −1344 行**。
+
+### R2 多语言与移动端实测（11 语言全覆盖）
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | P2 | **ru/vi 移动端横向溢出**（62px/24px）：顶栏 h1 `shrink-0` 使长标语（俄/越文）不换行，并把搜索框挤瘪到 7px（input 溢出容器）。存量隐患，本轮新布局下由多语言实测暴露 | h1 改 `min-w-0 md:shrink-0` + 标语 `break-words`；搜索框改 `w-full md:max-w-md md:flex-1`（移动端独占一行、桌面端原样）。11 语言 × 移动端/桌面端/重叠态全部复测 0px |
+| 2 | P3 | 时间控制条：实时态打开编辑器后**点击外部失焦会把「打开瞬间」误固定为查看时刻** | 记住预填值：失焦时未改动且原本实时 → 仅收起不固定；已固定态失焦=确认输入。浏览器断言双路径验证通过 |
+| 3 | P3 | `useUrlStateSync` 回写 effect 在还原流程完成前用空状态把 URL 参数瞬态抹掉（下一帧自愈，但产生 replaceState 抖动、加载瞬间复制链接为空参） | 增加 `ready` 就绪门控：还原完成（或确认无参数）后才启用回写。实测挂载全程无空参数 replaceState |
+
+### R3 疑似缺陷甄别（确认非缺陷）
+
+- **「页面神秘导航」**：测试中断言偶发 `Execution context was destroyed`。定位为 `ServiceWorkerRegister` 的既有 PWA 更新策略——SW 首次接管（controllerchange）时 `location.reload()` 一次。每个全新浏览器上下文首次访问都会触发，真实用户一生一次，非本轮引入。测试脚本改用 `serviceWorkers: 'block'` 消除竞态。
+- **「纽约卡未冻结」**：金融预设主地点为首城纽约，纽约显示的正是其自身被固定的本地时间（09:30 EST），各卡换算全部正确（伦敦 14:30 = 纽约+5h 验证）。系断言脚本城市假设错误。
+
+### R3 复跑断言
+
+- 浏览器回归 12/12：失焦防护双路径、时钟态默认、时间卡冻结、URL t=、无 URL 抹掉 replaceState、24 列网格、无 UTC 行、单击固定跨 3 行、分享链接 s=+t=、ru 移动端 0px。
+- 此前已过：26/26 主套件（第 45 轮）、33/35→全过的多语言套件（修复后逐项补测 ko/en/es/fr/pt）。
+
+### 本轮涉及文件
+
+`src/app/[locale]/(home)/page.tsx`（页头响应式） `src/components/TimeControlBar.tsx`（失焦防护） `src/lib/useUrlState.ts`（ready 门控）
+
+### 验证（修复后全量重跑）
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 无警告无错误 |
+| `npm run test` | ✅ 224/224 |
+| `npm run build` | ✅ 1045 静态页 |
+
+## 第 45 轮：首页一页两态改造（时钟时间卡 + 重叠排期，自定义时刻到分钟）
+
+> 时间：2026-08-23
+> 范围：按「首页简化改造方案」全量落地 P0/P1/P2。核心思路：**首屏交给零学习的直接操作**——默认「时钟」态用时间卡直读各地分钟级时间、顶部时间控制条即功能本身（点一下输入任意日期时间）；7 天横滚网格降级为第二态「重叠时段」，只服务找共同空闲段+分享。SEO/GEO 冻结区（h1/title/tagline、页脚 H2+两段内链、JSON-LD、`/time` `/time-converter` 各页）零改动。
+
+### 一页两态
+
+- **新 `Workspace.tsx`**：首页工作区容器。玻璃工作条 = 左「时钟｜重叠时段」分段控件（`.seg` 新样式，aria-pressed 驱动）+ 右时间控制条；下挂对应视图。恢复前骨架、恢复后空态（FirstUseEmptyState）在此分流。
+- **默认时钟态**：新 `TimeCards.tsx` 时间卡列表——每城一张横向卡：国旗+城市名／大号分钟级 HH:mm（`formatClock`）＋日期星期（Luxon setLocale 随 11 语言）／昼夜图标＋相对主地点时差 chip；悬浮 title 保留 IANA/UTC 偏移/DST 详情。地点管理原位内建：@dnd-kit 拖拽排序、行尾 ⋯ 菜单（设主地点/重命名/删除），**左侧 PlacesPanel 整体移除，三栏收敛单列卡片流**。
+- **重叠态**：原 TimeGrid 整体下沉为第二标签；带 `s=` 的分享链接经 useUrlStateSync 自动落入本视图（所见即所享）。
+
+### 自定义查看时刻（pinnedMs）
+
+- **store**：新增 `pinnedMs` / `setPinned`、`viewMode` / `setViewMode`、`gridDays(1|7)` / `setGridDays`；**删除** `cursorMs` / `setCursor` / `resizeSelection`（隐形键盘游标概念并入 pinnedMs）。
+- **URL**：shareUrl 编解码第 4 参数改为 pinnedMs，参数名 `c=` → **`t=`**；旧 `c=` 兼容读取（t 优先），localStorage 旧 `cursorMs` 字段迁移为 `pinnedMs`。
+- **新 `TimeControlBar.tsx`**：实时态=「● 现在 HH:mm:ss」走秒胶囊，点击变原生 `datetime-local`（step 60s，Enter 应用/Esc 取消/✓ 确认）；固定态=琥珀钟点 chip「MM-dd HH:mm」（点值重编辑、× 回到现在）。零引导文案，控件即功能。时间卡与网格统一消费该时刻。
+- **TimeGrid 单击=设时刻**：纯单击格子把查看时刻固定到该小时（再点同格取消），取代旧「单击清除选区」的反直觉行为；拖拽选区不变。网格新增 `data-pinned="1"` accent 蓝纵向指示线（CSS 定义在 now 线之后，同格兼有时固定优先于实时）。
+
+### 网格减法与热力修复
+
+- **默认 1 天 × 24 列**：一屏放下无横滚；工具条新增「1 天｜7 天」跨度切换（偏好持久化），WeekPager 改按当前跨度步进（±1/±7 天），aria 键 prevWeek/nextWeek → prev/next。
+- **UTC 行移除**（顶栏 LiveUtcClock 已覆盖）。
+- **单元格级热力**：新 `placeHeatColor(zone, countryCode, ms, periods)`（周末/假日覆盖+时段判定），每格表达该行城市自身状态；修复跨 ±12h 时差下「整列取最差→整片红」的信息量塌缩（见对比截图）。`columnColor` 保留为聚合视角纯逻辑供测试复用。
+- **工具条减法**：ViewOptions 弹层（DateJump+CursorBar）、DragGhostDemo 幽灵教学、useCursorShortcuts 快捷键整体删除；保留 图例色点｜跨度切换·‹›·回到现在。日期跳转由表头点击（原生 picker）承担。
+- **KeyboardShortcuts**：删 Ctrl/Cmd+Enter 游标对齐；保留 Delete 删主地点、Esc 清选区。HelpPopover 快捷键清单同步收缩。
+
+### i18n（11 语言键树同步）
+
+- 增：`Modes.{clock,overlap}`、`Viewing.{now,pick,backToNow}`、`ViewControls.{day1,day7,prev,next}`；
+- 删：`Cursor.*`（整个命名空间）、`ViewControls.{title,prevWeek,nextWeek}`、`Help.{shortcutSelect,shortcutResize,shortcutEnter}`、`DateJump.today`（无引用）；
+- 改：`Help.step2Body/step3Body` 更新为两态语义 + 单元格级配色描述。messages-shape 测试确认 11 文件键树一致。
+
+### CSS
+
+- 新增 `.seg` / `.seg--sm` 分段控件（胶囊容器、aria-pressed 抬升选中面）与 `.wt-grid td[data-pinned]::before`；`.time-cards > li` 错落进场替代 `.places-rows`；删除 `.wt-ghost-selection` + `ghost-drag` 死样式。`icons.tsx` 增 IconClock/IconGrid/IconCheck。
+
+### 删除文件
+
+`PlacesPanel.tsx`、`DragGhostDemo.tsx`、`CursorBar.tsx`、`ViewOptions.tsx`、`DateJump.tsx`、`lib/onboardingFlags.ts`
+
+### SEO/GEO 复验（SSR 实测）
+
+zh 页 200；页脚 intro H2、热门城市内链（/zh/time/*）、对照内链（/zh/time-converter/*）、IANA 说明全部在位；JSON-LD 6 段、h1=1；`/time` `/country` `/time-converter` `/about` `/faq` 未触碰。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 无警告无错误 |
+| `npm run test`（vitest） | ✅ 224/224（215 → 224，shareUrl t=/c 兼容 +9、placeHeatColor 单元格级断言） |
+| `npm run build` | ✅ 1045 静态页 |
+| SSR SEO 断言 | ✅ 页脚内链/JSON-LD/h1 不变 |
+| 浏览器行为断言（playwright-core + 缓存 Chromium，26 条） | ✅ 26/26：空态→预设→时间卡、datetime-local 固定→三卡冻结→URL t=、× 回到现在、1 天 24 列/7 天 168 列切换、无 UTC 行、单击设/取消时刻（data-pinned ×3 行）、拖选 6 小时+选区栏、分享链接同时含 s= 与 t=、s= 直达重叠态+高亮恢复、t= 直达时钟态冻结、移动端 2 卡无横向溢出+网格渲染 |
+| 截图走查 | ✅ zh/en 时钟态、亮/暗重叠态：24 列满屏无横滚、逐行独立热力、now 琥珀线+pinned 蓝线并存 |
+
+### 涉及文件
+
+`src/components/{Workspace,TimeCards,TimeControlBar}.tsx`(新) `src/components/{TimeGrid,GridToolbar,WeekPager,SelectionBar,KeyboardShortcuts,HelpPopover,icons}.tsx` `src/components/{PlacesPanel,DragGhostDemo,CursorBar,ViewOptions,DateJump}.tsx`(删) `src/lib/onboardingFlags.ts`(删) `src/lib/{heatmap,shareUrl,useUrlState,useLocalPersist,time}.ts` `src/store/useWorldTimeStore.ts` `src/app/[locale]/(home)/page.tsx` `src/app/globals.css` `messages/*.json`(×11) `tests/lib/{shareUrl,dstRegressions,heatmap}.test.ts`
+
+### 设计说明 / 遗留
+
+- 「记住用户偏好」：viewMode/gridDays 入 localStorage 不入 URL——无参访问跟随上次偏好，分享链接靠 s=/t= 语义直达对应视图。
+- Every Time Zone 式色带网格（P2 可选项）本轮未做：1 天默认视图已消除横滚痛点，色带形态留待真实反馈再评估。
+- 金融预设主地点为首城纽约（非北京）：时间控制条与各卡均以主地点本地时区呈现固定时刻，属预期行为（调试时曾误判为缺陷）。
+
 ## 第 44 轮：第 43 轮未提交更改的三轮审查（R1 广度 · R2 深挖 · R3 实证）
 
 > 时间：2026-08-22
