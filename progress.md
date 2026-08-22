@@ -1,5 +1,97 @@
 # 开发进度记录
 
+## 第 44 轮：第 43 轮未提交更改的三轮审查（R1 广度 · R2 深挖 · R3 实证）
+
+> 时间：2026-08-22
+> 范围：对第 43 轮（首页减法重构）的全部未提交更改做 3 轮「审查 + 修复」。R1 广度 diff 走读与死代码/残留扫描，R2 逐单元边界推理（DST 首列、周翻页数学、Esc 冲突、presence 时序、焦点管理），R3 生产构建 + 浏览器行为断言实证。全部修复后独立门槛全绿，未提交。
+
+### R1（广度）发现与修复
+
+- **死代码**：`icons.tsx` 的 `IconCalendar` 加入后无任何使用 → 删除（`IconSliders`/`IconChevronLeft/Right` 均有引用，保留）。
+- **读屏重复播报**：`HeatmapLegend` labels 形态下色点带 `aria-label` 又渲染可见文本，同一语义播报两遍 → 重构：labels 模式色点降为 `aria-hidden` 装饰、文字承载语义；紧凑模式维持色点 + `title`/`aria-label`。
+- **选区内数字可读性**：`.h-ghost` 淡化规则无差别作用于选区格，所选窗口本身是要逐字读的内容 → 补 `td[data-selected="1"] .h-ghost { opacity: .85 }` 恢复规则。
+- **残留引用扫描**：`useCursorShortcuts` 单定义单挂载 ✓；已删 i18n 键在 src 零引用（`duration` 命中均为 Tailwind `duration-150` 类名）✓；`page.tsx` 注释 UTF-8 完好（diff 乱码为控制台伪影）✓。
+
+### R2（深挖）发现与修复
+
+- **Esc 连带清选区（守卫扩展）**：全局 `KeyboardShortcuts` 的 Esc 清选区守卫原先只认 `[role="dialog"]`——本轮新增的行 ⋯ 菜单是 `role="menu"`，Esc 关菜单会连带清掉已有选区；`HeaderActions` 移动端菜单 `role="group"` 同病（存量隐患）。守卫扩为 `dialog, menu, group`（三者均仅在打开时挂载，无永久命中，安全）。
+- **逐单元边界推理（无问题确认）**：
+  - `WeekPager.shift`：`viewStartDateMs ?? today` 为基准 ±7 天，Luxon 墙钟日跨越 DST 正确；连点从最新窗口累计；与表头 picker/NowButton 组合语义自洽。
+  - `TimeGrid` day-first 判定基于 `columns[i-1].dayIndex`，DST 春进 23 列/秋退 25 列下首列对齐不受影响（各共享同一 columns）；隐藏 date input 为 `sr-only` 绝对定位，零布局影响；`showPicker` try/catch 兜底 focus。
+  - `useCursorShortcuts` 挂工具条层级，早退 return 在 hook 之后（规则安全）；places 为空时随工具条卸载，与旧行为一致。
+  - `DragGhostDemo`：真实选区抢先 → effect 立即标记退场；`ghost-drag` 动画 `both` 填充终态 opacity 0，JS 3s 收起前视觉已净；reduced-motion 不武装（flag 不置位，Help 弹窗兜底路径保留）。
+  - `PlaceActionsMenu`/`ViewOptions`：外点关闭均排除锚按钮自身（toggle 不被 pointerdown 抢先关闭）；GlassMenu 贴边 clamp 复用既有 measure()；删除主地点 confirm 走 `role="dialog"`，Esc 守卫覆盖。
+  - `FirstUseEmptyState` chips 为 `localCityName(locale, c)` 纯派生，SSR/客户端同构无水合风险。
+- **R2 回归断言新增（8 条）**：种子选区恢复、选区内 `.h-ghost` computed opacity=0.85、⋯菜单 Esc 后选区仍在、弹层关闭焦点归回触发按钮、周翻页 ×2 后日期输入=今天+14（实测 2026-09-05 精确匹配）、回到现在后输入框复位。
+
+### R3（实证）
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run test` | ✅ 215/215 |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 无警告无错误 |
+| `npm run build` | ✅ Compiled successfully（1045 静态页） |
+| 浏览器断言（生产服务器） | ✅ 31/31：第 43 轮 23 条（ghost 生命周期/工具条减法/弹层/全局快捷键/移动端）+ 本轮 8 条（Esc 守卫/选区可读/周翻页数学/焦点归还） |
+| SSR SEO 复验 | ✅ zh/en 页脚内链 24+46 不变、h1=1、JSON-LD 6 段 |
+
+### 本轮涉及文件
+
+`src/components/icons.tsx` `src/components/HeatmapLegend.tsx` `src/components/KeyboardShortcuts.tsx` `src/app/globals.css`
+
+### Git
+
+- 全程直接在 `main` 工作（与第 42 轮同惯例，无独立功能分支，无需合并）；因第 43/44 轮改动在同批文件内交叠，代码合为 1 个 feat 提交 + 1 个 docs(progress) 提交。
+- 提交前终审重跑四道门槛确认：type-check ✅ / lint ✅ 无警告无错误 / test 215/215 ✅ / build ✅（1045 静态页）；浏览器行为断言 31/31 与 SSR SEO 复验（zh/en 页脚内链 24+46、h1=1、JSON-LD 6 段）均在本轮 R3 通过。
+- 本条补记后提交并推送 `origin/main`。
+
+## 第 43 轮：首页减法重构（可用性 · 美观 · SEO/GEO 零损伤）
+
+> 时间：2026-08-22
+> 范围：按既定改造方案执行 P1 减法 / P2 动效教学 / P3 视觉收敛。核心思路：**靠减法与视觉语言降低理解成本，不新增一句解释文案**；SEO/GEO 冻结区（h1/title/meta/tagline、页脚三段内链、JSON-LD、hreflang/sitemap/llms.txt）零改动（`page.tsx` diff 仅 Coachmark→GhostDemo 一处换装）。
+
+### P1 减法
+
+- **工具条 8 元素 → 5 元素**（`GridToolbar.tsx`）：三色图例只剩色点（语义进 `title`/`aria-label`，全量图文说明仍在 Help 弹窗，`HeatmapLegend` 加 `labels` 形态供其使用）；时间游标与日期跳转收进新「视图选项」弹层（`ViewOptions.tsx`，GlassMenu + Esc/外点关闭/焦点归还）；日期跳转改 ‹ › 周翻页（新 `WeekPager.tsx`）+ 网格日期表头点击唤起原生 date picker（`TimeGrid.tsx` 内置隐藏 input + showPicker 兜底）；「今天」并入「回到现在」单主按钮。
+- **游标快捷键全局化**：键盘控制从 `CursorBar` 抽为 `useCursorShortcuts()` 挂在工具条层级——弹层开合不影响 ←/→ 移动游标、Shift+←/→ 微调选区、Enter 起选区（深度用户路径零回归，实测断言 B9）。屏幕上的快捷键口诀整段删除（Help 已有）。
+- **地点面板「表盘化」**（`PlacesPanel.tsx` 重写）：行内容三层化——国旗+城市名／大时钟／昼夜图标+相对主地点时差（`+12`/`-7:30`）；IANA 时区串、国家名、缩写、DST 徽标全部并入状态行 title 悬浮详情（含下次切换日期、即将切换预警）；三个操作键收进行尾 **⋯ 菜单**（桌面 hover 显现、触屏常驻弱化，role="menu" 全键盘可达）；删面板顶部 utc-strip（UTC 参考在网格首行+顶栏钟）；主地点标识整行黄底 → **amber 左竖条**（`.home-row` 渐变导轨保留）。
+- **空状态去文字化**（`FirstUseEmptyState.tsx`）：删 3 行 hint 与 body 说明，只留品牌印记 + headline；金融预设改为国旗 chip 组（🇺🇸 纽约 · 🇬🇧 伦敦 · 🇯🇵 东京，城市名随 locale），aria-label 复用原 key。
+- **选区栏微调**（`SelectionBar.tsx`）：去「时长」标签词直读「3 小时」；「复制分享链接」升 primary 蓝 CTA、「复制摘要」降 ghost。
+
+### P2 动效教学
+
+- **`DragGhostDemo.tsx` 替代文字 Coachmark**（`DragHintCoachmark.tsx` 已删除）：幽灵选区在网格上自动演示一次横向拖选（CSS `ghost-drag` 2.6s）后淡出——用动效教学替代文案教学，零新增词。复用 `dragHintSeen` 标记（只演示一次/做出真实选区立即标记/reduced-motion 用户直接跳过）；aria-hidden + pointer-events-none 纯装饰层。
+
+### P3 视觉收敛（globals.css）
+
+- `.hud-frame` 四角 HUD 描边删除（终端味 → polished premium），阴影降为 shadow-sm；
+- 热力三色降饱和一档（light bad .15→.11 / caution .18→.14 / good .16→.13；dark 同步下调），选区蓝成为最强色；
+- 网格降噪：每日首列完整小时数字、其余列淡化 0.22 为肌理（`.h-ghost`，悬停所在行恢复 0.85；数字保留 DOM 无障碍零损失）；「现在」amber 竖线保持唯一强锚点；
+- 字号清理：`text-[10px]`→11px（TimeGrid alt 行、LiveUtcClock 标签），消灭 sub-11px；
+- 删除 `.utc-strip` 死样式。
+
+### i18n（11 locale 键树同步）
+
+- 删 13 个不再使用的键：`Onboarding.{emptyBody,startLocalHint,presetFinanceHint,searchHint,dragHint,dragGotIt}`、`Heatmap.worstStatus`、`Cursor.{move,resize,select}`、`Places.utcRow`、`Selection.duration`；
+- 增 1 个命名空间 `ViewControls.{title,prevWeek,nextWeek}`（⚙ 弹层与周翻页的 aria 文案，×11 语言）；
+- `messages-shape.test.ts` 通过确认键树完全一致。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run test`（vitest） | ✅ 215/215 |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 无警告无错误 |
+| `npm run build` | ✅ 1045 静态页（11 locale 全预渲染） |
+| SSR HTML 断言 | ✅ 页脚内链数不变（城市 24 + 转换器 46）、h1=1、JSON-LD 6 段 |
+| 浏览器行为断言（playwright-core + 缓存 Chromium，23 条） | ✅ 23/23：ghost 五项生命周期、工具条无长句/口诀/纯色点、周翻页、视图选项开合、弹层关闭后全局快捷键仍移动游标、表头 picker 路径、移动端折叠/⋯菜单/无 IANA 串/无常驻操作键 |
+| 截图走查 | ✅ 桌面亮/暗、选区态、ru 长文本（弹层无溢出）、zh 首访空态 |
+
+### 涉及文件
+
+`src/components/{GridToolbar,HeatmapLegend,CursorBar,DateJump,PlacesPanel,FirstUseEmptyState,SelectionBar,HelpPopover,TimeGrid,LiveUtcClock}.tsx` `src/components/{ViewOptions,WeekPager,DragGhostDemo}.tsx`(新) `src/components/DragHintCoachmark.tsx`(删) `src/app/[locale]/(home)/page.tsx` `src/components/icons.tsx`(+chevron-lr/sliders/calendar) `src/app/globals.css` `messages/*.json`(×11)
+
 ## 第 42 轮：三轮自主审查修复（代码质量 · SEO · GEO）
 
 > 时间：2026-08-22
