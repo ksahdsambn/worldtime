@@ -4,6 +4,11 @@ export const routing = defineRouting({
   // UX 无 Accept-Language 时回退中文；搜索 x-default / SEO_DEFAULT_LOCALE 为英文。
   locales: ["zh", "zh-Hant", "en", "es", "fr", "de", "ja", "ko", "pt", "ru", "vi"],
   defaultLocale: "zh",
+  // 关闭中间件自动注入的 Link 头 hreflang：它输出原始 locale 码（zh/pt）与
+  // 未加前缀的 x-default，且 host 取请求方（localhost/代理），与页面 head 中经
+  // HREFLANG_MAP 映射（zh-Hans/pt-BR、x-default→/en）且绝对化的 hreflang 矛盾。
+  // head 内版本为唯一事实来源。
+  alternateLinks: false,
 });
 
 export type AppLocale = (typeof routing.locales)[number];

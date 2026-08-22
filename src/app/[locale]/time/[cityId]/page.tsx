@@ -58,11 +58,9 @@ export async function generateMetadata({
   const city = CITY_BY_ID[id];
   const path = `/time/${id}`;
   if (!city) {
-    return {
-      title: t("title", { city: cityId }),
-      alternates: buildAlternates(locale, path),
-      robots: { index: false, follow: false },
-    };
+    // 未知城市：在 generateMetadata 阶段即抛 notFound，抢在流式 shell 提交
+    // （loading 边界）之前，让响应携带真正的 404 状态而非 200 软 404。
+    notFound();
   }
   const name = localCityName(locale as AppLocale, city);
   const country = cityCountryName(locale as AppLocale, city);

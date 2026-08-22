@@ -51,11 +51,8 @@ export async function generateMetadata({
   const cities = citiesInCountry(code);
   const path = `/country/${code.toLowerCase()}`;
   if (cities.length === 0) {
-    return {
-      title: t("title", { country: code }),
-      alternates: buildAlternates(locale, path),
-      robots: { index: false, follow: false },
-    };
+    // 无收录城市的国家码：尽早抛 notFound，保证 404 状态（见 time/[cityId] 同注）
+    notFound();
   }
   const country = localCountryName(locale as AppLocale, countryByCode(code));
   const title = t("title", { country });

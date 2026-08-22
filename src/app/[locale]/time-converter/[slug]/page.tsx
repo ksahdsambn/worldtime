@@ -86,17 +86,8 @@ export async function generateMetadata({
   const canon = canonicalLandingSlug(slug);
   const path = `/time-converter/${canon}`;
   if (!info) {
-    return {
-      title: t("title"),
-      description: t("description"),
-      robots: { index: false, follow: false },
-      alternates: buildAlternates(locale, path),
-      openGraph: buildOpenGraph(locale, {
-        title: t("title"),
-        description: t("description"),
-        path,
-      }),
-    };
+    // 不可解析 slug：尽早抛 notFound，保证 404 状态（见 time/[cityId] 同注）
+    notFound();
   }
   const labels = localizedPairLabels(info, locale as AppLocale);
   const title = `${labels.a} ↔ ${labels.b} · ${t("title")}`;
