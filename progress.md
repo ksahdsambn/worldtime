@@ -1,5 +1,44 @@
 # 开发进度记录
 
+## 第 42 轮：三轮自主审查修复（代码质量 · SEO · GEO）
+
+> 时间：2026-08-22
+> 范围：对全仓做 3 轮「审查 + 修复」：R1 广度扫描（域名统一/alternates types/canonical 归一/robots 爬虫/死代码/i18n/文档）、R2 深挖（假日与周末数据实证纠错/DST 边界实跑固化/三态同步边界）、R3 生产构建端到端实证（软 404、矛盾 Link 头）。三轮各过全量门槛后独立提交（`2674a3c` / `3cb96d8` / `6132c9d`），不 push。完整问题清单见 `review-fix-report.md`。
+
+### 交付
+
+- **域名统一（P1）**：`getSiteUrl` 回退值改 `SITE_URL_FALLBACK = "https://time.eqde.de"`（与 .env.example 同源）；`gen-icons.mjs` 从 env/.env.local/.env.example 派生 OG 域名，`npm run gen:brand` 重生成 5 个素材。
+- **alternates.types 全子页携带（P1）**：`buildAlternates()` 内置 `text/plain → /llms.txt`，修复子页覆盖 layout alternates 后 GEO 机器可读入口丢失。
+- **软 404 修复（P1，实测驱动）**：未知城市/不可解析 slug/无城市国家原返回 200+noindex——根因 `[locale]/loading.tsx` 流式 shell 先行提交状态码。`loading.tsx` 收进首页路由组 `(home)`，三个动态路由 generateMetadata 改抛 `notFound()`；实测全部返回真 404，首页不受影响。
+- **矛盾 Link 头消除（P1）**：next-intl 中间件自动注入的 hreflang Link 头（原始 locale 码/未前缀 x-default/请求方 host）与 head 矛盾，`routing.alternateLinks: false` 关闭。
+- **canonical 大小写归一（P2）**：`canonicalLandingSlug` 经 `parseSlug` 归一后收敛，大小写变体不再产生碎片 canonical（实测 CN-BEIJING--US-NEW-YORK → cn-beijing--us-new-york）。
+- **robots AI 爬虫补全（P2）**：+OAI-Searchbot / Perplexity-User / DuckAssistBot / Bytespider（共 13 个）。
+- **数据纠错（P1，联网核实）**：CN/HK/TW 2027 端午 05-09→06-09（RU 05-09 胜利日核实保留）；周末规则 AE `[5,6]→[6,7]`（2022 起）、BD `[6,7]→[5,6]`、AF `[6,7]→[5]`。
+- **死代码删除（P2/P3）**：`opengraph-image.tsx` / `twitter-image.tsx` / `ogArtwork.tsx`（Next 源码证实文件约定不覆盖显式 metadata.images）、`weekendDaysOf`。
+- **i18n（P2/P3）**：复制摘要城市名随 locale；CitySearch 结果行城市/国家名按 locale 主显；空 `p=/s=/c=` 与 decodeState 语义对齐；对话框打开时 Esc 不再连带清选区。
+- **文档（P3）**：AGENTS.md 移除 Google Calendar 表述、README 重写、code-review-prompt.md 加历史声明、REQUIREMENTS.md 加存档注记。
+
+### 三轮审查
+
+**R1（广度）**：配置全读 + 关键词扫描（XSS/any/TODO/域名/硬编码文案）；Next 源码走读确认 OG 文件约定优先级；8 项修复 + 6 项记录型决策（SEO_KEYWORDS 英文共用、FAQPage 保留、sitemap hourly 等）。
+**R2（深挖）**：git show 重读 R1 diff 找回归（无）；逐函数深挖 time/grid/heatmap/landingSlug/shareUrl/store/三态同步，时间问题全部 node+Luxon 实跑（纽约春进/悉尼秋退/Lord Howe 30 分钟切换/开罗午夜切换/春进 167 列/秋退 169 列 epoch 唯一/半小时偏移/parseSlug 歧义/decodeState 降级——既有实现全对，固化为 `tests/lib/dstRegressions.test.ts`）；假日/周末数据逐国抽查发现并核实 3 类数据错误；npm audit 3 high 为构建期 devDep（修复需破坏性升级，按约束跳过）。
+**R3（实证）**：`next start` + curl/node 抓取——4 语言×4 页类元数据、canonical 三类收敛、404 边界、10 页 27 段 JSON-LD 全 parse+必填校验、sitemap 15,510 URL 抽样可达、robots/llms 三件套、5 条用户路径（分享 URL/城市↔国家↔对照互链/首页 footer/国家→城市）全部通过；实证揪出仅靠走读无法确认的软 404 与矛盾 Link 头两个 P1。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 无警告无错误 |
+| `npm run test` | ✅ 215/215（192 → 215，+23） |
+| `npm run build` | ✅ 1045 静态页（近期历史口径 1033） |
+
+### 涉及文件
+
+`src/lib/seo.ts` `src/lib/summary.ts` `src/lib/heatmap.ts` `src/lib/useLocalPersist.ts` `src/lib/ogArtwork.tsx`(删) `src/app/robots.ts` `src/app/[locale]/opengraph-image.tsx`(删) `src/app/[locale]/twitter-image.tsx`(删) `src/app/[locale]/(home)/{page,loading}.tsx`(自根段迁入) `src/app/[locale]/time/[cityId]/page.tsx` `src/app/[locale]/country/[code]/page.tsx` `src/app/[locale]/time-converter/[slug]/page.tsx` `src/i18n/routing.ts` `src/components/{SelectionBar,CitySearch,KeyboardShortcuts}.tsx` `src/data/{holidays,countries}.ts` `scripts/gen-icons.mjs` `tests/lib/{seo,summary,dstRegressions}.test.ts` `tests/data/{holidays,countries}.test.ts` `public/og*.png` `public/brand/*.{svg,png}` `AGENTS.md` `README.md` `code-review-prompt.md` `markdown/REQUIREMENTS.md`
+
+---
+
 ## 第 41 轮：OG/favicon/GEO 宣传素材 + 两轮审查合入 main
 
 > 时间：2026-08-21
