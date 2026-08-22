@@ -45,6 +45,28 @@ function rel(p) {
   return p.replace(root, "").replace(/^[\\/]/, "");
 }
 
+/**
+ * 站点域名（OG 图右下角展示）：与 src/lib/seo.ts 同源。
+ * 独立 node 脚本不经过 Next 的 env 加载，这里按
+ * process.env → .env.local → .env.example 顺序读取。
+ */
+function siteHost() {
+  let url = process.env.NEXT_PUBLIC_SITE_URL;
+  for (const f of [".env.local", ".env.example"]) {
+    if (url) break;
+    try {
+      const line = readFileSync(resolve(root, f), "utf8")
+        .split(/\r?\n/)
+        .find((l) => l.startsWith("NEXT_PUBLIC_SITE_URL="));
+      if (line) url = line.slice("NEXT_PUBLIC_SITE_URL=".length).trim();
+    } catch {
+      // 文件不存在则继续
+    }
+  }
+  return (url || "https://time.eqde.de").replace(/\/+$/, "").replace(/^https?:\/\//, "");
+}
+const SITE_HOST = siteHost();
+
 function writeBuf(path, buf, label) {
   writeFileSync(path, buf);
   console.log(`  wrote ${label} -> ${rel(path)} (${buf.length} bytes)`);
@@ -161,7 +183,7 @@ function buildOgLandscape() {
   <text x="236" y="372" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="16">Live offsets</text>
   <text x="362" y="372" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="16">·</text>
   <text x="384" y="372" fill="#7DD3FC" font-family="Arial, Helvetica, sans-serif" font-size="16">DST-aware</text>
-  <text x="72" y="548" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="18">worldtime.app</text>
+  <text x="72" y="548" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="18">${SITE_HOST}</text>
   <rect x="608" y="88" width="528" height="454" rx="20" fill="#1E293B" fill-opacity="0.96" stroke="#334155"/>
   <text x="640" y="128" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="12" letter-spacing="1.8">OVERLAP AT A GLANCE</text>
   <g transform="translate(608 52)">
@@ -196,7 +218,7 @@ function buildOgSquare() {
     ${grid}
   </g>
   <text x="188" y="940" fill="#FDE68A" font-family="Arial, Helvetica, sans-serif" font-size="22">Looks like a good time for everyone</text>
-  <text x="140" y="1084" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="22">worldtime.app</text>
+  <text x="140" y="1084" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="22">${SITE_HOST}</text>
 </svg>`;
 }
 

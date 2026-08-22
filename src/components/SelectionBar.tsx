@@ -56,6 +56,7 @@ export default function SelectionBar() {
         hourFormat,
         { title: tSum("title"), homeSuffix: tSum("homeSuffix") },
         homeId,
+        locale,
       ),
     );
     if (ok) {

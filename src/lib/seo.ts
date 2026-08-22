@@ -7,10 +7,17 @@
 
 import type { Metadata } from "next";
 import { routing } from "@/i18n/routing";
+import { parseSlug } from "@/lib/landingSlug";
+
+/**
+ * 站点真实域名以 NEXT_PUBLIC_SITE_URL 为准（.env.example 同源维护）；
+ * 此回退值须与 .env.example 保持一致，避免构建产物出现第二个域名。
+ */
+export const SITE_URL_FALLBACK = "https://time.eqde.de";
 
 export function getSiteUrl(): string {
   const env = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  const raw = env && env.length > 0 ? env : "https://worldtime.app";
+  const raw = env && env.length > 0 ? env : SITE_URL_FALLBACK;
   return raw.replace(/\/+$/, "");
 }
 
@@ -84,7 +91,7 @@ export const HREFLANG_MAP: Record<string, string> = {
 export const SEO_DEFAULT_LOCALE = "en";
 
 /** sitemap lastmod：内容指纹日。勿用 Date.now()，否则每次构建全站“刚更新”。 */
-export const SITEMAP_LASTMOD = "2026-08-21";
+export const SITEMAP_LASTMOD = "2026-08-22";
 
 export function sitemapLastModDate(): Date {
   return new Date(`${SITEMAP_LASTMOD}T00:00:00.000Z`);
@@ -106,6 +113,11 @@ export function buildAlternates(
   return {
     canonical: localeUrl(locale, path),
     languages: hreflangLanguages(path),
+    // llms.txt 机器可读链接须随每个子页携带：Next 的 metadata 合并按顶层键
+    // 整体覆盖，子页声明 alternates 后 layout 的 types 即丢失。
+    types: {
+      "text/plain": `${getSiteUrl()}/llms.txt`,
+    },
   };
 }
 
@@ -222,17 +234,20 @@ export function reverseLandingSlug(slug: string): string | null {
 
 /**
  * 对照页 canonical slug：热门表优先（含反向命中热门），否则按字典序收束 A--B / B--A。
+ *
+ * 经 parseSlug 归一后再比较：城市 id 统一小写、时区缩写统一大写，
+ * 避免大小写变体（如 CN-BEIJING--US-NEW-YORK）各自声明不同的 canonical，
+ * 造成同内容多 canonical 的碎片化。
  */
 export function canonicalLandingSlug(slug: string): string {
+  const info = parseSlug(slug);
+  if (!info) return slug; // 不可解析：页面本身 notFound，保持原样即可
   const popular = new Set(buildLandingSlugs());
-  if (popular.has(slug)) return slug;
-  const rev = reverseLandingSlug(slug);
-  if (rev && popular.has(rev)) return rev;
-  const i = slug.indexOf("--");
-  if (i <= 0) return slug;
-  const a = slug.slice(0, i);
-  const b = slug.slice(i + 2);
-  return a.toLowerCase() <= b.toLowerCase() ? `${a}--${b}` : `${b}--${a}`;
+  const forward = `${info.aId}--${info.bId}`;
+  const reverse = `${info.bId}--${info.aId}`;
+  if (popular.has(forward)) return forward;
+  if (popular.has(reverse)) return reverse;
+  return info.aId.toLowerCase() <= info.bId.toLowerCase() ? forward : reverse;
 }
 
 export function stringifyJsonLd(data: object): string {

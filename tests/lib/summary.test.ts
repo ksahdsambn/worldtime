@@ -20,6 +20,15 @@ describe("summaryText 复制时间摘要 (MS-3)", () => {
     expect(txt).toContain("New York");
   });
 
+  it("城市名随 locale 本地化（中文界面输出中文名，默认英文）", () => {
+    const zh = summaryText(selection, [PLACES.beijing()], "24", ZH, "cn-beijing", "zh");
+    const def = summaryText(selection, [PLACES.beijing()], "24", EN, "cn-beijing");
+    expect(zh).toContain("北京");
+    expect(zh).not.toContain("Beijing");
+    expect(def).toContain("Beijing");
+    expect(def).not.toContain("北京");
+  });
+
   it("主地点标记以真实 homeId 为准（非列表首项）", () => {
     // 主地点为第二项纽约
     const txt = summaryText(

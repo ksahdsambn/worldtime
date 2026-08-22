@@ -3,7 +3,6 @@ import type { PlaceItem } from "@/store/useWorldTimeStore";
 import type { DayPeriods } from "@/store/useWorldTimeStore";
 import { classifyLocalPeriod, type LocalPeriod } from "@/lib/time";
 import { isWeekendAt } from "@/lib/grid";
-import { getCountry } from "@/data/countries";
 import { isHoliday } from "@/data/holidays";
 
 /**
@@ -90,9 +89,4 @@ export function heatLabel(
   labels: Record<HeatColor, string>,
 ): string {
   return labels[color];
-}
-
-/** 国家代码 → weekendDays（供测试与外部使用）。 */
-export function weekendDaysOf(countryCode: string): number[] {
-  return getCountry(countryCode).weekendDays;
 }

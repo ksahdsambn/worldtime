@@ -1,5 +1,10 @@
 # WorldTime 项目全面代码审查提示词（3 轮递进）
 
+> **⚠️ 历史文档（2026-08-11）**：本提示词写于功能精简轮之前。此后以下模块已从代码库删除：
+> Google 日历叠加（`lib/calendar.ts`、ICS/base64 事件码）、公开事件页（`event/[code]`）、
+> 桌面 Widget、打印导出、氛围背景、`lib/sun.ts` 日出日落。涉及这些模块的检查项已无对应代码，
+> 以当前代码为准。技术栈亦已升级为 **Next.js 15**。最新架构说明见 `README.md` 与 `AGENTS.md`。
+
 ## 你的角色
 
 你是一名资深的全栈代码审查工程师，擅长 TypeScript / React / Next.js / 时区计算 / 前端安全与性能优化。你将以**独立、客观、严格**的标准对本项目进行全面审查。
@@ -15,10 +20,10 @@
 在开始审查前，先用 30 分钟通读以下内容，建立完整心智模型：
 
 1. **产品定位**：阅读 `markdown/REQUIREMENTS.md`，理解 WorldTime 是什么——一个纯客户端（无后端、无账号、无追踪）的世界时钟 + 时区转换器 + 会议安排器，数据存在浏览器 localStorage 和 URL 中。
-2. **技术栈**：Next.js 14（App Router，Node server 模式，standalone 输出）+ React 18 + TypeScript 5（strict）+ Tailwind CSS + Zustand 5 + Luxon 2.5 + next-intl 4.13（11 语言）+ Vitest 4。
+2. **技术栈**：Next.js 15（App Router，Node server 模式，standalone 输出）+ React 18 + TypeScript 5（strict）+ Tailwind CSS + Zustand 5 + Luxon 2.5 + next-intl 4.13（11 语言）+ Vitest 4。（原文写的 Next.js 14 已过时）
 3. **目录结构**：`src/lib/`（15 个纯函数业务逻辑模块）、`src/components/`（25 个组件）、`src/store/`（Zustand）、`src/data/`（1203 城市 / 2362 节假日 / 国家元数据）、`src/app/[locale]/`（App Router 页面）、`messages/`（11 个语言 JSON）、`tests/`（单元测试）。
 4. **状态架构**：理解状态存在三处并需保持同步——Zustand store（运行时）、localStorage（持久化）、URL query（分享）。重点关注同步逻辑是否有遗漏或竞态。
-5. **关键算法**：`lib/time.ts`（DST 检测/偏移量）、`lib/grid.ts`（小时列构建、DST 去重）、`lib/heatmap.ts`（"最差状态优先"着色 + 周末/节假日覆盖）、`lib/calendar.ts`（ICS 生成/RFC5545 转义/base64 事件码）、`lib/shareUrl.ts`（URL 状态编解码）、`lib/sun.ts`（日出日落天文计算）。
+5. **关键算法**：`lib/time.ts`（DST 检测/偏移量）、`lib/grid.ts`（小时列构建、DST 去重）、`lib/heatmap.ts`（"最差状态优先"着色 + 周末/节假日覆盖）、`lib/shareUrl.ts`（URL 状态编解码）、`lib/landingSlug.ts`（对照页 slug 解析）。（原文提到的 `lib/calendar.ts` 与 `lib/sun.ts` 已删除）
 
 理解后，列出你心中的"高风险区域"清单，作为后续审查的重点。
 

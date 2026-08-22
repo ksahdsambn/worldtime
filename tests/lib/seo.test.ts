@@ -41,8 +41,8 @@ describe("getSiteUrl", () => {
     else process.env.NEXT_PUBLIC_SITE_URL = ORIG;
   });
 
-  it("未设环境变量时回退到占位域名", () => {
-    expect(getSiteUrl()).toBe("https://worldtime.app");
+  it("未设环境变量时回退到占位域名（与 .env.example 同源）", () => {
+    expect(getSiteUrl()).toBe("https://time.eqde.de");
   });
   it("读取环境变量并裁掉末尾斜杠", () => {
     process.env.NEXT_PUBLIC_SITE_URL = "https://example.com////";
@@ -50,7 +50,7 @@ describe("getSiteUrl", () => {
   });
   it("空字符串环境变量回退", () => {
     process.env.NEXT_PUBLIC_SITE_URL = "   ";
-    expect(getSiteUrl()).toBe("https://worldtime.app");
+    expect(getSiteUrl()).toBe("https://time.eqde.de");
   });
 });
 
@@ -87,6 +87,10 @@ describe("buildAlternates", () => {
   it("x-default 指向英文", () => {
     const a = buildAlternates("zh");
     expect(a.languages?.["x-default"]).toBe(`${getSiteUrl()}/en`);
+  });
+  it("携带 llms.txt 的 types 链接（子页覆盖 alternates 时不丢失）", () => {
+    const a = buildAlternates("zh", "/time-converter/EST--PST");
+    expect(a.types?.["text/plain"]).toBe(`${getSiteUrl()}/llms.txt`);
   });
   it("首页（空 path）每语言 URL 不含多余斜杠", () => {
     const a = buildAlternates("zh");
@@ -276,8 +280,20 @@ describe("canonicalLandingSlug", () => {
   it("热门对的反向收束到热门表", () => {
     expect(canonicalLandingSlug("us-new-york--cn-beijing")).toBe("cn-beijing--us-new-york");
   });
-  it("非热门对按字典序收束", () => {
-    expect(canonicalLandingSlug("zz-b--aa-a")).toBe("aa-a--zz-b");
+  it("非热门真实城市对按字典序收束", () => {
+    expect(canonicalLandingSlug("jp-osaka--cn-chengdu")).toBe("cn-chengdu--jp-osaka");
+    expect(canonicalLandingSlug("cn-chengdu--jp-osaka")).toBe("cn-chengdu--jp-osaka");
+  });
+  it("含未注册城市 id 的 slug 原样返回（不虚构 canonical）", () => {
+    expect(canonicalLandingSlug("zz-b--aa-a")).toBe("zz-b--aa-a");
+  });
+  it("大小写变体归一到规范 slug（城市小写 / 时区大写）", () => {
+    expect(canonicalLandingSlug("CN-BEIJING--US-NEW-YORK")).toBe("cn-beijing--us-new-york");
+    expect(canonicalLandingSlug("US-NEW-YORK--CN-Beijing")).toBe("cn-beijing--us-new-york");
+    expect(canonicalLandingSlug("EST--PST")).toBe("EST--PST");
+  });
+  it("不可解析 slug 原样返回（页面自行 notFound）", () => {
+    expect(canonicalLandingSlug("nonsense")).toBe("nonsense");
   });
   it("reverseLandingSlug 对调两段", () => {
     expect(reverseLandingSlug("EST--PST")).toBe("PST--EST");

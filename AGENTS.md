@@ -10,13 +10,15 @@ sessions.
 
 WorldTime is a world clock, time-zone converter, and cross-timezone meeting
 scheduler. Core surface is a 7-day × 24-hour grid with cities/time zones as
-rows; users drag to select an overlap window and can overlay Google Calendar
-free/busy. Heatmap coloring flags work/sleep/weekend hours so meeting overlap
-is legible at a glance.
+rows; users drag to select an overlap window and share it via URL. Heatmap
+coloring flags work/sleep/weekend hours so meeting overlap is legible at a
+glance. SEO/GEO landing surfaces: per-city pages (`/time/[cityId]`), country
+indexes (`/country/[code]`), pair converters (`/time-converter/[slug]`), and
+`about` / `faq` / `privacy` pages.
 
 **Stack:** Next.js 15 (App Router) · React 18 · TypeScript · Tailwind CSS 3 ·
 next-intl (**11 locales**: en, zh, zh-Hant, ja, ko, de, es, fr, pt, ru, vi) ·
-Zustand · Luxon · @dnd-kit · next-themes · Google Calendar OAuth · PWA.
+Zustand · Luxon · @dnd-kit · next-themes · PWA (service worker).
 
 ---
 
