@@ -36,9 +36,10 @@ export default function KeyboardShortcuts() {
         removePlace(homeId);
         return;
       }
-      // Escape 清除选区；对话框打开时把 Esc 留给对话框关闭，避免连带清空选区
+      // Escape 清除选区；对话框/菜单/浮层组打开时把 Esc 留给其关闭，
+      // 避免连带清空选区（三者均仅在打开时挂载，无永久命中）
       if (e.key === "Escape") {
-        if (document.querySelector('[role="dialog"]')) return;
+        if (document.querySelector('[role="dialog"], [role="menu"], [role="group"]')) return;
         setSelection(null);
         return;
       }

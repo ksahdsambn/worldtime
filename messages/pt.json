@@ -37,7 +37,6 @@
     "setHome": "Definir como principal",
     "remove": "Remover",
     "home": "Principal",
-    "utcRow": "Tempo Universal Coordenado",
     "offsetFromHome": "Diferença para o principal (positivo = à frente)",
     "dstActive": "Atualmente em horário de verão",
     "dst": "Horário de verão",
@@ -57,7 +56,6 @@
     "periodRest": "Horário de descanso"
   },
   "Selection": {
-    "duration": "Duração",
     "clear": "Limpar seleção",
     "hour": "hora",
     "minute": "minuto",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "Todos em horário de trabalho",
     "orange": "Alguns fora do horário de trabalho",
-    "red": "Alguém dormindo",
-    "worstStatus": "Cada coluna é colorida pela cidade menos disponível."
+    "red": "Alguém dormindo"
   },
   "Now": {
     "backToNow": "Voltar para agora"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "Marcador de tempo:",
     "enable": "Mostrar marcador de tempo",
-    "move": "mover",
-    "resize": "ajustar borda",
-    "disable": "Ocultar marcador de tempo",
-    "select": "selecionar"
+    "disable": "Ocultar marcador de tempo"
   },
   "DateJump": {
     "jumpTo": "Ir para:",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "Encontre um horário que funciona para todos",
-    "emptyBody": "Adicione algumas cidades para ver o horário de trabalho e de sono de cada um lado a lado e depois arraste para escolher.",
     "startLocal": "Começar com meu fuso horário",
-    "startLocalHint": "Adiciona sua cidade local, além de Nova York e Londres.",
-    "presetFinance": "Relógio financeiro mundial",
-    "presetFinanceHint": "Nova York · Londres · Tóquio",
-    "searchHint": "…ou busque qualquer cidade na caixa acima.",
-    "dragHint": "Arraste pelas horas para escolher o horário da reunião — as cores mostram quem está acordado.",
-    "dragGotIt": "Entendi"
+    "presetFinance": "Relógio financeiro mundial"
   },
   "Help": {
     "label": "Dicas",
@@ -345,5 +333,10 @@
       "É um app web estático/SSR. Os horários são calculados no seu dispositivo e nos nossos servidores com dados IANA. Não vendemos perfis.",
       "Como PWA, o service worker guarda páginas só neste dispositivo para uso offline."
     ]
+  },
+  "ViewControls": {
+    "title": "Opções de visualização",
+    "prevWeek": "Semana anterior",
+    "nextWeek": "Próxima semana"
   }
 }

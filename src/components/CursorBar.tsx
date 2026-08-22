@@ -7,32 +7,19 @@ import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import type { PlaceItem } from "@/store/useWorldTimeStore";
 
 /**
- * 时间游标控制（TC-3 / TC-4，P1）。
+ * 时间游标的键盘控制（TC-3 / TC-4，P1）——全局挂载，与入口弹层开合无关：
  *
  * - 方向键 ←/→ 移动游标（默认 1 小时步进；Shift = 5 分钟步进）。
  * - 选中选区后，Shift+←/→ 微调选区起止边缘（5 分钟步进）。
- * - 点击"启用游标"初始化游标到当前时刻。
- *
- * 游标锚定到绝对时刻，所有地点行同步对齐（步骤 3.2）。
+ * - Enter / Space：在游标处开始一个 1 小时选区（随后用 Shift+←/→ 扩展）。
  */
-export default function CursorBar() {
-  const t = useTranslations("Cursor");
+export function useCursorShortcuts() {
   const cursorMs = useWorldTimeStore((s) => s.cursorMs);
   const setCursor = useWorldTimeStore((s) => s.setCursor);
   const selection = useWorldTimeStore((s) => s.selection);
   const setSelection = useWorldTimeStore((s) => s.setSelection);
   const resizeSelection = useWorldTimeStore((s) => s.resizeSelection);
-  const places = useWorldTimeStore((s) => s.places);
-  // 通过 hook 订阅 homeId，确保主地点变更时组件重渲染
-  const homeId = useWorldTimeStore((s) => s.homeId);
 
-  const home: PlaceItem | undefined =
-    places.find((p) => p.id === homeId) ?? places[0];
-
-  // 键盘快捷键（C1 无障碍修复：选区可通过键盘完成）
-  //  - Enter / Space：在游标处开始一个 1 小时选区（随后用 Shift+←/→ 扩展）
-  //  - ←/→：移动游标（Shift = 5 分钟步进）
-  //  - Shift+←/→：微调已有选区边缘
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       // 输入框中不触发
@@ -69,6 +56,21 @@ export default function CursorBar() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [cursorMs, selection, setSelection, resizeSelection, setCursor]);
+}
+
+/**
+ * 时间游标的行内控件（渲染于「视图选项」弹层内）。
+ * 启用后显示当前游标时刻；键盘操作见全局 useCursorShortcuts / Help 弹窗。
+ */
+export default function CursorBar() {
+  const t = useTranslations("Cursor");
+  const cursorMs = useWorldTimeStore((s) => s.cursorMs);
+  const setCursor = useWorldTimeStore((s) => s.setCursor);
+  const places = useWorldTimeStore((s) => s.places);
+  const homeId = useWorldTimeStore((s) => s.homeId);
+
+  const home: PlaceItem | undefined =
+    places.find((p) => p.id === homeId) ?? places[0];
 
   function enableCursor() {
     setCursor(Date.now());
@@ -82,7 +84,7 @@ export default function CursorBar() {
       : null;
 
   return (
-    <div className="flex items-center gap-2 px-1 py-0.5 text-xs text-muted">
+    <div className="flex items-center gap-2 text-xs text-muted">
       <span>{t("cursor")}</span>
       {cursorMs == null ? (
         <button
@@ -95,14 +97,8 @@ export default function CursorBar() {
         </button>
       ) : (
         <>
-          <span
-            className="chrono text-ink"
-            data-testid="cursor-time"
-          >
+          <span className="chrono text-ink" data-testid="cursor-time">
             {label}
-          </span>
-          <span className="hidden text-faint sm:inline">
-            · ←/→ {t("move")} · Enter {t("select")} · Shift+←/→ {t("resize")}
           </span>
           <button
             type="button"

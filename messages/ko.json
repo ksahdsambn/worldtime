@@ -37,7 +37,6 @@
     "setHome": "기준으로 설정",
     "remove": "제거",
     "home": "기준",
-    "utcRow": "협정 세계시",
     "offsetFromHome": "기준과의 시차 (양수 = 앞섬)",
     "dstActive": "현재 서머타임 중",
     "dst": "서머타임",
@@ -57,7 +56,6 @@
     "periodRest": "휴식 시간"
   },
   "Selection": {
-    "duration": "기간",
     "clear": "선택 해제",
     "hour": "시간",
     "minute": "분",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "전원 근무 시간대",
     "orange": "근무 시간 외인 사람 있음",
-    "red": "자는 사람 있음",
-    "worstStatus": "각 열은 가장 참여하기 어려운 도시 기준으로 색이 표시됩니다."
+    "red": "자는 사람 있음"
   },
   "Now": {
     "backToNow": "현재로 돌아가기"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "시간 표시:",
     "enable": "시간 표시 보기",
-    "move": "이동",
-    "resize": "가장자리 조정",
-    "disable": "시간 표시 숨기기",
-    "select": "선택"
+    "disable": "시간 표시 숨기기"
   },
   "DateJump": {
     "jumpTo": "이동:",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "모두에게 맞는 회의 시간 찾기",
-    "emptyBody": "도시를 몇 곳 추가해 각자의 근무 시간과 수면 시간을 나란히 보고, 드래그해 시간을 선택하세요.",
     "startLocal": "내 시간대에서 시작",
-    "startLocalHint": "내가 있는 도시와 뉴욕, 런던을 함께 추가합니다.",
-    "presetFinance": "세계 금융 시계",
-    "presetFinanceHint": "뉴욕 · 런던 · 도쿄",
-    "searchHint": "…또는 위 검색창에서 원하는 도시를 검색하세요.",
-    "dragHint": "시간대를 가로로 드래그해 회의 시간을 선택하세요. 색상은 깨어 있는 사람을 표시합니다.",
-    "dragGotIt": "알겠어요"
+    "presetFinance": "세계 금융 시계"
   },
   "Help": {
     "label": "사용 팁",
@@ -345,5 +333,10 @@
       "정적/SSR 웹 앱입니다. 시각은 IANA 구역 데이터로 기기와 서버에서 계산합니다. 개인 프로필을 판매하지 않습니다.",
       "PWA로 설치하면 Service Worker가 해당 기기에서만 페이지를 캐시합니다."
     ]
+  },
+  "ViewControls": {
+    "title": "보기 옵션",
+    "prevWeek": "이전 주",
+    "nextWeek": "다음 주"
   }
 }

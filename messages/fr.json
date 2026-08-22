@@ -37,7 +37,6 @@
     "setHome": "Définir comme principal",
     "remove": "Retirer",
     "home": "Principal",
-    "utcRow": "Temps universel coordonné",
     "offsetFromHome": "Décalage avec le principal (positif = en avance)",
     "dstActive": "Actuellement en heure d'été",
     "dst": "Heure d'été",
@@ -57,7 +56,6 @@
     "periodRest": "Heures de repos"
   },
   "Selection": {
-    "duration": "Durée",
     "clear": "Effacer la sélection",
     "hour": "heure",
     "minute": "minute",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "Tous en heures ouvrables",
     "orange": "Certains hors heures ouvrables",
-    "red": "Quelqu'un dort",
-    "worstStatus": "Chaque colonne est colorée selon la ville la moins disponible."
+    "red": "Quelqu'un dort"
   },
   "Now": {
     "backToNow": "Revenir à maintenant"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "Repère temporel :",
     "enable": "Afficher le repère temporel",
-    "move": "déplacer",
-    "resize": "ajuster le bord",
-    "disable": "Masquer le repère temporel",
-    "select": "sélectionner"
+    "disable": "Masquer le repère temporel"
   },
   "DateJump": {
     "jumpTo": "Aller à :",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "Trouvez une heure qui convient à tous",
-    "emptyBody": "Ajoutez quelques villes pour voir les heures de travail et de sommeil de chacun, puis glissez pour choisir une heure.",
     "startLocal": "Commencer avec mon fuseau horaire",
-    "startLocalHint": "Ajoute votre ville locale ainsi que New York et Londres.",
-    "presetFinance": "Horloge financière mondiale",
-    "presetFinanceHint": "New York · Londres · Tokyo",
-    "searchHint": "…ou recherchez n'importe quelle ville dans le champ ci-dessus.",
-    "dragHint": "Glissez sur les heures pour choisir une heure de réunion — les couleurs indiquent qui est réveillé.",
-    "dragGotIt": "Compris"
+    "presetFinance": "Horloge financière mondiale"
   },
   "Help": {
     "label": "Astuces",
@@ -345,5 +333,10 @@
       "Site statique/SSR. Les heures sont calculées sur votre appareil et nos serveurs à partir des données IANA. Nous ne vendons pas de profils.",
       "En PWA, le service worker met les pages en cache uniquement sur cet appareil pour le hors-ligne."
     ]
+  },
+  "ViewControls": {
+    "title": "Options d'affichage",
+    "prevWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante"
   }
 }

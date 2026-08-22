@@ -5,10 +5,11 @@ import { DateTime } from "luxon";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 
 /**
- * 任意日期跳转（TC-6）。
- * 选择一个日期后，网格以该日期为起始日重新渲染。
+ * 任意日期跳转输入框（TC-6）——渲染于「视图选项」弹层内。
+ *
+ * 选择一个日期后，网格以该日期为起始日重新渲染。清空即回到今天。
  * 输入框为受控组件，其值由 viewStartDateMs（主地点本地）派生，
- * 保证 UI 与 store 状态一致（重置时输入框同步清空）。
+ * 保证 UI 与 store 状态一致。「今天 / 回到现在」合并为主工具条的 NowButton。
  */
 export default function DateJump() {
   const t = useTranslations("DateJump");
@@ -37,29 +38,19 @@ export default function DateJump() {
     if (dt.isValid) setViewStartDate(dt.toMillis());
   }
 
-  function reset() {
-    setViewStartDate(null);
-  }
-
-  // 无地点时禁用日期选择器（审查报告 P3）：原实现输入框仍可交互但 onChange 静默
-  // 丢弃输入，用户无反馈。现禁用并加 aria-disabled。
+  // 无地点时禁用日期选择器：原实现输入框仍可交互但 onChange 静默丢弃输入。
   const disabled = !home;
 
   return (
-    <label className="flex items-center gap-1.5 text-xs text-muted">
-      <span>{t("jumpTo")}</span>
-      <input
-        type="date"
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        aria-disabled={disabled}
-        data-testid="date-jump"
-        className="input !w-auto !px-1.5 !py-0.5 text-xs disabled:cursor-not-allowed disabled:opacity-50"
-      />
-      <button type="button" onClick={reset} className="btn-ghost btn-sm">
-        {t("today")}
-      </button>
-    </label>
+    <input
+      type="date"
+      value={value}
+      onChange={onChange}
+      disabled={disabled}
+      aria-disabled={disabled}
+      aria-label={t("jumpTo")}
+      data-testid="date-jump"
+      className="input !w-auto text-xs disabled:cursor-not-allowed disabled:opacity-50"
+    />
   );
 }

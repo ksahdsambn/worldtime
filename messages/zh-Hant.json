@@ -37,7 +37,6 @@
     "setHome": "設為主要地點",
     "remove": "移除",
     "home": "主要",
-    "utcRow": "協調世界時",
     "offsetFromHome": "與主要地點的時差（正值為超前）",
     "dstActive": "目前為日光節約時間",
     "dst": "日光節約時間",
@@ -57,7 +56,6 @@
     "periodRest": "休息時段"
   },
   "Selection": {
-    "duration": "時長",
     "clear": "清除選取範圍",
     "hour": "小時",
     "minute": "分鐘",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "全員在工作時段",
     "orange": "部分人在非工作時段",
-    "red": "有人在休息",
-    "worstStatus": "每欄依最不方便的城市著色。"
+    "red": "有人在休息"
   },
   "Now": {
     "backToNow": "回到現在"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "時間游標：",
     "enable": "顯示時間游標",
-    "move": "移動",
-    "resize": "調整選取邊緣",
-    "disable": "隱藏時間游標",
-    "select": "選擇"
+    "disable": "隱藏時間游標"
   },
   "DateJump": {
     "jumpTo": "跳至：",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "找到一個大家都合適的會議時間",
-    "emptyBody": "新增幾座城市，並排查看每個人的工作和休息時段，再拖曳選出合適的時間。",
     "startLocal": "從我的時區開始",
-    "startLocalHint": "自動新增你的本地城市，以及紐約和倫敦。",
-    "presetFinance": "世界金融時鐘",
-    "presetFinanceHint": "紐約 · 倫敦 · 東京",
-    "searchHint": "……或在上方搜尋框輸入任意城市。",
-    "dragHint": "在網格上橫向拖曳來選擇會議時間——顏色代表誰處於清醒時段。",
-    "dragGotIt": "知道了"
+    "presetFinance": "世界金融時鐘"
   },
   "Help": {
     "label": "使用提示",
@@ -345,5 +333,10 @@
       "本站是靜態/SSR 網頁。時間在你的裝置和我們的伺服器上依據 IANA 時區資料計算；我們不出售個人檔案。",
       "若把應用安裝為 PWA，Service Worker 只在這台裝置上快取頁面供離線使用。"
     ]
+  },
+  "ViewControls": {
+    "title": "檢視選項",
+    "prevWeek": "上一週",
+    "nextWeek": "下一週"
   }
 }

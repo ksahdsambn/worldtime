@@ -37,7 +37,6 @@
     "setHome": "Als Hauptort festlegen",
     "remove": "Entfernen",
     "home": "Hauptort",
-    "utcRow": "Koordinierte Weltzeit",
     "offsetFromHome": "Abstand zum Hauptort (positiv = voraus)",
     "dstActive": "Aktuell in der Sommerzeit",
     "dst": "Sommerzeit",
@@ -57,7 +56,6 @@
     "periodRest": "Ruhezeit"
   },
   "Selection": {
-    "duration": "Dauer",
     "clear": "Auswahl löschen",
     "hour": "Stunde",
     "minute": "Minute",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "Alle in Arbeitszeit",
     "orange": "Einige außerhalb der Arbeitszeit",
-    "red": "Jemand schläft",
-    "worstStatus": "Jede Spalte wird nach der am wenigsten verfügbaren Stadt eingefärbt."
+    "red": "Jemand schläft"
   },
   "Now": {
     "backToNow": "Zurück zu jetzt"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "Zeitmarkierung:",
     "enable": "Zeitmarkierung anzeigen",
-    "move": "verschieben",
-    "resize": "Rand anpassen",
-    "disable": "Zeitmarkierung ausblenden",
-    "select": "Auswählen"
+    "disable": "Zeitmarkierung ausblenden"
   },
   "DateJump": {
     "jumpTo": "Springen zu:",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "Finde eine Uhrzeit, die für alle passt",
-    "emptyBody": "Füge ein paar Städte hinzu, um Arbeits- und Schlafzeiten aller side by side zu sehen – ziehe dann, um eine Zeit zu wählen.",
     "startLocal": "Mit meiner Zeitzone starten",
-    "startLocalHint": "Fügt deine Ortsstadt sowie New York und London hinzu.",
-    "presetFinance": "Welt-Finanzuhr",
-    "presetFinanceHint": "New York · London · Tokio",
-    "searchHint": "…oder suche oben nach einer beliebigen Stadt.",
-    "dragHint": "Ziehe über die Stunden, um eine Besprechungszeit zu wählen – die Farben zeigen, wer wach ist.",
-    "dragGotIt": "Alles klar"
+    "presetFinance": "Welt-Finanzuhr"
   },
   "Help": {
     "label": "Tipps",
@@ -345,5 +333,10 @@
       "Die Site ist eine statische/SSR-Web-App. Zeiten werden auf Ihrem Gerät und unseren Servern aus IANA-Zonendaten berechnet. Wir verkaufen keine Profile.",
       "Als PWA speichert der Service Worker Seiten nur auf diesem Gerät für den Offline-Gebrauch."
     ]
+  },
+  "ViewControls": {
+    "title": "Ansichtsoptionen",
+    "prevWeek": "Vorherige Woche",
+    "nextWeek": "Nächste Woche"
   }
 }

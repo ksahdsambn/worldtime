@@ -37,7 +37,6 @@
     "setHome": "设为主地点",
     "remove": "删除",
     "home": "主地点",
-    "utcRow": "协调世界时",
     "offsetFromHome": "与主地点的时差（正为领先）",
     "dstActive": "当前处于夏令时",
     "dst": "夏令时",
@@ -57,7 +56,6 @@
     "periodRest": "休息时段"
   },
   "Selection": {
-    "duration": "时长",
     "clear": "清除选区",
     "hour": "小时",
     "minute": "分钟",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "全员在工作时段",
     "orange": "部分人在非工作时段",
-    "red": "有人在休息",
-    "worstStatus": "每列按最不方便的城市着色。"
+    "red": "有人在休息"
   },
   "Now": {
     "backToNow": "回到现在"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "时间游标：",
     "enable": "显示时间游标",
-    "move": "移动",
-    "resize": "微调选区边缘",
-    "disable": "隐藏时间游标",
-    "select": "选择"
+    "disable": "隐藏时间游标"
   },
   "DateJump": {
     "jumpTo": "跳转日期：",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "找到一个大家都合适的会议时间",
-    "emptyBody": "添加几座城市，并排查看每个人的工作和休息时段，再拖动选出合适的时间。",
     "startLocal": "从我的时区开始",
-    "startLocalHint": "自动添加你的本地城市，以及纽约和伦敦。",
-    "presetFinance": "世界金融时钟",
-    "presetFinanceHint": "纽约 · 伦敦 · 东京",
-    "searchHint": "……或在上方搜索框输入任意城市。",
-    "dragHint": "在网格上横向拖动来选择会议时间——颜色代表谁处于清醒时段。",
-    "dragGotIt": "知道了"
+    "presetFinance": "世界金融时钟"
   },
   "Help": {
     "label": "使用提示",
@@ -345,5 +333,10 @@
       "本站是静态/SSR 网页。时间在你的设备和我们的服务器上依据 IANA 时区数据计算；我们不出售个人档案。",
       "若把应用安装为 PWA，Service Worker 只在这台设备上缓存页面供离线使用。"
     ]
+  },
+  "ViewControls": {
+    "title": "视图选项",
+    "prevWeek": "上一周",
+    "nextWeek": "下一周"
   }
 }

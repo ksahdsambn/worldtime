@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo, useState, type ComponentType, type SVGProps } from "react";
+import { memo, useEffect, useMemo, useRef, useState, type ComponentType, type SVGProps } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { DateTime } from "luxon";
 import {
@@ -24,12 +24,15 @@ import { useWorldTimeStore, type PlaceItem, type DayPeriods } from "@/store/useW
 import { useNow } from "@/lib/useNow";
 import { localCityName } from "@/lib/cityName";
 import { useDialog } from "./Dialog";
+import { usePresence } from "@/lib/usePresence";
+import GlassMenu from "./GlassMenu";
 import {
   IconDrag,
   IconHome,
   IconEdit,
   IconClose,
   IconChevronDown,
+  IconMore,
   IconBriefcase,
   IconSun,
   IconMoon,
@@ -89,11 +92,6 @@ export default function PlacesPanel() {
   // 主地点时区（用于偏移量计算）
   const home = places.find((p) => p.id === homeId) ?? null;
 
-  // UTC 当前时间（固定显示，不随主地点变化 WC-7）
-  const utcStr = nowRaw
-    ? DateTime.fromMillis(nowRaw, { zone: "UTC" }).toFormat("HH:mm")
-    : "--:--";
-
   // 拖拽排序（WC-6）：拖拽完成后用 setPlacesOrder 一次性整体回写，
   // 避免多次 splice 抖动。
   const setPlacesOrder = useWorldTimeStore((s) => s.setPlacesOrder);
@@ -143,25 +141,6 @@ export default function PlacesPanel() {
         id="places-panel-content"
         className={`${mobileOpen ? "flex" : "hidden"} flex-col flex-1 bg-surface-inset p-3 md:flex`}
       >
-        {/* UTC 基准行（WC-7）：固定在列表顶部，仅作参考 */}
-        <div className="utc-strip surface mb-3">
-          <span className="flex items-center gap-2">
-            <span
-              className="text-[10px] font-semibold uppercase tracking-[0.16em] text-faint"
-              aria-hidden
-            >
-              UTC
-            </span>
-            <span className="sr-only">{t("utcRow")}</span>
-          </span>
-          <span
-            className="chrono text-lg text-ink"
-            data-testid="utc-clock"
-          >
-            {utcStr}
-          </span>
-        </div>
-
         <h2 className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-faint hidden md:block">
           {t("title")}
         </h2>
@@ -208,11 +187,15 @@ export default function PlacesPanel() {
   );
 }
 
-/** 可拖拽的地点行（WC-6 拖拽排序）。
+/** 可拖拽的地点行（WC-6 拖拽排序）——「表盘化」三层布局：
+ *  国旗+城市名 ／ 大时钟 ／ 一行状态（昼夜图标 + 相对主地点时差）。
  *
- * 用 memo 包裹：父级 places 数组任一变更（如重命名某行）会触发整个列表
- * 重渲染，memo 使仅 props 实际变化的行重渲染。传入的 store action、next-intl 的
- * t/tCom、useDialog 的 prompt/confirm 均为稳定引用，默认浅比较即可正确跳过。 */
+ *  次要信息（国家、IANA 时区、UTC 偏移、夏令时状态与下次切换）全部并入
+ *  状态行的 title 悬浮详情；行操作（主地点/重命名/删除）收进行尾 ⋯ 菜单。
+ *
+ *  用 memo 包裹：父级 places 数组任一变更（如重命名某行）会触发整个列表
+ *  重渲染，memo 使仅 props 实际变化的行重渲染。传入的 store action、next-intl 的
+ *  t/tCom、useDialog 的 prompt/confirm 均为稳定引用，默认浅比较即可正确跳过。 */
 const PlaceRow = memo(function PlaceRow({
   place,
   isHome,
@@ -271,9 +254,6 @@ const PlaceRow = memo(function PlaceRow({
     localHour,
     timeStr,
     offsetMin,
-    dst,
-    abbr,
-    dstWarn,
     hoverDetail,
   } = useMemo(() => {
     const dt = DateTime.fromMillis(now, { zone: p.timeZone });
@@ -286,21 +266,22 @@ const PlaceRow = memo(function PlaceRow({
       home && p.id !== home.id
         ? diffOffsetMinutes(home.timeZone, p.timeZone, now)
         : null;
-    const dst = isDST(p.timeZone, now); // TC-8
-    const abbr = timeZoneAbbrev(p.timeZone, now);
-    // DST 预警（6.3）：7 天内将切换则提示
-    const dstWarn = dstChangeWithinDays(p.timeZone, 7, now);
-    // 详情悬浮（6.4）：UTC 偏移、当前是否夏令时、下次切换日期
+    // 详情悬浮（6.4）：国家/时区、UTC 偏移、夏令时状态、下次切换日期。
+    // 行面只保留「时差」一个数字，其余专业细节都收进这条 tooltip。
+    const dst = isDST(p.timeZone, now);
     const utcOffset = offsetMinutes(p.timeZone, now);
     const nextChange = nextDSTChange(p.timeZone, now);
+    const dstWarn = dstChangeWithinDays(p.timeZone, 7, now);
     const hoverDetail = [
+      `${p.countryZh} · ${p.timeZone}`,
       `UTC${formatOffset(utcOffset)}`,
-      `${t("dst")}: ${dst ? t("yes") : t("no")}`,
+      `${t("dst")}: ${dst ? t("yes") : t("no")}${timeZoneAbbrev(p.timeZone, now) ? ` (${timeZoneAbbrev(p.timeZone, now)})` : ""}`,
       nextChange
         ? `${t("nextChange")}: ${DateTime.fromMillis(nextChange, { zone: p.timeZone }).toFormat("yyyy-MM-dd")}`
         : t("noUpcoming"),
+      ...(dstWarn ? [t("dstWarnSoon")] : []),
     ].join("\n");
-    return { localHour, timeStr, offsetMin, dst, abbr, dstWarn, hoverDetail };
+    return { localHour, timeStr, offsetMin, hoverDetail };
     // t 入 next-intl 稳定；place/home 为引用，变更时本行确需重算
   }, [now, nowRaw, p, hourFormat, home, t]);
 
@@ -320,15 +301,15 @@ const PlaceRow = memo(function PlaceRow({
       ref={setNodeRef}
       style={style}
       className={`surface group animate-fade-in overflow-hidden transition-shadow duration-200 hover:shadow-glow ${
-        isHome ? "bg-warm-soft home-row" : "bg-surface"
+        isHome ? "home-row" : ""
       }`}
     >
-      <div className="flex items-center gap-2 px-2.5 py-2">
-        {/* 拖拽手柄（WC-6） */}
+      <div className="flex items-center gap-2 px-2.5 py-2.5">
+        {/* 拖拽手柄（WC-6）：桌面悬停显现，触屏常驻（弱化）以保留拖拽排序 */}
         <button
           type="button"
           aria-label={t("dragHandle")}
-          className="icon-btn cursor-grab text-faint active:cursor-grabbing"
+          className="icon-btn cursor-grab text-faint opacity-60 transition-opacity duration-150 active:cursor-grabbing md:h-6 md:w-6 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
           {...attributes}
           {...listeners}
         >
@@ -338,30 +319,23 @@ const PlaceRow = memo(function PlaceRow({
           {p.flag}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5">
-            {isHome && <span className="sr-only">{t("home")}</span>}
-            <span className="truncate text-[13px] font-medium text-ink">
-              {isHome && (
+          <div className="truncate text-[13px] font-medium text-ink">
+            {isHome && (
+              <>
+                <span className="sr-only">{t("home")}</span>
                 <IconHome
                   aria-hidden
                   className="mr-1 inline h-3.5 w-3.5 shrink-0 text-warm-strong"
                 />
-              )}
-              {p.customName || localCityName(locale, p)}
-            </span>
+              </>
+            )}
+            {p.customName || localCityName(locale, p)}
           </div>
-          <div className="truncate text-[11px] text-faint">
-            {p.countryZh} · {p.timeZone}
-          </div>
-        </div>
-        <div className="flex shrink-0 flex-col items-end leading-tight">
-          <span
-            className="chrono text-xl text-ink"
-            data-testid={`clock-${p.id}`}
+          {/* 状态行：昼夜图标 + 相对主地点时差；完整时区细节在 title 悬浮 */}
+          <div
+            className="mt-0.5 flex items-center gap-1.5 text-[11px] text-faint"
+            title={hoverDetail}
           >
-            {timeStr}
-          </span>
-          <div className="mt-0.5 flex items-center gap-1.5 text-[10px]">
             {(() => {
               const dn = dayNightIcon(localHour, dayPeriods);
               const label =
@@ -371,90 +345,192 @@ const PlaceRow = memo(function PlaceRow({
                     ? t("periodContact")
                     : t("periodRest");
               return (
-                <span className="text-faint" title={label} aria-label={label}>
+                <span className="text-faint" aria-label={label}>
                   <dn.Icon className="h-3.5 w-3.5" />
                 </span>
               );
             })()}
             {offsetMin != null && (
-              <span
-                className="cursor-help text-faint"
-                data-testid={`offset-${p.id}`}
-                title={hoverDetail}
-              >
+              <span data-testid={`offset-${p.id}`}>
                 {offsetMin === 0 ? "0" : formatOffset(offsetMin)}
-              </span>
-            )}
-            {abbr && (
-              <span
-                className={`font-medium ${dst ? "text-warm-strong" : "text-faint"}`}
-                data-testid={`abbr-${p.id}`}
-                title={hoverDetail}
-              >
-                {abbr}
-              </span>
-            )}
-            {dstWarn && (
-              <span
-                className="rounded-full bg-warm-soft px-1 text-[9px] font-semibold text-ink"
-                data-testid={`dst-warn-${p.id}`}
-                title={t("dstWarnSoon")}
-              >
-                {t("dstBadge")}
               </span>
             )}
           </div>
         </div>
-      </div>
-
-      {/* 操作行 */}
-      <div className="flex items-center justify-end gap-1 border-t border-line px-2 py-1 md:gap-0.5 md:px-1.5">
-        <button
-          type="button"
-          onClick={() => onSetHome(p.id)}
-          className="icon-btn h-10 w-10 md:!h-6 md:!w-6"
-          title={t("setHome")}
-          aria-label={t("setHome")}
-        >
-          <IconHome className="h-4 w-4 md:h-3.5 md:w-3.5" />
-        </button>
-        <button
-          type="button"
-          onClick={async () => {
-            const name = await prompt({
-              title: t("renamePrompt"),
-              defaultValue: p.customName || localCityName(locale, p),
-            });
-            if (name !== null) onRename(p.id, name);
-          }}
-          className="icon-btn h-10 w-10 md:!h-6 md:!w-6"
-          title={t("rename")}
-          aria-label={t("rename")}
-        >
-          <IconEdit className="h-4 w-4 md:h-3.5 md:w-3.5" />
-        </button>
-        <button
-          type="button"
-          onClick={async () => {
-            // 删除主地点前二次确认，避免误删基准地点
-            if (
-              isHome &&
-              !(await confirm({
-                title: t("remove"),
-                message: t("confirmRemoveHome"),
-                destructive: true,
-              }))
-            )
-              return;
-            onRemove(p.id);
-          }}
-          className="icon-btn h-10 w-10 hover:!text-danger md:!h-6 md:!w-6"
-          title={tCom("delete")}
-          aria-label={tCom("delete")}
-        >
-          <IconClose className="h-4 w-4 md:h-3.5 md:w-3.5" />
-        </button>
+        <div className="flex shrink-0 items-center gap-0.5">
+          <span className="chrono text-xl text-ink" data-testid={`clock-${p.id}`}>
+            {timeStr}
+          </span>
+          <PlaceActionsMenu
+            place={p}
+            isHome={isHome}
+            locale={locale}
+            t={t}
+            tCom={tCom}
+            onSetHome={onSetHome}
+            onRemove={onRemove}
+            onRename={onRename}
+            prompt={prompt}
+            confirm={confirm}
+          />
+        </div>
       </div>
     </li>
   );
 });
+
+/** 行尾 ⋯ 操作菜单：主地点 / 重命名 / 删除 三个低频操作的收纳处。
+ *  桌面悬停行时显现，触屏常驻（弱化）。Esc / 外部点击关闭，焦点还给按钮。 */
+function PlaceActionsMenu({
+  place,
+  isHome,
+  locale,
+  t,
+  tCom,
+  onSetHome,
+  onRemove,
+  onRename,
+  prompt,
+  confirm,
+}: {
+  place: PlaceItem;
+  isHome: boolean;
+  locale: AppLocale;
+  t: (k: string) => string;
+  tCom: (k: string) => string;
+  onSetHome: (id: string) => void;
+  onRemove: (id: string) => void;
+  onRename: (id: string, name: string) => void;
+  prompt: (opts: {
+    title: string;
+    defaultValue?: string;
+    placeholder?: string;
+  }) => Promise<string | null>;
+  confirm: (opts: {
+    title: string;
+    message?: string;
+    destructive?: boolean;
+  }) => Promise<boolean>;
+}) {
+  const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const presence = usePresence(open, 200);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        btnRef.current?.focus();
+      }
+    }
+    function onPointerDown(e: PointerEvent) {
+      const target = e.target as Node;
+      if (
+        !panelRef.current?.contains(target) &&
+        !btnRef.current?.contains(target)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open]);
+
+  async function onRemoveClick() {
+    setOpen(false);
+    // 删除主地点前二次确认，避免误删基准地点
+    if (
+      isHome &&
+      !(await confirm({
+        title: t("remove"),
+        message: t("confirmRemoveHome"),
+        destructive: true,
+      }))
+    )
+      return;
+    onRemove(place.id);
+  }
+
+  async function onRenameClick() {
+    setOpen(false);
+    const name = await prompt({
+      title: t("renamePrompt"),
+      defaultValue: place.customName || localCityName(locale, place),
+    });
+    if (name !== null) onRename(place.id, name);
+  }
+
+  const itemCls =
+    "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-[13px] text-muted transition-colors duration-150 hover:bg-surface-hover hover:text-ink";
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        type="button"
+        aria-label={tCom("more")}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        title={tCom("more")}
+        onClick={() => setOpen((o) => !o)}
+        data-testid={`place-menu-${place.id}`}
+        className="icon-btn !h-6 !w-6 opacity-60 transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:focus-visible:opacity-100"
+      >
+        <IconMore className="h-4 w-4" />
+      </button>
+
+      {presence.mounted && (
+        <GlassMenu
+          ref={panelRef}
+          anchorRef={btnRef}
+          align="end"
+          width={176}
+          data-state={presence.state}
+          role="menu"
+          aria-label={tCom("more")}
+          className="motion-pop p-1.5"
+        >
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              onSetHome(place.id);
+            }}
+            disabled={isHome}
+            aria-disabled={isHome}
+            className={`${itemCls} disabled:cursor-not-allowed disabled:opacity-40`}
+          >
+            <IconHome className="h-3.5 w-3.5" />
+            {t("setHome")}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={onRenameClick}
+            className={itemCls}
+          >
+            <IconEdit className="h-3.5 w-3.5" />
+            {t("rename")}
+          </button>
+          <div className="my-1 h-px bg-[var(--border)]" />
+          <button
+            type="button"
+            role="menuitem"
+            onClick={onRemoveClick}
+            className={`${itemCls} hover:!text-danger`}
+          >
+            <IconClose className="h-3.5 w-3.5" />
+            {tCom("delete")}
+          </button>
+        </GlassMenu>
+      )}
+    </>
+  );
+}

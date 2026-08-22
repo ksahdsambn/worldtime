@@ -16,7 +16,7 @@ export default function LiveUtcClock() {
   return (
     <div className="hidden items-center gap-2 xl:flex">
       <span className="live-dot" aria-hidden />
-      <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-faint">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-faint">
         UTC
       </span>
       <span className="chrono text-[15px] text-ink">{stamp}</span>

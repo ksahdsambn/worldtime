@@ -86,10 +86,7 @@ export default function SelectionBar() {
         data-state={presence.state}
         className="motion-sheet liquid-glass mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
       >
-        <div className="flex shrink-0 items-baseline gap-2">
-          <span className="text-[11px] uppercase tracking-wide text-muted">
-            {t("duration")}
-          </span>
+        <div className="flex shrink-0 items-baseline">
           <span
             className="chrono text-lg text-ink"
             data-testid="selection-duration"
@@ -107,7 +104,7 @@ export default function SelectionBar() {
             type="button"
             onClick={onCopySummary}
             data-testid="copy-summary"
-            className="btn-primary btn-sm shrink-0"
+            className="btn-ghost btn-sm shrink-0"
           >
             {flash === "summary" ? tExp("copied") : tExp("copySummary")}
           </button>
@@ -115,7 +112,7 @@ export default function SelectionBar() {
             type="button"
             onClick={onCopyShare}
             data-testid="copy-share"
-            className="btn-ghost btn-sm shrink-0"
+            className="btn-primary btn-sm shrink-0"
           >
             {flash === "share" ? tExp("copied") : tExp("shareLink")}
           </button>

@@ -37,7 +37,6 @@
     "setHome": "基準に設定",
     "remove": "削除",
     "home": "基準",
-    "utcRow": "協定世界時",
     "offsetFromHome": "基準との時差（正=進んでいる）",
     "dstActive": "現在サマータイム中",
     "dst": "サマータイム",
@@ -57,7 +56,6 @@
     "periodRest": "休息時間"
   },
   "Selection": {
-    "duration": "時間",
     "clear": "選択を解除",
     "hour": "時間",
     "minute": "分",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "全員が勤務時間帯",
     "orange": "勤務時間外の人がいる",
-    "red": "寝ている人がいる",
-    "worstStatus": "各列は最も都合の悪い都市の色で表示されます。"
+    "red": "寝ている人がいる"
   },
   "Now": {
     "backToNow": "現在に戻る"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "タイムマーカー：",
     "enable": "タイムマーカーを表示",
-    "move": "移動",
-    "resize": "端を調整",
-    "disable": "タイムマーカーを非表示",
-    "select": "選択"
+    "disable": "タイムマーカーを非表示"
   },
   "DateJump": {
     "jumpTo": "移動：",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "全員に合う会議時間を見つけよう",
-    "emptyBody": "都市をいくつか追加して、各人の勤務時間と睡眠時間を並べて確認し、ドラッグで時間を選びましょう。",
     "startLocal": "自分のタイムゾーンで始める",
-    "startLocalHint": "お住まいの都市に加え、ニューヨークとロンドンを追加します。",
-    "presetFinance": "世界の金融時計",
-    "presetFinanceHint": "ニューヨーク · ロンドン · 東京",
-    "searchHint": "…または上の検索ボックスで任意の都市を探してください。",
-    "dragHint": "時間帯をドラッグして会議時間を選択できます。色は起きている時間を表します。",
-    "dragGotIt": "了解"
+    "presetFinance": "世界の金融時計"
   },
   "Help": {
     "label": "使い方",
@@ -345,5 +333,10 @@
       "静的/SSR のウェブアプリです。時刻は IANA ゾーンデータから端末とサーバで計算します。個人プロフィールは販売しません。",
       "PWA としてインストールした場合、Service Worker はその端末だけでページをキャッシュします。"
     ]
+  },
+  "ViewControls": {
+    "title": "表示オプション",
+    "prevWeek": "前の週",
+    "nextWeek": "次の週"
   }
 }

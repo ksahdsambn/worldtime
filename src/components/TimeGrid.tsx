@@ -24,12 +24,14 @@ import type { AppLocale } from "@/i18n/routing";
 export default function TimeGrid() {
   const locale = useLocale() as AppLocale;
   const tLoad = useTranslations("Loading");
+  const tDate = useTranslations("DateJump");
   const places = useWorldTimeStore((s) => s.places);
   const homeId = useWorldTimeStore((s) => s.homeId);
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
   const dayPeriods = useWorldTimeStore((s) => s.dayPeriods);
   const selection = useWorldTimeStore((s) => s.selection);
   const setSelection = useWorldTimeStore((s) => s.setSelection);
+  const setViewStartDate = useWorldTimeStore((s) => s.setViewStartDate);
   const restored = useWorldTimeStore((s) => s.restored);
   const nowRaw = useNow(60_000);
 
@@ -79,6 +81,26 @@ export default function TimeGrid() {
   const dragRafRef = useRef<number | null>(null);
   // dragEndMs 的 ref 镜像：rAF 回调里读取最新值做去重，避免闭包捕获过期 state。
   const dragEndMsRef = useRef<number | null>(null);
+
+  // —— 日期表头跳转：点击任意日期分组表头弹出原生 date picker（TC-6 的零文字入口）。
+  const datePickerRef = useRef<HTMLInputElement>(null);
+  function openDatePicker() {
+    const el = datePickerRef.current;
+    if (!el) return;
+    try {
+      // showPicker 需用户手势（表头点击即手势上下文）；旧浏览器无此 API
+      (el as HTMLInputElement & { showPicker?: () => void }).showPicker?.();
+    } catch {
+      el.focus();
+    }
+  }
+  function onDatePickerChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (!home) return;
+    const v = e.target.value;
+    if (!v) return;
+    const dt = DateTime.fromISO(v, { zone: home.timeZone }).startOf("day");
+    if (dt.isValid) setViewStartDate(dt.toMillis());
+  }
 
   // 当前高亮范围（拖拽中优先，否则用已确认选区）
   const highlight = useMemo<{ start: number; end: number } | null>(() => {
@@ -254,9 +276,17 @@ export default function TimeGrid() {
                   key={g.dayIndex}
                   scope="colgroup"
                   colSpan={g.count}
-                  className="border-l border-line px-2 py-2.5 text-center text-[11px] font-semibold"
+                  className="border-l border-line px-2 py-1 text-center text-[11px] font-semibold"
                 >
-                  {dt.toFormat("MM-dd EEE")}
+                  <button
+                    type="button"
+                    onClick={openDatePicker}
+                    aria-label={`${tDate("jumpTo")} ${dt.toFormat("yyyy-MM-dd")}`}
+                    data-testid="day-header-jump"
+                    className="w-full cursor-pointer rounded-sm px-1 py-1 transition-colors duration-150 hover:bg-surface-hover hover:text-ink focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
+                  >
+                    {dt.toFormat("MM-dd EEE")}
+                  </button>
                 </th>
               );
             })}
@@ -288,6 +318,16 @@ export default function TimeGrid() {
           ))}
         </tbody>
       </table>
+
+      {/* 隐藏的日期选择器：由日期表头按钮唤起原生 picker（sr-only 保持可聚焦） */}
+      <input
+        ref={datePickerRef}
+        type="date"
+        onChange={onDatePickerChange}
+        aria-label={tDate("jumpTo")}
+        tabIndex={-1}
+        className="sr-only"
+      />
     </div>
   );
 }
@@ -312,10 +352,11 @@ const Row = memo(function Row({
   highlight: { start: number; end: number } | null;
   now: number | null;
 }) {
-  // 每格需要的信息（显示文字 + 是否周末）集中 memo，且对每列仅构造一次 DateTime
-  // 复用于「文字格式化」与「周末判定」两处。依赖 columns/zone/countryCode/hourFormat，
-  // 不含 now —— 故每 60s 的 now tick 命中缓存，跳过全部 DateTime 分配（原实现每次渲染
-  // 对 ~168 列 × N 行各自 new DateTime，是网格最大的 GC 压力源）。
+  // 每格需要的信息（显示文字 + 是否周末 + 是否每日首列）集中 memo，且对每列仅
+  // 构造一次 DateTime 复用于「文字格式化」与「周末判定」两处。依赖
+  // columns/zone/countryCode/hourFormat，不含 now —— 故每 60s 的 now tick 命中缓存，
+  // 跳过全部 DateTime 分配（原实现每次渲染对 ~168 列 × N 行各自 new DateTime，
+  // 是网格最大的 GC 压力源）。
   const cellInfo = useMemo(() => {
     const use12 =
       hourFormat === "12" ||
@@ -324,13 +365,17 @@ const Row = memo(function Row({
     const weekendDays = countryCode
       ? getCountry(countryCode).weekendDays
       : null;
-    return columns.map((c) => {
+    return columns.map((c, i) => {
       const dt = DateTime.fromMillis(c.ms, { zone });
       const weekend = weekendDays && dt.isValid ? weekendDays.includes(dt.weekday) : false;
+      // 每日首列（dayIndex 变化处）：唯一完整显示小时数字的列；
+      // 其余列数字淡化（CSS .h-ghost），悬停恢复——降噪但零信息损失。
+      const dayFirst = i === 0 || columns[i - 1].dayIndex !== c.dayIndex;
       return {
         primary: dt.toFormat(use12 ? "h a" : "HH"),
-        alt: use12 ? dt.toFormat("HH") : null,
+        alt: use12 && dayFirst ? dt.toFormat("HH") : null,
         weekend,
+        dayFirst,
       };
     });
   }, [columns, zone, countryCode, hourFormat]);
@@ -364,9 +409,11 @@ const Row = memo(function Row({
             }
             className="cursor-cell px-1 py-1.5 text-center"
           >
-            <span className="tabular-nums">{info.primary}</span>
+            <span className={info.dayFirst ? "tabular-nums" : "tabular-nums h-ghost"}>
+              {info.primary}
+            </span>
             {info.alt && (
-              <span className="block text-[10px] leading-none text-faint tabular-nums">
+              <span className="block text-[11px] leading-none text-faint tabular-nums">
                 {info.alt}
               </span>
             )}

@@ -123,7 +123,8 @@ export default function HelpPopover() {
             <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-faint">
               {t("legendTitle")}
             </h3>
-            <HeatmapLegend />
+            {/* 工具条上的图例只剩色点；这里是颜色语义的全量图文说明之家 */}
+            <HeatmapLegend labels />
           </div>
 
           <div className="mt-3 pt-3">

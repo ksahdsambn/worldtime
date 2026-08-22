@@ -7,7 +7,7 @@ import SelectionBar from "@/components/SelectionBar";
 import HeaderActions from "@/components/HeaderActions";
 import GlassHeader from "@/components/GlassHeader";
 import GridToolbar from "@/components/GridToolbar";
-import DragHintCoachmark from "@/components/DragHintCoachmark";
+import DragGhostDemo from "@/components/DragGhostDemo";
 import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import { Reveal } from "@/components/Reveal";
@@ -105,9 +105,9 @@ export default async function Home({ params }: Props) {
           {/* 网格工具条：空状态（无城市）时自隐藏，见 GridToolbar */}
           <GridToolbar />
 
-          {/* 网格（内凹表面）+ 首次拖拽上下文提示（浮于可见顶部，不随滚动） */}
+          {/* 网格（内凹表面）+ 首次拖选动效教学（幽灵选区演示一次后淡出，零文字） */}
           <div className="relative min-h-0 flex-1">
-            <DragHintCoachmark />
+            <DragGhostDemo />
             <div className="h-full overflow-auto p-3 md:p-4">
               <TimeGrid />
             </div>

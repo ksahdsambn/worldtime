@@ -37,7 +37,6 @@
     "setHome": "Set as home",
     "remove": "Remove",
     "home": "Home",
-    "utcRow": "Coordinated Universal Time",
     "offsetFromHome": "Offset from home (positive = ahead)",
     "dstActive": "Currently in daylight saving time",
     "dst": "Daylight saving",
@@ -57,7 +56,6 @@
     "periodRest": "Rest hours"
   },
   "Selection": {
-    "duration": "Duration",
     "clear": "Clear selection",
     "hour": "hour",
     "minute": "minute",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "All in work hours",
     "orange": "Some outside work hours",
-    "red": "Someone asleep",
-    "worstStatus": "Each column is colored by whoever is least available."
+    "red": "Someone asleep"
   },
   "Now": {
     "backToNow": "Back to now"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "Time marker:",
     "enable": "Show time marker",
-    "move": "move",
-    "resize": "adjust edges",
-    "disable": "Hide time marker",
-    "select": "select"
+    "disable": "Hide time marker"
   },
   "DateJump": {
     "jumpTo": "Jump to:",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "Find a meeting time that works for everyone",
-    "emptyBody": "Add a few cities to see everyone's working and sleeping hours side by side — then drag to pick a time that fits.",
     "startLocal": "Start with my time zone",
-    "startLocalHint": "Adds your local city plus New York and London.",
-    "presetFinance": "World finance clock",
-    "presetFinanceHint": "New York · London · Tokyo",
-    "searchHint": "…or search for any city in the box above.",
-    "dragHint": "Drag across the hours to pick a meeting time — the colors show who's awake.",
-    "dragGotIt": "Got it"
+    "presetFinance": "World finance clock"
   },
   "Help": {
     "label": "Tips",
@@ -345,5 +333,10 @@
       "The site is a static/SSR web app. Times are calculated on your device and on our servers from IANA zone data; we do not sell personal profiles.",
       "If you install the app as a PWA, the service worker caches pages for offline use on that device only."
     ]
+  },
+  "ViewControls": {
+    "title": "View options",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week"
   }
 }

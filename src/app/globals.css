@@ -51,11 +51,11 @@
     --danger-fg: #ffffff;
 
     /* —— 热力图三色（降低不透明度；与文字/图案冗余，非仅靠颜色）—— */
-    --heat-good: rgba(22, 163, 74, 0.16);
+    --heat-good: rgba(22, 163, 74, 0.13);
     --heat-good-ink: #15803d;
-    --heat-caution: rgba(234, 138, 8, 0.18);
+    --heat-caution: rgba(234, 138, 8, 0.14);
     --heat-caution-ink: #b45309;
-    --heat-bad: rgba(220, 38, 38, 0.15);
+    --heat-bad: rgba(220, 38, 38, 0.11);
     --heat-bad-ink: #b91c1c;
 
     /* —— 选区单元格 —— */
@@ -172,11 +172,11 @@
     --danger-hover: #b91c1c;
     --danger-fg: #ffffff;
 
-    --heat-good: rgba(34, 197, 94, 0.2);
+    --heat-good: rgba(34, 197, 94, 0.16);
     --heat-good-ink: #4ade80;
-    --heat-caution: rgba(249, 115, 22, 0.22);
+    --heat-caution: rgba(249, 115, 22, 0.18);
     --heat-caution-ink: #fb923c;
-    --heat-bad: rgba(239, 68, 68, 0.2);
+    --heat-bad: rgba(239, 68, 68, 0.16);
     --heat-bad-ink: #f87171;
 
     --cell-selected-bg: rgba(59, 130, 246, 0.3);
@@ -824,30 +824,13 @@
 }
 
 /* 阅读面：对照表 / 网格 / 状态卡。逐字读数，绝不玻璃化。
-   四角 HUD 描边是品牌 chrome，叠在不透明 --surface 上。 */
+   普通圆角卡片 + 极浅阴影（HUD 四角描边已随「数据终端」风一并移除）。 */
 .hud-frame {
   position: relative;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background-color: var(--surface);
-  box-shadow: var(--shadow-md);
-}
-.hud-frame::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 21;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    linear-gradient(var(--accent), var(--accent)) 0 0 / 16px 1.5px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 0 0 / 1.5px 16px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 100% 0 / 16px 1.5px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 100% 0 / 1.5px 16px no-repeat,
-    linear-gradient(var(--warm), var(--warm)) 0 100% / 16px 1.5px no-repeat,
-    linear-gradient(var(--warm), var(--warm)) 0 100% / 1.5px 16px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 100% 100% / 16px 1.5px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 100% 100% / 1.5px 16px no-repeat;
+  box-shadow: var(--shadow-sm);
 }
 
 .chrono-spinner {
@@ -881,15 +864,7 @@
   animation: orbit-ring 1.35s linear infinite;
 }
 
-/* 侧栏 UTC 条：衬底是地点列表而非环境网格，保持不透明（JSX 挂 .surface）。 */
-.utc-strip {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.65rem 0.85rem;
-  box-shadow: inset 2px 0 0 0 var(--warm);
-}
+/* 侧栏 UTC 条已随面板「表盘化」移除（UTC 参考在网格首行 + 顶栏钟）。 */
 
 /* —— 主地点行（home-row）—— 左侧暖色渐变发光导轨，标识「主地点」。
    用 ::before 绘制，独立于 box-shadow（hover 发光 / 拖拽阴影天然共存）。*/
@@ -1005,6 +980,56 @@
   box-shadow: 0 0 12px 1px var(--glow-warm), 0 0 3px 0 var(--warm);
   animation: now-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   pointer-events: none;
+}
+
+/* 每日首列之外的小时数字：淡化为可扫描的肌理（网格降噪）。
+   数字保留在 DOM 中（无障碍零损失），悬停所在行/格时恢复完整读数。 */
+.wt-grid td[data-ms] .h-ghost {
+  opacity: 0.22;
+  transition: opacity 0.15s ease;
+}
+.wt-grid tr:hover td[data-ms] .h-ghost,
+.wt-grid td[data-ms]:hover .h-ghost,
+/* 选区内的小时数字恢复完整读数（所选窗口本身就是要逐字读的内容） */
+.wt-grid td[data-selected="1"] .h-ghost {
+  opacity: 0.85;
+}
+
+/* ============================================================================
+   首次拖选动效教学（DragGhostDemo）：幽灵选区在网格上演示一次横向拖选。
+   纯装饰层，aria-hidden + pointer-events-none；reduced-motion 下组件直接不挂载。
+   ========================================================================== */
+.wt-ghost-selection {
+  width: 4.5rem;
+  height: 1.75rem;
+  border-radius: var(--radius-sm, 4px);
+  background-color: var(--cell-selected-bg);
+  box-shadow:
+    inset 0 0 0 1.5px var(--accent),
+    0 6px 18px -6px var(--glow-accent);
+  animation: ghost-drag 2.6s cubic-bezier(0.45, 0, 0.25, 1) both;
+}
+@keyframes ghost-drag {
+  0% {
+    transform: translateX(0) scaleX(0.35);
+    opacity: 0;
+  }
+  16% {
+    transform: translateX(6px) scaleX(0.55);
+    opacity: 0.95;
+  }
+  58% {
+    transform: translateX(7.5rem) scaleX(1);
+    opacity: 0.95;
+  }
+  78% {
+    transform: translateX(7.5rem) scaleX(1);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(8.5rem) scaleX(1);
+    opacity: 0;
+  }
 }
 
 /* ============================================================================

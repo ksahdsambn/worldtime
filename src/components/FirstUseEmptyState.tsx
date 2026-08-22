@@ -1,31 +1,39 @@
 "use client";
 
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { localStarterCities, financeStarterCities } from "@/data/starterSets";
+import { localCityName } from "@/lib/cityName";
 import type { CityRecord } from "@/lib/types";
+import type { AppLocale } from "@/i18n/routing";
 
 /**
  * 首次使用富空状态：替代旧的一行 `Grid.empty` 文案。
  *
- * - 温暖主标题 + 一行价值说明；
- * - 一键起始预设（本地时区 / 世界金融时钟），点一下即填入城市；
- * - 指向搜索框的轻提示，承接想自己挑城市的用户。
+ * 减法重构：只保留品牌印记 + 一句 headline + 两个自解释入口——
+ * 「从我的时区开始」与「国旗 chip 组」（🇺🇸 纽约 · 🇬🇧 伦敦 · 🇯🇵 东京，
+ * 城市名随 locale 本地化，视觉自解释，零说明文字）。
  *
  * addPlace 会自动把加入的首座城市设为主地点（home），因此预设顺序即「主地点在前」。
  */
 export default function FirstUseEmptyState() {
   const t = useTranslations("Onboarding");
+  const locale = useLocale() as AppLocale;
   const addPlace = useWorldTimeStore((s) => s.addPlace);
 
   function apply(cities: CityRecord[]) {
     for (const c of cities) addPlace(c);
   }
 
+  // 金融预设的 chip 文本：城市名随页面 locale（SSR 与客户端同构，无水合风险）
+  const financeChips = financeStarterCities()
+    .map((c) => `${c.flag} ${localCityName(locale, c)}`)
+    .join("　·　");
+
   return (
     <div className="relative flex min-h-[380px] flex-col items-center justify-center px-6 py-14">
-      <div className="animate-scale-in relative w-full max-w-md space-y-7 text-center">
+      <div className="animate-scale-in relative w-full max-w-md space-y-8 text-center">
         <div className="space-y-3">
           <span className="brand-orbit mx-auto">
             <Image
@@ -41,12 +49,9 @@ export default function FirstUseEmptyState() {
           <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
             {t("emptyHeadline")}
           </h2>
-          <p className="mx-auto max-w-sm text-sm leading-relaxed text-muted">
-            {t("emptyBody")}
-          </p>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           <button
             type="button"
             onClick={() => apply(localStarterCities())}
@@ -54,19 +59,17 @@ export default function FirstUseEmptyState() {
           >
             {t("startLocal")}
           </button>
-          <p className="text-xs text-faint">{t("startLocalHint")}</p>
 
           <button
             type="button"
             onClick={() => apply(financeStarterCities())}
-            className="btn btn-ghost w-full"
+            aria-label={t("presetFinance")}
+            data-testid="preset-finance"
+            className="btn btn-ghost w-full tracking-wide text-ink"
           >
-            {t("presetFinance")}
+            {financeChips}
           </button>
-          <p className="text-xs text-faint">{t("presetFinanceHint")}</p>
         </div>
-
-        <p className="pt-1 text-xs tracking-wide text-faint">{t("searchHint")}</p>
       </div>
     </div>
   );

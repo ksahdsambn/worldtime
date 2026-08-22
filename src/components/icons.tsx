@@ -95,6 +95,41 @@ export function IconChevronDown(props: IconProps) {
   );
 }
 
+/** 左箭头（周翻页）。 */
+export function IconChevronLeft(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m15 18-6-6 6-6" />
+    </Svg>
+  );
+}
+
+/** 右箭头（周翻页）。 */
+export function IconChevronRight(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="m9 18 6-6-6-6" />
+    </Svg>
+  );
+}
+
+/** 视图选项（滑杆组）。 */
+export function IconSliders(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <line x1="21" x2="14" y1="4" y2="4" />
+      <line x1="10" x2="3" y1="4" y2="4" />
+      <line x1="21" x2="12" y1="12" y2="12" />
+      <line x1="8" x2="3" y1="12" y2="12" />
+      <line x1="21" x2="16" y1="20" y2="20" />
+      <line x1="12" x2="3" y1="20" y2="20" />
+      <line x1="14" x2="14" y1="2" y2="6" />
+      <line x1="8" x2="8" y1="10" y2="14" />
+      <line x1="16" x2="16" y1="18" y2="22" />
+    </Svg>
+  );
+}
+
 /** 太阳（主题 / 可联系时段）。 */
 export function IconSun(props: IconProps) {
   return (

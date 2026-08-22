@@ -37,7 +37,6 @@
     "setHome": "Đặt làm chính",
     "remove": "Xoá",
     "home": "Chính",
-    "utcRow": "Giờ phối hợp quốc tế",
     "offsetFromHome": "Chênh lệch với địa điểm chính (dương = nhanh hơn)",
     "dstActive": "Hiện đang trong giờ mùa hè",
     "dst": "Giờ mùa hè",
@@ -57,7 +56,6 @@
     "periodRest": "Giờ nghỉ ngơi"
   },
   "Selection": {
-    "duration": "Thời lượng",
     "clear": "Xoá vùng chọn",
     "hour": "giờ",
     "minute": "phút",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "Tất cả trong giờ làm việc",
     "orange": "Một số ngoài giờ làm việc",
-    "red": "Có người đang ngủ",
-    "worstStatus": "Mỗi cột được tô màu theo thành phố khó tham gia nhất."
+    "red": "Có người đang ngủ"
   },
   "Now": {
     "backToNow": "Về hiện tại"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "Đánh dấu thời gian:",
     "enable": "Hiện đánh dấu thời gian",
-    "move": "di chuyển",
-    "resize": "chỉnh biên",
-    "disable": "Ẩn đánh dấu thời gian",
-    "select": "chọn"
+    "disable": "Ẩn đánh dấu thời gian"
   },
   "DateJump": {
     "jumpTo": "Chuyển đến:",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "Tìm giờ họp phù hợp với mọi người",
-    "emptyBody": "Thêm vài thành phố để xem giờ làm việc và giờ ngủ của từng người, sau đó kéo để chọn thời gian.",
     "startLocal": "Bắt đầu với múi giờ của tôi",
-    "startLocalHint": "Thêm thành phố của bạn cùng New York và London.",
-    "presetFinance": "Đồng hồ tài chính thế giới",
-    "presetFinanceHint": "New York · London · Tokyo",
-    "searchHint": "…hoặc tìm bất kỳ thành phố nào trong ô phía trên.",
-    "dragHint": "Kéo qua các giờ để chọn thời gian họp — màu sắc cho biết ai đang thức.",
-    "dragGotIt": "Đã rõ"
+    "presetFinance": "Đồng hồ tài chính thế giới"
   },
   "Help": {
     "label": "Mẹo",
@@ -345,5 +333,10 @@
       "Đây là ứng dụng web tĩnh/SSR. Giờ được tính trên thiết bị của bạn và máy chủ của chúng tôi từ dữ liệu IANA. Chúng tôi không bán hồ sơ.",
       "Nếu cài PWA, service worker chỉ lưu trang trên thiết bị đó để dùng ngoại tuyến."
     ]
+  },
+  "ViewControls": {
+    "title": "Tùy chọn xem",
+    "prevWeek": "Tuần trước",
+    "nextWeek": "Tuần sau"
   }
 }

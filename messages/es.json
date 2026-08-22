@@ -37,7 +37,6 @@
     "setHome": "Definir como principal",
     "remove": "Quitar",
     "home": "Principal",
-    "utcRow": "Tiempo Universal Coordinado",
     "offsetFromHome": "Diferencia con el principal (positivo = por delante)",
     "dstActive": "Actualmente en horario de verano",
     "dst": "Horario de verano",
@@ -57,7 +56,6 @@
     "periodRest": "Horario de descanso"
   },
   "Selection": {
-    "duration": "Duración",
     "clear": "Borrar selección",
     "hour": "hora",
     "minute": "minuto",
@@ -76,8 +74,7 @@
   "Heatmap": {
     "green": "Todo en horario laboral",
     "orange": "Algunos fuera del horario laboral",
-    "red": "Alguien durmiendo",
-    "worstStatus": "Cada columna se colorea según la ciudad que esté menos disponible."
+    "red": "Alguien durmiendo"
   },
   "Now": {
     "backToNow": "Volver al ahora"
@@ -85,10 +82,7 @@
   "Cursor": {
     "cursor": "Marcador de tiempo:",
     "enable": "Mostrar marcador de tiempo",
-    "move": "mover",
-    "resize": "ajustar borde",
-    "disable": "Ocultar marcador de tiempo",
-    "select": "seleccionar"
+    "disable": "Ocultar marcador de tiempo"
   },
   "DateJump": {
     "jumpTo": "Ir a:",
@@ -233,14 +227,8 @@
   },
   "Onboarding": {
     "emptyHeadline": "Encuentra una hora que funcione para todos",
-    "emptyBody": "Añade unas ciudades para ver las horas de trabajo y de sueño de cada uno y luego arrastra para elegir una hora.",
     "startLocal": "Empezar con mi zona horaria",
-    "startLocalHint": "Añade tu ciudad local más Nueva York y Londres.",
-    "presetFinance": "Reloj financiero mundial",
-    "presetFinanceHint": "Nueva York · Londres · Tokio",
-    "searchHint": "…o busca cualquier ciudad en el cuadro de arriba.",
-    "dragHint": "Arrastra por las horas para elegir una hora de reunión: los colores muestran quién está despierto.",
-    "dragGotIt": "Entendido"
+    "presetFinance": "Reloj financiero mundial"
   },
   "Help": {
     "label": "Consejos",
@@ -345,5 +333,10 @@
       "Es una web estática/SSR. Las horas se calculan en su dispositivo y en nuestros servidores con datos IANA. No vendemos perfiles.",
       "Si instala la PWA, el service worker guarda páginas solo en ese dispositivo para uso sin conexión."
     ]
+  },
+  "ViewControls": {
+    "title": "Opciones de vista",
+    "prevWeek": "Semana anterior",
+    "nextWeek": "Semana siguiente"
   }
 }
