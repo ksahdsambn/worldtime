@@ -94,8 +94,8 @@ describe("decodeState 降级与往返", () => {
     expect(decodeState("p=cn-beijing,unknown-city").homeId).toBe("cn-beijing");
     expect(decodeState("s=200-100").selection).toBeNull();
     expect(decodeState("s=1-999999999999999").selection).toBeNull();
-    expect(decodeState("c=-5").cursorMs).toBeNull();
-    expect(decodeState("c=abc").cursorMs).toBeNull();
+    expect(decodeState("c=-5").pinnedMs).toBeNull();
+    expect(decodeState("c=abc").pinnedMs).toBeNull();
     expect(decodeState(`p=${Array(40).fill("cn-beijing").join(",")}`).places.length).toBeLessThanOrEqual(30);
   });
   it("encode → decode 完整往返", () => {
@@ -112,6 +112,6 @@ describe("decodeState 降级与往返", () => {
     const st = decodeState(q);
     expect(st.homeId).toBe("cn-beijing");
     expect(st.selection).toEqual({ startMs: 1000, endMs: 3_600_000 });
-    expect(st.cursorMs).toBe(12345);
+    expect(st.pinnedMs).toBe(12345);
   });
 });

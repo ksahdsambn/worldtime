@@ -395,6 +395,42 @@
     color: var(--text-muted);
   }
 
+  /* —— 分段控件（模式切换 / 跨度切换）—— 胶囊容器 + 选中态抬升表面。
+      状态由 aria-pressed 驱动，键盘可达（原生 button）。*/
+  .seg {
+    @apply inline-flex items-center gap-0.5;
+    padding: 2px;
+    border-radius: 9999px;
+    background-color: var(--surface-inset);
+    border: 1px solid var(--border);
+  }
+  .seg button {
+    @apply inline-flex items-center gap-1.5 rounded-full font-medium;
+    padding: 0.25rem 0.7rem;
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--text-muted);
+    transition: color var(--dur-fast) var(--ease-out-quint),
+      background-color var(--dur-fast) var(--ease-out-quint),
+      box-shadow var(--dur-fast) var(--ease-out-quint);
+  }
+  .seg button:hover {
+    color: var(--text);
+  }
+  .seg button:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .seg button[aria-pressed="true"] {
+    background-color: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+  }
+  .seg--sm button {
+    padding: 0.15rem 0.55rem;
+    font-size: 11px;
+  }
+
   /* —— 文本输入 —— */
   .input {
     @apply rounded-sm text-sm transition-colors duration-150;
@@ -982,6 +1018,26 @@
   pointer-events: none;
 }
 
+/* 「固定查看时刻」（pinnedMs）：accent 蓝纵向指示线，与琥珀「现在」线同构。
+   定义在 [data-now] 之后：同一格两者兼有时以固定时刻为准（用户主动设定优先）。 */
+.wt-grid td[data-pinned="1"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--accent) 10%,
+    var(--accent) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px 1px var(--glow-accent), 0 0 3px 0 var(--accent);
+  pointer-events: none;
+}
+
 /* 每日首列之外的小时数字：淡化为可扫描的肌理（网格降噪）。
    数字保留在 DOM 中（无障碍零损失），悬停所在行/格时恢复完整读数。 */
 .wt-grid td[data-ms] .h-ghost {
@@ -996,55 +1052,18 @@
 }
 
 /* ============================================================================
-   首次拖选动效教学（DragGhostDemo）：幽灵选区在网格上演示一次横向拖选。
-   纯装饰层，aria-hidden + pointer-events-none；reduced-motion 下组件直接不挂载。
+   时间卡列表（TimeCards）：错落进场。配合 .animate-fade-in，每行递增
+   animation-delay，封顶第 8 行避免长列表末尾过慢。仅挂载时播放一次。
    ========================================================================== */
-.wt-ghost-selection {
-  width: 4.5rem;
-  height: 1.75rem;
-  border-radius: var(--radius-sm, 4px);
-  background-color: var(--cell-selected-bg);
-  box-shadow:
-    inset 0 0 0 1.5px var(--accent),
-    0 6px 18px -6px var(--glow-accent);
-  animation: ghost-drag 2.6s cubic-bezier(0.45, 0, 0.25, 1) both;
-}
-@keyframes ghost-drag {
-  0% {
-    transform: translateX(0) scaleX(0.35);
-    opacity: 0;
-  }
-  16% {
-    transform: translateX(6px) scaleX(0.55);
-    opacity: 0.95;
-  }
-  58% {
-    transform: translateX(7.5rem) scaleX(1);
-    opacity: 0.95;
-  }
-  78% {
-    transform: translateX(7.5rem) scaleX(1);
-    opacity: 0.95;
-  }
-  100% {
-    transform: translateX(8.5rem) scaleX(1);
-    opacity: 0;
-  }
-}
-
-/* ============================================================================
-   地点列表错落进场：配合 .animate-fade-in，每行递增 animation-delay，
-   封顶第 8 行避免长列表末尾过慢。仅挂载时播放一次（重排/筛选不重播）。
-   ========================================================================== */
-.places-rows > li:nth-child(1) { animation-delay: 0ms; }
-.places-rows > li:nth-child(2) { animation-delay: 40ms; }
-.places-rows > li:nth-child(3) { animation-delay: 80ms; }
-.places-rows > li:nth-child(4) { animation-delay: 120ms; }
-.places-rows > li:nth-child(5) { animation-delay: 160ms; }
-.places-rows > li:nth-child(6) { animation-delay: 200ms; }
-.places-rows > li:nth-child(7) { animation-delay: 240ms; }
-.places-rows > li:nth-child(8) { animation-delay: 280ms; }
-.places-rows > li:nth-child(n + 9) { animation-delay: 280ms; }
+.time-cards > li:nth-child(1) { animation-delay: 0ms; }
+.time-cards > li:nth-child(2) { animation-delay: 40ms; }
+.time-cards > li:nth-child(3) { animation-delay: 80ms; }
+.time-cards > li:nth-child(4) { animation-delay: 120ms; }
+.time-cards > li:nth-child(5) { animation-delay: 160ms; }
+.time-cards > li:nth-child(6) { animation-delay: 200ms; }
+.time-cards > li:nth-child(7) { animation-delay: 240ms; }
+.time-cards > li:nth-child(8) { animation-delay: 280ms; }
+.time-cards > li:nth-child(n + 9) { animation-delay: 280ms; }
 
 /* 通用错落进场（.stagger）：任意子元素序列的递增 animation-delay，
    封顶第 8 个，避免长列表末尾过慢。配合 animate-* 进场类使用。*/

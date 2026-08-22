@@ -27,7 +27,7 @@ export function isDST(timeZone: string, ms: number = Date.now()): boolean {
  * 性能：纯计算见 nextDSTChangeUncached（逐月×逐日探测，多达 ~360 次 DateTime 构造）；
  * 本函数在其上做「时区 + fromMs 所在本地日 + maxMonths」的日级结果缓存。DST 切换每年
  * 至多两次，「now 之后下一次切换」在同一自然日内恒定，按本地日期键缓存安全且命中极高。
- * 动机：PlacesPanel 每个地点行每 30s 重渲染都调用一次，30 个地点即上万次 DateTime
+ * 动机：时间卡列表每个地点行每次渲染都可能调用一次，30 个地点即上万次 DateTime
  * 分配/分钟——缓存后降为每个时区每日一次真实计算。
  */
 const nextDstCache = new Map<string, number | null>();

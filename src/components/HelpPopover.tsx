@@ -60,11 +60,8 @@ export default function HelpPopover() {
     { title: t("step3Title"), body: t("step3Body") },
   ];
   const shortcuts: Array<{ keys: string; label: string }> = [
-    { keys: "Enter", label: t("shortcutSelect") },
-    { keys: "Shift + ←/→", label: t("shortcutResize") },
     { keys: "Delete", label: t("shortcutDelete") },
     { keys: "Esc", label: t("shortcutEscape") },
-    { keys: "Ctrl/⌘ + Enter", label: t("shortcutEnter") },
   ];
 
   return (

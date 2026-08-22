@@ -79,14 +79,8 @@
   "Now": {
     "backToNow": "回到現在"
   },
-  "Cursor": {
-    "cursor": "時間游標：",
-    "enable": "顯示時間游標",
-    "disable": "隱藏時間游標"
-  },
   "DateJump": {
-    "jumpTo": "跳至：",
-    "today": "今天"
+    "jumpTo": "跳至："
   },
   "Theme": {
     "toggle": "切換淺色/深色主題"
@@ -236,17 +230,14 @@
     "step1Title": "1. 新增城市",
     "step1Body": "在搜尋框中新增你要協調的每個地點。",
     "step2Title": "2. 拖曳選擇時間",
-    "step2Body": "在網格上點擊並拖曳來選定會議時段，選區會在每一列同步對齊。",
+    "step2Body": "切換到「重疊時段」，在網格上按住拖曳，選出對大家都合適的時段。",
     "step3Title": "3. 看懂顏色",
-    "step3Body": "每一欄依「最不方便的人」著色：綠色表示都在工作時段，橙色表示有人在工作時段之外，紅色表示有人在睡眠。",
+    "step3Body": "每個格子依該城市自身的狀態著色——綠色是工作時段，橙色是可聯絡時段，紅色是在休息。",
     "legendTitle": "顏色圖例",
     "shortcutsTitle": "鍵盤快捷鍵",
     "shortcutDelete": "刪除主城市",
     "shortcutEscape": "清除選區",
-    "shortcutEnter": "將時間標記對齊到選區起點",
-    "close": "關閉",
-    "shortcutSelect": "在時間游標處開始選區",
-    "shortcutResize": "擴展或收縮選區"
+    "close": "關閉"
   },
   "Errors": {
     "title": "發生錯誤",
@@ -335,8 +326,18 @@
     ]
   },
   "ViewControls": {
-    "title": "檢視選項",
-    "prevWeek": "上一週",
-    "nextWeek": "下一週"
+    "prev": "向前",
+    "next": "向後",
+    "day1": "1 天",
+    "day7": "7 天"
+  },
+  "Modes": {
+    "clock": "時鐘",
+    "overlap": "重疊時段"
+  },
+  "Viewing": {
+    "now": "現在",
+    "pick": "設定時間",
+    "backToNow": "回到現在"
   }
 }

@@ -60,25 +60,38 @@ describe("shareUrl 编解码 round-trip", () => {
     expect(selection).toBeNull();
   });
 
-  it("游标 cursorMs round-trip（c 参数）", () => {
+  it("固定查看时刻 round-trip（t 参数）", () => {
     const beijing = PLACES.beijing();
-    const cursor = 1700000000000;
-    const q = encodeState([beijing], "cn-beijing", null, cursor);
-    expect(q).toContain("c=1700000000000");
-    const { cursorMs } = decodeState(q);
-    expect(cursorMs).toBe(cursor);
+    const pinned = 1700000000000;
+    const q = encodeState([beijing], "cn-beijing", null, pinned);
+    expect(q).toContain("t=1700000000000");
+    expect(q).not.toContain("c=");
+    const { pinnedMs } = decodeState(q);
+    expect(pinnedMs).toBe(pinned);
   });
 
-  it("无游标时 cursorMs 为 null", () => {
+  it("无固定时刻时 pinnedMs 为 null", () => {
     const q = encodeState([], null, null);
-    const { cursorMs } = decodeState(q);
-    expect(cursorMs).toBeNull();
+    const { pinnedMs } = decodeState(q);
+    expect(pinnedMs).toBeNull();
   });
 
-  it("非法游标格式被忽略", () => {
-    const q = "c=not-a-number";
-    const { cursorMs } = decodeState(q);
-    expect(cursorMs).toBeNull();
+  it("非法时刻格式被忽略", () => {
+    expect(decodeState("t=not-a-number").pinnedMs).toBeNull();
+  });
+
+  /**
+   * 旧版兼容：时间游标 c= 参数仍可读取，映射为 pinnedMs；
+   * 新链接不再写出 c=。两者同时存在时 t= 优先。
+   */
+  it("旧版游标 c= 兼容读取为 pinnedMs", () => {
+    const { pinnedMs } = decodeState("c=1700000000000");
+    expect(pinnedMs).toBe(1700000000000);
+  });
+
+  it("t 与 c 同时存在时 t 优先", () => {
+    const { pinnedMs } = decodeState("t=111&c=222");
+    expect(pinnedMs).toBe(111);
   });
 
   /**

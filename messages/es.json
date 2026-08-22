@@ -79,14 +79,8 @@
   "Now": {
     "backToNow": "Volver al ahora"
   },
-  "Cursor": {
-    "cursor": "Marcador de tiempo:",
-    "enable": "Mostrar marcador de tiempo",
-    "disable": "Ocultar marcador de tiempo"
-  },
   "DateJump": {
-    "jumpTo": "Ir a:",
-    "today": "Hoy"
+    "jumpTo": "Ir a:"
   },
   "Theme": {
     "toggle": "Cambiar tema claro/oscuro"
@@ -236,17 +230,14 @@
     "step1Title": "1. Añade ciudades",
     "step1Body": "Usa el buscador para añadir todos los lugares que quieres coordinar.",
     "step2Title": "2. Arrastra para elegir la hora",
-    "step2Body": "Haz clic y arrastra sobre la cuadrícula para elegir la ventana de la reunión. La selección se alinea en todas las filas.",
+    "step2Body": "Abre la pestaña «Coincidencia» y arrastra sobre la cuadrícula para elegir un horario que funcione para todos.",
     "step3Title": "3. Lee los colores",
-    "step3Body": "Cada columna se tinta según quien esté menos disponible: verde, todos en horario laboral; naranja, alguien fuera de él; rojo, alguien durmiendo.",
+    "step3Body": "Cada celda se colorea según el estado de esa ciudad: verde es horario laboral, naranja es horario de contacto y rojo es descanso.",
     "legendTitle": "Leyenda de colores",
     "shortcutsTitle": "Atajos de teclado",
     "shortcutDelete": "Eliminar ciudad de origen",
     "shortcutEscape": "Borrar la selección",
-    "shortcutEnter": "Llevar el marcador al inicio de la selección",
-    "close": "Cerrar",
-    "shortcutSelect": "Iniciar una selección en el marcador de tiempo",
-    "shortcutResize": "Ampliar o reducir la selección"
+    "close": "Cerrar"
   },
   "Errors": {
     "title": "Algo salió mal",
@@ -335,8 +326,18 @@
     ]
   },
   "ViewControls": {
-    "title": "Opciones de vista",
-    "prevWeek": "Semana anterior",
-    "nextWeek": "Semana siguiente"
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "day1": "1 día",
+    "day7": "7 días"
+  },
+  "Modes": {
+    "clock": "Reloj",
+    "overlap": "Coincidencia"
+  },
+  "Viewing": {
+    "now": "Ahora",
+    "pick": "Fijar una hora",
+    "backToNow": "Volver a ahora"
   }
 }

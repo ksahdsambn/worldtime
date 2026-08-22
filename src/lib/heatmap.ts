@@ -25,18 +25,50 @@ function rankToColor(rank: number): HeatColor {
   return "green";
 }
 
+/** 颜色 → 优先级值（与 periodRank 对偶，供聚合最差状态用）。 */
+function colorRank(c: HeatColor): number {
+  return c === "red" ? 2 : c === "orange" ? 1 : 0;
+}
+
 /**
- * 计算某一列（绝对时刻 ms）的热力图颜色。
- * @param places 所有地点
- * @param ms 列对应的绝对时刻
- * @param periods 时段定义（可配置）
+ * 计算单个地点在某绝对时刻的热力颜色（单元格级语义）。
+ *
+ * 重构（首页两态改造）：热力从「整列取全员最差」改为「每格表达该地点自身的
+ * 状态」——城市跨度大时（如 ±12h）几乎每列都有人在睡觉，列级最差色会让整个
+ * 网格一片红、失去信息量；单元格级着色让每一行独立可读。
  *
  * 算法：
- * 1. 对每个地点，判定该时刻其本地小时所属时段；
- * 2. 若该地点处于其地区周末，强制视为休息（覆盖）；
- * 3. 取所有地点中最高优先级（最差状态）作为该列颜色。
+ * 1. 该时刻处于其地区周末 -> 休息（覆盖）；
+ * 2. 处于其地区公共假日 -> 休息（覆盖，MS-7）；
+ * 3. 否则按本地小时所属时段判定。
  *
- * 地点列表为空时返回 null（不渲染热力）。
+ * 时区非法时返回 null（不渲染热力）。
+ */
+export function placeHeatColor(
+  zone: string,
+  countryCode: string,
+  ms: number,
+  periods: DayPeriods,
+): HeatColor | null {
+  const dt = DateTime.fromMillis(ms, { zone });
+  if (!dt.isValid) return null;
+  // 周末覆盖（4.3.2 P0）：该地点处于其地区周末 -> 视为休息
+  if (isWeekendAt(zone, countryCode, ms)) return "red";
+  // 节假日覆盖（4.3.2 P1，MS-7）：公共假日 -> 视为休息
+  if (isHoliday(countryCode, dt.toFormat("yyyy-MM-dd"))) return "red";
+  return rankToColor(periodRank(classifyLocalPeriod(dt.hour, periods)));
+}
+
+/**
+ * 计算某一列（绝对时刻）下所有地点的最差状态颜色。
+ *
+ * 现状：网格已改为单元格级 placeHeatColor 着色；本函数保留为「汇总视角」
+ * 纯逻辑（供测试与潜在的小部件复用），不再被 TimeGrid 消费。
+ *
+ * @param places 所有地点
+ * @param ms 绝对时刻
+ * @param periods 时段定义（可配置）
+ * @returns 全员最差状态色；地点列表为空或全部时区非法时返回 null
  */
 export function columnColor(
   places: PlaceItem[],
@@ -44,28 +76,14 @@ export function columnColor(
   periods: DayPeriods,
 ): HeatColor | null {
   if (places.length === 0) return null;
-  let worst = 0; // 全工作起步
-  let anyValid = false; // 是否存在任一时区有效地点（审查报告 P2：全无效应返回 null）
+  let worst = -1; // -1 表示尚无有效地点
   for (const p of places) {
-    const dt = DateTime.fromMillis(ms, { zone: p.timeZone });
-    if (!dt.isValid) continue;
-    anyValid = true;
-    // 周末覆盖（4.3.2 P0）：该地点处于其地区周末 -> 视为休息
-    if (isWeekendAt(p.timeZone, p.countryCode, ms)) {
-      worst = Math.max(worst, periodRank("rest"));
-      continue;
-    }
-    // 节假日覆盖（4.3.2 P1，MS-7）：该地点处于公共假日 -> 视为休息
-    const isoDate = dt.toFormat("yyyy-MM-dd");
-    if (isHoliday(p.countryCode, isoDate)) {
-      worst = Math.max(worst, periodRank("rest"));
-      continue;
-    }
-    const period = classifyLocalPeriod(dt.hour, periods);
-    worst = Math.max(worst, periodRank(period));
+    const c = placeHeatColor(p.timeZone, p.countryCode, ms, periods);
+    if (!c) continue; // 时区非法的地点跳过
+    worst = Math.max(worst, colorRank(c));
   }
   // 所有时区均非法时返回 null（不渲染热力），而非误判为 green
-  if (!anyValid) return null;
+  if (worst < 0) return null;
   return rankToColor(worst);
 }
 

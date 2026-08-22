@@ -1,30 +1,23 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { useLiquidGlass } from "@/lib/useLiquidGlass";
 import HeatmapLegend from "./HeatmapLegend";
 import WeekPager from "./WeekPager";
 import NowButton from "./NowButton";
-import ViewOptions from "./ViewOptions";
-import { useCursorShortcuts } from "./CursorBar";
 
 /**
- * 网格工具条：图例色点 ｜ 周翻页 · 回到现在 · 视图选项。
+ * 排期视图工具条：图例色点 ｜ 1天/7天 · ‹ › · 回到现在。
  *
- * 减法重构：三色图例只剩色点（完整语义在 title 与 Help 弹窗）；
- * 时间游标与日期跳转收进「视图选项」弹层；「今天 / 回到现在」合并为一个
- * 主按钮（重置窗口起点并滚到当前时刻）。
+ * 两态改造后的减法：日期跳转由网格日期表头点击（原生 picker）与
+ * 时间控制条承担；视图选项弹层（时间游标/日期输入）随游标功能一并移除。
  *
- * 空状态（无任何城市）时整体隐藏：这些控件在没有网格时全部失效，
- * 隐藏它们让首屏富空状态聚焦，首座城市加入即恢复。
- * 游标键盘快捷键在此全局挂载，与弹层开合无关。
+ * 空状态（无任何城市）时整体隐藏：这些控件在没有网格时全部失效。
  */
 export default function GridToolbar() {
   const places = useWorldTimeStore((s) => s.places);
   const glassRef = useLiquidGlass();
-  // 键盘 ←/→ 移动游标、Shift+←/→ 微调选区边缘、Enter 起选区：
-  // 挂在工具条层级，即使「视图选项」关闭也保持可用（深度用户路径零回归）。
-  useCursorShortcuts();
   if (places.length === 0) return null;
 
   return (
@@ -34,11 +27,40 @@ export default function GridToolbar() {
     >
       <HeatmapLegend />
       <div className="flex items-center gap-1">
-        <WeekPager />
+        <DaySpanToggle />
         <span className="divider" />
+        <WeekPager />
         <NowButton />
-        <ViewOptions />
       </div>
+    </div>
+  );
+}
+
+/** 网格窗口跨度切换：1 天一屏放下无需横滚，7 天保留全景排期视角。 */
+function DaySpanToggle() {
+  const t = useTranslations("ViewControls");
+  const gridDays = useWorldTimeStore((s) => s.gridDays);
+  const setGridDays = useWorldTimeStore((s) => s.setGridDays);
+
+  return (
+    // 同 Workspace：不加 role="group"，避免常驻命中 Esc 清选区守卫
+    <div className="seg seg--sm" data-testid="days-toggle">
+      <button
+        type="button"
+        aria-pressed={gridDays === 1}
+        onClick={() => setGridDays(1)}
+        data-testid="days-1"
+      >
+        {t("day1")}
+      </button>
+      <button
+        type="button"
+        aria-pressed={gridDays === 7}
+        onClick={() => setGridDays(7)}
+        data-testid="days-7"
+      >
+        {t("day7")}
+      </button>
     </div>
   );
 }

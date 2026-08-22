@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { DateTime } from "luxon";
-import { columnColor, heatLabel } from "@/lib/heatmap";
+import { columnColor, placeHeatColor, heatLabel } from "@/lib/heatmap";
 import { DEFAULT_DAY_PERIODS } from "@/store/useWorldTimeStore";
 import { PLACES } from "../helpers";
 
@@ -88,6 +88,57 @@ describe("columnColor 配色规则", () => {
     const ms = DateTime.fromISO("2026-07-15T12:00:00", { zone: "Asia/Shanghai" }).toMillis();
     const invalid = { ...PLACES.newYork(), timeZone: "Invalid/Zone" };
     expect(columnColor([invalid, PLACES.beijing()], ms, DEFAULT_DAY_PERIODS)).toBe("green");
+  });
+});
+
+/**
+ * 单元格级配色（首页两态改造）：热力从「整列取全员最差」改为「每格表达该
+ * 地点自身的状态」——城市跨度大时列级最差色会让整片网格变红、失去信息量。
+ */
+describe("placeHeatColor 单元格级配色规则", () => {
+  const beijing = PLACES.beijing();
+  const newYork = PLACES.newYork();
+  const riyadh = PLACES.riyadh();
+
+  it("北京本地 12:00（工作时段）→ 绿色", () => {
+    const ms = DateTime.fromISO("2026-07-15T12:00:00", { zone: "Asia/Shanghai" }).toMillis();
+    expect(placeHeatColor(beijing.timeZone, beijing.countryCode, ms, DEFAULT_DAY_PERIODS)).toBe("green");
+  });
+
+  it("同一时刻两城各自着色互不拖累：北京 09:00 绿 / 纽约 21:00 橙", () => {
+    // 旧列级逻辑下该列为 orange（取最差）；单元格级下各行独立
+    const ms = DateTime.fromISO("2026-07-15T09:00:00", { zone: "Asia/Shanghai" }).toMillis();
+    expect(placeHeatColor(beijing.timeZone, beijing.countryCode, ms, DEFAULT_DAY_PERIODS)).toBe("green");
+    expect(placeHeatColor(newYork.timeZone, newYork.countryCode, ms, DEFAULT_DAY_PERIODS)).toBe("orange");
+  });
+
+  it("北京本地 02:00（休息）→ 红色", () => {
+    const ms = DateTime.fromISO("2026-07-15T02:00:00", { zone: "Asia/Shanghai" }).toMillis();
+    expect(placeHeatColor(beijing.timeZone, beijing.countryCode, ms, DEFAULT_DAY_PERIODS)).toBe("red");
+  });
+
+  it("周末覆盖：沙特周五 → 红色", () => {
+    const ms = DateTime.fromISO("2026-06-19T12:00:00", { zone: "Asia/Riyadh" }).toMillis();
+    expect(placeHeatColor(riyadh.timeZone, riyadh.countryCode, ms, DEFAULT_DAY_PERIODS)).toBe("red");
+  });
+
+  it("节假日覆盖：美国独立日（2026-07-04）→ 红色", () => {
+    const ms = DateTime.fromISO("2026-07-04T12:00:00", { zone: "America/New_York" }).toMillis();
+    expect(placeHeatColor(newYork.timeZone, newYork.countryCode, ms, DEFAULT_DAY_PERIODS)).toBe("red");
+  });
+
+  it("时区非法 → null", () => {
+    const ms = DateTime.fromISO("2026-07-15T12:00:00Z").toMillis();
+    expect(placeHeatColor("Foo/Bar", "CN", ms, DEFAULT_DAY_PERIODS)).toBeNull();
+  });
+
+  it("columnColor 与 placeHeatColor 的最差聚合保持一致", () => {
+    // 北京 09:00（工作）+ 纽约 21:00（可联系）→ 列级 orange
+    const ms = DateTime.fromISO("2026-07-15T09:00:00", { zone: "Asia/Shanghai" }).toMillis();
+    expect(columnColor([beijing, newYork], ms, DEFAULT_DAY_PERIODS)).toBe("orange");
+    // 全员非法 → null
+    const invalid = { ...beijing, timeZone: "Foo/Bar" };
+    expect(columnColor([invalid], ms, DEFAULT_DAY_PERIODS)).toBeNull();
   });
 });
 

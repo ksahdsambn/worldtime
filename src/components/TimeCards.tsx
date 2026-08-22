@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useEffect, useMemo, useRef, useState, type ComponentType, type SVGProps } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { DateTime } from "luxon";
 import {
   DndContext,
@@ -22,7 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { useWorldTimeStore, type PlaceItem, type DayPeriods } from "@/store/useWorldTimeStore";
 import { useNow } from "@/lib/useNow";
-import { localCityName } from "@/lib/cityName";
+import { localCityName, cityCountryName } from "@/lib/cityName";
 import { useDialog } from "./Dialog";
 import { usePresence } from "@/lib/usePresence";
 import GlassMenu from "./GlassMenu";
@@ -31,7 +31,6 @@ import {
   IconHome,
   IconEdit,
   IconClose,
-  IconChevronDown,
   IconMore,
   IconBriefcase,
   IconSun,
@@ -51,8 +50,7 @@ import {
   nextDSTChange,
 } from "@/lib/time";
 
-/** 昼夜状态图标（WC-4），基于三类本地时段细分。
- *  返回 SVG 图标组件（随 currentColor 着色）+ 状态枚举（渲染层翻译为标签）。 */
+/** 昼夜状态图标（WC-4），基于三类本地时段细分。 */
 function dayNightIcon(
   localHour: number,
   periods: DayPeriods,
@@ -68,7 +66,17 @@ function dayNightIcon(
   }
 }
 
-export default function PlacesPanel() {
+/**
+ * 时间卡列表：首页默认「时钟」视图。
+ *
+ * 每座城市一张横向卡片——城市名 + 大号本地时间（精确到分钟）+ 日期星期 +
+ * 昼夜状态 + 相对主地点时差，直接回答「此刻 / 任意时刻，各地几点」。
+ * 显示时刻统一取 pinnedMs（自定义查看时刻），未固定则实时走表。
+ *
+ * 地点管理原位内建：拖拽排序（@dnd-kit）、行尾 ⋯ 菜单（主地点/重命名/删除），
+ * 取代旧的左侧独立面板，首页由三栏收敛为单列卡片流。
+ */
+export default function TimeCards() {
   const t = useTranslations("Places");
   const tCom = useTranslations("Common");
   const locale = useLocale() as AppLocale;
@@ -81,19 +89,17 @@ export default function PlacesPanel() {
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
   const dayPeriods = useWorldTimeStore((s) => s.dayPeriods);
   const renamePlace = useWorldTimeStore((s) => s.renamePlace);
+  const pinnedMs = useWorldTimeStore((s) => s.pinnedMs);
 
+  // 实时节拍（30s）；被固定时改用 pinnedMs，走表停摆
   const nowRaw = useNow(30_000);
   const now = nowRaw ?? 0; // 0 仅 SSR 占位；挂载后 nowRaw 非 null
+  const viewingMs = pinnedMs ?? now;
 
-  // 移动端面板折叠态：手机端默认折叠（避免地点列表霸占网格视口），
-  // 桌面端忽略此状态，面板作为常驻侧栏始终展开（由 md:flex 保证）。
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  // 主地点时区（用于偏移量计算）
+  // 主地点（用于偏移量计算，TC-7）
   const home = places.find((p) => p.id === homeId) ?? null;
 
-  // 拖拽排序（WC-6）：拖拽完成后用 setPlacesOrder 一次性整体回写，
-  // 避免多次 splice 抖动。
+  // 拖拽排序（WC-6）：拖拽完成后用 setPlacesOrder 一次性整体回写
   const setPlacesOrder = useWorldTimeStore((s) => s.setPlacesOrder);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -103,7 +109,6 @@ export default function PlacesPanel() {
   function onDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
-    // 以全量 places 的 id 序列参与重排，保证未筛选项位置不变
     const ids = places.map((p) => p.id);
     const oldIndex = ids.indexOf(String(active.id));
     const newIndex = ids.indexOf(String(over.id));
@@ -112,95 +117,48 @@ export default function PlacesPanel() {
   }
 
   return (
-    <aside className="animate-slide-in-left flex w-full shrink-0 flex-col border-line bg-surface md:w-80 md:border-r">
-      {/* 移动端折叠开关：桌面端面板常驻展开，手机端默认折叠，把视口让给网格 */}
-      <button
-        type="button"
-        onClick={() => setMobileOpen((o) => !o)}
-        aria-expanded={mobileOpen}
-        aria-controls="places-panel-content"
-        className="flex items-center justify-between gap-2 border-b border-line px-4 py-3 md:hidden"
-      >
-        <span className="flex items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-faint">
-            {t("title")}
-          </span>
-          <span className="chip">{places.length}</span>
-        </span>
-        <span
-          aria-hidden
-          className={`text-faint transition-transform duration-150 ${
-            mobileOpen ? "rotate-180" : ""
-          }`}
-        >
-          <IconChevronDown className="h-4 w-4" />
-        </span>
-      </button>
-
-      <div
-        id="places-panel-content"
-        className={`${mobileOpen ? "flex" : "hidden"} flex-col flex-1 bg-surface-inset p-3 md:flex`}
-      >
-        <h2 className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-wider text-faint hidden md:block">
-          {t("title")}
-        </h2>
-
-        {places.length === 0 && <p className="px-1 text-xs text-faint">{t("empty")}</p>}
-
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={onDragEnd}
-        >
-          <SortableContext
-            items={places.map((p) => p.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <ul className="places-rows space-y-1.5">
-              {places.map((p: PlaceItem) => (
-                <PlaceRow
-                  key={p.id}
-                  place={p}
-                  isHome={p.id === homeId}
-                  now={now}
-                  nowRaw={nowRaw}
-                  hourFormat={hourFormat}
-                  dayPeriods={dayPeriods}
-                  home={home}
-                  locale={locale}
-                  t={t}
-                  tCom={tCom}
-                  onSetHome={setHome}
-                  onRemove={removePlace}
-                  onRename={renamePlace}
-                  prompt={prompt}
-                  confirm={confirm}
-                />
-              ))}
-            </ul>
-          </SortableContext>
-        </DndContext>
-      </div>
-
+    <section aria-label={t("title")} className="min-h-0 flex-1">
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+        <SortableContext items={places.map((p) => p.id)} strategy={verticalListSortingStrategy}>
+          <ul className="time-cards mx-auto w-full max-w-3xl space-y-2 px-3 pb-10 pt-3 md:px-4 md:pt-4">
+            {places.map((p: PlaceItem) => (
+              <PlaceCardRow
+                key={p.id}
+                place={p}
+                isHome={p.id === homeId}
+                viewingMs={viewingMs}
+                hourFormat={hourFormat}
+                dayPeriods={dayPeriods}
+                home={home}
+                locale={locale}
+                t={t}
+                tCom={tCom}
+                onSetHome={setHome}
+                onRemove={removePlace}
+                onRename={renamePlace}
+                prompt={prompt}
+                confirm={confirm}
+              />
+            ))}
+          </ul>
+        </SortableContext>
+      </DndContext>
       {dialog}
-    </aside>
+    </section>
   );
 }
 
-/** 可拖拽的地点行（WC-6 拖拽排序）——「表盘化」三层布局：
- *  国旗+城市名 ／ 大时钟 ／ 一行状态（昼夜图标 + 相对主地点时差）。
+/**
+ * 可拖拽的时间卡行。
  *
- *  次要信息（国家、IANA 时区、UTC 偏移、夏令时状态与下次切换）全部并入
- *  状态行的 title 悬浮详情；行操作（主地点/重命名/删除）收进行尾 ⋯ 菜单。
- *
- *  用 memo 包裹：父级 places 数组任一变更（如重命名某行）会触发整个列表
- *  重渲染，memo 使仅 props 实际变化的行重渲染。传入的 store action、next-intl 的
- *  t/tCom、useDialog 的 prompt/confirm 均为稳定引用，默认浅比较即可正确跳过。 */
-const PlaceRow = memo(function PlaceRow({
+ * 用 memo 包裹：父级 places 数组任一变更会触发整个列表重渲染，memo 使仅
+ * props 实际变化的行重渲染。传入的 store action、next-intl 的 t/tCom、
+ * useDialog 的 prompt/confirm 均为稳定引用，默认浅比较即可正确跳过。
+ */
+const PlaceCardRow = memo(function PlaceCardRow({
   place,
   isHome,
-  now,
-  nowRaw,
+  viewingMs,
   hourFormat,
   dayPeriods,
   home,
@@ -215,8 +173,7 @@ const PlaceRow = memo(function PlaceRow({
 }: {
   place: PlaceItem;
   isHome: boolean;
-  now: number;
-  nowRaw: number | null;
+  viewingMs: number;
   hourFormat: "12" | "24" | "mixed";
   dayPeriods: DayPeriods;
   home: PlaceItem | null;
@@ -247,51 +204,43 @@ const PlaceRow = memo(function PlaceRow({
   } = useSortable({ id: place.id });
 
   const p = place;
-  // 派生时间信息集中 memo：避免兄弟行变动（如重命名其一）导致本行无谓重算
-  // 所有 Luxon / DST 计算。昂贵项（nextDSTChange / timeZoneAbbrev）
-  // 已在 lib/time 内部缓存，此处 memo 进一步消除无关重渲染的重复调用。
-  const {
-    localHour,
-    timeStr,
-    offsetMin,
-    hoverDetail,
-  } = useMemo(() => {
-    const dt = DateTime.fromMillis(now, { zone: p.timeZone });
+  // 派生时间信息集中 memo：兄弟行变动不触发本行重算 Luxon / DST。
+  // 昂贵项（nextDSTChange / timeZoneAbbrev）已在 lib/time 内部缓存。
+  const { localHour, timeStr, dateStr, offsetMin, hoverDetail } = useMemo(() => {
+    const dt = DateTime.fromMillis(viewingMs, { zone: p.timeZone }).setLocale(locale);
     const localHour = dt.hour;
-    const timeStr = nowRaw
-      ? formatClock(p.timeZone, nowRaw, hourFormat, p.countryCode)
-      : "--:--";
+    // 水合前占位（viewingMs=0 为 SSR/首帧哨兵值）：与旧面板一致的 --:--
+    const hasTime = viewingMs > 0;
+    // 大号时钟：精确到分钟（12/24 制随设置与地区惯例）
+    const timeStr = hasTime ? formatClock(p.timeZone, viewingMs, hourFormat, p.countryCode) : "--:--";
+    // 日期 + 星期（随 locale 本地化；被固定时刻跨日时此处如实显示该日）
+    const dateStr = hasTime ? dt.toFormat("MM-dd EEE") : "—";
     // 与主地点的偏移（分钟），仅当存在主地点且非主地点自身时计算（TC-7）
     const offsetMin =
       home && p.id !== home.id
-        ? diffOffsetMinutes(home.timeZone, p.timeZone, now)
+        ? diffOffsetMinutes(home.timeZone, p.timeZone, viewingMs)
         : null;
     // 详情悬浮（6.4）：国家/时区、UTC 偏移、夏令时状态、下次切换日期。
-    // 行面只保留「时差」一个数字，其余专业细节都收进这条 tooltip。
-    const dst = isDST(p.timeZone, now);
-    const utcOffset = offsetMinutes(p.timeZone, now);
-    const nextChange = nextDSTChange(p.timeZone, now);
-    const dstWarn = dstChangeWithinDays(p.timeZone, 7, now);
+    const dst = isDST(p.timeZone, viewingMs);
+    const utcOffset = offsetMinutes(p.timeZone, viewingMs);
+    const nextChange = nextDSTChange(p.timeZone, viewingMs);
+    const dstWarn = dstChangeWithinDays(p.timeZone, 7, viewingMs);
     const hoverDetail = [
-      `${p.countryZh} · ${p.timeZone}`,
+      `${cityCountryName(locale, p)} · ${p.timeZone}`,
       `UTC${formatOffset(utcOffset)}`,
-      `${t("dst")}: ${dst ? t("yes") : t("no")}${timeZoneAbbrev(p.timeZone, now) ? ` (${timeZoneAbbrev(p.timeZone, now)})` : ""}`,
+      `${t("dst")}: ${dst ? t("yes") : t("no")}${timeZoneAbbrev(p.timeZone, viewingMs) ? ` (${timeZoneAbbrev(p.timeZone, viewingMs)})` : ""}`,
       nextChange
         ? `${t("nextChange")}: ${DateTime.fromMillis(nextChange, { zone: p.timeZone }).toFormat("yyyy-MM-dd")}`
         : t("noUpcoming"),
       ...(dstWarn ? [t("dstWarnSoon")] : []),
     ].join("\n");
-    return { localHour, timeStr, offsetMin, hoverDetail };
-    // t 入 next-intl 稳定；place/home 为引用，变更时本行确需重算
-  }, [now, nowRaw, p, hourFormat, home, t]);
+    return { localHour, timeStr, dateStr, offsetMin, hoverDetail };
+  }, [viewingMs, p, hourFormat, home, locale, t]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    // 保留 dnd-kit 的排序过渡；额外加上 scale/box-shadow 过渡用于拖拽抬升反馈
     transition: `${transition ? transition + ", " : ""}scale var(--dur-fast) var(--ease-out-quint), box-shadow var(--dur-fast) var(--ease-out-quint)`,
     opacity: isDragging ? 0.5 : 1,
-    // 拖拽抬升：用独立的 scale 属性（与 dnd-kit 的 transform 叠加，不冲突）+ 加深阴影，
-    // 给「被拎起」的实体感。scale 属性旧浏览器忽略，退化为仅阴影。
     scale: isDragging ? "1.02" : "1",
     boxShadow: isDragging ? "var(--shadow-lg)" : undefined,
   };
@@ -304,7 +253,7 @@ const PlaceRow = memo(function PlaceRow({
         isHome ? "home-row" : ""
       }`}
     >
-      <div className="flex items-center gap-2 px-2.5 py-2.5">
+      <div className="flex items-center gap-2.5 px-3 py-3 md:gap-3 md:px-4">
         {/* 拖拽手柄（WC-6）：桌面悬停显现，触屏常驻（弱化）以保留拖拽排序 */}
         <button
           type="button"
@@ -315,11 +264,11 @@ const PlaceRow = memo(function PlaceRow({
         >
           <IconDrag className="h-4 w-4" />
         </button>
-        <span className="text-xl leading-none" aria-hidden>
+        <span className="text-2xl leading-none" aria-hidden>
           {p.flag}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[13px] font-medium text-ink">
+          <div className="truncate text-sm font-medium text-ink">
             {isHome && (
               <>
                 <span className="sr-only">{t("home")}</span>
@@ -351,29 +300,31 @@ const PlaceRow = memo(function PlaceRow({
               );
             })()}
             {offsetMin != null && (
-              <span data-testid={`offset-${p.id}`}>
-                {offsetMin === 0 ? "0" : formatOffset(offsetMin)}
+              <span data-testid={`offset-${p.id}`} className="tabular-nums">
+                {formatOffset(offsetMin)}
               </span>
             )}
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-0.5">
-          <span className="chrono text-xl text-ink" data-testid={`clock-${p.id}`}>
+        {/* 右侧时间组：大号分钟级时钟 + 日期星期（右对齐，逐字读数面） */}
+        <div className="shrink-0 text-right">
+          <div className="chrono text-3xl font-semibold leading-tight tracking-tight text-ink md:text-4xl" data-testid={`clock-${p.id}`}>
             {timeStr}
-          </span>
-          <PlaceActionsMenu
-            place={p}
-            isHome={isHome}
-            locale={locale}
-            t={t}
-            tCom={tCom}
-            onSetHome={onSetHome}
-            onRemove={onRemove}
-            onRename={onRename}
-            prompt={prompt}
-            confirm={confirm}
-          />
+          </div>
+          <div className="text-[11px] tabular-nums text-faint">{dateStr}</div>
         </div>
+        <PlaceActionsMenu
+          place={p}
+          isHome={isHome}
+          locale={locale}
+          t={t}
+          tCom={tCom}
+          onSetHome={onSetHome}
+          onRemove={onRemove}
+          onRename={onRename}
+          prompt={prompt}
+          confirm={confirm}
+        />
       </div>
     </li>
   );

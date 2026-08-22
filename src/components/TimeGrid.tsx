@@ -9,16 +9,22 @@ import FirstUseEmptyState from "./FirstUseEmptyState";
 import { buildColumns, todayStartMs } from "@/lib/grid";
 import { getCountry } from "@/data/countries";
 import { prefers12Hour } from "@/lib/time";
-import { columnColor, type HeatColor } from "@/lib/heatmap";
+import { placeHeatColor } from "@/lib/heatmap";
 import { localCityName } from "@/lib/cityName";
 import type { AppLocale } from "@/i18n/routing";
+import type { DayPeriods } from "@/store/useWorldTimeStore";
 
 /**
- * 时间网格（TC-1）+ 拖拽选区（TC-2）。
- * - 顶部为 UTC 行，其余为各地点行；
- * - 横轴：默认 7 天，每天 24 小时格；
+ * 时间网格（TC-1）+ 拖拽选区（TC-2）——「重叠时段」排期视图。
+ *
+ * 两态改造后的定位：只服务「找共同空闲段 + 分享」；看各地几点走时钟态时间卡。
+ * - 行：每座城市一行（无 UTC 参考行，UTC 见顶栏时钟）；
+ * - 列：默认 1 天（一屏放下、无横滚），可切 7 天全景；
  * - 列锚定到主地点本地整点，再换算为 UTC 绝对时刻，所有行同步对齐；
- * - 拖拽选区锚定到 UTC 毫秒，跨地点行同步高亮（TC-2）；
+ * - 拖拽选区锚定到 UTC 毫秒，跨行同步高亮（TC-2）；纯单击 = 把查看时刻
+ *   固定到该格（再次点击同一格取消），与时间控制条共享 pinnedMs；
+ * - 热力为单元格级：每格表达该行城市自身的状态（周末/假日/时段），
+ *   跨度大时不再出现「整列全红」的信息量塌缩；
  * - 选区时长显示由 SelectionBar 承担（TC-12）。
  */
 export default function TimeGrid() {
@@ -32,6 +38,9 @@ export default function TimeGrid() {
   const selection = useWorldTimeStore((s) => s.selection);
   const setSelection = useWorldTimeStore((s) => s.setSelection);
   const setViewStartDate = useWorldTimeStore((s) => s.setViewStartDate);
+  const gridDays = useWorldTimeStore((s) => s.gridDays);
+  const pinnedMs = useWorldTimeStore((s) => s.pinnedMs);
+  const setPinned = useWorldTimeStore((s) => s.setPinned);
   const restored = useWorldTimeStore((s) => s.restored);
   const nowRaw = useNow(60_000);
 
@@ -44,11 +53,15 @@ export default function TimeGrid() {
   // 表头分组：每个连续 dayIndex 段对应一个 <th>，其 colSpan 等于该段在 columns 中的
   // 实际列数（而非固定 24）。这保证表头与表体列在 DST 切换（某日 23 或 25 小时、
   // 或末尾多出 1 列）时仍逐列对齐——否则日期标签会整体相对表体偏移。
-  const { columns, dayGroups, colors } = useMemo(() => {
-    if (!home) return { columns: [] as ReturnType<typeof buildColumns>, dayGroups: [] as Array<{ dayIndex: number; count: number }>, colors: {} as Record<number, HeatColor> };
+  const { columns, dayGroups } = useMemo(() => {
+    if (!home)
+      return {
+        columns: [] as ReturnType<typeof buildColumns>,
+        dayGroups: [] as Array<{ dayIndex: number; count: number }>,
+      };
     // nowRaw 为 null（SSR/首屏）时用真实「现在」占位，避免以 epoch 0（1970）算起始日。
     const start = viewStartDateMs ?? todayStartMs(home.timeZone, nowRaw ?? Date.now());
-    const cols = buildColumns(home.timeZone, start, 7);
+    const cols = buildColumns(home.timeZone, start, gridDays);
     // 按表体顺序扫描，遇 dayIndex 变化即开新段；colSpan = 该段连续列数。
     const groups: Array<{ dayIndex: number; count: number }> = [];
     for (const c of cols) {
@@ -56,14 +69,8 @@ export default function TimeGrid() {
       if (last && last.dayIndex === c.dayIndex) last.count++;
       else groups.push({ dayIndex: c.dayIndex, count: 1 });
     }
-    // 热力图：每列一种颜色（取所有地点最差状态，含周末覆盖）
-    const colorMap: Record<number, HeatColor> = {};
-    for (const c of cols) {
-      const col = columnColor(places, c.ms, dayPeriods);
-      if (col) colorMap[c.ms] = col;
-    }
-    return { columns: cols, dayGroups: groups, colors: colorMap };
-  }, [home, nowRaw, places, dayPeriods, viewStartDateMs]);
+    return { columns: cols, dayGroups: groups };
+  }, [home, nowRaw, gridDays, viewStartDateMs]);
 
   // ---- 拖拽选区状态 ----
   const [dragStartMs, setDragStartMs] = useState<number | null>(null);
@@ -71,8 +78,8 @@ export default function TimeGrid() {
   // 拖拽进行态用 state 表达，使其能进入 highlight 的依赖数组（避免在 memo 中读 ref）
   const [isDragging, setIsDragging] = useState(false);
   // 记录拖拽过程中指针是否真的移动到过别的格子（区分「点击」与「拖拽」）。
-  // 审查报告 P2：单击（未拖拽）原实现会强制选中 1 小时，导致触屏误触与无法
-  // 用指针清除选区。现改为：只有真的移动过才选中；纯点击则清除已有选区。
+  // 单击（未拖拽）= 固定/取消查看时刻（与时间控制条同一 pinnedMs）；
+  // 只有真的移动过才产生选区。
   const movedRef = useRef(false);
   // 拖拽命中测试用 rAF 合帧：pointermove 在快速拖动时每秒触发数十次，原实现每次都
   // document.elementFromPoint（强制命中测试）+ setState，导致单帧多次回流/重渲染。
@@ -162,7 +169,7 @@ export default function TimeGrid() {
   }, []);
 
   // M4：手机端首屏自动把「现在」列滚到视口中部。桌面端保留「从今日 00:00 起」的默认定位。
-  // 网格宽达 168 列，手机若落在最左侧的 00:00，用户需横滑很远才到当前时段；居中后即可见。
+  // 手机若落在最左侧的 00:00，用户需横滑很远才到当前时段；居中后即可见。
   const didAutoScrollRef = useRef(false);
   useEffect(() => {
     if (didAutoScrollRef.current) return;
@@ -192,9 +199,14 @@ export default function TimeGrid() {
       if (ms != null) dragEndMsRef.current = ms;
     }
     setIsDragging(false);
-    // 单击（未移动到别的格子）：清除已有选区，不强制选中 1 小时
+    // 纯单击（未移动到别的格子）：把查看时刻固定到该格 / 再点同格取消。
+    // 与时间控制条共享 pinnedMs，时间卡与网格标记同步冻结。
     if (!movedRef.current) {
-      setSelection(null);
+      const clicked = dragStartMs;
+      if (clicked != null) {
+        const cur = useWorldTimeStore.getState().pinnedMs;
+        setPinned(cur === clicked ? null : clicked);
+      }
       setDragStartMs(null);
       setDragEndMs(null);
       dragEndMsRef.current = null;
@@ -225,7 +237,8 @@ export default function TimeGrid() {
 
   if (!home || columns.length === 0) {
     // 恢复完成前（localStorage/URL 尚未 hydrate）显示轻量骨架，避免回访用户每次刷新
-    // 都闪一下完整引导空状态；恢复后若无城市再显示真正的 FirstUseEmptyState。
+    // 都闪一下完整引导空状态；恢复后若无城市再显示真正的 FirstUseEmptyState
+    // （该兜底通常由 Workspace 处理，此处仅防御直渲染路径）。
     if (!restored) {
       return (
         <div className="hud-frame flex min-h-[40vh] items-center justify-center" aria-busy="true">
@@ -293,16 +306,6 @@ export default function TimeGrid() {
           </tr>
         </thead>
         <tbody>
-          <Row
-            label="UTC"
-            zone="UTC"
-            countryCode=""
-            columns={columns}
-            colorByMs={colors}
-            hourFormat={hourFormat}
-            highlight={highlight}
-            now={nowRaw}
-          />
           {places.map((p) => (
             <Row
               key={p.id}
@@ -310,10 +313,11 @@ export default function TimeGrid() {
               zone={p.timeZone}
               countryCode={p.countryCode}
               columns={columns}
-              colorByMs={colors}
+              dayPeriods={dayPeriods}
               hourFormat={hourFormat}
               highlight={highlight}
               now={nowRaw}
+              pinnedMs={pinnedMs}
             />
           ))}
         </tbody>
@@ -337,37 +341,39 @@ const Row = memo(function Row({
   zone,
   countryCode,
   columns,
-  colorByMs,
+  dayPeriods,
   hourFormat,
   highlight,
   now,
+  pinnedMs,
 }: {
   label: string;
   zone: string;
   countryCode: string;
   columns: ReturnType<typeof buildColumns>;
-  colorByMs: Record<number, HeatColor>;
+  dayPeriods: DayPeriods;
   hourFormat: "12" | "24" | "mixed";
   /** 选区高亮范围（半开区间）；null 表示无高亮。传范围对象而非闭包，便于 memo。 */
   highlight: { start: number; end: number } | null;
   now: number | null;
+  pinnedMs: number | null;
 }) {
-  // 每格需要的信息（显示文字 + 是否周末 + 是否每日首列）集中 memo，且对每列仅
-  // 构造一次 DateTime 复用于「文字格式化」与「周末判定」两处。依赖
-  // columns/zone/countryCode/hourFormat，不含 now —— 故每 60s 的 now tick 命中缓存，
-  // 跳过全部 DateTime 分配（原实现每次渲染对 ~168 列 × N 行各自 new DateTime，
-  // 是网格最大的 GC 压力源）。
+  // 每格需要的信息（显示文字 + 周末 + 自身热力色 + 是否每日首列）集中 memo，且对每列仅
+  // 构造一次 DateTime 复用于「文字格式化」「周末判定」「热力判定」多处。依赖
+  // columns/zone/countryCode/dayPeriods/hourFormat，不含 now —— 故每 60s 的 now tick
+  // 命中缓存，跳过全部 DateTime 分配（网格最大的 GC 压力源）。
   const cellInfo = useMemo(() => {
     const use12 =
       hourFormat === "12" ||
       (hourFormat === "mixed" && prefers12Hour(countryCode));
-    // UTC 行无 countryCode：跳过周末判定（避免兜底 [6,7] 产生无意义高亮）
-    const weekendDays = countryCode
-      ? getCountry(countryCode).weekendDays
-      : null;
+    const weekendDays = countryCode ? getCountry(countryCode).weekendDays : null;
     return columns.map((c, i) => {
       const dt = DateTime.fromMillis(c.ms, { zone });
-      const weekend = weekendDays && dt.isValid ? weekendDays.includes(dt.weekday) : false;
+      // 周末底纹：该地本地周六/周日的弱提示（热力色由 data-heat 承担）
+      const weekend =
+        weekendDays && dt.isValid ? weekendDays.includes(dt.weekday) : false;
+      // 单元格级热力：该行城市在此时刻自身的状态（周末/假日覆盖 + 时段判定）
+      const heat = placeHeatColor(zone, countryCode, c.ms, dayPeriods);
       // 每日首列（dayIndex 变化处）：唯一完整显示小时数字的列；
       // 其余列数字淡化（CSS .h-ghost），悬停恢复——降噪但零信息损失。
       const dayFirst = i === 0 || columns[i - 1].dayIndex !== c.dayIndex;
@@ -375,10 +381,11 @@ const Row = memo(function Row({
         primary: dt.toFormat(use12 ? "h a" : "HH"),
         alt: use12 && dayFirst ? dt.toFormat("HH") : null,
         weekend,
+        heat,
         dayFirst,
       };
     });
-  }, [columns, zone, countryCode, hourFormat]);
+  }, [columns, zone, countryCode, dayPeriods, hourFormat]);
 
   return (
     <tr>
@@ -393,17 +400,20 @@ const Row = memo(function Row({
         // 当前小时标记（TC-5）：当前时刻落在该列所在的小时区间内。
         // 用区间判定（c.ms <= now < c.ms + 1h）以正确支持半小时/45 分钟偏移时区
         // （Asia/Kolkata、Asia/Kathmandu 等列 ms 不落在 UTC 整点上）。
-        // 单元格的视觉状态（热力 / 周末 / 选区 / 现在）全部由 data-* 属性
+        // 单元格的视觉状态（热力 / 周末 / 选区 / 现在 / 固定时刻）全部由 data-* 属性
         // 驱动 globals.css 的令牌化规则，优先级在那里靠源码顺序保证。
         const isNow = now ? c.ms <= now && now < c.ms + 3600_000 : false;
+        const isPinned =
+          pinnedMs != null && c.ms <= pinnedMs && pinnedMs < c.ms + 3600_000;
         return (
           <td
             key={c.ms}
             data-zone={zone}
             data-ms={c.ms}
             data-weekend={info.weekend ? "1" : "0"}
-            data-heat={colorByMs[c.ms] ?? ""}
+            data-heat={info.heat ?? ""}
             data-now={isNow ? "1" : "0"}
+            data-pinned={isPinned ? "1" : "0"}
             data-selected={
               highlight ? c.ms >= highlight.start && c.ms < highlight.end ? "1" : "0" : "0"
             }

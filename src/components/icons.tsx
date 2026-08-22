@@ -197,3 +197,34 @@ export function IconBriefcase(props: IconProps) {
     </Svg>
   );
 }
+
+/** 时钟（「时钟」视图模式 / 时间控制）。 */
+export function IconClock(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </Svg>
+  );
+}
+
+/** 网格（「重叠时段」视图模式）。 */
+export function IconGrid(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <rect width="7" height="7" x="3" y="3" rx="1" />
+      <rect width="7" height="7" x="14" y="3" rx="1" />
+      <rect width="7" height="7" x="14" y="14" rx="1" />
+      <rect width="7" height="7" x="3" y="14" rx="1" />
+    </Svg>
+  );
+}
+
+/** 对勾（确认）。 */
+export function IconCheck(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M20 6 9 17l-5-5" />
+    </Svg>
+  );
+}

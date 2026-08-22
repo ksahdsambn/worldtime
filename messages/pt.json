@@ -79,14 +79,8 @@
   "Now": {
     "backToNow": "Voltar para agora"
   },
-  "Cursor": {
-    "cursor": "Marcador de tempo:",
-    "enable": "Mostrar marcador de tempo",
-    "disable": "Ocultar marcador de tempo"
-  },
   "DateJump": {
-    "jumpTo": "Ir para:",
-    "today": "Hoje"
+    "jumpTo": "Ir para:"
   },
   "Theme": {
     "toggle": "Alternar tema claro/escuro"
@@ -236,17 +230,14 @@
     "step1Title": "1. Adicione cidades",
     "step1Body": "Use a busca para adicionar todos os lugares que quer coordenar.",
     "step2Title": "2. Arraste para escolher o horário",
-    "step2Body": "Clique e arraste sobre a grade para escolher a janela da reunião. A seleção se alinha em todas as linhas.",
+    "step2Body": "Abra a aba \"Sobreposição\" e arraste na grade para escolher um horário que funcione para todos.",
     "step3Title": "3. Leia as cores",
-    "step3Body": "Cada coluna é colorida pela pessoa menos disponível: verde, todos em horário de trabalho; laranja, alguém fora dele; vermelho, alguém dormindo.",
+    "step3Body": "Cada célula é colorida pelo status da própria cidade — verde é horário de trabalho, laranja é horário de contato e vermelho é descanso.",
     "legendTitle": "Legenda das cores",
     "shortcutsTitle": "Atalhos de teclado",
     "shortcutDelete": "Excluir cidade de origem",
     "shortcutEscape": "Limpar a seleção",
-    "shortcutEnter": "Levar o marcador ao início da seleção",
-    "close": "Fechar",
-    "shortcutSelect": "Iniciar seleção no marcador de tempo",
-    "shortcutResize": "Ampliar ou reduzir a seleção"
+    "close": "Fechar"
   },
   "Errors": {
     "title": "Algo deu errado",
@@ -335,8 +326,18 @@
     ]
   },
   "ViewControls": {
-    "title": "Opções de visualização",
-    "prevWeek": "Semana anterior",
-    "nextWeek": "Próxima semana"
+    "prev": "Anterior",
+    "next": "Próximo",
+    "day1": "1 dia",
+    "day7": "7 dias"
+  },
+  "Modes": {
+    "clock": "Relógio",
+    "overlap": "Sobreposição"
+  },
+  "Viewing": {
+    "now": "Agora",
+    "pick": "Definir um horário",
+    "backToNow": "Voltar para agora"
   }
 }

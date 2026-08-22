@@ -79,14 +79,8 @@
   "Now": {
     "backToNow": "현재로 돌아가기"
   },
-  "Cursor": {
-    "cursor": "시간 표시:",
-    "enable": "시간 표시 보기",
-    "disable": "시간 표시 숨기기"
-  },
   "DateJump": {
-    "jumpTo": "이동:",
-    "today": "오늘"
+    "jumpTo": "이동:"
   },
   "Theme": {
     "toggle": "밝은/어두운 테마 전환"
@@ -236,17 +230,14 @@
     "step1Title": "1. 도시 추가",
     "step1Body": "검색창을 이용해 조율할 모든 장소를 추가하세요.",
     "step2Title": "2. 드래그로 시간 선택",
-    "step2Body": "그리드에서 클릭 후 드래그해 회의 시간대를 선택합니다. 선택은 모든 행에 동기화됩니다.",
+    "step2Body": "「겹치는 시간」탭에서 그리드를 드래그해 모두에게 맞는 시간대를 선택하세요.",
     "step3Title": "3. 색상 읽기",
-    "step3Body": "각 열은 가장 여의치 않은 사람을 기준으로 채색됩니다. 초록은 모두 근무 시간, 주황은 일부가 시간 외, 빨강은 수면 중인 사람이 있다는 뜻입니다.",
+    "step3Body": "각 칸은 해당 도시의 상태로 칠해집니다 — 초록은 근무 시간, 주황은 연락 가능 시간, 빨강은 휴식 중입니다.",
     "legendTitle": "색상 범례",
     "shortcutsTitle": "키보드 단축키",
     "shortcutDelete": "기준 도시 삭제",
     "shortcutEscape": "선택 해제",
-    "shortcutEnter": "시간 표시를 선택 시작점으로 이동",
-    "close": "닫기",
-    "shortcutSelect": "시간 표시에서 선택 시작",
-    "shortcutResize": "선택 영역 넓히기/줄이기"
+    "close": "닫기"
   },
   "Errors": {
     "title": "문제가 발생했습니다",
@@ -335,8 +326,18 @@
     ]
   },
   "ViewControls": {
-    "title": "보기 옵션",
-    "prevWeek": "이전 주",
-    "nextWeek": "다음 주"
+    "prev": "이전",
+    "next": "다음",
+    "day1": "1일",
+    "day7": "7일"
+  },
+  "Modes": {
+    "clock": "시계",
+    "overlap": "겹치는 시간"
+  },
+  "Viewing": {
+    "now": "지금",
+    "pick": "시간 설정",
+    "backToNow": "지금으로 돌아가기"
   }
 }

@@ -1,13 +1,9 @@
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import Image from "next/image";
 import CitySearch from "@/components/CitySearch";
-import PlacesPanel from "@/components/PlacesPanel";
-import TimeGrid from "@/components/TimeGrid";
-import SelectionBar from "@/components/SelectionBar";
+import Workspace from "@/components/Workspace";
 import HeaderActions from "@/components/HeaderActions";
 import GlassHeader from "@/components/GlassHeader";
-import GridToolbar from "@/components/GridToolbar";
-import DragGhostDemo from "@/components/DragGhostDemo";
 import UrlStateSync from "@/components/UrlStateSync";
 import KeyboardShortcuts from "@/components/KeyboardShortcuts";
 import { Reveal } from "@/components/Reveal";
@@ -66,7 +62,8 @@ export default async function Home({ params }: Props) {
           panel 层玻璃 + 折射（GlassHeader）；safe-top 避开全面屏安全区。 */}
       <GlassHeader>
         <div className="mx-auto flex max-w-[1680px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
-          <h1 className="flex shrink-0 items-center gap-3">
+          {/* 移动端允许压缩换行（ru/vi 长标语），桌面端保持不缩放原样 */}
+          <h1 className="flex min-w-0 items-center gap-3 md:shrink-0">
             <span className="brand-orbit brand-orbit--sm">
               <Image
                 src="/brand/worldtime-mark.svg"
@@ -78,17 +75,18 @@ export default async function Home({ params }: Props) {
                 className="brand-mark"
               />
             </span>
-            <span className="flex flex-col leading-tight">
+            <span className="flex min-w-0 flex-col leading-tight">
               <span className="text-[16px] font-semibold tracking-tight text-gradient">
                 {t("title")}
               </span>
-                <span className="text-[11px] tracking-wide text-muted">
+                <span className="break-words text-[11px] tracking-wide text-muted">
                   {t("tagline")}
                 </span>
             </span>
           </h1>
 
-          <div className="min-w-0 flex-1 md:max-w-md">
+          {/* 移动端独占一行（避免被长标语挤瘪），桌面端恢复弹性中列 */}
+          <div className="w-full min-w-0 md:max-w-md md:flex-1">
             <CitySearch />
           </div>
 
@@ -97,26 +95,10 @@ export default async function Home({ params }: Props) {
         </div>
       </GlassHeader>
 
-      {/* 主体：左侧地点列表面板 + 右侧网格工作区。
-          面板与表头为抬升表面，网格区为内凹表面，构成「分层」深度。 */}
-      <div className="mx-auto flex w-full max-w-[1680px] flex-1 flex-col md:flex-row">
-        <PlacesPanel />
-        <main className="flex min-w-0 flex-1 flex-col">
-          {/* 网格工具条：空状态（无城市）时自隐藏，见 GridToolbar */}
-          <GridToolbar />
-
-          {/* 网格（内凹表面）+ 首次拖选动效教学（幽灵选区演示一次后淡出，零文字） */}
-          <div className="relative min-h-0 flex-1">
-            <DragGhostDemo />
-            <div className="h-full overflow-auto p-3 md:p-4">
-              <TimeGrid />
-            </div>
-          </div>
-        </main>
-      </div>
-
-      {/* 选区操作栏：仅在有选区时出现（固定浮于底部，抬升表面） */}
-      <SelectionBar />
+      {/* 工作区：一页两态（时钟时间卡 / 重叠排期网格）。
+          模式分段 + 时间控制条为玻璃工作条；网格区为内凹表面，构成「分层」深度。
+          选区操作栏由 Workspace 在排期视图内挂载（仅在有选区时出现）。 */}
+      <Workspace />
 
       {/*
         瘦 SEO 页脚：实体定义 + 热门城市/对照内链（首页权重传递）。

@@ -79,14 +79,8 @@
   "Now": {
     "backToNow": "Revenir à maintenant"
   },
-  "Cursor": {
-    "cursor": "Repère temporel :",
-    "enable": "Afficher le repère temporel",
-    "disable": "Masquer le repère temporel"
-  },
   "DateJump": {
-    "jumpTo": "Aller à :",
-    "today": "Aujourd'hui"
+    "jumpTo": "Aller à :"
   },
   "Theme": {
     "toggle": "Basculer thème clair/sombre"
@@ -236,17 +230,14 @@
     "step1Title": "1. Ajoutez des villes",
     "step1Body": "Utilisez le champ de recherche pour ajouter tous les lieux à coordonner.",
     "step2Title": "2. Glissez pour choisir l'heure",
-    "step2Body": "Cliquez et glissez sur la grille pour choisir la plage de réunion. La sélection s'aligne sur toutes les lignes.",
+    "step2Body": "Ouvrez l'onglet « Créneaux » puis faites glisser sur la grille pour choisir un créneau qui convient à tout le monde.",
     "step3Title": "3. Lisez les couleurs",
-    "step3Body": "Chaque colonne est teintée selon la personne la moins disponible : vert, tous en heures de travail ; orange, certains en dehors ; rouge, quelqu'un dort.",
+    "step3Body": "Chaque case est colorée selon le statut de la ville — vert : heures de travail, orange : heures de contact, rouge : sommeil.",
     "legendTitle": "Légende des couleurs",
     "shortcutsTitle": "Raccourcis clavier",
     "shortcutDelete": "Supprimer la ville de référence",
     "shortcutEscape": "Effacer la sélection",
-    "shortcutEnter": "Placer le repère sur le début de la sélection",
-    "close": "Fermer",
-    "shortcutSelect": "Démarrer une sélection au marqueur de temps",
-    "shortcutResize": "Agrandir ou réduire la sélection"
+    "close": "Fermer"
   },
   "Errors": {
     "title": "Une erreur est survenue",
@@ -335,8 +326,18 @@
     ]
   },
   "ViewControls": {
-    "title": "Options d'affichage",
-    "prevWeek": "Semaine précédente",
-    "nextWeek": "Semaine suivante"
+    "prev": "Précédent",
+    "next": "Suivant",
+    "day1": "1 jour",
+    "day7": "7 jours"
+  },
+  "Modes": {
+    "clock": "Horloge",
+    "overlap": "Créneaux"
+  },
+  "Viewing": {
+    "now": "Maintenant",
+    "pick": "Définir l'heure",
+    "backToNow": "Revenir à maintenant"
   }
 }

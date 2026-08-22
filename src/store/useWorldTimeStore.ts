@@ -67,6 +67,16 @@ export interface TimeSelection {
   endMs: number;
 }
 
+/**
+ * 主视图模式。
+ * - clock：城市时间卡列表（默认）——回答「现在 / 任意时刻，各地几点」；
+ * - overlap：时间网格排期——拖拽找共同空闲段并分享。
+ */
+export type ViewMode = "clock" | "overlap";
+
+/** 网格窗口跨度（天）：默认 1 天一屏放下、无需横滚；可切 7 天全景。 */
+export type GridDays = 1 | 7;
+
 interface WorldTimeState {
   /** 已添加地点列表（顺序即展示顺序） */
   places: PlaceItem[];
@@ -81,8 +91,18 @@ interface WorldTimeState {
   /** 当前选区（TC-2 / TC-12），无选区时为 null */
   selection: TimeSelection | null;
 
-  /** 时间游标（TC-4，P1），epoch 毫秒；null 表示未启用 */
-  cursorMs: number | null;
+  /**
+   * 自定义查看时刻（epoch 毫秒，可精确到分钟）。null 表示实时「现在」。
+   * 所有展示视图（时间卡 / 网格标记）统一消费该值；由顶栏时间控制条或
+   * 点击网格单元格设定，URL 以 t= 参数分享。
+   */
+  pinnedMs: number | null;
+
+  /** 主视图模式（默认 clock） */
+  viewMode: ViewMode;
+
+  /** 网格窗口天数（默认 1 天） */
+  gridDays: GridDays;
 
   /** 网格视图起始日期（主地点本地午夜，TC-6 任意日期跳转）。null 表示今天。 */
   viewStartDateMs: number | null;
@@ -113,10 +133,13 @@ interface WorldTimeState {
   // ---- 选区 ----
   setSelection: (sel: TimeSelection | null) => void;
 
-  // ---- 游标（TC-4）----
-  setCursor: (ms: number | null) => void;
-  /** 选区边缘微调（TC-3）：edge 为 'start'|'end'，deltaMs 为增量（可负） */
-  resizeSelection: (edge: "start" | "end", deltaMs: number) => void;
+  // ---- 查看时刻 / 视图模式 ----
+  /** 设定自定义查看时刻；null 回到实时「现在」 */
+  setPinned: (ms: number | null) => void;
+  /** 切换主视图模式（时钟 / 重叠时段） */
+  setViewMode: (mode: ViewMode) => void;
+  /** 切换网格窗口跨度（1 天 / 7 天） */
+  setGridDays: (days: GridDays) => void;
 
   /** 设置网格视图起始日期（TC-6）；null 表示回到今天 */
   setViewStartDate: (ms: number | null) => void;
@@ -133,7 +156,9 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   hourFormat: "24",
   dayPeriods: DEFAULT_DAY_PERIODS,
   selection: null,
-  cursorMs: null,
+  pinnedMs: null,
+  viewMode: "clock",
+  gridDays: 1,
   viewStartDateMs: null,
   restored: false,
 
@@ -230,20 +255,9 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   setDayPeriods: (dp) => set({ dayPeriods: dp }),
   setSelection: (sel) => set({ selection: sel }),
 
-  setCursor: (ms) => set({ cursorMs: ms }),
-  resizeSelection: (edge, deltaMs) =>
-    set((state) => {
-      if (!state.selection) return state;
-      const { startMs, endMs } = state.selection;
-      let start = startMs;
-      let end = endMs;
-      if (edge === "start") {
-        start = Math.min(start + deltaMs, end - 60_000); // 至少保留 1 分钟
-      } else {
-        end = Math.max(end + deltaMs, start + 60_000);
-      }
-      return { selection: { startMs: start, endMs: end } };
-    }),
+  setPinned: (ms) => set({ pinnedMs: ms }),
+  setViewMode: (mode) => set({ viewMode: mode }),
+  setGridDays: (days) => set({ gridDays: days }),
 
   setViewStartDate: (ms) => set({ viewStartDateMs: ms }),
 

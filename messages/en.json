@@ -79,14 +79,8 @@
   "Now": {
     "backToNow": "Back to now"
   },
-  "Cursor": {
-    "cursor": "Time marker:",
-    "enable": "Show time marker",
-    "disable": "Hide time marker"
-  },
   "DateJump": {
-    "jumpTo": "Jump to:",
-    "today": "Today"
+    "jumpTo": "Jump to:"
   },
   "Theme": {
     "toggle": "Toggle light/dark theme"
@@ -236,17 +230,14 @@
     "step1Title": "1. Add cities",
     "step1Body": "Use the search box to add every place you're coordinating across.",
     "step2Title": "2. Drag to pick a time",
-    "step2Body": "Click and drag across the grid to choose a meeting window. The selection lines up across every row.",
+    "step2Body": "Open the Overlap tab, then click and drag across the grid to choose a window that lines up for everyone.",
     "step3Title": "3. Read the colors",
-    "step3Body": "Each column is tinted by whoever is least available — green is all in work hours, orange is some outside them, red is someone asleep.",
+    "step3Body": "Each cell is tinted by that city's own status — green is work hours, orange is contact hours, red is asleep.",
     "legendTitle": "Color legend",
     "shortcutsTitle": "Keyboard shortcuts",
     "shortcutDelete": "Delete home city",
     "shortcutEscape": "Clear the selection",
-    "shortcutEnter": "Snap the time marker to the selection start",
-    "close": "Close",
-    "shortcutSelect": "Start a selection at the time marker",
-    "shortcutResize": "Grow or shrink the selection"
+    "close": "Close"
   },
   "Errors": {
     "title": "Something went wrong",
@@ -335,8 +326,18 @@
     ]
   },
   "ViewControls": {
-    "title": "View options",
-    "prevWeek": "Previous week",
-    "nextWeek": "Next week"
+    "prev": "Backward",
+    "next": "Forward",
+    "day1": "1 day",
+    "day7": "7 days"
+  },
+  "Modes": {
+    "clock": "Clock",
+    "overlap": "Overlap"
+  },
+  "Viewing": {
+    "now": "Now",
+    "pick": "Set a custom time",
+    "backToNow": "Back to now"
   }
 }

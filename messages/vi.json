@@ -79,14 +79,8 @@
   "Now": {
     "backToNow": "Về hiện tại"
   },
-  "Cursor": {
-    "cursor": "Đánh dấu thời gian:",
-    "enable": "Hiện đánh dấu thời gian",
-    "disable": "Ẩn đánh dấu thời gian"
-  },
   "DateJump": {
-    "jumpTo": "Chuyển đến:",
-    "today": "Hôm nay"
+    "jumpTo": "Chuyển đến:"
   },
   "Theme": {
     "toggle": "Chuyển giao diện sáng/tối"
@@ -236,17 +230,14 @@
     "step1Title": "1. Thêm thành phố",
     "step1Body": "Dùng ô tìm kiếm để thêm mọi nơi bạn muốn phối hợp.",
     "step2Title": "2. Kéo để chọn giờ",
-    "step2Body": "Nhấp và kéo trên lưới để chọn khung giờ họp. Vùng chọn được căn hàng trên mọi dòng.",
+    "step2Body": "Chuyển sang thẻ \"Khung trùng nhau\", rồi kéo trên lưới để chọn khung giờ phù hợp với mọi người.",
     "step3Title": "3. Đọc màu sắc",
-    "step3Body": "Mỗi cột được tô theo người bất tiện nhất: xanh lá là tất cả trong giờ làm, cam là có người ngoài giờ làm, đỏ là có người đang ngủ.",
+    "step3Body": "Mỗi ô được tô theo trạng thái của thành phố đó — xanh lá là giờ làm việc, cam là giờ có thể liên lạc, đỏ là đang nghỉ.",
     "legendTitle": "Chú giải màu",
     "shortcutsTitle": "Phím tắt",
     "shortcutDelete": "Xóa thành phố gốc",
     "shortcutEscape": "Xóa vùng chọn",
-    "shortcutEnter": "Đưa điểm đánh dấu về đầu vùng chọn",
-    "close": "Đóng",
-    "shortcutSelect": "Bắt đầu chọn tại điểm đánh dấu thời gian",
-    "shortcutResize": "Mở rộng hoặc thu nhỏ vùng chọn"
+    "close": "Đóng"
   },
   "Errors": {
     "title": "Đã xảy ra lỗi",
@@ -335,8 +326,18 @@
     ]
   },
   "ViewControls": {
-    "title": "Tùy chọn xem",
-    "prevWeek": "Tuần trước",
-    "nextWeek": "Tuần sau"
+    "prev": "Trước",
+    "next": "Sau",
+    "day1": "1 ngày",
+    "day7": "7 ngày"
+  },
+  "Modes": {
+    "clock": "Đồng hồ",
+    "overlap": "Khung trùng nhau"
+  },
+  "Viewing": {
+    "now": "Bây giờ",
+    "pick": "Đặt thời gian",
+    "backToNow": "Quay lại hiện tại"
   }
 }

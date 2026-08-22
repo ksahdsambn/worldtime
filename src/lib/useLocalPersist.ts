@@ -3,7 +3,13 @@
 import { useEffect, useRef } from "react";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { CITY_BY_ID } from "@/data/cities";
-import type { PlaceItem, DayPeriods, HourFormat } from "@/store/useWorldTimeStore";
+import type {
+  PlaceItem,
+  DayPeriods,
+  HourFormat,
+  ViewMode,
+  GridDays,
+} from "@/store/useWorldTimeStore";
 
 /**
  * 本地存储持久化（步骤 2.16）。
@@ -40,7 +46,12 @@ interface PersistShape {
   hourFormat: HourFormat;
   dayPeriods: DayPeriods;
   selectionMs: { start: number; end: number } | null;
-  cursorMs: number | null;
+  /** 自定义查看时刻（现行字段名）。 */
+  pinnedMs: number | null;
+  /** 旧版时间游标（向后兼容读取，恢复时迁移到 pinnedMs）。 */
+  cursorMs?: number | null;
+  viewMode: ViewMode;
+  gridDays: GridDays;
 }
 
 export function useLocalPersist() {
@@ -49,12 +60,16 @@ export function useLocalPersist() {
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
   const dayPeriods = useWorldTimeStore((s) => s.dayPeriods);
   const selection = useWorldTimeStore((s) => s.selection);
-  const cursorMs = useWorldTimeStore((s) => s.cursorMs);
+  const pinnedMs = useWorldTimeStore((s) => s.pinnedMs);
+  const viewMode = useWorldTimeStore((s) => s.viewMode);
+  const gridDays = useWorldTimeStore((s) => s.gridDays);
   const setPlaces = useWorldTimeStore((s) => s.setPlaces);
   const setHourFormat = useWorldTimeStore((s) => s.setHourFormat);
   const setDayPeriods = useWorldTimeStore((s) => s.setDayPeriods);
   const setSelection = useWorldTimeStore((s) => s.setSelection);
-  const setCursor = useWorldTimeStore((s) => s.setCursor);
+  const setPinned = useWorldTimeStore((s) => s.setPinned);
+  const setViewMode = useWorldTimeStore((s) => s.setViewMode);
+  const setGridDays = useWorldTimeStore((s) => s.setGridDays);
   const markRestored = useWorldTimeStore((s) => s.markRestored);
 
   const restored = useRef(false);
@@ -68,12 +83,12 @@ export function useLocalPersist() {
       return;
     }
 
-    // URL 编码的字段优先：p（地点）、s（选区）、c（游标）。
+    // URL 编码的字段优先：p（地点）、s（选区）、t（查看时刻；旧版 c= 游标）。
     // 空值（如 "?p="）视为未携带，与 decodeState 的「空值跳过」语义一致，
     // 避免手工拼的空参数把本地地点清成空列表。
     const hasUrlPlaces = /[?&]p=[^&]/.test(window.location.search);
     const hasUrlSelection = /[?&]s=\d/.test(window.location.search);
-    const hasUrlCursor = /[?&]c=\d/.test(window.location.search);
+    const hasUrlPinned = /[?&][ct]=\d/.test(window.location.search);
 
     try {
       const raw = window.localStorage.getItem(KEY);
@@ -110,9 +125,13 @@ export function useLocalPersist() {
           }
         }
       }
-      // hourFormat / dayPeriods 始终从本地恢复（URL 不编码这些）
+      // hourFormat / dayPeriods / 视图偏好始终从本地恢复（URL 不编码这些）
       if (data.hourFormat) setHourFormat(data.hourFormat);
       if (data.dayPeriods) setDayPeriods(data.dayPeriods);
+      if (data.viewMode === "clock" || data.viewMode === "overlap") {
+        setViewMode(data.viewMode);
+      }
+      if (data.gridDays === 1 || data.gridDays === 7) setGridDays(data.gridDays);
       // 选区：仅当 URL 未带 s 参数
       if (!hasUrlSelection && data.selectionMs) {
         setSelection({
@@ -120,9 +139,10 @@ export function useLocalPersist() {
           endMs: data.selectionMs.end,
         });
       }
-      // 游标：仅当 URL 未带 c 参数
-      if (!hasUrlCursor && data.cursorMs != null) {
-        setCursor(data.cursorMs);
+      // 查看时刻：仅当 URL 未带 t/c 参数；旧 cursorMs 迁移为 pinnedMs
+      if (!hasUrlPinned) {
+        const pinned = data.pinnedMs ?? data.cursorMs ?? null;
+        if (pinned != null) setPinned(pinned);
       }
     } catch {
       // 损坏数据忽略
@@ -130,7 +150,16 @@ export function useLocalPersist() {
       // 无论恢复成功与否，都标记「已完成」，让 UI 退出轻量骨架、显示真实空状态。
       markRestored();
     }
-  }, [setPlaces, setHourFormat, setDayPeriods, setSelection, setCursor, markRestored]);
+  }, [
+    setPlaces,
+    setHourFormat,
+    setDayPeriods,
+    setSelection,
+    setPinned,
+    setViewMode,
+    setGridDays,
+    markRestored,
+  ]);
 
   // 2) 状态变化时回写
   //    注意：直接读取闭包变量会在"恢复"当次渲染读到旧值（React 闭包），
@@ -152,12 +181,14 @@ export function useLocalPersist() {
       selectionMs: snap.selection
         ? { start: snap.selection.startMs, end: snap.selection.endMs }
         : null,
-      cursorMs: snap.cursorMs,
+      pinnedMs: snap.pinnedMs,
+      viewMode: snap.viewMode,
+      gridDays: snap.gridDays,
     };
     try {
       window.localStorage.setItem(KEY, JSON.stringify(payload));
     } catch {
       // 写入失败（隐私模式等）忽略
     }
-  }, [places, homeId, hourFormat, dayPeriods, selection, cursorMs]);
+  }, [places, homeId, hourFormat, dayPeriods, selection, pinnedMs, viewMode, gridDays]);
 }

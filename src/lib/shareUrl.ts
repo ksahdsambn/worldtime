@@ -9,9 +9,10 @@ import { CITY_BY_ID } from "@/data/cities";
  * - places: 以逗号分隔的 cityId 列表，主地点前置 "*"。
  *   例："*cn-beijing,us-new-york"
  * - sel: "startMs-endMs"（epoch 毫秒），缺省表示无选区。
- * - c: 游标时刻（epoch 毫秒，TC-4），缺省表示无游标。
+ * - t: 自定义查看时刻（epoch 毫秒，精确到分钟），缺省表示实时「现在」。
  *
- * 查询参数名：p（places）、s（selection）、c（cursor）。
+ * 查询参数名：p（places）、s（selection）、t（pinned time）。
+ * 兼容：旧版时间游标参数 c= 仍可读取（映射为 t=），但不再写出。
  */
 
 /**
@@ -25,7 +26,7 @@ export function encodeState(
   places: PlaceItem[],
   homeId: string | null,
   selection: TimeSelection | null,
-  cursorMs: number | null = null,
+  pinnedMs: number | null = null,
 ): string {
   const parts: string[] = [];
   if (places.length > 0) {
@@ -37,8 +38,8 @@ export function encodeState(
   if (selection) {
     parts.push(`s=${selection.startMs}-${selection.endMs}`);
   }
-  if (cursorMs != null) {
-    parts.push(`c=${cursorMs}`);
+  if (pinnedMs != null) {
+    parts.push(`t=${pinnedMs}`);
   }
   return parts.join("&");
 }
@@ -50,15 +51,15 @@ export function decodeState(
   places: PlaceItem[];
   homeId: string | null;
   selection: TimeSelection | null;
-  cursorMs: number | null;
+  pinnedMs: number | null;
 } {
   const params = new URLSearchParams(query);
   const result: {
     places: PlaceItem[];
     homeId: string | null;
     selection: TimeSelection | null;
-    cursorMs: number | null;
-  } = { places: [], homeId: null, selection: null, cursorMs: null };
+    pinnedMs: number | null;
+  } = { places: [], homeId: null, selection: null, pinnedMs: null };
 
   const p = params.get("p");
   if (p) {
@@ -97,10 +98,11 @@ export function decodeState(
     }
   }
 
-  const c = params.get("c");
-  if (c) {
-    const cm = c.match(/^(\d+)$/);
-    if (cm) result.cursorMs = Number(cm[1]);
+  // 自定义查看时刻：t= 为现行参数；旧版游标 c= 兼容读取（两者同时存在时 t 优先）
+  const t = params.get("t") ?? params.get("c");
+  if (t) {
+    const tm = t.match(/^(\d+)$/);
+    if (tm) result.pinnedMs = Number(tm[1]);
   }
 
   return result;

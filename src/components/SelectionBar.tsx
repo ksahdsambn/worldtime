@@ -23,7 +23,7 @@ export default function SelectionBar() {
   const places = useWorldTimeStore((s) => s.places);
   const homeId = useWorldTimeStore((s) => s.homeId);
   const hourFormat = useWorldTimeStore((s) => s.hourFormat);
-  const cursorMs = useWorldTimeStore((s) => s.cursorMs);
+  const pinnedMs = useWorldTimeStore((s) => s.pinnedMs);
   const locale = useLocale() as AppLocale;
   const [flash, setFlash] = useState<string | null>(null);
   const glassRef = useLiquidGlass();
@@ -66,11 +66,11 @@ export default function SelectionBar() {
   }
 
   async function onCopyShare() {
-    // 构建当前完整分享 URL（含游标，在用户手势上下文中安全访问 window）。
+    // 构建当前完整分享 URL（含固定查看时刻，在用户手势上下文中安全访问 window）。
     // 用渲染中的 sel（lastSel.current）而非 store 的 selection：选区清除后
     // 退场动画仍显示该栏约 320ms，此时 store.selection 已为 null，若用它编码
     // 会复制出「不含 s= 参数」的失效链接（审查报告 P3）。
-    const q = encodeState(places, homeId, sel, cursorMs);
+    const q = encodeState(places, homeId, sel, pinnedMs);
     const url = `${window.location.origin}${window.location.pathname}${q ? "?" + q : ""}`;
     const ok = await copyText(url);
     if (ok) {
