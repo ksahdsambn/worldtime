@@ -37,6 +37,12 @@
 
 `src/lib/seo.ts` `src/lib/summary.ts` `src/lib/heatmap.ts` `src/lib/useLocalPersist.ts` `src/lib/ogArtwork.tsx`(删) `src/app/robots.ts` `src/app/[locale]/opengraph-image.tsx`(删) `src/app/[locale]/twitter-image.tsx`(删) `src/app/[locale]/(home)/{page,loading}.tsx`(自根段迁入) `src/app/[locale]/time/[cityId]/page.tsx` `src/app/[locale]/country/[code]/page.tsx` `src/app/[locale]/time-converter/[slug]/page.tsx` `src/i18n/routing.ts` `src/components/{SelectionBar,CitySearch,KeyboardShortcuts}.tsx` `src/data/{holidays,countries}.ts` `scripts/gen-icons.mjs` `tests/lib/{seo,summary,dstRegressions}.test.ts` `tests/data/{holidays,countries}.test.ts` `public/og*.png` `public/brand/*.{svg,png}` `AGENTS.md` `README.md` `code-review-prompt.md` `markdown/REQUIREMENTS.md`
 
+### Git
+
+- 全程直接在 `main` 工作（审查任务即针对 main 代码，无独立功能分支，无需合并）；每轮 1 个中文 conventional commit，共 4 个：`2674a3c`(R1) → `3cb96d8`(R2) → `6132c9d`(R3) → `59f7e42`(报告+本轮记录)。
+- 推送前重跑四道门槛确认（type-check / lint / test 215/215 / build 1045 静态页）。
+- 本条补记后提交并推送 `origin/main`；无其他本地/远程分支需要清理。
+
 ---
 
 ## 第 41 轮：OG/favicon/GEO 宣传素材 + 两轮审查合入 main
