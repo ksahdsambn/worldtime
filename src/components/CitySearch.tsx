@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { CITIES } from "@/data/cities";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import type { CityRecord } from "@/lib/types";
+import { localCityName, cityCountryName } from "@/lib/cityName";
+import { isChineseLocale, type AppLocale } from "@/i18n/routing";
 import { toast } from "@/lib/toast";
 import { usePresence } from "@/lib/usePresence";
 import GlassMenu from "./GlassMenu";
@@ -88,6 +90,8 @@ export default function CitySearch() {
   const t = useTranslations("CitySearch");
   const tCom = useTranslations("Common");
   const tPlaces = useTranslations("Places");
+  const locale = useLocale() as AppLocale;
+  const zhFirst = isChineseLocale(locale);
   const addPlace = useWorldTimeStore((s) => s.addPlace);
   const places = useWorldTimeStore((s) => s.places);
   const [query, setQuery] = useState("");
@@ -228,10 +232,10 @@ export default function CitySearch() {
                   {c.flag}
                 </span>
                 <span className="flex-1">
-                  <span className="font-medium text-ink">{c.nameZh}</span>
-                  <span className="ml-1 text-faint">({c.nameEn})</span>
+                  <span className="font-medium text-ink">{localCityName(locale, c)}</span>
+                  <span className="ml-1 text-faint">({zhFirst ? c.nameEn : c.nameZh})</span>
                   <span className="block text-xs text-faint">
-                    {c.countryZh} · {c.timeZone}
+                    {cityCountryName(locale, c)} · {c.timeZone}
                   </span>
                 </span>
                 <span className="shrink-0 text-[11px] font-medium tabular-nums text-muted">

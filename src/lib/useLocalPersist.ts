@@ -69,10 +69,11 @@ export function useLocalPersist() {
     }
 
     // URL 编码的字段优先：p（地点）、s（选区）、c（游标）。
-    // URL 未覆盖的字段（hourFormat、dayPeriods，以及无 p/s/c 时的地点/选区/游标）从本地恢复。
-    const hasUrlPlaces = /[?&]p=/.test(window.location.search);
-    const hasUrlSelection = /[?&]s=/.test(window.location.search);
-    const hasUrlCursor = /[?&]c=/.test(window.location.search);
+    // 空值（如 "?p="）视为未携带，与 decodeState 的「空值跳过」语义一致，
+    // 避免手工拼的空参数把本地地点清成空列表。
+    const hasUrlPlaces = /[?&]p=[^&]/.test(window.location.search);
+    const hasUrlSelection = /[?&]s=\d/.test(window.location.search);
+    const hasUrlCursor = /[?&]c=\d/.test(window.location.search);
 
     try {
       const raw = window.localStorage.getItem(KEY);

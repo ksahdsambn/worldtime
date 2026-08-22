@@ -13,8 +13,9 @@ import { useWorldTimeStore } from "@/store/useWorldTimeStore";
  *
  * 方向键移动游标、Shift+方向键微调选区边缘 见 CursorBar。
  *
- * 注意：删除主地点走与 PlacesPanel 删除按钮相同的 window.confirm 二次确认，
- * 避免误按导致基准地点静默丢失。不再绑定 Backspace（高频键，易误触）。
+ * 注意：删除主地点走 window.confirm 二次确认（键盘流保持原生弹窗，
+ * PlacesPanel 的按钮流用应用内 Dialog——两条路径都需确认，避免误按
+ * 导致基准地点静默丢失）。不再绑定 Backspace（高频键，易误触）。
  */
 export default function KeyboardShortcuts() {
   const t = useTranslations("Places");
@@ -28,15 +29,16 @@ export default function KeyboardShortcuts() {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
 
-      // Delete 主地点（需二次确认，与 PlacesPanel 删除按钮一致）
+      // Delete 主地点（需二次确认）
       if (e.key === "Delete" && homeId) {
         e.preventDefault();
         if (!window.confirm(t("confirmRemoveHome"))) return;
         removePlace(homeId);
         return;
       }
-      // Escape 清除选区
+      // Escape 清除选区；对话框打开时把 Esc 留给对话框关闭，避免连带清空选区
       if (e.key === "Escape") {
+        if (document.querySelector('[role="dialog"]')) return;
         setSelection(null);
         return;
       }

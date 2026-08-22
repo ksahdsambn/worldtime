@@ -53,6 +53,15 @@ describe("isHoliday", () => {
   it("中国春节 2026-02-17", () => {
     expect(isHoliday("CN", "2026-02-17")).toBe(true);
   });
+  it("端午 2027 为 6 月 9 日（修复原误写 05-09 的回归）", () => {
+    for (const code of ["CN", "HK", "TW"]) {
+      expect(isHoliday(code, "2027-06-09"), `${code} 端午 2027-06-09`).toBe(true);
+      expect(isHoliday(code, "2027-05-09"), `${code} 不应把 2027-05-09 当假日`).toBe(false);
+    }
+  });
+  it("俄罗斯胜利日 2027-05-09（同日期在 RU 是真实假日）", () => {
+    expect(isHoliday("RU", "2027-05-09")).toBe(true);
+  });
   it("英国圣诞 2026-12-25", () => {
     expect(isHoliday("GB", "2026-12-25")).toBe(true);
   });

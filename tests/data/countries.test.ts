@@ -15,10 +15,22 @@ describe("countries 周末数据", () => {
   });
 
   it("海湾/以色列/巴勒斯坦为周五周六休（[5,6]）", () => {
-    const gulf = ["SA", "AE", "QA", "BH", "KW", "OM", "YE", "IR", "IQ", "IL", "PS"];
+    const gulf = ["SA", "QA", "BH", "KW", "OM", "YE", "IR", "IQ", "IL", "PS"];
     for (const code of gulf) {
       expect(getCountry(code).weekendDays, `${code} 应为 [5,6]`).toEqual([5, 6]);
     }
+  });
+
+  it("阿联酋 2022 起为周六周日休（[6,7]）", () => {
+    expect(getCountry("AE").weekendDays).toEqual([6, 7]);
+  });
+
+  it("孟加拉国周五周六休（[5,6]，修复原误标 [6,7]）", () => {
+    expect(getCountry("BD").weekendDays).toEqual([5, 6]);
+  });
+
+  it("阿富汗周五单休（[5]，修复原误标 [6,7]）", () => {
+    expect(getCountry("AF").weekendDays).toEqual([5]);
   });
 
   it("主要国家为周六周日休（[6,7]）", () => {

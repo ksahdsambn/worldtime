@@ -50,7 +50,9 @@ const COUNTRY_META: Array<
   // 南亚
   { code: "IN", nameZh: "印度", nameEn: "India", weekendDays: [6, 7] },
   { code: "PK", nameZh: "巴基斯坦", nameEn: "Pakistan", weekendDays: [6, 7] },
-  { code: "BD", nameZh: "孟加拉国", nameEn: "Bangladesh", weekendDays: [6, 7] },
+  // 孟加拉国：传统周五、周六休；2025 起政府向周五单休（周日至周四工作）过渡，
+  // 取交集外的传统口径 [5,6]——两种制度下周五必休、周日必工作
+  { code: "BD", nameZh: "孟加拉国", nameEn: "Bangladesh", weekendDays: [5, 6] },
   { code: "LK", nameZh: "斯里兰卡", nameEn: "Sri Lanka", weekendDays: [6, 7] },
   { code: "NP", nameZh: "尼泊尔", nameEn: "Nepal", weekendDays: [6, 7] },
   { code: "BT", nameZh: "不丹", nameEn: "Bhutan", weekendDays: [6, 7] },
@@ -61,10 +63,12 @@ const COUNTRY_META: Array<
   { code: "TM", nameZh: "土库曼斯坦", nameEn: "Turkmenistan", weekendDays: [6, 7] },
   { code: "KG", nameZh: "吉尔吉斯斯坦", nameEn: "Kyrgyzstan", weekendDays: [6, 7] },
   { code: "TJ", nameZh: "塔吉克斯坦", nameEn: "Tajikistan", weekendDays: [6, 7] },
-  { code: "AF", nameZh: "阿富汗", nameEn: "Afghanistan", weekendDays: [6, 7] },
+  // 阿富汗：周五为法定周休（周四半日），周六、周日均为工作日
+  { code: "AF", nameZh: "阿富汗", nameEn: "Afghanistan", weekendDays: [5] },
   // 西亚 / 中东 —— 多数为周五、周六休（满足 TC-11 / 4.3.2 周末覆盖测试需求）
   { code: "SA", nameZh: "沙特阿拉伯", nameEn: "Saudi Arabia", weekendDays: [5, 6] },
-  { code: "AE", nameZh: "阿联酋", nameEn: "United Arab Emirates", weekendDays: [5, 6] },
+  // 阿联酋：2022-01 起联邦政府改周六、周日休（周五半日），私营部门普遍跟随
+  { code: "AE", nameZh: "阿联酋", nameEn: "United Arab Emirates", weekendDays: [6, 7] },
   { code: "QA", nameZh: "卡塔尔", nameEn: "Qatar", weekendDays: [5, 6] },
   { code: "BH", nameZh: "巴林", nameEn: "Bahrain", weekendDays: [5, 6] },
   { code: "KW", nameZh: "科威特", nameEn: "Kuwait", weekendDays: [5, 6] },
