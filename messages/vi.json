@@ -217,6 +217,7 @@
     "aboutLink": "Giới thiệu",
     "faqLink": "FAQ",
     "privacyLink": "Quyền riêng tư",
+    "termsLink": "Điều khoản",
     "sourceNote": "Giờ địa phương dùng cơ sở múi giờ IANA."
   },
   "Onboarding": {
@@ -306,7 +307,12 @@
     "dataBody": "Quy tắc múi giờ đến từ IANA Time Zone Database (tzdb), cùng bộ dữ liệu với hệ điều hành. Chúng tôi không cào các trang đồng hồ khác.",
     "dstTitle": "Giờ mùa hè",
     "dstBody": "DST lấy từ dữ liệu múi, không từ nhãn EST/PST trên URL. Mùa hè America/New_York là EDT. Viết tắt trực tiếp trên trang mới là nguồn chính xác.",
-    "privacyBlurb": "Quyền riêng tư: không cần tài khoản. Chi tiết",
+    "shareTitle": "Chia sẻ và liên kết",
+    "shareBody": "Phần bạn chọn được mã hóa ngay trong URL của trang. Khi chia sẻ một liên kết, bạn chia sẻ các thành phố và khung giờ đã chọn — không có gì khác. Không có tài khoản, và người dùng không thấy dữ liệu của nhau.",
+    "offlineTitle": "Ngoại tuyến và cài đặt",
+    "offlineBody": "WorldTime là Progressive Web App. Sau khi cài đặt, service worker sẽ lưu trang vào thiết bị của bạn để ứng dụng dùng được khi ngoại tuyến. Bộ nhớ đệm không bao giờ rời khỏi thiết bị của bạn.",
+    "privacyBlurb": "Chính sách quyền riêng tư",
+    "termsBlurb": "Điều khoản dịch vụ",
     "breadcrumbHome": "Trang chủ"
   },
   "Faq": {
@@ -315,14 +321,64 @@
     "breadcrumbHome": "Trang chủ"
   },
   "Privacy": {
-    "title": "Quyền riêng tư",
-    "metaDescription": "Quyền riêng tư WorldTime: không tài khoản; danh sách thành phố nằm trong trình duyệt.",
+    "title": "Chính sách quyền riêng tư",
+    "metaDescription": "Chính sách quyền riêng tư của WorldTime: không tài khoản, không quảng cáo, không script phân tích; thành phố và cài đặt của bạn chỉ nằm trong trình duyệt.",
     "breadcrumbHome": "Trang chủ",
-    "paragraphs": [
-      "WorldTime không yêu cầu tài khoản và không có cơ sở người dùng cho chính đồng hồ.",
-      "Thành phố, giao diện và tùy chọn lưu trong localStorage để khôi phục lưới. Xóa dữ liệu trang web sẽ xóa chúng.",
-      "Đây là ứng dụng web tĩnh/SSR. Giờ được tính trên thiết bị của bạn và máy chủ của chúng tôi từ dữ liệu IANA. Chúng tôi không bán hồ sơ.",
-      "Nếu cài PWA, service worker chỉ lưu trang trên thiết bị đó để dùng ngoại tuyến."
+    "updated": "Cập nhật lần cuối: 25 tháng 8, 2026",
+    "lead": "WorldTime là công cụ không cần tài khoản. Trang này giải thích bằng ngôn ngữ đơn giản những dữ liệu ít ỏi nào liên quan và chúng nằm ở đâu.",
+    "sections": [
+      {
+        "heading": "Tóm tắt",
+        "paragraphs": [
+          "Không cần đăng ký và đồng hồ không có cơ sở dữ liệu người dùng. Chúng tôi không hỏi tên, email hay số điện thoại, và không bán dữ liệu cá nhân."
+        ]
+      },
+      {
+        "heading": "Dữ liệu lưu trên thiết bị của bạn",
+        "paragraphs": [
+          "Các thành phố bạn thêm, thành phố gốc, định dạng giờ, cài đặt giờ làm việc, vùng đang chọn và giao diện được lưu trong bộ nhớ cục bộ của trình duyệt để khôi phục lưới ở lần truy cập sau.",
+          "Dữ liệu này ở lại trên thiết bị của bạn. Xóa dữ liệu trang trong trình duyệt sẽ xóa tất cả."
+        ]
+      },
+      {
+        "heading": "Liên kết bạn chia sẻ",
+        "paragraphs": [
+          "Khi sao chép hoặc chia sẻ liên kết, các thành phố và lựa chọn giờ được mã hóa ngay trong URL — đó là cách chia sẻ hoạt động mà không cần tài khoản phía máy chủ.",
+          "Bất kỳ ai có liên kết đều xem được các thành phố và khung giờ đó. URL không chứa dữ liệu cá nhân nào khác."
+        ]
+      },
+      {
+        "heading": "Cookie",
+        "paragraphs": [
+          "WorldTime không hiển thị quảng cáo, không nhúng script phân tích và không chứa trình theo dõi của bên thứ ba.",
+          "Cookie duy nhất bạn có thể nhận được là NEXT_LOCALE — một cookie kỹ thuật nhỏ nhớ lựa chọn ngôn ngữ của bạn. Nó không chứa thông tin định danh cá nhân và có thể xóa bằng cách xóa cookie của trang này."
+        ]
+      },
+      {
+        "heading": "Yêu cầu máy chủ và nhật ký",
+        "paragraphs": [
+          "Như mọi trang web, trình duyệt yêu cầu trang từ dịch vụ lưu trữ của chúng tôi. Vì mục đích bảo mật và chống lạm dụng, lớp lưu trữ có thể giữ nhật ký kỹ thuật ngắn hạn như địa chỉ IP, loại trình duyệt và thời điểm yêu cầu.",
+          "Chúng tôi không dùng các nhật ký này để xây dựng hồ sơ người dùng, không bán hay chia sẻ chúng cho quảng cáo."
+        ]
+      },
+      {
+        "heading": "Bộ nhớ đệm ngoại tuyến (PWA)",
+        "paragraphs": [
+          "Nếu bạn cài đặt WorldTime như ứng dụng, service worker sẽ lưu trang vào thiết bị đó để dùng ngoại tuyến. Bộ nhớ đệm chỉ ở lại trên thiết bị đó."
+        ]
+      },
+      {
+        "heading": "Trẻ em",
+        "paragraphs": [
+          "WorldTime là công cụ dành cho mọi người. Chúng tôi không cố ý thu thập dữ liệu cá nhân của bất kỳ ai, kể cả trẻ em."
+        ]
+      },
+      {
+        "heading": "Thay đổi chính sách",
+        "paragraphs": [
+          "Nếu trang này thay đổi, chúng tôi sẽ cập nhật ngày ở đầu trang. Tiếp tục dùng trang sau khi thay đổi nghĩa là bạn chấp nhận phiên bản hiện tại."
+        ]
+      }
     ]
   },
   "ViewControls": {
@@ -339,5 +395,65 @@
     "now": "Bây giờ",
     "pick": "Đặt thời gian",
     "backToNow": "Quay lại hiện tại"
+  },
+  "Terms": {
+    "title": "Điều khoản dịch vụ",
+    "metaDescription": "Điều khoản sử dụng WorldTime: dịch vụ miễn phí, cung cấp theo nguyên trạng; hãy tự kiểm chứng các thời hạn quan trọng.",
+    "breadcrumbHome": "Trang chủ",
+    "updated": "Cập nhật lần cuối: 25 tháng 8, 2026",
+    "lead": "Các điều khoản này áp dụng cho việc bạn sử dụng WorldTime. Ngắn gọn: đây là công cụ miễn phí, cung cấp theo nguyên trạng; những việc thật sự quan trọng thì hãy kiểm tra lại lần nữa.",
+    "sections": [
+      {
+        "heading": "Chấp nhận điều khoản",
+        "paragraphs": [
+          "Khi sử dụng WorldTime, bạn đồng ý với các điều khoản này. Nếu không đồng ý, vui lòng không sử dụng dịch vụ."
+        ]
+      },
+      {
+        "heading": "Dịch vụ là gì",
+        "paragraphs": [
+          "WorldTime là đồng hồ thế giới, bộ chuyển múi giờ và công cụ sắp lịch họp miễn phí. Không cần tài khoản và không có gói trả phí.",
+          "Chúng tôi có thể thêm, thay đổi hoặc bớt tính năng bất cứ lúc nào. Trang Giới thiệu và Hỏi đáp mô tả cách phiên bản hiện tại hoạt động."
+        ]
+      },
+      {
+        "heading": "Sử dụng hợp lý",
+        "paragraphs": [
+          "Hãy sử dụng trang web hợp pháp; không được gây gián đoạn, quá tải hay cố vượt qua hoạt động bình thường của trang. Truy cập tự động gây hại đến dịch vụ cho khách khác là không được phép."
+        ]
+      },
+      {
+        "heading": "Độ chính xác của dữ liệu giờ",
+        "paragraphs": [
+          "Giờ, chênh lệch và quy tắc giờ mùa hè được tính từ cơ sở dữ liệu múi giờ IANA. Dữ liệu này được tin cậy rộng rãi, nhưng quy tắc múi giờ thay đổi theo luật và vẫn tồn tại các trường hợp biên.",
+          "Đừng chỉ dựa vào WorldTime cho các thời hạn quan trọng, mốc pháp lý hay cuộc họp gấp rút; hãy kiểm tra giờ quan trọng với nguồn chính thống."
+        ]
+      },
+      {
+        "heading": "Không bảo đảm",
+        "paragraphs": [
+          "Dịch vụ được cung cấp “nguyên trạng” và “khi khả dụng”, không kèm bất kỳ bảo đảm nào, ở mức tối đa mà pháp luật hiện hành cho phép."
+        ]
+      },
+      {
+        "heading": "Giới hạn trách nhiệm",
+        "paragraphs": [
+          "Ở mức tối đa mà pháp luật hiện hành cho phép, chúng tôi không chịu trách nhiệm về thiệt hại phát sinh từ việc sử dụng dịch vụ, như lỡ cuộc họp, lỡ thời hạn hay mất dữ liệu."
+        ]
+      },
+      {
+        "heading": "Nội dung và sở hữu trí tuệ",
+        "paragraphs": [
+          "Tên gọi, giao diện, mã nguồn và nội dung văn bản của WorldTime thuộc dự án này. Các dữ kiện về múi giờ đến từ cơ sở dữ liệu công khai của IANA.",
+          "Bạn cứ tự do chia sẻ liên kết đến trang và trích dẫn giờ hiển thị trên đó."
+        ]
+      },
+      {
+        "heading": "Thay đổi điều khoản",
+        "paragraphs": [
+          "Các điều khoản này có thể thay đổi theo sự phát triển của dịch vụ. Ngày ở đầu trang cho biết phiên bản hiện tại; tiếp tục dùng trang sau khi thay đổi nghĩa là bạn chấp nhận điều khoản đã cập nhật."
+        ]
+      }
+    ]
   }
 }

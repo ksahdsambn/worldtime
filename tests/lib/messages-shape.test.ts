@@ -47,6 +47,13 @@ describe("messages 11 语言键位对齐", () => {
       expect(json.Faq.metaDescription, file).toBeTruthy();
       expect(json.Faq.breadcrumbHome, file).toBeTruthy();
       expect(json.Seo.faqLink, file).toBeTruthy();
+      expect(json.Terms.title, file).toBeTruthy();
+      expect(json.Terms.breadcrumbHome, file).toBeTruthy();
+      expect(json.Terms.sections, file).toHaveLength(8);
+      expect(json.Terms.sections[0].heading, file).toBeTruthy();
+      expect(json.Terms.sections[0].paragraphs[0], file).toBeTruthy();
+      expect(json.Privacy.sections, file).toHaveLength(8);
+      expect(json.Seo.termsLink, file).toBeTruthy();
       expect(json.Seo.faq, file).toHaveLength(5);
       expect(json.Seo.faq[0].q, file).toBeTruthy();
       expect(json.Seo.faq[0].a, file).toBeTruthy();
@@ -57,7 +64,12 @@ describe("messages 11 语言键位对齐", () => {
       expect(json.Seo.useCases[0].title, file).toBeTruthy();
       expect(json.Seo.useCases[0].desc, file).toBeTruthy();
     }
-    expect(en.Privacy.paragraphs.length).toBeGreaterThan(0);
+    expect(en.Privacy.sections.length).toBeGreaterThan(0);
+    expect(en.Privacy.sections[0].heading).toBeTruthy();
+    expect(en.Privacy.sections[0].paragraphs[0]).toBeTruthy();
+    expect(en.Terms.title).toBeTruthy();
+    expect(en.Terms.sections.length).toBeGreaterThan(0);
+    expect(en.Seo.termsLink).toBeTruthy();
     expect(en.Seo.citiesTitle).toBeTruthy();
     expect(en.Landing.factLead).toBeTruthy();
     expect(en.Seo.faq[4].a).toMatch(/minute|分钟|分鐘/i);

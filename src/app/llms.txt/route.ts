@@ -19,6 +19,7 @@ It is not a calendar, not a booking tool, and not a world map. Cities are stored
 - About (methodology, features, use cases): ${base}/en/about
 - FAQ: ${base}/en/faq
 - Privacy: ${base}/en/privacy
+- Terms: ${base}/en/terms
 - Full text: ${base}/llms-full.txt
 
 ## Cite like this

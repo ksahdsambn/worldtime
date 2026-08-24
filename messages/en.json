@@ -217,6 +217,7 @@
     "aboutLink": "About",
     "faqLink": "FAQ",
     "privacyLink": "Privacy",
+    "termsLink": "Terms",
     "sourceNote": "Local times use the IANA Time Zone Database."
   },
   "Onboarding": {
@@ -306,7 +307,12 @@
     "dataBody": "Zone rules come from the IANA Time Zone Database (tzdb), the same dataset used by operating systems. We do not scrape other clock websites.",
     "dstTitle": "Daylight saving time",
     "dstBody": "DST is taken from the zone, not from a URL label. A slug like EST--PST is a search alias; in summer America/New_York is EDT. The live abbreviation on each page is authoritative.",
-    "privacyBlurb": "Privacy: we do not require an account. Details",
+    "shareTitle": "Sharing and links",
+    "shareBody": "A selection you make is encoded in the page URL. When you share a link, you share the cities and the highlighted time window — nothing else. There are no accounts, and visitors never see each other's data.",
+    "offlineTitle": "Offline and install",
+    "offlineBody": "WorldTime is a Progressive Web App. If you install it, a service worker caches pages on your device so the app keeps working offline. The cache never leaves your device.",
+    "privacyBlurb": "Privacy Policy",
+    "termsBlurb": "Terms of Service",
     "breadcrumbHome": "Home"
   },
   "Faq": {
@@ -315,14 +321,64 @@
     "breadcrumbHome": "Home"
   },
   "Privacy": {
-    "title": "Privacy",
-    "metaDescription": "WorldTime privacy notes: no account, city lists stay in your browser.",
+    "title": "Privacy Policy",
+    "metaDescription": "Privacy policy: no account, no ads, no analytics. Your cities and settings stay in your browser; sharing happens through the link itself.",
     "breadcrumbHome": "Home",
-    "paragraphs": [
-      "WorldTime does not require an account and does not run a user database for the clock itself.",
-      "Cities you add, theme, and display settings are stored in your browser (localStorage) so the grid can restore on the next visit. Clearing site data removes them.",
-      "The site is a static/SSR web app. Times are calculated on your device and on our servers from IANA zone data; we do not sell personal profiles.",
-      "If you install the app as a PWA, the service worker caches pages for offline use on that device only."
+    "updated": "Last updated: August 25, 2026",
+    "lead": "WorldTime is a no-account utility. This page explains, in plain language, what little data is involved and where it lives.",
+    "sections": [
+      {
+        "heading": "The short version",
+        "paragraphs": [
+          "You do not need an account, and the clock has no user database. We do not ask for your name, email, or phone number, and we do not sell personal data."
+        ]
+      },
+      {
+        "heading": "Data stored on your device",
+        "paragraphs": [
+          "The cities you add, your home city, hour format, working-hours settings, your current selection, and your theme preference are stored in your browser's local storage so the grid can restore on your next visit.",
+          "This data stays on your device. Clearing the site data in your browser removes all of it."
+        ]
+      },
+      {
+        "heading": "Links you share",
+        "paragraphs": [
+          "When you copy or share a link, your cities and time selection are encoded in the URL itself — that is how sharing works without a server-side account.",
+          "Anyone with the link can view those cities and that time window. The URL contains no other personal data."
+        ]
+      },
+      {
+        "heading": "Cookies",
+        "paragraphs": [
+          "WorldTime shows no ads, embeds no analytics, and includes no third-party trackers.",
+          "The only cookie you may receive is NEXT_LOCALE, a small technical cookie that remembers your language choice between visits. It contains no personal identifiers, and you can remove it by clearing cookies for this site."
+        ]
+      },
+      {
+        "heading": "Server requests and logs",
+        "paragraphs": [
+          "Like every website, your browser requests pages from our hosting. For security and abuse prevention, the hosting layer may keep short-lived technical logs, such as IP address, browser type, and request time.",
+          "We do not use these logs to build user profiles, and we do not sell or share them for advertising."
+        ]
+      },
+      {
+        "heading": "Offline cache (PWA)",
+        "paragraphs": [
+          "If you install WorldTime as an app, a service worker caches pages on your device for offline use. The cache stays on that device only."
+        ]
+      },
+      {
+        "heading": "Children",
+        "paragraphs": [
+          "WorldTime is a general-audience tool. We knowingly collect no personal data from anyone, including children."
+        ]
+      },
+      {
+        "heading": "Changes to this policy",
+        "paragraphs": [
+          "If this page changes, we will update the date at the top. Continued use of the site after a change means you accept the current version."
+        ]
+      }
     ]
   },
   "ViewControls": {
@@ -339,5 +395,65 @@
     "now": "Now",
     "pick": "Set a custom time",
     "backToNow": "Back to now"
+  },
+  "Terms": {
+    "title": "Terms of Service",
+    "metaDescription": "Terms of service: WorldTime is free and provided as-is; time data is for reference — verify critical deadlines independently.",
+    "breadcrumbHome": "Home",
+    "updated": "Last updated: August 25, 2026",
+    "lead": "These terms cover your use of WorldTime. The short version: it is a free tool, provided as-is; double-check anything that really matters.",
+    "sections": [
+      {
+        "heading": "Accepting these terms",
+        "paragraphs": [
+          "By using WorldTime you agree to these terms. If you do not agree, please do not use the service."
+        ]
+      },
+      {
+        "heading": "What the service is",
+        "paragraphs": [
+          "WorldTime is a free world clock, time-zone converter, and meeting planner. It requires no account and has no paid tier.",
+          "We may add, change, or remove features at any time. The About and FAQ pages describe how the current version works."
+        ]
+      },
+      {
+        "heading": "Fair use",
+        "paragraphs": [
+          "Please use the site lawfully, and do not attempt to disrupt, overload, or circumvent its normal operation. Automated access that harms the service for other visitors is not allowed."
+        ]
+      },
+      {
+        "heading": "Accuracy of time data",
+        "paragraphs": [
+          "Times, offsets, and daylight-saving rules are computed from the IANA Time Zone Database. The data is widely trusted, but time-zone rules change with legislation, and edge cases exist.",
+          "Do not rely on WorldTime alone for critical deadlines, legal cutoffs, or last-minute meetings. Verify important times with an authoritative source."
+        ]
+      },
+      {
+        "heading": "No warranty",
+        "paragraphs": [
+          "The service is provided “as is” and “as available”, without warranties of any kind, to the fullest extent permitted by applicable law."
+        ]
+      },
+      {
+        "heading": "Limitation of liability",
+        "paragraphs": [
+          "To the fullest extent permitted by applicable law, we are not liable for damages arising from your use of the service, such as missed meetings, missed deadlines, or lost data."
+        ]
+      },
+      {
+        "heading": "Content and intellectual property",
+        "paragraphs": [
+          "The WorldTime name, interface, code, and written content belong to this project. Time-zone facts come from the public IANA database.",
+          "You are welcome to link to the site and to quote the times it shows."
+        ]
+      },
+      {
+        "heading": "Changes to these terms",
+        "paragraphs": [
+          "These terms may change as the service evolves. The date at the top shows the current version; continuing to use the site after a change means you accept the updated terms."
+        ]
+      }
+    ]
   }
 }

@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
-type FooterCurrent = "about" | "faq" | "privacy";
+type FooterCurrent = "about" | "faq" | "privacy" | "terms";
 
 const linkClass =
   "text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover";
@@ -40,6 +40,13 @@ export default async function SiteFooter({
           aria-current={current === "privacy" ? "page" : undefined}
         >
           {t("privacyLink")}
+        </Link>
+        <Link
+          href="/terms"
+          className={linkClass}
+          aria-current={current === "terms" ? "page" : undefined}
+        >
+          {t("termsLink")}
         </Link>
       </nav>
       <span>{t("sourceNote")}</span>

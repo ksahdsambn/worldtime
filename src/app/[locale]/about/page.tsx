@@ -103,9 +103,18 @@ export default async function AboutPage({ params }: Props) {
         <h2 className="mt-8 text-base font-semibold text-gradient">{t("dstTitle")}</h2>
         <p className="mt-2 leading-relaxed text-muted">{t("dstBody")}</p>
 
-        <p className="mt-8 text-sm text-muted">
+        <h2 className="mt-8 text-base font-semibold text-gradient">{t("shareTitle")}</h2>
+        <p className="mt-2 leading-relaxed text-muted">{t("shareBody")}</p>
+
+        <h2 className="mt-8 text-base font-semibold text-gradient">{t("offlineTitle")}</h2>
+        <p className="mt-2 leading-relaxed text-muted">{t("offlineBody")}</p>
+
+        <p className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm text-muted">
           <Link href="/privacy" className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover">
             {t("privacyBlurb")}
+          </Link>
+          <Link href="/terms" className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover">
+            {t("termsBlurb")}
           </Link>
         </p>
 

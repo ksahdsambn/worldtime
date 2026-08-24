@@ -91,7 +91,7 @@ export const HREFLANG_MAP: Record<string, string> = {
 export const SEO_DEFAULT_LOCALE = "en";
 
 /** sitemap lastmod：内容指纹日。勿用 Date.now()，否则每次构建全站“刚更新”。 */
-export const SITEMAP_LASTMOD = "2026-08-22";
+export const SITEMAP_LASTMOD = "2026-08-25";
 
 export function sitemapLastModDate(): Date {
   return new Date(`${SITEMAP_LASTMOD}T00:00:00.000Z`);

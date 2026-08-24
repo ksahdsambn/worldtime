@@ -23,8 +23,8 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Privacy" });
-  const path = "/privacy";
+  const t = await getTranslations({ locale, namespace: "Terms" });
+  const path = "/terms";
   return {
     title: t("title"),
     description: t("metaDescription"),
@@ -37,12 +37,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function PrivacyPage({ params }: Props) {
+export default async function TermsPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "Privacy" });
+  const t = await getTranslations({ locale, namespace: "Terms" });
   const tApp = await getTranslations({ locale, namespace: "App" });
-  const pageUrl = localeUrl(locale, "/privacy");
+  const pageUrl = localeUrl(locale, "/terms");
   const sectionsRaw = t.raw("sections");
   const sections = Array.isArray(sectionsRaw)
     ? (sectionsRaw as Array<{ heading: string; paragraphs: string[] }>)
@@ -63,7 +63,7 @@ export default async function PrivacyPage({ params }: Props) {
         <p className="mt-4 leading-relaxed text-muted">{t("lead")}</p>
         <LegalSections sections={sections} />
         <div className="mt-12">
-          <SiteFooter locale={locale} current="privacy" />
+          <SiteFooter locale={locale} current="terms" />
         </div>
         <JsonLd
           data={webPageJsonLd({

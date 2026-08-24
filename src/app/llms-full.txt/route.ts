@@ -18,6 +18,7 @@ Site: ${base}
 About: ${base}/en/about
 FAQ: ${base}/en/faq
 Privacy: ${base}/en/privacy
+Terms: ${base}/en/terms
 Short notes: ${base}/llms.txt
 
 ## Brand
@@ -43,6 +44,7 @@ Mark PNG: ${base}/brand/worldtime-mark.png
 - /{locale}/about — methodology, features, use cases
 - /{locale}/faq — product FAQ
 - /{locale}/privacy — privacy
+- /{locale}/terms — terms of service
 
 Locales: en, zh, zh-Hant, ja, ko, de, es, fr, pt, ru, vi.
 x-default: ${base}/en

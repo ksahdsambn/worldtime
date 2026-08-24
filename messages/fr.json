@@ -217,6 +217,7 @@
     "aboutLink": "À propos",
     "faqLink": "FAQ",
     "privacyLink": "Confidentialité",
+    "termsLink": "Conditions d'utilisation",
     "sourceNote": "Les heures locales utilisent la base IANA des fuseaux."
   },
   "Onboarding": {
@@ -306,7 +307,12 @@
     "dataBody": "Les règles de fuseau viennent d’IANA Time Zone Database (tzdb), le même jeu que les systèmes d’exploitation. Nous ne moissonnons pas d’autres horloges.",
     "dstTitle": "Heure d’été",
     "dstBody": "L’heure d’été vient du fuseau, pas du libellé EST/PST de l’URL. En été, America/New_York est en EDT. L’abréviation en direct sur la page fait foi.",
-    "privacyBlurb": "Confidentialité : aucun compte requis. Détails",
+    "shareTitle": "Partage et liens",
+    "shareBody": "Votre sélection est encodée dans l'URL de la page. En partageant un lien, vous partagez les villes et la plage horaire choisie — rien d'autre. Il n'y a pas de compte, et les visiteurs ne voient jamais les données des autres.",
+    "offlineTitle": "Hors ligne et installation",
+    "offlineBody": "WorldTime est une application web progressive. Une fois installée, un service worker met des pages en cache sur votre appareil pour que l'appli fonctionne hors ligne. Ce cache ne quitte jamais votre appareil.",
+    "privacyBlurb": "Politique de confidentialité",
+    "termsBlurb": "Conditions d'utilisation",
     "breadcrumbHome": "Accueil"
   },
   "Faq": {
@@ -315,14 +321,64 @@
     "breadcrumbHome": "Accueil"
   },
   "Privacy": {
-    "title": "Confidentialité",
-    "metaDescription": "Confidentialité WorldTime : pas de compte ; les villes restent dans le navigateur.",
+    "title": "Politique de confidentialité",
+    "metaDescription": "Politique de confidentialité de WorldTime : pas de compte, pas de publicité ni de scripts d'analyse ; vos villes et réglages restent dans votre navigateur.",
     "breadcrumbHome": "Accueil",
-    "paragraphs": [
-      "WorldTime n’exige pas de compte et n’a pas de base utilisateurs pour l’horloge elle-même.",
-      "Villes, thème et options sont stockés dans localStorage pour restaurer la grille. Effacer les données du site les supprime.",
-      "Site statique/SSR. Les heures sont calculées sur votre appareil et nos serveurs à partir des données IANA. Nous ne vendons pas de profils.",
-      "En PWA, le service worker met les pages en cache uniquement sur cet appareil pour le hors-ligne."
+    "updated": "Dernière mise à jour : 25 août 2026",
+    "lead": "WorldTime est un outil sans compte. Cette page explique, en termes simples, quelles données — rares — sont concernées et où elles se trouvent.",
+    "sections": [
+      {
+        "heading": "En résumé",
+        "paragraphs": [
+          "Aucune inscription n'est requise et l'horloge n'a pas de base d'utilisateurs. Nous ne demandons ni nom, ni e-mail, ni téléphone, et nous ne vendons pas de données personnelles."
+        ]
+      },
+      {
+        "heading": "Données stockées sur votre appareil",
+        "paragraphs": [
+          "Les villes que vous ajoutez, votre ville de référence, le format horaire, les réglages d'heures de travail, la sélection en cours et le thème sont enregistrés dans le stockage local du navigateur afin de restaurer la vue à votre prochaine visite.",
+          "Ces données restent sur votre appareil. Effacer les données du site dans le navigateur les supprime entièrement."
+        ]
+      },
+      {
+        "heading": "Liens que vous partagez",
+        "paragraphs": [
+          "Lorsque vous copiez ou partagez un lien, vos villes et votre sélection horaire sont encodées dans l'URL elle-même — c'est ainsi que le partage fonctionne sans compte côté serveur.",
+          "Toute personne disposant du lien peut voir ces villes et cette plage horaire. L'URL ne contient aucune autre donnée personnelle."
+        ]
+      },
+      {
+        "heading": "Cookies",
+        "paragraphs": [
+          "WorldTime n'affiche aucune publicité, n'embarque aucun script d'analyse et n'inclut aucun traceur tiers.",
+          "Le seul cookie que vous pouvez recevoir est NEXT_LOCALE, un petit cookie technique qui retient votre choix de langue. Il ne contient aucun identifiant personnel et se supprime en effaçant les cookies de ce site."
+        ]
+      },
+      {
+        "heading": "Requêtes serveur et journaux",
+        "paragraphs": [
+          "Comme pour tout site Web, votre navigateur demande les pages à notre hébergement. Pour des raisons de sécurité et de prévention des abus, la couche d'hébergement peut conserver des journaux techniques de courte durée : adresse IP, type de navigateur, horaire de requête.",
+          "Nous n'utilisons pas ces journaux pour établir des profils d'utilisateurs et ne les vendons ni ne les partageons à des fins publicitaires."
+        ]
+      },
+      {
+        "heading": "Cache hors ligne (PWA)",
+        "paragraphs": [
+          "Si vous installez WorldTime comme application, un service worker met des pages en cache sur cet appareil pour un usage hors ligne. Le cache reste sur cet appareil uniquement."
+        ]
+      },
+      {
+        "heading": "Enfants",
+        "paragraphs": [
+          "WorldTime est un outil grand public. Nous ne collectons sciemment aucune donnée personnelle de qui que ce soit, y compris les enfants."
+        ]
+      },
+      {
+        "heading": "Modifications de cette politique",
+        "paragraphs": [
+          "Si cette page change, nous mettons à jour la date en haut. Continuer à utiliser le site après une modification vaut acceptation de la version en vigueur."
+        ]
+      }
     ]
   },
   "ViewControls": {
@@ -339,5 +395,65 @@
     "now": "Maintenant",
     "pick": "Définir l'heure",
     "backToNow": "Revenir à maintenant"
+  },
+  "Terms": {
+    "title": "Conditions d'utilisation",
+    "metaDescription": "Conditions d'utilisation de WorldTime : service gratuit fourni « en l'état » ; vérifiez par vous-même les échéances importantes.",
+    "breadcrumbHome": "Accueil",
+    "updated": "Dernière mise à jour : 25 août 2026",
+    "lead": "Ces conditions régissent votre utilisation de WorldTime. En résumé : c'est un outil gratuit, fourni en l'état ; revérifiez tout ce qui compte vraiment.",
+    "sections": [
+      {
+        "heading": "Acceptation des conditions",
+        "paragraphs": [
+          "En utilisant WorldTime, vous acceptez ces conditions. Si vous ne les acceptez pas, merci de ne pas utiliser le service."
+        ]
+      },
+      {
+        "heading": "Ce qu'est le service",
+        "paragraphs": [
+          "WorldTime est une horloge mondiale, un convertisseur de fuseaux horaires et un planificateur de réunions gratuits. Aucun compte, aucune offre payante.",
+          "Nous pouvons ajouter, modifier ou retirer des fonctionnalités à tout moment. Les pages « À propos » et « FAQ » décrivent le fonctionnement de la version actuelle."
+        ]
+      },
+      {
+        "heading": "Usage raisonnable",
+        "paragraphs": [
+          "Utilisez le site conformément à la loi et ne tentez pas d'en perturber, surcharger ou contourner le fonctionnement normal. L'accès automatisé qui nuit au service pour les autres visiteurs est interdit."
+        ]
+      },
+      {
+        "heading": "Exactitude des données horaires",
+        "paragraphs": [
+          "Les heures, décalages et règles d'heure d'été sont calculés à partir de la base de fuseaux horaires de l'IANA. Ces données sont largement reconnues, mais les règles changent avec la législation et des cas limites existent.",
+          "Ne vous fiez pas uniquement à WorldTime pour des échéances critiques, des délais légaux ou des réunions de dernière minute : vérifiez les heures importantes auprès d'une source faisant autorité."
+        ]
+      },
+      {
+        "heading": "Absence de garantie",
+        "paragraphs": [
+          "Le service est fourni « en l'état » et « selon disponibilité », sans garantie d'aucune sorte, dans les limites permises par la loi applicable."
+        ]
+      },
+      {
+        "heading": "Limitation de responsabilité",
+        "paragraphs": [
+          "Dans les limites permises par la loi applicable, nous ne sommes pas responsables des dommages résultant de l'utilisation du service, tels que réunions manquées, échéances dépassées ou données perdues."
+        ]
+      },
+      {
+        "heading": "Contenu et propriété intellectuelle",
+        "paragraphs": [
+          "Le nom, l'interface, le code et les textes de WorldTime appartiennent à ce projet. Les données de fuseaux horaires proviennent de la base publique de l'IANA.",
+          "Vous êtes invités à partager des liens vers le site et à citer les heures qu'il affiche."
+        ]
+      },
+      {
+        "heading": "Modifications des conditions",
+        "paragraphs": [
+          "Ces conditions peuvent évoluer avec le service. La date en haut indique la version en vigueur ; continuer à utiliser le site après une modification vaut acceptation des conditions mises à jour."
+        ]
+      }
+    ]
   }
 }

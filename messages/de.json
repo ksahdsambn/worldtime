@@ -217,6 +217,7 @@
     "aboutLink": "Über uns",
     "faqLink": "FAQ",
     "privacyLink": "Datenschutz",
+    "termsLink": "Nutzungsbedingungen",
     "sourceNote": "Ortszeiten nutzen die IANA-Zeitzonendatenbank."
   },
   "Onboarding": {
@@ -306,7 +307,12 @@
     "dataBody": "Zonenregeln stammen aus der IANA Time Zone Database (tzdb), dem gleichen Datensatz wie Betriebssysteme. Wir scrapen keine anderen Uhren-Websites.",
     "dstTitle": "Sommerzeit",
     "dstBody": "Sommerzeit kommt aus den Zonendaten, nicht aus EST/PST in der URL. Im Sommer ist America/New_York EDT. Die Live-Abkürzung auf der Seite gilt.",
-    "privacyBlurb": "Datenschutz: kein Konto nötig. Details",
+    "shareTitle": "Teilen und Links",
+    "shareBody": "Deine Auswahl wird in die URL der Seite kodiert. Wenn du einen Link teilst, teilst du nur die Städte und das gewählte Zeitfenster – nichts weiter. Es gibt keine Konten, und Besucher sehen niemals die Daten anderer.",
+    "offlineTitle": "Offline und Installation",
+    "offlineBody": "WorldTime ist eine Progressive Web App. Nach der Installation speichert ein Service Worker Seiten auf deinem Gerät, sodass die App auch offline funktioniert. Der Cache verlässt dein Gerät nie.",
+    "privacyBlurb": "Datenschutzerklärung",
+    "termsBlurb": "Nutzungsbedingungen",
     "breadcrumbHome": "Start"
   },
   "Faq": {
@@ -315,14 +321,64 @@
     "breadcrumbHome": "Start"
   },
   "Privacy": {
-    "title": "Datenschutz",
-    "metaDescription": "WorldTime-Datenschutz: kein Konto, Städtelisten bleiben im Browser.",
+    "title": "Datenschutzerklärung",
+    "metaDescription": "Datenschutzerklärung von WorldTime: kein Konto, keine Werbung, keine Analyse-Skripte; deine Städte und Einstellungen bleiben im Browser.",
     "breadcrumbHome": "Start",
-    "paragraphs": [
-      "WorldTime verlangt kein Konto und betreibt keine Nutzerdatenbank für die Uhr selbst.",
-      "Hinzugefügte Städte, Theme und Anzeigeoptionen liegen in localStorage, damit das Raster beim nächsten Besuch wiederhergestellt wird. Das Löschen der Sitedaten entfernt sie.",
-      "Die Site ist eine statische/SSR-Web-App. Zeiten werden auf Ihrem Gerät und unseren Servern aus IANA-Zonendaten berechnet. Wir verkaufen keine Profile.",
-      "Als PWA speichert der Service Worker Seiten nur auf diesem Gerät für den Offline-Gebrauch."
+    "updated": "Zuletzt aktualisiert: 25. August 2026",
+    "lead": "WorldTime ist ein Werkzeug ohne Konto. Diese Seite erklärt in einfacher Sprache, welche wenigen Daten betroffen sind und wo sie liegen.",
+    "sections": [
+      {
+        "heading": "Das Wichtigste kurz",
+        "paragraphs": [
+          "Du brauchst kein Konto, und die Uhr hat keine Benutzerdatenbank. Wir fragen weder Name, E-Mail noch Telefonnummer ab und verkaufen keine persönlichen Daten."
+        ]
+      },
+      {
+        "heading": "Daten auf deinem Gerät",
+        "paragraphs": [
+          "Die von dir hinzugefügten Städte, deine Heimatstadt, das Stundenformat, die Einstellungen für Arbeitszeiten, die aktuelle Auswahl und dein Design werden im lokalen Speicher des Browsers abgelegt, damit die Übersicht beim nächsten Besuch wiederhergestellt wird.",
+          "Diese Daten bleiben auf deinem Gerät. Wenn du die Website-Daten im Browser löschst, ist alles entfernt."
+        ]
+      },
+      {
+        "heading": "Links, die du teilst",
+        "paragraphs": [
+          "Wenn du einen Link kopierst oder teilst, werden deine Städte und deine Zeitauswahl direkt in die URL kodiert – so funktioniert Teilen ohne serverseitiges Konto.",
+          "Jeder mit dem Link kann diese Städte und dieses Zeitfenster sehen. Die URL enthält keine weiteren persönlichen Daten."
+        ]
+      },
+      {
+        "heading": "Cookies",
+        "paragraphs": [
+          "WorldTime zeigt keine Werbung, bettet keine Analyse-Skripte ein und enthält keine Tracker von Drittanbietern.",
+          "Das einzige Cookie, das du erhalten kannst, ist NEXT_LOCALE – ein kleines technisches Cookie, das sich deine Sprachwahl merkt. Es enthält keine personenbezogenen Kennungen und lässt sich löschen, indem du die Cookies dieser Seite löschst."
+        ]
+      },
+      {
+        "heading": "Serveranfragen und Logs",
+        "paragraphs": [
+          "Wie bei jeder Website fordert dein Browser Seiten von unserem Hosting an. Zur Sicherheit und Missbrauchsabwehr kann die Hosting-Schicht kurzfristige technische Logs speichern, etwa IP-Adresse, Browsertyp und Zeitpunkt der Anfrage.",
+          "Wir nutzen diese Logs nicht, um Nutzerprofile zu erstellen, und verkaufen oder teilen sie nicht für Werbung."
+        ]
+      },
+      {
+        "heading": "Offline-Cache (PWA)",
+        "paragraphs": [
+          "Wenn du WorldTime als App installierst, cached ein Service Worker Seiten auf diesem Gerät für die Offline-Nutzung. Der Cache bleibt ausschließlich auf diesem Gerät."
+        ]
+      },
+      {
+        "heading": "Kinder",
+        "paragraphs": [
+          "WorldTime ist ein Angebot für alle. Wir erheben bewusst keine personenbezogenen Daten von niemandem – auch nicht von Kindern."
+        ]
+      },
+      {
+        "heading": "Änderungen dieser Erklärung",
+        "paragraphs": [
+          "Ändert sich diese Seite, aktualisieren wir das Datum oben. Wer die Seite nach einer Änderung weiter nutzt, akzeptiert die aktuelle Fassung."
+        ]
+      }
     ]
   },
   "ViewControls": {
@@ -339,5 +395,65 @@
     "now": "Jetzt",
     "pick": "Zeit festlegen",
     "backToNow": "Zurück zu jetzt"
+  },
+  "Terms": {
+    "title": "Nutzungsbedingungen",
+    "metaDescription": "Nutzungsbedingungen für WorldTime: der Dienst ist kostenlos und wird ohne Gewähr bereitgestellt; prüfe wichtige Termine bitte selbst.",
+    "breadcrumbHome": "Start",
+    "updated": "Zuletzt aktualisiert: 25. August 2026",
+    "lead": "Diese Bedingungen gelten für deine Nutzung von WorldTime. Kurz gesagt: Es ist ein kostenloses Werkzeug, das ohne Gewähr bereitgestellt wird – prüfe alles wirklich Wichtige noch einmal selbst.",
+    "sections": [
+      {
+        "heading": "Annahme dieser Bedingungen",
+        "paragraphs": [
+          "Mit der Nutzung von WorldTime akzeptierst du diese Bedingungen. Wenn du ihnen nicht zustimmst, nutze den Dienst bitte nicht."
+        ]
+      },
+      {
+        "heading": "Was der Dienst ist",
+        "paragraphs": [
+          "WorldTime ist eine kostenlose Weltuhr, Zeitzonen-Umrechner und Terminplaner. Es gibt kein Konto und keine Bezahlstufen.",
+          "Wir können Funktionen jederzeit ergänzen, ändern oder entfernen. Die Seiten „Über“ und „FAQ“ beschreiben, wie die aktuelle Version arbeitet."
+        ]
+      },
+      {
+        "heading": "Faire Nutzung",
+        "paragraphs": [
+          "Nutze die Seite gesetzeskonform und versuche nicht, ihren Betrieb zu stören, zu überlasten oder zu umgehen. Automatisierte Zugriffe, die den Dienst für andere beeinträchtigen, sind nicht erlaubt."
+        ]
+      },
+      {
+        "heading": "Genauigkeit der Zeitdaten",
+        "paragraphs": [
+          "Zeiten, Offsets und Sommerzeit-Regeln werden aus der IANA-Zeitzonen-Datenbank berechnet. Diese Daten sind allgemein anerkannt, doch Zeitzonenregeln ändern sich mit der Gesetzgebung, und Sonderfälle existieren.",
+          "Verlasse dich bei kritischen Fristen, gesetzlichen Terminen oder kurzfristigen Meetings nicht allein auf WorldTime – prüfe wichtige Zeiten mit einer maßgeblichen Quelle."
+        ]
+      },
+      {
+        "heading": "Keine Garantie",
+        "paragraphs": [
+          "Der Dienst wird „wie besehen“ und „wie verfügbar“ bereitgestellt, ohne jegliche Gewährleistung, soweit das anwendbare Recht dies zulässt."
+        ]
+      },
+      {
+        "heading": "Haftungsbeschränkung",
+        "paragraphs": [
+          "Soweit das anwendbare Recht es zulässt, haften wir nicht für Schäden aus der Nutzung des Dienstes, etwa entgangene Meetings, verpasste Fristen oder verlorene Daten."
+        ]
+      },
+      {
+        "heading": "Inhalte und geistiges Eigentum",
+        "paragraphs": [
+          "Name, Oberfläche, Code und Texte von WorldTime gehören zu diesem Projekt. Zeitzonenfakten stammen aus der öffentlichen IANA-Datenbank.",
+          "Links auf die Seite und Zitate der angezeigten Zeiten sind ausdrücklich erwünscht."
+        ]
+      },
+      {
+        "heading": "Änderungen dieser Bedingungen",
+        "paragraphs": [
+          "Diese Bedingungen können sich mit dem Dienst weiterentwickeln. Das Datum oben zeigt die aktuelle Fassung; wer die Seite nach einer Änderung weiter nutzt, akzeptiert die aktualisierten Bedingungen."
+        ]
+      }
+    ]
   }
 }
