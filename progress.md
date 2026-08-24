@@ -1,5 +1,46 @@
 # 开发进度记录
 
+## 第 46 轮：协议三篇（About 扩充 / Privacy 重写 / Terms 新建）+ 审查修复，合入 main 并推送
+
+> 时间：2026-08-25
+> 范围：编写官网【关于】【隐私政策】【使用条款】三篇协议，覆盖 11 语言。About 在原 3 节基础上新增「分享与链接」「离线与安装」；Privacy 由 4 段简注重写为 8 节分节政策（新增 `LegalSections` 共享渲染组件，不玻璃化长文阅读面）；Terms 为全新页面（8 节）。连带更新 SiteFooter（+terms 链接）、sitemap（`/terms` yearly 0.2）、`SITEMAP_LASTMOD`→2026-08-25、llms.txt / llms-full.txt 页面清单、messages-shape 测试同步新结构并新增 Terms 断言。随后 code-reviewer 代理 + 人工复核，发现并修复 1 处 P1。
+
+### 内容事实核查（以代码为准，防「写错承诺」）
+
+- 全站 grep 证实**无广告 / 无 analytics / 无第三方跟踪脚本**；唯一例外：next-intl v4 中间件在语言切换场景会写 `NEXT_LOCALE` 技术 Cookie（读 `next-intl/dist/esm/production/routing/config.js` 证实默认开启）——隐私政策如实披露，**未**笼统声称「零 Cookie」。
+- localStorage 声明对齐 `useLocalPersist.ts`（键 `worldtime:v1`：城市/主城市/小时制/工作时段/选区）+ next-themes 默认 `theme` 键；PWA 声明对齐 `public/sw.js` / `manifest.ts`；托管层日志采用谨慎标准措辞，避免过度承诺。
+
+### 审查发现与修复
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | **P1** | **Terms 命名空间缺 `breadcrumbHome` 键**：terms 页面调用 `t("breadcrumbHome")` 而 11 个语言包均未写入该键，`/terms` 面包屑「首页」在全部语言渲染为字面量 `Terms.breadcrumbHome`（next-intl 默认回退为键路径；tsc/vitest 均不拦）。此前冒烟只 grep 了 breadcrumb 存在性未查文本，漏检 | 11 个语言包 Terms 补 `breadcrumbHome`（取各自 `Privacy.breadcrumbHome` 译文，键位与 Privacy 对齐）；messages-shape 测试补 `json.Terms.breadcrumbHome` 断言防回归 |
+
+### 其余核对（无问题确认）
+
+- 11 文件键树与 en 完全一致（既有测试 + 审查代理深度比对）；`Privacy.sections` / `Terms.sections` 均恰 8 节、无空段落、无重复小节标题（`key={heading}` 安全）。
+- 翻译质量：无 mojibake、非英文语言包无英文残留、德文引号配对、法/西撇号正常、`updated` 日期各语言正确本地化且与 `SITEMAP_LASTMOD` 一致。
+- SEO 一致性：/terms 完整复刻 /privacy 模式（metadata/alternates/OG/WebPage+Breadcrumb JSON-LD/sitemap/llms 双清单）；`/terms` 307→locale 协商正确。
+- 遗留清扫：旧 `Privacy.paragraphs` 全库无引用；`Seo.termsLink` 已接入 SiteFooter；About 底部 privacy/terms 双链接。
+
+### 实证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` / `next lint` | ✅ 0 错误 / 无警告 |
+| `npm test` | ✅ 224/224 |
+| `npm run build` | ✅ 成功，`/[locale]/terms` 11 语言全 SSG 预渲染 |
+| 冒烟（next start） | ✅ 3 篇 × zh/en + 8 个语言 /terms 均 200；构建产物与在线页面双验 `Terms.breadcrumbHome` 字面量 **0 命中**，面包屑正确渲染「首页 / Home / ホーム…」；sitemap.xml 含全部 terms URL |
+
+### 协议完备性结论（应询评估）
+
+- 三篇 + FAQ 已足够：**Cookie 政策不需要**（无广告/统计，NEXT_LOCALE 属豁免类技术 Cookie，已披露；将来接 Analytics/广告时再补政策+横幅）；免责声明已并入 Terms 第 4/5/6 节；DMCA/版权与无障碍声明为可选加分项。
+- 真实缺口：三篇均无**联系方式**（项目无邮箱），未擅自编造——待用户提供真实邮箱后统一补「联系我们」节。
+
+### Git
+
+- 全程直接在 main 工作（与第 42–45c 轮同惯例）；按仓库惯例分 2 个提交：feat（页面/组件/11 语 messages/集成）+ docs(progress)，推送 origin/main。
+
 ## 第 45c 轮：未提交更改三轮审查与修复，合入 main 并推送
 
 > 时间：2026-08-23
