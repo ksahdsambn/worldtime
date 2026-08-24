@@ -14,7 +14,7 @@ rows; users drag to select an overlap window and share it via URL. Heatmap
 coloring flags work/sleep/weekend hours so meeting overlap is legible at a
 glance. SEO/GEO landing surfaces: per-city pages (`/time/[cityId]`), country
 indexes (`/country/[code]`), pair converters (`/time-converter/[slug]`), and
-`about` / `faq` / `privacy` pages.
+`about` / `faq` / `privacy` / `terms` pages.
 
 **Stack:** Next.js 15 (App Router) · React 18 · TypeScript · Tailwind CSS 3 ·
 next-intl (**11 locales**: en, zh, zh-Hant, ja, ko, de, es, fr, pt, ru, vi) ·

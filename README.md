@@ -33,7 +33,7 @@ npm run gen:brand  # regenerate favicon/OG/brand assets from src/app/icon.svg
 ## Layout
 
 - `src/app/[locale]/` — home grid, `/time/[cityId]`, `/country/[code]`,
-  `/time-converter/[slug]`, `/about`, `/faq`, `/privacy`
+  `/time-converter/[slug]`, `/about`, `/faq`, `/privacy`, `/terms`
 - `src/lib/` — pure time/grid/heatmap/SEO helpers and hooks
 - `src/store/` — Zustand store (places, selection, settings)
 - `src/data/` — cities (~1200), countries, holidays, tz abbreviations
