@@ -1,5 +1,49 @@
 # 开发进度记录
 
+## 第 48 轮：11 语言翻译补全与校对（i18n 审计 + 术语统一），合入 main 并推送
+
+> 时间：2026-08-25
+> 范围：对 `messages/` 下 11 个 next-intl 语言文件做完整翻译补全与校对。以 `en.json` 为唯一基准，运行审计脚本（missing/extra/empty/placeholder/sameAsEn），逐文件通读 275 个叶子 key，统一术语一致性。
+
+### Phase 0 审计结论
+
+- **missing / extra / empty**：全部 10 个非英文文件均为 0。
+- **sameAsEn**：全部为合理保留（品牌名 "WorldTime"、语言端词 "中文/English"、国际缩写 "DST/FAQ/OK"、模板变量 `{dstAnswer}`、法语/西语正确的不翻译词 "minute/no/Cookies"）。
+- **phMismatch**：仅 `Country.metaDescription` — 英文中 `{country}` 出现两次，各译文出现一次；单次出现已满足硬性要求，译文自然，视为通过。
+
+### Phase 3 术语统一（9 处文件修改）
+
+| # | 文件 | 改动 key | 改动原因 |
+| --- | --- | --- | --- |
+| 1 | zh | `Help.shortcutDelete` | 「删除主城市」→「删除主地点」，与 `Places.home`「主地点」统一 |
+| 2 | zh-Hant | `Help.shortcutDelete` | 「刪除主城市」→「刪除主要地點」，与 `Places.home`「主要」统一 |
+| 3 | ja | `Places.dstActive/dst/dstWarnSoon` | 「サマータイム」→「夏時間」，与 `Landing.dstHeading`「夏時間」统一 |
+| 4 | ja | `Help.shortcutDelete` | 「基準都市を削除」→「基準を削除」，与 `Places.home`「基準」统一 |
+| 5 | ko | `City.dst` + `Landing.dstHeading` | 「일광 절약 시간」→「서머타임」，与 `Places.dst/dstActive/dstBadge`「서머타임」统一 |
+| 6 | de | `Help.shortcutDelete` | 「Heimatstadt löschen」→「Hauptort löschen」，与 `Places.home`「Hauptort」统一 |
+| 7 | es | `Help.shortcutDelete` | 「Eliminar ciudad de origen」→「Eliminar ciudad principal」，与 `Places.home`「Principal」统一 |
+| 8 | fr | `Help.shortcutDelete` | 「Supprimer la ville de référence」→「Supprimer la ville principale」，与 `Places.home`「Principal」统一 |
+| 9 | pt | `Help.shortcutDelete` | 「Excluir cidade de origem」→「Excluir cidade principal」，与 `Places.home`「Principal」统一 |
+| 10 | ru | `Help.shortcutDelete` | 「Удалить опорный город」→「Удалить основной город」，与 `Places.home`「Основное」统一 |
+| 11 | vi | `Common.more` | 「Thêm」→「Thêm nữa」，避免与 `Common.add`「Thêm」碰撞 |
+| 12 | vi | `Help.shortcutDelete` | 「Xóa thành phố gốc」→「Xoá thành phố chính」，与 `Places.home`「Chính」统一 |
+
+### Phase 4 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| 11 文件 JSON.parse | ✅ 全部合法 |
+| 重跑审计脚本 | ✅ missing/extra/empty = 0；sameAsEn 全部合理保留 |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm test` (vitest) | ✅ 224/224 |
+| `npm run build` | ✅ 成功，无错误/无警告 |
+
+### Git
+
+- 直接在 main 工作；1 个提交 `fix(i18n): 11 语言翻译补全与校对`，推送 origin/main。
+
+---
+
 ## 第 47 轮：协议三篇三轮审查（R1 广度 · R2 深挖 · R3 实证）与修复，合入 main 并推送
 
 > 时间：2026-08-25

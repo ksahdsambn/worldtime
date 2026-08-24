@@ -236,7 +236,7 @@
     "step3Body": "Cada célula é colorida pelo status da própria cidade — verde é horário de trabalho, laranja é horário de contato e vermelho é descanso.",
     "legendTitle": "Legenda das cores",
     "shortcutsTitle": "Atalhos de teclado",
-    "shortcutDelete": "Excluir cidade de origem",
+    "shortcutDelete": "Excluir cidade principal",
     "shortcutEscape": "Limpar a seleção",
     "close": "Fechar"
   },

@@ -236,7 +236,7 @@
     "step3Body": "每个格子按该城市自身的状态着色——绿色是工作时段，橙色是可联系时段，红色是在休息。",
     "legendTitle": "颜色图例",
     "shortcutsTitle": "键盘快捷键",
-    "shortcutDelete": "删除主城市",
+    "shortcutDelete": "删除主地点",
     "shortcutEscape": "清除选区",
     "close": "关闭"
   },

@@ -12,7 +12,7 @@
     "settings": "Cài đặt",
     "cancel": "Huỷ",
     "confirm": "OK",
-    "more": "Thêm",
+    "more": "Thêm nữa",
     "close": "Đóng"
   },
   "LocaleSwitcher": {
@@ -236,7 +236,7 @@
     "step3Body": "Mỗi ô được tô theo trạng thái của thành phố đó — xanh lá là giờ làm việc, cam là giờ có thể liên lạc, đỏ là đang nghỉ.",
     "legendTitle": "Chú giải màu",
     "shortcutsTitle": "Phím tắt",
-    "shortcutDelete": "Xóa thành phố gốc",
+    "shortcutDelete": "Xoá thành phố chính",
     "shortcutEscape": "Xóa vùng chọn",
     "close": "Đóng"
   },

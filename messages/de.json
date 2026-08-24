@@ -236,7 +236,7 @@
     "step3Body": "Jede Zelle zeigt den Status der jeweiligen Stadt — Grün ist Arbeitszeit, Orange ist erreichbare Zeit, Rot ist Schlafenszeit.",
     "legendTitle": "Farblegende",
     "shortcutsTitle": "Tastaturkurzbefehle",
-    "shortcutDelete": "Heimatstadt löschen",
+    "shortcutDelete": "Hauptort löschen",
     "shortcutEscape": "Auswahl löschen",
     "close": "Schließen"
   },

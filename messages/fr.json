@@ -236,7 +236,7 @@
     "step3Body": "Chaque case est colorée selon le statut de la ville — vert : heures de travail, orange : heures de contact, rouge : sommeil.",
     "legendTitle": "Légende des couleurs",
     "shortcutsTitle": "Raccourcis clavier",
-    "shortcutDelete": "Supprimer la ville de référence",
+    "shortcutDelete": "Supprimer la ville principale",
     "shortcutEscape": "Effacer la sélection",
     "close": "Fermer"
   },

@@ -236,7 +236,7 @@
     "step3Body": "Cada celda se colorea según el estado de esa ciudad: verde es horario laboral, naranja es horario de contacto y rojo es descanso.",
     "legendTitle": "Leyenda de colores",
     "shortcutsTitle": "Atajos de teclado",
-    "shortcutDelete": "Eliminar ciudad de origen",
+    "shortcutDelete": "Eliminar ciudad principal",
     "shortcutEscape": "Borrar la selección",
     "close": "Cerrar"
   },
