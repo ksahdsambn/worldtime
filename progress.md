@@ -1,5 +1,38 @@
 # 开发进度记录
 
+## 第 47 轮：协议三篇三轮审查（R1 广度 · R2 深挖 · R3 实证）与修复，合入 main 并推送
+
+> 时间：2026-08-25
+> 范围：对第 46 轮提交的协议三篇（About 扩充 / Privacy 重写 / Terms 新建，11 语言）做三轮独立审查。R1 广度排查全仓遗漏集成点；R2 逐句通读 11 语言全文 + 程序化检查（重复键/引号配对/结构）；R3 四道门槛 + 33 页构建产物断言 + 运行时核验。共发现并修复 4 处（1 处内容笔误、1 处德语语法、2 处文档清单滞后）。
+
+### 三轮发现与修复
+
+| # | 轮次 | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- | --- |
+| 1 | R1 | **P2** | **zh Terms 第 4 节笔误**：「法定期限或**临会议**」漏字（zh-Hant 版「臨時會議」正确，简体版生成时漏「时」） | 改为「或临时会议」，构建产物断言确认渲染 |
+| 2 | R1 | P3 | **页面清单滞后**：README.md Layout 列表与 AGENTS.md SEO/GEO 落地面列表均漏 `/terms`（ai.txt 只指向 llms/sitemap 无需改；audit/、markdown/、sw.js、manifest 均核验无涉） | 两处补 `/terms` |
+| 3 | R2 | **P2** | **de Privacy 第 7 节双重否定**：「Wir erheben bewusst **keine** personenbezogenen Daten **von niemandem**」——keine 与 niemandem 叠加否定，严格语法下语义反转，法律性文本不可接受 | 改为「Wir erheben bewusst von niemandem personenbezogene Daten – auch nicht von Kindern.」，构建产物断言确认 |
+| 4 | R3 | —（假阳性甄别） | 初版断言脚本 hreflang 计数全 0、sitemap grep /terms 计数 0，两度疑似缺陷 | 均非缺陷：Next 将属性序列化为 `hrefLang`（驼峰，与既有 city 页一致，浏览器大小写不敏感）；Git Bash MSYS 会把以 `/` 开头的 grep 模式参数转换成 Windows 路径导致假阴性。修正断言方式后全绿 |
+
+### R1/R2 其余核对（无问题确认）
+
+- **R1**：Explore 代理全仓扫——`Privacy.paragraphs` 全库零引用；`About.privacyBlurb` 新链接文案在 about 页上下文正确；SiteFooter 为唯一法务链接组件且含 4 链接；ContentHeader/移动端无遗漏；robots.ts 无硬编码路径；messages-shape 测试已覆盖 Terms；seo.test.ts 无过时断言。
+- **R2**：11 语言全文逐句通读（Terms+Privacy 全部小节 + About 补充节 + lead/meta/updated）——CJK 四语、欧洲六语文义、术语、敬语（ja「ご遠慮ください」）、语域（de du 型、fr vous 型）均正确；程序化检查：JSON 无重复键、按语言正确配对的引号（de „…"/其余 "…"/es·pt «»）全平衡、段落结构 1–2 段/节、无多余空格；Terms 第 2 节对各语言 About/FAQ 页面的指称（„Über"/«Acerca de»/«À propos»/«Sobre»/«О проекте»/Giới thiệu 等）与各语言实际页名/页脚链接逐一比对一致。
+
+### R3 实证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` / `next lint` / `npm test` | ✅ 0 错误 / 无警告 / 224/224 |
+| `npm run build` | ✅ 成功（terms 11 语言 SSG） |
+| 构建产物断言（11 语言 × about/privacy/terms = 33 页 × 7 项） | ✅ 无 i18n 键路径字面量回退、JSON-LD 全部可解析、hreflang 12 条（11+x-default）、canonical、唯一非空 h1、面包屑、页脚 4 链接 |
+| 修复点渲染断言 | ✅ zh「或临时会议」已渲染且旧笔误 0 命中；de 双重否定已消除 |
+| 运行时（next start） | ✅ 33 页全 200；sitemap 含 11 个 `/terms` URL 及 alternates；llms.txt 含 `- Terms: …/en/terms`；`/terms` 307→`/zh/terms` 语言协商正确 |
+
+### Git
+
+- 全程直接在 main 工作（与第 42–46 轮同惯例）；分 2 个提交：fix（zh/de 文案修正 + README/AGENTS 清单）+ docs(progress)，推送 origin/main。
+
 ## 第 46 轮：协议三篇（About 扩充 / Privacy 重写 / Terms 新建）+ 审查修复，合入 main 并推送
 
 > 时间：2026-08-25
