@@ -4,7 +4,7 @@
     "tagline": "Horloge mondiale / convertisseur de fuseaux horaires / planificateur de réunions",
     "homeTitle": "WorldTime — Horloge mondiale, convertisseur de fuseaux horaires et planificateur de réunions",
     "homeDescription": "Horloge mondiale et convertisseur de fuseaux horaires gratuits. Comparez l'heure locale entre villes, planifiez vos réunions internationales et organisez votre agenda entre fuseaux avec prise en charge automatique de l'heure d'été.",
-    "openApp": "Ouvrir l’horloge mondiale"
+    "openApp": "Ouvrir l'horloge mondiale"
   },
   "Common": {
     "add": "Ajouter",
@@ -119,18 +119,18 @@
       },
       {
         "q": "Quelle est la meilleure heure pour une réunion entre {a} et {b} ?",
-        "a": "{overlap} Vous pouvez aussi ouvrir l’horloge mondiale et faire glisser une plage personnalisée."
+        "a": "{overlap} Vous pouvez aussi ouvrir l'horloge mondiale et faire glisser une plage personnalisée."
       }
     ],
     "relatedTitle": "Convertisseurs de fuseau horaire associés",
     "factLead": "Il est {aTime} à {a} et {bTime} à {b}.",
     "overlapTitle": "Heures de travail communes",
     "overlapBody": "Heures où {a} et {b} sont tous deux entre 09:00 et 18:00 : {hours}.",
-    "overlapNone": "Aujourd’hui, 09:00–18:00 à {a} et {b} ne se chevauchent pas.",
-    "dstHeading": "Heure d’été",
-    "dstActive": "{place} est actuellement à l’heure d’été ({abbr}).",
-    "dstInactive": "{place} n’est pas à l’heure d’été en ce moment ({abbr}).",
-    "dstNone": "{place} n’observe pas l’heure d’été.",
+    "overlapNone": "Aujourd'hui, 09:00–18:00 à {a} et {b} ne se chevauchent pas.",
+    "dstHeading": "Heure d'été",
+    "dstActive": "{place} est actuellement à l'heure d'été ({abbr}).",
+    "dstInactive": "{place} n'est pas à l'heure d'été en ce moment ({abbr}).",
+    "dstNone": "{place} n'observe pas l'heure d'été.",
     "nextDst": "Prochain changement : {date}.",
     "tzAbbrNote": "{label} désigne {name} ({zone}). Le fuseau utilise actuellement {abbr}.",
     "relatedCitiesTitle": "Heure actuelle",
@@ -210,7 +210,7 @@
       },
       {
         "q": "L'heure affichée est-elle en temps réel ?",
-        "a": "L’heure actuelle et les tableaux du convertisseur se mettent à jour en direct dans le navigateur chaque minute."
+        "a": "L'heure actuelle et les tableaux du convertisseur se mettent à jour en direct dans le navigateur chaque minute."
       }
     ],
     "citiesTitle": "Heure actuelle dans les villes populaires",
@@ -256,16 +256,16 @@
   },
   "City": {
     "title": "Heure actuelle à {city}",
-    "metaDescription": "Quelle heure est-il à {city}, {country} ? Heure locale, décalage UTC, heure d’été et fuseau IANA {zone}.",
-    "intro": "L’heure locale actuelle à {city}, {country} est {time} ({date}). Fuseau : {zone}. Décalage UTC : {offset}.",
+    "metaDescription": "Quelle heure est-il à {city}, {country} ? Heure locale, décalage UTC, heure d'été et fuseau IANA {zone}.",
+    "intro": "L'heure locale actuelle à {city}, {country} est {time} ({date}). Fuseau : {zone}. Décalage UTC : {offset}.",
     "iana": "Fuseau IANA",
     "utcOffset": "Décalage UTC",
-    "dst": "Heure d’été",
-    "dstYes": "Actuellement à l’heure d’été.",
-    "dstNo": "Pas à l’heure d’été en ce moment.",
-    "noDst": "Ce fuseau n’observe pas l’heure d’été.",
-    "nextDst": "Prochain changement d’heure : {date}.",
-    "nextDstLabel": "Prochain changement d’heure",
+    "dst": "Heure d'été",
+    "dstYes": "Actuellement à l'heure d'été.",
+    "dstNo": "Pas à l'heure d'été en ce moment.",
+    "noDst": "Ce fuseau n'observe pas l'heure d'été.",
+    "nextDst": "Prochain changement d'heure : {date}.",
+    "nextDstLabel": "Prochain changement d'heure",
     "country": "Pays",
     "workHours": "Heures de travail habituelles",
     "workHoursBody": "09:00–18:00 heure locale à {city}.",
@@ -282,31 +282,31 @@
         "a": "{city} utilise le fuseau IANA {zone}."
       },
       {
-        "q": "{city} observe-t-elle l’heure d’été ?",
+        "q": "{city} observe-t-elle l'heure d'été ?",
         "a": "{dstAnswer}"
       }
     ],
     "breadcrumbHome": "Accueil",
-    "openInGrid": "Comparer dans l’horloge mondiale"
+    "openInGrid": "Comparer dans l'horloge mondiale"
   },
   "Country": {
     "title": "Heure en {country}",
     "metaDescription": "Heure locale et fuseaux en {country}. Heure actuelle dans les villes.",
-    "intro": "{country} utilise {zones} fuseau(x). Choisissez une ville pour voir l’heure locale.",
+    "intro": "{country} utilise {zones} fuseau(x). Choisissez une ville pour voir l'heure locale.",
     "citiesTitle": "Villes",
     "breadcrumbHome": "Accueil",
     "zoneCount": "{n} fuseaux"
   },
   "About": {
     "title": "À propos de WorldTime",
-    "metaDescription": "Comment WorldTime calcule l’heure locale, les décalages et l’heure d’été à partir d’IANA — plus fonctions et cas d’usage.",
-    "lead": "WorldTime est une horloge mondiale, un convertisseur de fuseaux et un planificateur de réunions gratuits. Le chevauchement se lit d’un coup d’œil — pas de compte, pas de péage.",
+    "metaDescription": "Comment WorldTime calcule l'heure locale, les décalages et l'heure d'été à partir d'IANA — plus fonctions et cas d'usage.",
+    "lead": "WorldTime est une horloge mondiale, un convertisseur de fuseaux et un planificateur de réunions gratuits. Le chevauchement se lit d'un coup d'œil — pas de compte, pas de péage.",
     "howTitle": "Calcul des heures",
-    "howBody": "Chaque ville est liée à un fuseau IANA. Luxon calcule décalages et dates à l’instant donné. Le navigateur et le HTML pour les robots partagent le même résultat.",
+    "howBody": "Chaque ville est liée à un fuseau IANA. Luxon calcule décalages et dates à l'instant donné. Le navigateur et le HTML pour les robots partagent le même résultat.",
     "dataTitle": "Source des données",
-    "dataBody": "Les règles de fuseau viennent d’IANA Time Zone Database (tzdb), le même jeu que les systèmes d’exploitation. Nous ne moissonnons pas d’autres horloges.",
-    "dstTitle": "Heure d’été",
-    "dstBody": "L’heure d’été vient du fuseau, pas du libellé EST/PST de l’URL. En été, America/New_York est en EDT. L’abréviation en direct sur la page fait foi.",
+    "dataBody": "Les règles de fuseau viennent d'IANA Time Zone Database (tzdb), le même jeu que les systèmes d'exploitation. Nous ne moissonnons pas d'autres horloges.",
+    "dstTitle": "Heure d'été",
+    "dstBody": "L'heure d'été vient du fuseau, pas du libellé EST/PST de l'URL. En été, America/New_York est en EDT. L'abréviation en direct sur la page fait foi.",
     "shareTitle": "Partage et liens",
     "shareBody": "Votre sélection est encodée dans l'URL de la page. En partageant un lien, vous partagez les villes et la plage horaire choisie — rien d'autre. Il n'y a pas de compte, et les visiteurs ne voient jamais les données des autres.",
     "offlineTitle": "Hors ligne et installation",
@@ -317,7 +317,7 @@
   },
   "Faq": {
     "title": "Questions fréquentes",
-    "metaDescription": "Réponses sur la comparaison des heures, l’heure d’été, le chevauchement des réunions, et si WorldTime est gratuit et en direct.",
+    "metaDescription": "Réponses sur la comparaison des heures, l'heure d'été, le chevauchement des réunions, et si WorldTime est gratuit et en direct.",
     "breadcrumbHome": "Accueil"
   },
   "Privacy": {
