@@ -2619,5 +2619,5 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 
 ### Git
 
-- 直接在 main 工作；改动留在工作区供人工复查（未 commit）。
-- 修改文件：`messages/fr.json`（撇号统一）、`messages/ja.json`（夏时间统一）。
+- 直接在 main 工作；1 个提交 `fix(i18n): fr 撇号统一(47处弯→直) + ja 夏時間术语统一(2处サマータイム→夏時間)`，推送 origin/main。
+- 修改文件：`messages/fr.json`（撇号统一）、`messages/ja.json`（夏时间统一）、`progress.md`（第49轮记录）。
