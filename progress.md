@@ -16,7 +16,7 @@
 | # | 文件 | 改动 key | 改动原因 |
 | --- | --- | --- | --- |
 | 1 | zh | `Help.shortcutDelete` | 「删除主城市」→「删除主地点」，与 `Places.home`「主地点」统一 |
-| 2 | zh-Hant | `Help.shortcutDelete` | 「刪除主城市」→「刪除主要地點」，与 `Places.home`「主要」统一 |
+| 2 | zh-Hant | `Help.shortcutDelete` + `Places.dstActive/dst/dstWarnSoon` | 「刪除主城市」→「刪除主要地點」；「日光節約時間」→「夏令時間」，与 `Landing.dstHeading`「夏令時間」统一 |
 | 3 | ja | `Places.dstActive/dst/dstWarnSoon` | 「サマータイム」→「夏時間」，与 `Landing.dstHeading`「夏時間」统一 |
 | 4 | ja | `Help.shortcutDelete` | 「基準都市を削除」→「基準を削除」，与 `Places.home`「基準」统一 |
 | 5 | ko | `City.dst` + `Landing.dstHeading` | 「일광 절약 시간」→「서머타임」，与 `Places.dst/dstActive/dstBadge`「서머타임」统一 |
