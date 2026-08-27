@@ -68,7 +68,10 @@
     "scope": "7 ngày tới",
     "allGreen": "Tất cả trong giờ làm việc",
     "compromise": "Tất cả đều thức (có người sớm hoặc muộn)",
-    "empty": "Không có khung giờ phù hợp trong 7 ngày tới. Hãy thử bỏ bớt một thành phố hoặc tự chọn giờ trên lưới."
+    "empty": "Không có khung giờ phù hợp trong 7 ngày tới. Hãy thử bỏ bớt một thành phố hoặc tự chọn giờ trên lưới.",
+    "conclusion": "Có vẻ {day} {time} phù hợp với tất cả",
+    "apply": "Chọn khung này",
+    "more": "Các phương án khác"
   },
   "Summary": {
     "title": "Giờ họp",
@@ -89,7 +92,9 @@
     "toggle": "Chuyển giao diện sáng/tối"
   },
   "Grid": {
-    "empty": "Thêm thành phố để xem lưới thời gian."
+    "empty": "Thêm thành phố để xem lưới thời gian.",
+    "dragHint": "Kéo ngang trên lưới để chọn khung giờ",
+    "dragHintDone": "Đã hiểu"
   },
   "Landing": {
     "title": "Chuyển đổi múi giờ",
@@ -395,7 +400,8 @@
     "prev": "Trước",
     "next": "Sau",
     "day1": "1 ngày",
-    "day7": "7 ngày"
+    "day7": "7 ngày",
+    "viewOptions": "Tùy chọn hiển thị"
   },
   "Modes": {
     "clock": "Đồng hồ",

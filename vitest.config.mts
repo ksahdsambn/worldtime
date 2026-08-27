@@ -6,11 +6,12 @@ import { resolve } from "path";
  *
  * - alias "@" -> src，与 tsconfig paths 一致，被测模块的 @/ 引用可正确解析。
  * - environment: node（被测核心算法为纯函数，无 DOM 依赖；luxon 基于 Intl，
- *   Node 内置完整 ICU，时区计算准确）。
- *
- * 仅包含纯函数测试（.ts）。若将来引入 React 组件测试（.tsx），
- * 需先安装 happy-dom 与 @testing-library/react，并将 environment 改为 "happy-dom"，
- * 否则组件中访问 document/window 会抛 ReferenceError。
+ *   Node 内置完整 ICU，时区计算准确）。需要 DOM 的测试文件用
+ *   `// @vitest-environment happy-dom` 按文件切换（如 usePresence / DragHint）。
+ * - oxc.jsx 覆盖 tsconfig 的 "preserve"：vitest v4 以 rolldown/oxc 转译，
+ *   Next 的 jsx=preserve 会原样保留 JSX 导致测试无法解析 .tsx 组件，需显式
+ *   改为 automatic（React 17+ JSX 运行时，无需手动 import React）。
+ * - include 放宽到 .tsx：第四期起引入 React 组件测试（tests/components/*）。
  */
 export default defineConfig({
   resolve: {
@@ -20,9 +21,12 @@ export default defineConfig({
       "@": resolve(import.meta.dirname, "src"),
     },
   },
+  oxc: {
+    jsx: { runtime: "automatic" },
+  },
   test: {
     environment: "node",
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.{ts,tsx}"],
     globals: true,
   },
 });

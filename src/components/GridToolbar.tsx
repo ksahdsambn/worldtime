@@ -1,18 +1,17 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { useLiquidGlass } from "@/lib/useLiquidGlass";
 import HeatmapLegend from "./HeatmapLegend";
-import WeekPager from "./WeekPager";
-import NowButton from "./NowButton";
 import SuggestionsPopover from "./SuggestionsPopover";
+import ViewOptionsMenu from "./ViewOptionsMenu";
 
 /**
- * 排期视图工具条：图例（色点+文字）｜ 推荐时段 · 1天/7天 · ‹ › · 回到现在。
+ * 排期视图工具条（第四期收纳后）：图例（色点+文字）｜ 推荐时段 · 视图选项。
  *
- * 两态改造后的减法：日期跳转由网格日期表头点击（原生 picker）与
- * 时间控制条承担；视图选项弹层（时间游标/日期输入）随游标功能一并移除。
+ * 渐进式披露：主层级只留读图必需的图例与推荐入口；「1 天 / 7 天」、
+ * 周翻页、「回到现在」收进 ViewOptionsMenu 弹出菜单（键盘可达）。
+ * 日期跳转由网格日期表头点击（原生 picker）与时间控制条承担。
  *
  * 空状态（无任何城市）时整体隐藏：这些控件在没有网格时全部失效。
  */
@@ -28,42 +27,12 @@ export default function GridToolbar() {
     >
       <HeatmapLegend />
       <div className="flex flex-wrap items-center gap-1">
-        {/* 推荐时段：核心价值的显性入口（<2 城时组件自隐藏） */}
+        {/* 推荐时段：核心价值的显性入口（<2 城时组件自隐藏）。
+            D4 决策：保留为高级用户的次要入口，与结论卡并存。 */}
         <SuggestionsPopover />
-        <DaySpanToggle />
-        <span className="divider" />
-        <WeekPager />
-        <NowButton />
+        {/* 视图选项收纳：1天/7天 · 周翻页 · 回到现在 */}
+        <ViewOptionsMenu />
       </div>
-    </div>
-  );
-}
-
-/** 网格窗口跨度切换：1 天一屏放下无需横滚，7 天保留全景排期视角。 */
-function DaySpanToggle() {
-  const t = useTranslations("ViewControls");
-  const gridDays = useWorldTimeStore((s) => s.gridDays);
-  const setGridDays = useWorldTimeStore((s) => s.setGridDays);
-
-  return (
-    // 同 Workspace：不加 role="group"，避免常驻命中 Esc 清选区守卫
-    <div className="seg seg--sm" data-testid="days-toggle">
-      <button
-        type="button"
-        aria-pressed={gridDays === 1}
-        onClick={() => setGridDays(1)}
-        data-testid="days-1"
-      >
-        {t("day1")}
-      </button>
-      <button
-        type="button"
-        aria-pressed={gridDays === 7}
-        onClick={() => setGridDays(7)}
-        data-testid="days-7"
-      >
-        {t("day7")}
-      </button>
     </div>
   );
 }

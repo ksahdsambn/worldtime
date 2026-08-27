@@ -68,7 +68,10 @@
     "scope": "Next 7 days",
     "allGreen": "Everyone in work hours",
     "compromise": "Everyone awake (some early or late)",
-    "empty": "No good window in the next 7 days. Try removing a city, or pick a time manually on the grid."
+    "empty": "No good window in the next 7 days. Try removing a city, or pick a time manually on the grid.",
+    "conclusion": "Looks like {day} {time} works for everyone",
+    "apply": "Use this slot",
+    "more": "Other options"
   },
   "Summary": {
     "title": "Meeting time",
@@ -89,7 +92,9 @@
     "toggle": "Toggle light/dark theme"
   },
   "Grid": {
-    "empty": "Add a city to see the time grid."
+    "empty": "Add a city to see the time grid.",
+    "dragHint": "Drag across the grid to select a time window",
+    "dragHintDone": "Got it"
   },
   "Landing": {
     "title": "Time Zone Converter",
@@ -395,7 +400,8 @@
     "prev": "Earlier",
     "next": "Later",
     "day1": "1 day",
-    "day7": "7 days"
+    "day7": "7 days",
+    "viewOptions": "View options"
   },
   "Modes": {
     "clock": "Clock",

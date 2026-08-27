@@ -68,7 +68,10 @@
     "scope": "Próximos 7 días",
     "allGreen": "Todos en horario laboral",
     "compromise": "Todos despiertos (algunos muy de mañana o de noche)",
-    "empty": "No hay una buena franja en los próximos 7 días. Prueba a quitar una ciudad o elige una hora manualmente en la cuadrícula."
+    "empty": "No hay una buena franja en los próximos 7 días. Prueba a quitar una ciudad o elige una hora manualmente en la cuadrícula.",
+    "conclusion": "Parece que {day} {time} les va bien a todos",
+    "apply": "Elegir esta franja",
+    "more": "Otras opciones"
   },
   "Summary": {
     "title": "Horario de la reunión",
@@ -89,7 +92,9 @@
     "toggle": "Cambiar tema claro/oscuro"
   },
   "Grid": {
-    "empty": "Añade una ciudad para ver la cuadrícula horaria."
+    "empty": "Añade una ciudad para ver la cuadrícula horaria.",
+    "dragHint": "Arrastra por la cuadrícula para seleccionar una franja horaria",
+    "dragHintDone": "Entendido"
   },
   "Landing": {
     "title": "Conversor de zonas horarias",
@@ -395,7 +400,8 @@
     "prev": "Anterior",
     "next": "Siguiente",
     "day1": "1 día",
-    "day7": "7 días"
+    "day7": "7 días",
+    "viewOptions": "Opciones de vista"
   },
   "Modes": {
     "clock": "Reloj",

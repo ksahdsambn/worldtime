@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { DateTime } from "luxon";
-import { findOverlapSlots } from "@/lib/overlap";
+import { findOverlapSlots, slotInView } from "@/lib/overlap";
 import { DEFAULT_DAY_PERIODS, type DayPeriods } from "@/store/useWorldTimeStore";
 import { makePlace, PLACES } from "../helpers";
 
@@ -257,5 +257,53 @@ describe("findOverlapSlots 推荐时段", () => {
     expect(slots.filter((s) => s.tier === "green")).toHaveLength(5);
     expect(local(slots[0].startMs, BJ).hour).toBe(10);
     expect(local(slots[0].endMs, BJ).hour).toBe(18);
+  });
+});
+
+describe("slotInView（第四期：结论卡视野定位）", () => {
+  // 参考日期：2026-08-27 周四（今天）
+  const now = ms("2026-08-27T10:00", BJ);
+  const todaySlot = {
+    startMs: ms("2026-08-27T10:00", BJ),
+    endMs: ms("2026-08-27T11:00", BJ),
+  };
+  const tomorrowSlot = {
+    startMs: ms("2026-08-28T10:00", BJ),
+    endMs: ms("2026-08-28T11:00", BJ),
+  };
+  // 7 天窗口外（下下周）
+  const farSlot = {
+    startMs: ms("2026-09-07T10:00", BJ),
+    endMs: ms("2026-09-07T11:00", BJ),
+  };
+
+  it("1 天视图：今天窗口内的推荐判定为在视野内", () => {
+    expect(slotInView(todaySlot, BJ, null, 1, now)).toBe(true);
+  });
+
+  it("1 天视图：明天的推荐不在视野内（需切回七天并定位）", () => {
+    expect(slotInView(tomorrowSlot, BJ, null, 1, now)).toBe(false);
+  });
+
+  it("7 天视图：未来一周内的推荐在视野内", () => {
+    expect(slotInView(tomorrowSlot, BJ, null, 7, now)).toBe(true);
+  });
+
+  it("7 天视图：窗口外（下下周）的推荐不在视野内", () => {
+    expect(slotInView(farSlot, BJ, null, 7, now)).toBe(false);
+  });
+
+  it("已翻到其它周（viewStartDateMs 偏移）：明天的推荐不在视野内", () => {
+    const shifted = ms("2026-09-03T00:00", BJ); // 翻到 09-03 起 7 天
+    expect(slotInView(tomorrowSlot, BJ, shifted, 7, now)).toBe(false);
+  });
+
+  it("已翻到其它周但推荐恰好在该周内：在视野内", () => {
+    const shifted = ms("2026-08-28T00:00", BJ); // 翻到 08-28 起 7 天
+    expect(slotInView(tomorrowSlot, BJ, shifted, 7, now)).toBe(true);
+  });
+
+  it("空列（非法时区）不误判为在视野内", () => {
+    expect(slotInView(todaySlot, "Foo/Bar", null, 7, now)).toBe(false);
   });
 });

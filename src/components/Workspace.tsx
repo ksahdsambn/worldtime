@@ -9,6 +9,8 @@ import TimeGrid from "./TimeGrid";
 import GridToolbar from "./GridToolbar";
 import SelectionBar from "./SelectionBar";
 import FirstUseEmptyState from "./FirstUseEmptyState";
+import RecommendationCard from "./RecommendationCard";
+import DragHint from "./DragHint";
 import { IconClock, IconGrid } from "./icons";
 
 /**
@@ -80,6 +82,10 @@ export default function Workspace() {
       ) : (
         <>
           <GridToolbar />
+          {/* 结论前置（第四期）：先给答案、再给画布；<2 城时不占位。
+              一次性拖选提示：新用户首访排期视图时出现，读过即不再出现。 */}
+          <RecommendationCard />
+          <DragHint />
           <div className="min-h-0 flex-1 p-3 md:p-4">
             <TimeGrid />
           </div>

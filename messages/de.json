@@ -68,7 +68,10 @@
     "scope": "Nächste 7 Tage",
     "allGreen": "Alle in Arbeitszeit",
     "compromise": "Alle wach (teils früh, teils spät)",
-    "empty": "Kein passendes Zeitfenster in den nächsten 7 Tagen. Entferne eine Stadt oder wähle eine Zeit direkt im Raster."
+    "empty": "Kein passendes Zeitfenster in den nächsten 7 Tagen. Entferne eine Stadt oder wähle eine Zeit direkt im Raster.",
+    "conclusion": "{day} {time} passt wohl allen",
+    "apply": "Dieses Zeitfenster wählen",
+    "more": "Weitere Optionen"
   },
   "Summary": {
     "title": "Besprechungszeit",
@@ -89,7 +92,9 @@
     "toggle": "Hell/Dunkel umschalten"
   },
   "Grid": {
-    "empty": "Stadt hinzufügen, um das Zeitraster zu sehen."
+    "empty": "Stadt hinzufügen, um das Zeitraster zu sehen.",
+    "dragHint": "Ziehe quer übers Raster, um ein Zeitfenster auszuwählen",
+    "dragHintDone": "Verstanden"
   },
   "Landing": {
     "title": "Zeitzonen-Rechner",
@@ -395,7 +400,8 @@
     "prev": "Zurück",
     "next": "Weiter",
     "day1": "1 Tag",
-    "day7": "7 Tage"
+    "day7": "7 Tage",
+    "viewOptions": "Ansichtsoptionen"
   },
   "Modes": {
     "clock": "Uhr",

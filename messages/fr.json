@@ -68,7 +68,10 @@
     "scope": "7 prochains jours",
     "allGreen": "Tous en heures de travail",
     "compromise": "Tous éveillés (les uns tôt, les autres tard)",
-    "empty": "Aucun bon créneau dans les 7 prochains jours. Essayez de retirer une ville ou choisissez une heure directement dans la grille."
+    "empty": "Aucun bon créneau dans les 7 prochains jours. Essayez de retirer une ville ou choisissez une heure directement dans la grille.",
+    "conclusion": "{day} {time} semble convenir à tous",
+    "apply": "Choisir ce créneau",
+    "more": "Autres options"
   },
   "Summary": {
     "title": "Heure de la réunion",
@@ -89,7 +92,9 @@
     "toggle": "Basculer thème clair/sombre"
   },
   "Grid": {
-    "empty": "Ajoutez une ville pour afficher la grille horaire."
+    "empty": "Ajoutez une ville pour afficher la grille horaire.",
+    "dragHint": "Faites glisser sur la grille pour sélectionner une plage horaire",
+    "dragHintDone": "Compris"
   },
   "Landing": {
     "title": "Convertisseur de fuseaux horaires",
@@ -395,7 +400,8 @@
     "prev": "Précédent",
     "next": "Suivant",
     "day1": "1 jour",
-    "day7": "7 jours"
+    "day7": "7 jours",
+    "viewOptions": "Options d'affichage"
   },
   "Modes": {
     "clock": "Horloge",

@@ -95,3 +95,26 @@ export function findOverlapSlots(
   );
   return slots.slice(0, maxResults);
 }
+
+/**
+ * 判断推荐时段是否落在当前网格视野内（第四期：结论卡「选中这段」的定位前提）。
+ *
+ * 视野 = 以 viewStartDateMs（null 表示今天，主地点本地午夜）为起点、
+ * gridDays 跨度的列窗口；与 TimeGrid / SuggestionsPopover.applySlot 的
+ * 视野判定同一口径（末列 ms + 1 小时为闭区间上界）。
+ */
+export function slotInView(
+  slot: Pick<OverlapSlot, "startMs" | "endMs">,
+  homeZone: string,
+  viewStartDateMs: number | null,
+  gridDays: number,
+  nowMs: number,
+): boolean {
+  const winStart = viewStartDateMs ?? todayStartMs(homeZone, nowMs);
+  const cols = buildColumns(homeZone, winStart, gridDays);
+  return (
+    cols.length > 0 &&
+    slot.startMs >= cols[0].ms &&
+    slot.endMs <= cols[cols.length - 1].ms + HOUR_MS
+  );
+}

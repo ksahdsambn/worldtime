@@ -68,7 +68,10 @@
     "scope": "Próximos 7 dias",
     "allGreen": "Todos em horário de trabalho",
     "compromise": "Todos acordados (alguns cedo demais, outros tarde demais)",
-    "empty": "Não há uma boa janela nos próximos 7 dias. Tente remover uma cidade ou escolha um horário manualmente na grade."
+    "empty": "Não há uma boa janela nos próximos 7 dias. Tente remover uma cidade ou escolha um horário manualmente na grade.",
+    "conclusion": "Parece que {day} {time} funciona para todos",
+    "apply": "Usar este horário",
+    "more": "Outras opções"
   },
   "Summary": {
     "title": "Horário da reunião",
@@ -89,7 +92,9 @@
     "toggle": "Alternar tema claro/escuro"
   },
   "Grid": {
-    "empty": "Adicione uma cidade para ver a grade de horários."
+    "empty": "Adicione uma cidade para ver a grade de horários.",
+    "dragHint": "Arraste pela grade para selecionar uma janela de horário",
+    "dragHintDone": "Entendi"
   },
   "Landing": {
     "title": "Conversor de fusos horários",
@@ -395,7 +400,8 @@
     "prev": "Anterior",
     "next": "Próximo",
     "day1": "1 dia",
-    "day7": "7 dias"
+    "day7": "7 dias",
+    "viewOptions": "Opções de exibição"
   },
   "Modes": {
     "clock": "Relógio",
