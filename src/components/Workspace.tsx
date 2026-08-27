@@ -20,7 +20,7 @@ import { IconClock, IconGrid } from "./icons";
  * - 重叠时段：时间网格排期——拖拽选共同空闲段并分享（带 s= 的分享链接
  *   由 useUrlStateSync 自动落入本视图）。
  *
- * 工作条为玻璃 chrome：左模式分段控件、右时间控制条（实时/固定时刻）。
+ * 工作条为玻璃 chrome：左模式小卡片、右时间控制条（实时/固定时刻）。
  * 恢复完成前显示轻量骨架；恢复后无城市则显示首用富空状态。
  */
 export default function Workspace() {
@@ -53,8 +53,9 @@ export default function Workspace() {
         className="liquid-glass liquid-glass--bar flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5"
       >
         {/* 不用 role="group"：该值被 KeyboardShortcuts 的 Esc 守卫视为「浮层打开」，
-            常驻分段控件会永久短路 Esc 清选区。按钮 aria-pressed 已表达状态。 */}
-        <div className="seg" data-testid="mode-tabs">
+            常驻模式卡片会永久短路 Esc 清选区。按钮 aria-pressed 已表达状态。
+            第 56 轮：分段胶囊改为小卡片 UI（.mode-cards），与首页任务卡同语言。 */}
+        <div className="mode-cards" data-testid="mode-tabs">
           <button
             type="button"
             aria-pressed={viewMode === "clock"}

@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "找到一個大家都合適的會議時間",
     "startLocal": "從我的時區開始",
+    "startLocalBody": "自動加入你所在的時區，再搭配紐約、倫敦等世界主要城市。",
     "presetFinance": "世界金融時鐘",
     "taskClockTitle": "看看各地現在幾點",
     "taskClockBody": "新增城市，隨時查看各地的目前時間與晝夜。",

@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "모두에게 맞는 회의 시간 찾기",
     "startLocal": "내 시간대에서 시작",
+    "startLocalBody": "내 시간대를 자동으로 추가하고, 뉴욕과 런던 등 세계 주요 도시도 함께 포함합니다.",
     "presetFinance": "세계 금융 시계",
     "taskClockTitle": "지금 세계 각지 시간 보기",
     "taskClockBody": "도시를 추가하면 현재 현지 시간과 낮/밤 여부를 한눈에 확인할 수 있습니다.",

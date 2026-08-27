@@ -249,7 +249,7 @@ const PlaceCardRow = memo(function PlaceCardRow({
     <li
       ref={setNodeRef}
       style={style}
-      className={`surface group animate-fade-in overflow-hidden transition-shadow duration-200 hover:shadow-glow ${
+      className={`surface group animate-fade-in overflow-hidden rounded-lg shadow-sm transition-shadow duration-200 hover:shadow-glow ${
         isHome ? "home-row" : ""
       }`}
     >

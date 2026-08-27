@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "全員に合う会議時間を見つけよう",
     "startLocal": "自分のタイムゾーンで始める",
+    "startLocalBody": "お住まいのタイムゾーンと、ニューヨークやロンドンなど世界の主要都市をまとめて追加します。",
     "presetFinance": "世界の金融時計",
     "taskClockTitle": "世界各地の今の時間を見る",
     "taskClockBody": "都市を追加すると、現地の現在時刻と昼か夜かをひと目で確認できます。",

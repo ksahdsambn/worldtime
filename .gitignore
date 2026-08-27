@@ -42,3 +42,7 @@ audit/
 
 # zcode 会话/计划本地元数据
 .zcode/
+
+# 本地工具与流程文档（含部署凭据，约定不入库）
+deploy.py
+i18n-translation-prompt.md

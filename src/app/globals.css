@@ -431,6 +431,47 @@
     font-size: 11px;
   }
 
+  /* —— 模式小卡片（第 56 轮：工作条模式切换改卡片化）——
+     与 .seg 的胶囊分段不同：每项自成一张小卡片（surface + border + 投影），
+     选中态蓝描边 + 浅蓝底 + 辉光，与首页任务卡同一语言。状态仍由
+     aria-pressed 驱动，键盘可达（原生 button）、焦点环可见。 */
+  .mode-cards {
+    @apply inline-flex items-center gap-2;
+  }
+  .mode-cards button {
+    @apply inline-flex items-center gap-1.5 rounded font-medium;
+    padding: 0.35rem 0.7rem;
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--text-muted);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: color var(--dur-fast) var(--ease-out-quint),
+      background-color var(--dur-fast) var(--ease-out-quint),
+      border-color var(--dur-fast) var(--ease-out-quint),
+      box-shadow var(--dur-fast) var(--ease-out-quint);
+  }
+  .mode-cards button:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .mode-cards button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .mode-cards button[aria-pressed="true"] {
+    color: var(--text);
+    border-color: var(--accent);
+    /* 选中面须为不透明（玻璃条上的控件面不做玻璃）：--accent-soft 在暗色下
+       是半透明 rgba，会透出模糊背景，故用 accent 与 surface 的不透明混合，
+       浅色 ≈ accent-soft、暗色为实色深蓝。color-mix 为 Baseline 2023，
+       项目内玻璃悬停色等处已按此基线裸用（无回退写法——带 var() 的回退
+       声明会 IACVT 落到 transparent，反而更透）。 */
+    background-color: color-mix(in srgb, var(--accent) 22%, var(--surface));
+    box-shadow: var(--shadow-glow);
+  }
+
   /* —— 文本输入 —— */
   .input {
     @apply rounded-sm text-sm transition-colors duration-150;
@@ -537,6 +578,11 @@
   }
   .task-card[aria-pressed="true"] .task-card__icon {
     background-color: var(--surface);
+  }
+  /* 实心图标章：快捷开始卡的「立即执行」分量（对应原主按钮的蓝色权重） */
+  .task-card__icon--solid {
+    color: var(--accent-fg);
+    background-color: var(--accent);
   }
 
   /* —— 任务卡片引导：搜索框高亮脉冲（第三期）—— */

@@ -14,11 +14,13 @@ import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import { PLACES } from "../helpers";
 
 /**
- * UX 重设计（第 54 轮）无障碍结构抽检 + 新手全路径集成测试。
+ * UX 重设计（第 54 轮）无障碍结构抽检 + 新手全路径集成测试；
+ * 第 56 轮扩展：快捷开始大卡片化（4 卡等大网格）后的结构与即时加城行为。
  *
  * 目的：以可重复的 DOM 结构断言替代读屏实机抽检（执行总则一.6「无障碍纪律」）：
  * - 任务卡片：原生 button、aria-pressed 选定态、h3 标题进入文档大纲（修复审查
  *   发现五.4 偏离项）；
+ * - 快捷开始卡片（第 56 轮）：同为原生 button + h3，无按压态、点击立即加城；
  * - 折叠开关：原生 details/summary（键盘可达、读屏可感知展开态）；
  * - 结论卡：≥2 城门槛（单城不占位）、不透明内容区含主操作按钮；
  * - 收纳菜单：aria-haspopup/aria-expanded 同步、Esc 关闭还焦；
@@ -69,22 +71,33 @@ function render(el: React.ReactNode) {
 }
 
 describe("任务卡片无障碍结构（第三期）", () => {
-  it("两张任务卡片为原生 button + aria-pressed，且标题在 h3 内（进大纲）", async () => {
+  it("四张卡片均为原生 button，任务卡带 aria-pressed，标题在 h3 内（进大纲）", async () => {
     await render(<FirstUseEmptyState />);
     const clock = container.querySelector('[data-testid="task-card-clock"]');
     const overlap = container.querySelector(
       '[data-testid="task-card-overlap"]',
     );
-    expect(clock?.tagName).toBe("BUTTON");
-    expect(overlap?.tagName).toBe("BUTTON");
+    const quickLocal = container.querySelector(
+      '[data-testid="quick-start-local"]',
+    );
+    const finance = container.querySelector('[data-testid="preset-finance"]');
+    for (const card of [clock, overlap, quickLocal, finance]) {
+      expect(card?.tagName).toBe("BUTTON");
+    }
+    // 仅任务卡有选定态（aria-pressed）；快捷开始卡是即时动作，无按压态
     expect(clock?.getAttribute("aria-pressed")).toBe("false");
     expect(overlap?.getAttribute("aria-pressed")).toBe("false");
+    expect(quickLocal?.hasAttribute("aria-pressed")).toBe(false);
+    expect(finance?.hasAttribute("aria-pressed")).toBe(false);
 
-    // 卡片标题进 h3（文档大纲 h1 品牌 → h2 空状态 → h3 任务卡片）
+    // 卡片标题进 h3（文档大纲 h1 品牌 → h2 空状态 → h3 卡片），
+    // 顺序：任务时钟 → 任务共同时间 → 从我的时区开始 → 世界金融时钟
     const headings = [...container.querySelectorAll("h3")];
-    expect(headings).toHaveLength(2);
+    expect(headings).toHaveLength(4);
     expect(headings[0].querySelector("button")).toBe(clock);
     expect(headings[1].querySelector("button")).toBe(overlap);
+    expect(headings[2].querySelector("button")).toBe(quickLocal);
+    expect(headings[3].querySelector("button")).toBe(finance);
 
     // 无 role=button 的假按钮（全部为原生控件）
     expect(
@@ -142,6 +155,59 @@ describe("任务卡片无障碍结构（第三期）", () => {
     const after = useWorldTimeStore.getState();
     expect(after.viewMode).toBe("overlap");
     expect(after.pendingMode).toBeNull();
+  });
+});
+
+describe("快捷开始卡片（第 56 轮：大卡片化）", () => {
+  it("「从我的时区开始」点击即加城：恰好 3 座（本地时区起步）", async () => {
+    await render(<FirstUseEmptyState />);
+    const local = container.querySelector<HTMLButtonElement>(
+      '[data-testid="quick-start-local"]',
+    );
+    expect(local?.textContent).toContain("从我的时区开始");
+    await act(() => {
+      local?.click();
+    });
+    const s = useWorldTimeStore.getState();
+    expect(s.places).toHaveLength(3);
+  });
+
+  it("先选定任务再点快捷卡：加城后进入所选模式并清除待定态（addPlace 消费 pendingMode）", async () => {
+    await render(<FirstUseEmptyState />);
+    // 用户先点了「找个大家都有空的时间」任务卡
+    await act(() => {
+      useWorldTimeStore.getState().setPendingMode("overlap");
+    });
+    const local = container.querySelector<HTMLButtonElement>(
+      '[data-testid="quick-start-local"]',
+    );
+    await act(() => {
+      local?.click();
+    });
+    const s = useWorldTimeStore.getState();
+    expect(s.places).toHaveLength(3);
+    expect(s.viewMode).toBe("overlap");
+    expect(s.pendingMode).toBeNull();
+  });
+
+  it("「世界金融时钟」点击即加城：纽约 · 伦敦 · 东京", async () => {
+    await render(<FirstUseEmptyState />);
+    const finance = container.querySelector<HTMLButtonElement>(
+      '[data-testid="preset-finance"]',
+    );
+    // 卡片正文展示三城 chips（flag + 城市名）
+    expect(finance?.textContent).toContain("纽约");
+    expect(finance?.textContent).toContain("伦敦");
+    expect(finance?.textContent).toContain("东京");
+    await act(() => {
+      finance?.click();
+    });
+    const s = useWorldTimeStore.getState();
+    expect(s.places.map((p) => p.id)).toEqual([
+      "us-new-york",
+      "gb-london",
+      "jp-tokyo",
+    ]);
   });
 });
 

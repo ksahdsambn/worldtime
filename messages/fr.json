@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "Trouvez une heure qui convient à tous",
     "startLocal": "Commencer avec mon fuseau horaire",
+    "startLocalBody": "Ajoutez automatiquement votre fuseau horaire ainsi que des grandes villes du monde comme New York et Londres.",
     "presetFinance": "Horloge financière mondiale",
     "taskClockTitle": "Voyez l'heure qu'il est partout",
     "taskClockBody": "Ajoutez des villes pour voir leur heure locale actuelle et l'état jour/nuit.",

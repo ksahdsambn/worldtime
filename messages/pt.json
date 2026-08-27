@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "Encontre um horário que funciona para todos",
     "startLocal": "Começar com meu fuso horário",
+    "startLocalBody": "Adicione automaticamente o seu fuso horário, juntamente com grandes cidades do mundo, como Nova Iorque e Londres.",
     "presetFinance": "Relógio financeiro mundial",
     "taskClockTitle": "Veja que horas são em cada lugar",
     "taskClockBody": "Adicione cidades para ver a hora local atual e se é dia ou noite.",

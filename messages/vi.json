@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "Tìm giờ họp phù hợp với mọi người",
     "startLocal": "Bắt đầu với múi giờ của tôi",
+    "startLocalBody": "Tự động thêm múi giờ của nơi bạn ở và kết hợp với các thành phố lớn trên thế giới như New York và London.",
     "presetFinance": "Đồng hồ tài chính thế giới",
     "taskClockTitle": "Xem bây giờ là mấy giờ ở mọi nơi",
     "taskClockBody": "Thêm thành phố để xem giờ địa phương hiện tại và ban ngày hay ban đêm.",

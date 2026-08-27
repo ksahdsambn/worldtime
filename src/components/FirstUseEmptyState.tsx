@@ -8,22 +8,23 @@ import { localStarterCities, financeStarterCities } from "@/data/starterSets";
 import { localCityName } from "@/lib/cityName";
 import type { CityRecord } from "@/lib/types";
 import type { AppLocale } from "@/i18n/routing";
-import { IconClock, IconGrid } from "./icons";
+import { IconClock, IconGrid, IconHome, IconGlobe } from "./icons";
 
 /**
- * 首用/空状态门面（第三期：任务卡片入口）。
+ * 首用/空状态门面（第三期任务卡片入口；第 56 轮统一为 4 卡等大网格）。
  *
- * 两个层次并存、各司其职：
- * - 任务卡片区（门面）：把「能做什么」翻译成任务——点卡片选定任务，随即
- *   高亮顶部城市搜索引导添加城市；添加第一个城市后自动进入所选模式
- *   （store.addPlace 消费 pendingMode，见 useWorldTimeStore）。
- * - 快捷开始按钮：最快补城市（本地时区起步 / 预设城市组）。未选任务而
- *   直接点快捷按钮时维持现状进入默认时钟模式。
+ * 一个网格四张等大卡片，一排一排向下流动：
+ * - 第一排（任务卡）：点卡片选定任务，随即高亮顶部城市搜索引导添加城市；
+ *   添加第一个城市后自动进入所选模式（store.addPlace 消费 pendingMode，
+ *   见 useWorldTimeStore）。
+ * - 第二排（快捷开始卡）：最快补城市，点击立即生效——「从我的时区开始」
+ *   本地时区起步 /「世界金融时钟」预设城市组；未选任务直接点快捷卡时
+ *   进入默认时钟模式。
  *
- * 无障碍：卡片为原生 button（键盘可聚焦、回车触发、焦点可见）；选定态由
- * aria-pressed 表达（样式同步）；卡片标题由 h3 包裹 button 进文档大纲
- * （h1 品牌 → h2 空状态 → h3 任务卡片），读屏在标题列表可直达任务，
- * 按钮 accessible name 朗读完整任务信息。
+ * 无障碍：四张卡均为原生 button（键盘可聚焦、回车触发、焦点可见）；
+ * 任务卡的选定态由 aria-pressed 表达（样式同步）；卡片标题由 h3 包裹
+ * button 进文档大纲（h1 品牌 → h2 空状态 → h3 卡片），读屏在标题列表
+ * 可直达任务，按钮 accessible name 朗读完整卡片信息。
  * 卡片为不透明表面（surface + border 令牌，无玻璃——内容性表面）。
  *
  * flex-1：本分支是 Workspace 三态中唯一会短于视口内容的分支，必须撑满
@@ -48,10 +49,9 @@ export default function FirstUseEmptyState() {
     pulseSearch();
   }
 
-  // 金融预设的 chip 文本：城市名随页面 locale（SSR 与客户端同构，无水合风险）
-  const financeChips = financeStarterCities()
-    .map((c) => `${c.flag} ${localCityName(locale, c)}`)
-    .join("　·　");
+  // 金融预设的 chips：城市名随页面 locale（SSR 与客户端同构，无水合风险）。
+  // 国旗 emoji 对读屏是噪音（逐个朗读"国旗"），以 aria-hidden 只暴露城市名。
+  const financeCities = financeStarterCities();
 
   const tasks: Array<{
     mode: ViewMode;
@@ -96,10 +96,12 @@ export default function FirstUseEmptyState() {
           </h2>
         </div>
 
-        {/* 任务卡片区：选任务 → 高亮搜索 → 加首城自动进模式。
-            卡片标题用 h3（页面大纲 h1→h2→h3 层级合理）；h3 包裹原生 button
-            （button 内容模型允许 phrasing content，h3 亦为 phrasing，合法）；
-            读屏在标题列表可直达任务，按钮 accessible name 仍朗读完整任务信息。 */}
+        {/* 四卡等大网格，一排一排向下流动：第一排选任务（aria-pressed 选定态），
+            第二排快捷开始（点击立即加城）。卡片标题用 h3（页面大纲
+            h1→h2→h3 层级合理）；h3 包裹原生 button（button 内容模型允许
+            phrasing content，h3 亦为 phrasing，合法）；读屏在标题列表可直达
+            卡片，按钮 accessible name 仍朗读完整卡片信息。快捷卡 sm 起占满
+            整行（col-span-2），与任务卡同宽同款、面积一致。 */}
         <div className="grid gap-3 text-left sm:grid-cols-2">
           {tasks.map((task) => (
             <h3 key={task.mode} className="min-w-0">
@@ -124,27 +126,56 @@ export default function FirstUseEmptyState() {
               </button>
             </h3>
           ))}
-        </div>
 
-        {/* 快捷开始：最快补城市（与任务卡片并存，职责分离） */}
-        <div className="space-y-2.5">
-          <button
-            type="button"
-            onClick={() => apply(localStarterCities())}
-            className="btn btn-primary w-full"
-          >
-            {t("startLocal")}
-          </button>
+          <h3 className="min-w-0 sm:col-span-2">
+            <button
+              type="button"
+              onClick={() => apply(localStarterCities())}
+              data-testid="quick-start-local"
+              className="task-card w-full"
+            >
+              <span className="task-card__icon task-card__icon--solid" aria-hidden>
+                <IconHome className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1 space-y-1">
+                <span className="block text-[15px] font-semibold leading-snug text-ink">
+                  {t("startLocal")}
+                </span>
+                <span className="block text-[13px] leading-relaxed text-muted">
+                  {t("startLocalBody")}
+                </span>
+              </span>
+            </button>
+          </h3>
 
-          <button
-            type="button"
-            onClick={() => apply(financeStarterCities())}
-            aria-label={t("presetFinance")}
-            data-testid="preset-finance"
-            className="btn btn-ghost w-full tracking-wide text-ink"
-          >
-            {financeChips}
-          </button>
+          <h3 className="min-w-0 sm:col-span-2">
+            <button
+              type="button"
+              onClick={() => apply(financeStarterCities())}
+              data-testid="preset-finance"
+              className="task-card w-full"
+            >
+              <span className="task-card__icon" aria-hidden>
+                <IconGlobe className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1 space-y-1">
+                <span className="block text-[15px] font-semibold leading-snug text-ink">
+                  {t("presetFinance")}
+                </span>
+                <span className="block text-[13px] leading-relaxed text-muted">
+                  {financeCities.map((c, i) => (
+                    <span key={c.id}>
+                      <span aria-hidden>{c.flag}</span>{" "}
+                      {localCityName(locale, c)}
+                      {i < financeCities.length - 1 && (
+                        <span aria-hidden>　·　</span>
+                      )}
+                    </span>
+                  ))}
+                </span>
+              </span>
+            </button>
+          </h3>
         </div>
       </div>
     </div>

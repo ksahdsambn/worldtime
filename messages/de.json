@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "Finde eine Uhrzeit, die für alle passt",
     "startLocal": "Mit meiner Zeitzone starten",
+    "startLocalBody": "Füge automatisch deine Zeitzone sowie Weltstädte wie New York und London hinzu.",
     "presetFinance": "Welt-Finanzuhr",
     "taskClockTitle": "Sieh nach, wie spät es überall ist",
     "taskClockBody": "Städte hinzufügen und die aktuelle Ortszeit sowie Tag und Nacht auf einen Blick sehen.",

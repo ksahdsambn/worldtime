@@ -234,6 +234,7 @@
   "Onboarding": {
     "emptyHeadline": "Find a meeting time that works for everyone",
     "startLocal": "Start with my time zone",
+    "startLocalBody": "Automatically add your own time zone, together with major world cities such as New York and London.",
     "presetFinance": "World finance clock",
     "taskClockTitle": "See what time it is anywhere",
     "taskClockBody": "Add cities to see their current local time and day/night state.",
