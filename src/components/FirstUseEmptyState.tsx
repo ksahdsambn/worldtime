@@ -25,6 +25,10 @@ import { IconClock, IconGrid } from "./icons";
  * （h1 品牌 → h2 空状态 → h3 任务卡片），读屏在标题列表可直达任务，
  * 按钮 accessible name 朗读完整任务信息。
  * 卡片为不透明表面（surface + border 令牌，无玻璃——内容性表面）。
+ *
+ * flex-1：本分支是 Workspace 三态中唯一会短于视口内容的分支，必须撑满
+ * 剩余高度（内容垂直居中），否则首页 footer 上浮、撑满视口的容器余量变成
+ * footer 下方的死背景区。
  */
 export default function FirstUseEmptyState() {
   const t = useTranslations("Onboarding");
@@ -73,7 +77,7 @@ export default function FirstUseEmptyState() {
   ];
 
   return (
-    <div className="relative flex min-h-[380px] flex-col items-center justify-center px-6 py-14">
+    <div className="relative flex min-h-[380px] flex-1 flex-col items-center justify-center px-6 py-14">
       <div className="animate-scale-in relative w-full max-w-2xl space-y-8 text-center">
         <div className="space-y-3">
           <span className="brand-orbit mx-auto">

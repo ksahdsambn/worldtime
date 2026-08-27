@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 type FooterCurrent = "about" | "faq" | "privacy" | "terms";
 
 const linkClass =
-  "text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover";
+  "text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent";
 
 export default async function SiteFooter({
   locale,

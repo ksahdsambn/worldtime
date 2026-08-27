@@ -55,7 +55,7 @@ export default async function Home({ params }: Props) {
   const tSeo = await getTranslations({ locale, namespace: "Seo" });
 
   return (
-    <div className="liquid-glass-backdrop flex min-h-screen flex-col text-ink">
+    <div className="liquid-glass-backdrop flex min-h-screen supports-[height:100dvh]:min-h-dvh flex-col text-ink">
       <UrlStateSync />
       <KeyboardShortcuts />
 
@@ -108,7 +108,9 @@ export default async function Home({ params }: Props) {
         功能/场景在 /about，FAQ 与 FAQPage JSON-LD 在 /faq。
         结构化数据描述继续引用更完整的 Seo.introBody（与可见定义句同源）。
       */}
-      <footer className="border-t border-line bg-surface px-4 py-2.5 text-sm">
+      {/* mt-auto：内容不足一屏时把 footer 压到容器底部，避免视口余量
+          留在 footer 下方成为空白背景区。 */}
+      <footer className="mt-auto border-t border-line bg-surface px-4 py-2.5 text-sm">
         <Reveal className="mx-auto max-w-5xl space-y-1.5">
           {/* 一段：一句实体定义（世界时钟 / 时区转换器 / 会议安排工具三实体必备） */}
           <p className="max-w-3xl leading-relaxed text-muted">
@@ -137,7 +139,7 @@ export default async function Home({ params }: Props) {
                       <li key={id}>
                         <Link
                           href={`/time/${id}`}
-                          className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover"
+                          className="text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent"
                         >
                           {localCityName(locale as AppLocale, city)}
                         </Link>
@@ -156,7 +158,7 @@ export default async function Home({ params }: Props) {
                     <li key={id}>
                       <Link
                         href={`/time/${id}`}
-                        className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover"
+                        className="text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent"
                       >
                         {localCityName(locale as AppLocale, city)}
                       </Link>
@@ -186,7 +188,7 @@ export default async function Home({ params }: Props) {
                     <li key={item.slug}>
                       <Link
                         href={`/time-converter/${item.slug}`}
-                        className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover"
+                        className="text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent"
                       >
                         {item.label}
                       </Link>
