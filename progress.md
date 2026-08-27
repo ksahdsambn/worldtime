@@ -3068,3 +3068,96 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 - 基线 worktree（`d:/opencode/worldtime-baseline`）：保留供复核，需要时按 `git worktree remove` 清理。
 - 临时脚本（`.tmp-*.cjs`）与中间产物（`.next.old`/`.next.old2`/`.next.old3`）已清理。
 - 本补遗未提交（用户未要求 commit）。
+
+---
+
+### 第 55 轮：审查修复与分期提交（2026-08-27）
+
+> 外部审查确认四期功能全部达标（总体 9/10），另指出 4 类问题：①四期改动堆在
+> 同一未提交工作区、无法按期独立回滚（执行文档一.2 缺口）；②翻译纪律违规
+> （执行文档一.4，第 54 轮为手工翻译）；③八.1 真人可用性走查未执行；
+> ④小问题（FirstUseEmptyState 陈旧注释、工作区调试产物未清理——补遗声称
+> `.next.old` 已清理但实际仍在，与记录不符）。本轮逐项修复。
+
+#### 1. 翻译纪律补正：补走统一翻译流程（闭环问题 ②）
+
+- 对第 54 轮全部 17 个变更键（3 Seo + 4 文案 + 4 Onboarding + 6 结论/提示）
+  以独立翻译引擎对 9 个目标语言（de/es/fr/ja/ko/pt/ru/vi/zh-Hant）做
+  **盲重译**（en 为基准、zh 为语义参照，附各语言风格约束与术语表，
+  `{day} {time}` 占位符锁定），再与现值逐键比对（17 × 9 = 153 对）。
+- **结论：现值 0 处需修改**，MT 盲重译自身错误率显著：
+  - es 三处性数错误（"Encuentra un hora"→应为 un horario/una）；
+  - fr 语义偏移（Modes.overlap 译成 "Trouver un fuseau horaire"＝找时区）；
+  - ja/ko 输出夹杂乱码与中文残留（「開会コーディネーター」「もっと Cities」、
+    「然后点击」混入韩语句）；de 全文 Sie 尊称违背品牌 du 基调；
+  - ru 性数一致错误（"бесплатный мировой часы"）；vi "Hốt" 用词不当。
+  - 重合键（pt "Encontrar um horário"、de "Gemeinsame Zeit finden"、
+    ru "Понятно"、zh-Hant 全部 17 键）与现值一致或等价，佐证现值质量。
+- 按 `i18n-translation-prompt.md` 硬性约束 6（修改最小化原则：禁止为改而改），
+  全部保留现值；流程违规就此闭环：文案已实际经过「独立机译 + 逐键比对 +
+  人工裁定」三道工序，比对记录在案。
+
+#### 2. 代码与工作区修复（闭环问题 ④）
+
+- `FirstUseEmptyState.tsx` 顶部注释修正：原文误写「卡片标题为视觉标题（span）」
+  与补遗后的 h3 包裹 button 实现不符，更正为 h3 大纲描述（纯注释改动，
+  无行为变化）。
+- 清理调试产物（本轮实测确认删除）：`.next.old/`、`.next.old2/`、`nul`、
+  根目录散落截图 `footer-current.png`/`footer-current2.png`/`footer-final.png`/
+  `worldtime_seo_footer.jpg`/`t1_light_grid.png`。`deploy.py`、
+  `i18n-translation-prompt.md` 按第 53 轮约定继续保留不提交；
+  `output/` 证据目录按 .gitignore 保留本地。
+- `src/app/globals.css` 工作副本行尾统一为 LF（原 CRLF 与索引不一致，
+  曾致 `git status` 虚报 M；内容零变化）。
+
+#### 3. 分期提交拆分（闭环问题 ①）
+
+- 方法（messages 与 globals.css 均被多期共同触碰，需分相手术）：
+  - 以 `git show HEAD:<file>` 为基线、最终工作区为终态，将 17 个变更键按
+    四期归类，逐期重建「基线 + 累积本期键」中间态（JSON 按 final 键序
+    插入，phase-4 重建与终态**逐字节断言一致**；globals.css 按四个样式块
+    banner 切分归期，同法断言）；
+  - 提交顺序 docs → 一期 → 二期 → 三期 → 四期，每期 `git add` 对应文件集，
+    期与期之间重建下一相中间态。
+- 提交清单（全部单 main 直推，恢复「按期独立回滚」能力）：
+  | 提交 | 内容 |
+  | --- | --- |
+  | `81cb2e5` docs(ux) | 需求/执行计划文档 + 第 54 轮记录 |
+  | `029e4c2` feat(seo) | 一期：SEO 区三段式收缩（seo.ts/SeoFold/page.tsx/css 块 1/seo.test/messages Seo 键） |
+  | `0e53831` feat(i18n) | 二期：文案去术语化（messages 4 键） |
+  | `b3c36ca` feat(onboarding) | 三期：任务卡片引导流（store/FirstUseEmptyState/CitySearch/taskMode.test/css 块 2-3/messages Onboarding 键） |
+  | `ee6e884` feat(grid) | 四期：结论卡/收纳/拖选提示（新 3 组件/GridToolbar/Workspace/overlap.ts/vitest.config/组件测试/css 块 4/messages 其余键/puppeteer-core） |
+- **逐提交独立验证**（`git worktree` 检出各提交 + node_modules junction，
+  各自跑 vitest + tsc）：
+  | 提交 | vitest | tsc |
+  | --- | --- | --- |
+  | 一期 `029e4c2` | ✅ 252/252（18 文件） | ✅ 0 错误 |
+  | 二期 `0e53831` | ✅ 252/252（18 文件） | ✅ 0 错误 |
+  | 三期 `b3c36ca` | ✅ 260/260（19 文件） | ✅ 0 错误 |
+  | 四期 `ee6e884` | ✅ 279/279（21 文件） | ✅ 0 错误 |
+  测试数递进 252→252→260→279，与各期新增用例数吻合，证明分期边界正确、
+  任一期可独立检出且回滚不牵连其它期。
+
+#### 4. 八.1 真人可用性走查（问题 ③，列为上线后跟踪）
+
+- 本地无法招募 5 名未接触产品的受试者，维持第 54 轮替代验证
+  （「选卡片 → 加城 → 见结论卡」自动化全路径 + DOM 结构抽检）。
+- 正式列入上线后观察任务：上线后组织 5 人走查（至少 4 人在 5 秒内说出
+  产品能干什么、1 分钟内完成选定任务→加两城→看到推荐结论），结果回填本节。
+
+#### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm test`（终态 HEAD） | ✅ 279/279 |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 0 警告 / 0 错误 |
+| 逐提交 worktree 验证 | ✅ 四期各自 vitest + tsc 全绿 |
+| `git status` | ✅ 干净（仅约定保留的 2 个未跟踪文件） |
+
+#### 收尾
+
+- 分相手术临时目录（`.tmp-phase-split/`）与比对用临时文件已删除；4 个验证
+  worktree 已 remove；`worldtime-baseline` worktree 保留（第 53 轮基线对照，
+  四期已入 Git 历史，后续可随时 `git worktree remove` 清理）。
+- 本轮共 6 个提交（docs ×1 + 四期 ×4 + 本记录），推送由用户决定。
