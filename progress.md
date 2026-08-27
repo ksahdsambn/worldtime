@@ -3161,3 +3161,77 @@ PORT=8080 docker compose up -d # 自定义宿主端口
   worktree 已 remove；`worldtime-baseline` worktree 保留（第 53 轮基线对照，
   四期已入 Git 历史，后续可随时 `git worktree remove` 清理）。
 - 本轮共 6 个提交（docs ×1 + 四期 ×4 + 本记录），推送由用户决定。
+
+### 第 56 轮：卡片化视觉统一——首页快捷开始大卡 + 模式小卡片 + 时钟卡片行（2026-08-28）
+
+> 时间：2026-08-28
+> 范围：按用户三点反馈做卡片化视觉统一：①首页中部「从我的时区开始」「世界金融时钟
+> （US 纽约 · GB 伦敦 · JP 东京）」由通栏按钮升级为与上方任务卡同款大卡片，一排一排
+> 向下流动、面积与任务卡一致；②时钟/排期页左上角「时钟」「找共同时间」改为小卡片 UI；
+> ③点开各模式后的页面元素（时钟城市行）改为与首页一致的卡片形式。本轮为纯视觉/结构
+> 调整，无数据与业务逻辑变化。
+
+#### 改动清单
+
+| # | 文件 | 改动 |
+| --- | --- | --- |
+| 1 | `src/components/FirstUseEmptyState.tsx` | 快捷开始两张按钮并入任务卡同一网格，成 4 卡等大布局：第一排两张任务卡（sm 两列），第二/三排「从我的时区开始」「世界金融时钟」各占整行大卡片（`sm:col-span-2`）；卡片均为原生 button + h3 标题；「从我的时区开始」图标用新增 `.task-card__icon--solid`（蓝底实心章）保留原主按钮权重；金融卡正文为三城 chips，国旗 emoji 以 `aria-hidden` 屏蔽（读屏只读城市名，避免逐个朗读"国旗"）；移除旧 `btn-primary`/`btn-ghost` 通栏按钮 |
+| 2 | `src/components/Workspace.tsx` | 模式切换容器由 `.seg` 胶囊分段改为 `.mode-cards` 小卡片；`data-testid`（mode-tabs/mode-clock/mode-overlap）与 `aria-pressed` 语义不变；不使用 role=group 的既有约束保留 |
+| 3 | `src/app/globals.css` | 新增 `.mode-cards` 小卡片样式（surface + border + shadow-sm，选中态蓝描边 + `color-mix(accent 22%, surface)` 不透明浅蓝面 + glow，焦点环 2px）与 `.task-card__icon--solid` 实心图标章 |
+| 4 | `src/components/TimeCards.tsx` | 城市行 `li` 增补 `rounded-lg shadow-sm`（工具类覆盖 `.surface` 的 radius/shadow），与首页卡片同观感；拖拽/悬停投影逻辑不变 |
+| 5 | `messages/*.json`（11 文件） | 新增 `Onboarding.startLocalBody`（快捷卡描述文案）；zh 源文案「自动加入你所在的时区，并搭配纽约、伦敦等世界主要城市。」（**非穷举表述**，与 `localStarterCities` 实际行为一致），其余 10 语言经 translator 子智能体翻译并多轮校对修正 |
+| 6 | `tests/components/uxRedesign.test.tsx` | 结构断言扩为 4 卡（原生 button + h3 顺序：任务时钟→任务共同时间→开始→金融；快捷卡无 aria-pressed）；新增 3 用例：快捷卡即时加城（本地起步恰好 3 座）、先选任务再点快捷卡（`addPlace` 消费 pendingMode 进入所选模式）、金融三巨头精确 id 序列 |
+| 7 | `.gitignore` | `deploy.py`（含明文服务器凭据）与 `i18n-translation-prompt.md`（本地流程文档）纳入忽略，防误提交（第二轮审查 P2-F） |
+
+#### 设计说明
+
+- 快捷卡与任务卡同为 `.task-card` 语言（同宽、同圆角、同描边、同悬停辉光），
+  差异仅在图标章（实心 vs 浅蓝底）——满足「面积都等于上边两个卡片」的等大诉求，
+  又保留「立即执行」与「先选任务」的层级差。
+- 模式小卡片是玻璃工作条上的 chrome，但按钮面用不透明令牌（未选中 surface、
+  选中 `color-mix(accent 22%, surface)` 实色混合），与 `.seg` 选中态抬升做法
+  一致（可逐字读数的控件面不做玻璃）。
+
+#### 两轮审查与修复（code-reviewer 独立执行）
+
+**第一轮**（P0=0 / P1=1 / P2=3）：
+- **P1-1 文案与行为不符**：初版 startLocalBody 承诺「纽约、伦敦、东京」，但
+  `localStarterCities()` 在探测到本地时区时返回「本地+纽约+伦敦」（`slice(0,3)`
+  丢弃东京），最常见路径下文案失实。修复：zh 源文案改为非穷举表述
+  「自动加入你所在的时区，并搭配纽约、伦敦等世界主要城市。」并重译 10 语言。
+- P2-1 暗色选中面半透明：`--accent-soft` 暗色为 rgba 半透明，玻璃条上选中卡
+  透出模糊背景。修复：改 `color-mix(in srgb, var(--accent) 22%, var(--surface))`
+  不透明混合（浅色 ≈ accent-soft，暗色实色深蓝，对比度 11.1:1–13.1:1）。
+- P2-2 记录文件计数不符 / P2-3 测试注释悬空：随本轮记录刷新与用例重写修复
+  （删除恒真断言，改为真实锁定「先选任务 → 点快捷卡 → 进入所选模式」路径）。
+
+**第二轮**（P0=0 / P1=0 / P2=6）：
+- P2-A color-mix「回退行」死代码：带 `var()` 的回退声明在不支持 color-mix 的
+  环境会 IACVT 落到 transparent 而非回退上一行。修复：删除无效回退行，注释
+  如实声明 color-mix 为项目基线（玻璃悬停色等处已裸用）。
+- P2-B 记录三处与修复后 diff 不符（accent-soft 底/旧文案/用例数）：已随本节刷新。
+- P2-C ja 语义方向偏移（「タイムゾーンに…追加」= 把城市加进时区）：已改
+  「タイムゾーン**と**」并列；P2-D ko 语体混用（해요체→합니다체）：已统一；
+  P2-E vi/ru 微瑕（và 连接 / 未完成体命令式）与金融卡 accname 含国旗 emoji：
+  译文已修，chips 已 aria-hidden。
+- P2-F `deploy.py` 明文凭据未忽略而提交在即：已入 `.gitignore`（见改动清单 #7）。
+
+#### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm test`（修复终态） | ✅ 282/282（21 文件；较上轮 +3，与新增用例数吻合） |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 0 警告 / 0 错误 |
+| `npm run build` | ✅ 成功（1056 页静态生成；next start :3100 冒烟 /zh 200） |
+| 视觉回归（puppeteer 截图 ×3 + vision 校验） | ✅ 首页 4 卡等大网格 / 模式小卡片选中态 / 时钟卡片行，三页均符合且无旧样式残留 |
+
+#### 收尾
+
+- 临时截图脚本（`scripts/tmp-shots.cjs`）、i18n 插入/修正脚本 ×3、`.tmp-shots/`
+  截图目录均已删除；临时 3100 端口冒烟服务器已停止（3000 端口被既有进程
+  占用，未触碰）。
+- 本轮共 2 个提交：feat `c1753d0`（17 文件：4 源码 + 11 语言 + 测试 +
+  .gitignore）+ docs 本笔（progress.md），已按用户要求推送 GitHub main；
+  `deploy.py` / `i18n-translation-prompt.md` 已入 .gitignore 不再出现在
+  git status。
