@@ -237,7 +237,7 @@
     "step1Title": "1. Ajoutez des villes",
     "step1Body": "Utilisez le champ de recherche pour ajouter tous les lieux à coordonner.",
     "step2Title": "2. Glissez pour choisir l'heure",
-    "step2Body": "Ouvrez l'onglet « Créneaux » puis faites glisser sur la grille pour choisir un créneau qui convient à tout le monde.",
+    "step2Body": "Ouvrez l'onglet « Trouver un créneau » puis faites glisser sur la grille pour choisir un créneau qui convient à tout le monde.",
     "step3Title": "3. Lisez les couleurs",
     "step3Body": "Chaque case est colorée selon le statut de la ville — vert : heures de travail, orange : heures de contact, rouge : sommeil.",
     "legendTitle": "Légende des couleurs",
@@ -395,7 +395,7 @@
   },
   "Modes": {
     "clock": "Horloge",
-    "overlap": "Créneaux"
+    "overlap": "Trouver un créneau"
   },
   "Viewing": {
     "now": "Maintenant",

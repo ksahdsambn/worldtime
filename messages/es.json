@@ -237,7 +237,7 @@
     "step1Title": "1. Añade ciudades",
     "step1Body": "Usa el buscador para añadir todos los lugares que quieres coordinar.",
     "step2Title": "2. Arrastra para elegir la hora",
-    "step2Body": "Abre la pestaña «Coincidencia» y arrastra sobre la cuadrícula para elegir un horario que funcione para todos.",
+    "step2Body": "Abre la pestaña «Buscar un horario común» y arrastra sobre la cuadrícula para elegir un horario que funcione para todos.",
     "step3Title": "3. Lee los colores",
     "step3Body": "Cada celda se colorea según el estado de esa ciudad: verde es horario laboral, naranja es horario de contacto y rojo es descanso.",
     "legendTitle": "Leyenda de colores",
@@ -395,7 +395,7 @@
   },
   "Modes": {
     "clock": "Reloj",
-    "overlap": "Coincidencia"
+    "overlap": "Buscar un horario común"
   },
   "Viewing": {
     "now": "Ahora",

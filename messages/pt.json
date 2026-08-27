@@ -237,7 +237,7 @@
     "step1Title": "1. Adicione cidades",
     "step1Body": "Use a busca para adicionar todos os lugares que quer coordenar.",
     "step2Title": "2. Arraste para escolher o horário",
-    "step2Body": "Abra a aba \"Sobreposição\" e arraste na grade para escolher um horário que funcione para todos.",
+    "step2Body": "Abra a aba \"Encontrar um horário\" e arraste na grade para escolher um horário que funcione para todos.",
     "step3Title": "3. Leia as cores",
     "step3Body": "Cada célula é colorida pelo status da própria cidade — verde é horário de trabalho, laranja é horário de contato e vermelho é descanso.",
     "legendTitle": "Legenda das cores",
@@ -395,7 +395,7 @@
   },
   "Modes": {
     "clock": "Relógio",
-    "overlap": "Sobreposição"
+    "overlap": "Encontrar um horário"
   },
   "Viewing": {
     "now": "Agora",

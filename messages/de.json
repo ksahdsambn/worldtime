@@ -237,7 +237,7 @@
     "step1Title": "1. Städte hinzufügen",
     "step1Body": "Nutze das Suchfeld, um jeden Ort hinzuzufügen, den du abstimmen möchtest.",
     "step2Title": "2. Zeit durch Ziehen wählen",
-    "step2Body": "Wechsle zum Tab „Überschneidung“ und ziehe im Raster ein Zeitfenster auf, das für alle passt.",
+    "step2Body": "Wechsle zum Tab „Gemeinsame Zeit finden“ und ziehe im Raster ein Zeitfenster auf, das für alle passt.",
     "step3Title": "3. Farben lesen",
     "step3Body": "Jede Zelle zeigt den Status der jeweiligen Stadt — Grün ist Arbeitszeit, Orange ist erreichbare Zeit, Rot ist Schlafenszeit.",
     "legendTitle": "Farblegende",
@@ -395,7 +395,7 @@
   },
   "Modes": {
     "clock": "Uhr",
-    "overlap": "Überschneidung"
+    "overlap": "Gemeinsame Zeit finden"
   },
   "Viewing": {
     "now": "Jetzt",

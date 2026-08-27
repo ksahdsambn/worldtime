@@ -237,7 +237,7 @@
     "step1Title": "1. Thêm thành phố",
     "step1Body": "Dùng ô tìm kiếm để thêm mọi nơi bạn muốn phối hợp.",
     "step2Title": "2. Kéo để chọn giờ",
-    "step2Body": "Chuyển sang thẻ \"Khung trùng nhau\", rồi kéo trên lưới để chọn khung giờ phù hợp với mọi người.",
+    "step2Body": "Chuyển sang thẻ \"Tìm giờ chung\", rồi kéo trên lưới để chọn khung giờ phù hợp với mọi người.",
     "step3Title": "3. Đọc màu sắc",
     "step3Body": "Mỗi ô được tô theo trạng thái của thành phố đó — xanh lá là giờ làm việc, cam là giờ có thể liên lạc, đỏ là đang nghỉ.",
     "legendTitle": "Chú giải màu",
@@ -395,7 +395,7 @@
   },
   "Modes": {
     "clock": "Đồng hồ",
-    "overlap": "Khung trùng nhau"
+    "overlap": "Tìm giờ chung"
   },
   "Viewing": {
     "now": "Bây giờ",

@@ -237,7 +237,7 @@
     "step1Title": "1. Add cities",
     "step1Body": "Use the search box to add every place you're coordinating across.",
     "step2Title": "2. Drag to pick a time",
-    "step2Body": "Open the Overlap tab, then click and drag across the grid to choose a window that lines up for everyone.",
+    "step2Body": "Open the Find a time tab, then click and drag across the grid to choose a window that lines up for everyone.",
     "step3Title": "3. Read the colors",
     "step3Body": "Each cell is tinted by that city's own status — green is work hours, orange is contact hours, red is asleep.",
     "legendTitle": "Color legend",
@@ -388,14 +388,14 @@
     ]
   },
   "ViewControls": {
-    "prev": "Backward",
-    "next": "Forward",
+    "prev": "Earlier",
+    "next": "Later",
     "day1": "1 day",
     "day7": "7 days"
   },
   "Modes": {
     "clock": "Clock",
-    "overlap": "Overlap"
+    "overlap": "Find a time"
   },
   "Viewing": {
     "now": "Now",
