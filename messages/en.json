@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "Find a meeting time that works for everyone",
     "startLocal": "Start with my time zone",
-    "presetFinance": "World finance clock"
+    "presetFinance": "World finance clock",
+    "taskClockTitle": "See what time it is anywhere",
+    "taskClockBody": "Add cities to see their current local time and day/night state.",
+    "taskOverlapTitle": "Find a time that works for everyone",
+    "taskOverlapBody": "Compare everyone's hours across a week and pick a slot that suits all."
   },
   "Help": {
     "label": "Tips",

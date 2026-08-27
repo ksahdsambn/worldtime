@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "全員に合う会議時間を見つけよう",
     "startLocal": "自分のタイムゾーンで始める",
-    "presetFinance": "世界の金融時計"
+    "presetFinance": "世界の金融時計",
+    "taskClockTitle": "世界各地の今の時間を見る",
+    "taskClockBody": "都市を追加すると、現地の現在時刻と昼か夜かをひと目で確認できます。",
+    "taskOverlapTitle": "全員が空いている時間を探す",
+    "taskOverlapBody": "1 週間の各都市の生活リズムを比べて、全員に合う時間帯を選びます。"
   },
   "Help": {
     "label": "使い方",

@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "모두에게 맞는 회의 시간 찾기",
     "startLocal": "내 시간대에서 시작",
-    "presetFinance": "세계 금융 시계"
+    "presetFinance": "세계 금융 시계",
+    "taskClockTitle": "지금 세계 각지 시간 보기",
+    "taskClockBody": "도시를 추가하면 현재 현지 시간과 낮/밤 여부를 한눈에 확인할 수 있습니다.",
+    "taskOverlapTitle": "모두가 되는 시간 찾기",
+    "taskOverlapBody": "일주일간 각 도시의 일정을 비교해 모두에게 맞는 시간대를 선택하세요."
   },
   "Help": {
     "label": "사용 팁",

@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "Trouvez une heure qui convient à tous",
     "startLocal": "Commencer avec mon fuseau horaire",
-    "presetFinance": "Horloge financière mondiale"
+    "presetFinance": "Horloge financière mondiale",
+    "taskClockTitle": "Voyez l'heure qu'il est partout",
+    "taskClockBody": "Ajoutez des villes pour voir leur heure locale actuelle et l'état jour/nuit.",
+    "taskOverlapTitle": "Trouvez un créneau qui convient à tous",
+    "taskOverlapBody": "Comparez les horaires de chacun sur une semaine et choisissez une plage adaptée à tous."
   },
   "Help": {
     "label": "Astuces",

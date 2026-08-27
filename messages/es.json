@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "Encuentra una hora que funcione para todos",
     "startLocal": "Empezar con mi zona horaria",
-    "presetFinance": "Reloj financiero mundial"
+    "presetFinance": "Reloj financiero mundial",
+    "taskClockTitle": "Mira qué hora es en cada lugar",
+    "taskClockBody": "Añade ciudades para ver su hora local actual y si es de día o de noche.",
+    "taskOverlapTitle": "Encuentra un horario que funcione para todos",
+    "taskOverlapBody": "Compara los horarios de todos durante una semana y elige una franja que convenga a todos."
   },
   "Help": {
     "label": "Consejos",

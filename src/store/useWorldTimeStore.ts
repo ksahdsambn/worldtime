@@ -101,6 +101,19 @@ interface WorldTimeState {
   /** 主视图模式（默认 clock） */
   viewMode: ViewMode;
 
+  /**
+   * 任务卡片选定的待生效模式（第三期）：
+   * 空状态下点任务卡片时记录；添加第一个城市后自动切换到该模式并清除。
+   * null 表示未选定（维持默认时钟模式）。不持久化、不进分享链接。
+   */
+  pendingMode: ViewMode | null;
+
+  /**
+   * 城市搜索高亮脉冲计数（第三期）：点任务卡片后自增，
+   * CitySearch 据此聚焦并短暂高亮搜索框，引导用户添加城市。
+   */
+  searchPulse: number;
+
   /** 网格窗口天数（默认 1 天） */
   gridDays: GridDays;
 
@@ -136,8 +149,12 @@ interface WorldTimeState {
   // ---- 查看时刻 / 视图模式 ----
   /** 设定自定义查看时刻；null 回到实时「现在」 */
   setPinned: (ms: number | null) => void;
-  /** 切换主视图模式（时钟 / 重叠时段） */
+  /** 切换主视图模式（时钟 / 找共同时间） */
   setViewMode: (mode: ViewMode) => void;
+  /** 设定任务卡片的待生效模式；null 清除（第三期） */
+  setPendingMode: (mode: ViewMode | null) => void;
+  /** 触发城市搜索高亮脉冲（第三期） */
+  pulseSearch: () => void;
   /** 切换网格窗口跨度（1 天 / 7 天） */
   setGridDays: (days: GridDays) => void;
 
@@ -158,6 +175,8 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
   selection: null,
   pinnedMs: null,
   viewMode: "clock",
+  pendingMode: null,
+  searchPulse: 0,
   gridDays: 1,
   viewStartDateMs: null,
   restored: false,
@@ -174,6 +193,10 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
       const places = [...state.places, place];
       // 列表为空（加入前）时自动设为主地点
       const homeId = state.places.length === 0 ? place.id : state.homeId;
+      // 任务卡片引导流（第三期）：加入前无城市且已选任务 → 自动进入所选模式
+      if (state.places.length === 0 && state.pendingMode != null) {
+        return { places, homeId, viewMode: state.pendingMode, pendingMode: null };
+      }
       return { places, homeId };
     });
     return added;
@@ -257,6 +280,8 @@ export const useWorldTimeStore = create<WorldTimeState>((set, get) => ({
 
   setPinned: (ms) => set({ pinnedMs: ms }),
   setViewMode: (mode) => set({ viewMode: mode }),
+  setPendingMode: (mode) => set({ pendingMode: mode }),
+  pulseSearch: () => set((s) => ({ searchPulse: s.searchPulse + 1 })),
   setGridDays: (days) => set({ gridDays: days }),
 
   setViewStartDate: (ms) => set({ viewStartDateMs: ms }),

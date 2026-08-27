@@ -94,11 +94,14 @@ export default function CitySearch() {
   const zhFirst = isChineseLocale(locale);
   const addPlace = useWorldTimeStore((s) => s.addPlace);
   const places = useWorldTimeStore((s) => s.places);
+  const searchPulse = useWorldTimeStore((s) => s.searchPulse);
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [highlight, setHighlight] = useState(0);
+  const [pulsing, setPulsing] = useState(false);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = "city-search-listbox";
   // 下拉可见 = 聚焦/输入且非空查询；进出过渡由 presence 驱动
   const dropdownVisible = open && query.trim().length > 0;
@@ -108,6 +111,19 @@ export default function CitySearch() {
   useEffect(() => () => {
     if (blurTimer.current) clearTimeout(blurTimer.current);
   }, []);
+
+  // 任务卡片引导（第三期）：searchPulse 自增时聚焦搜索框并短暂高亮，
+  // 把「下一步：添加城市」变成显性动作。跳过初始值（0）避免首挂载误触发。
+  useEffect(() => {
+    if (searchPulse === 0) return;
+    const el = inputRef.current;
+    if (!el) return;
+    el.focus();
+    el.scrollIntoView({ block: "center", behavior: "smooth" });
+    setPulsing(true);
+    const id = setTimeout(() => setPulsing(false), 2400);
+    return () => clearTimeout(id);
+  }, [searchPulse]);
 
   const results = useMemo<CityRecord[]>(() => {
     const q = query.trim().toLowerCase();
@@ -168,9 +184,10 @@ export default function CitySearch() {
 
   return (
     <div className="relative w-full max-w-md" ref={anchorRef}>
-      <div className="relative">
+      <div className={`relative ${pulsing ? "search-pulse" : ""}`}>
         <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
         <input
+          ref={inputRef}
           type="text"
           role="combobox"
           maxLength={60}

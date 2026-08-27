@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "Finde eine Uhrzeit, die für alle passt",
     "startLocal": "Mit meiner Zeitzone starten",
-    "presetFinance": "Welt-Finanzuhr"
+    "presetFinance": "Welt-Finanzuhr",
+    "taskClockTitle": "Sieh nach, wie spät es überall ist",
+    "taskClockBody": "Städte hinzufügen und die aktuelle Ortszeit sowie Tag und Nacht auf einen Blick sehen.",
+    "taskOverlapTitle": "Finde eine Zeit, die für alle passt",
+    "taskOverlapBody": "Vergleiche die Arbeitszeiten aller über eine Woche und wähle ein Zeitfenster für alle."
   },
   "Help": {
     "label": "Tipps",

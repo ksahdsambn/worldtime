@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "找到一個大家都合適的會議時間",
     "startLocal": "從我的時區開始",
-    "presetFinance": "世界金融時鐘"
+    "presetFinance": "世界金融時鐘",
+    "taskClockTitle": "看看各地現在幾點",
+    "taskClockBody": "新增城市，隨時查看各地的目前時間與晝夜。",
+    "taskOverlapTitle": "找個大家都有空的時間",
+    "taskOverlapBody": "對比一週內各城市的作息，選出對所有人都合適的時段。"
   },
   "Help": {
     "label": "使用提示",

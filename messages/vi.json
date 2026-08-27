@@ -229,7 +229,11 @@
   "Onboarding": {
     "emptyHeadline": "Tìm giờ họp phù hợp với mọi người",
     "startLocal": "Bắt đầu với múi giờ của tôi",
-    "presetFinance": "Đồng hồ tài chính thế giới"
+    "presetFinance": "Đồng hồ tài chính thế giới",
+    "taskClockTitle": "Xem bây giờ là mấy giờ ở mọi nơi",
+    "taskClockBody": "Thêm thành phố để xem giờ địa phương hiện tại và ban ngày hay ban đêm.",
+    "taskOverlapTitle": "Tìm giờ phù hợp với tất cả mọi người",
+    "taskOverlapBody": "So sánh lịch sinh hoạt của các thành phố trong một tuần và chọn khung giờ phù hợp với tất cả."
   },
   "Help": {
     "label": "Mẹo",
