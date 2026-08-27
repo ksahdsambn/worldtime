@@ -142,6 +142,9 @@
   "Seo": {
     "introTitle": "Horloge mondiale et convertisseur de fuseaux horaires",
     "introBody": "WorldTime est une horloge mondiale, un convertisseur de fuseaux horaires et un planificateur de réunions gratuit. Comparez l'heure locale entre villes et fuseaux horaires, trouvez les meilleures plages pour vos réunions internationales et partagez vos sélections horaires avec prise en charge automatique de l'heure d'été (DST).",
+    "introLine": "WorldTime est une horloge mondiale, un convertisseur de fuseaux horaires et un planificateur de réunions gratuit.",
+    "moreCities": "Plus de villes",
+    "allConverters": "Tous les comparatifs de fuseaux horaires",
     "popularTitle": "Convertisseurs de fuseau horaire populaires",
     "featuresTitle": "Fonctionnalités principales",
     "features": [

@@ -142,6 +142,9 @@
   "Seo": {
     "introTitle": "Reloj mundial y conversor de zonas horarias",
     "introBody": "WorldTime es un reloj mundial, conversor de zonas horarias y organizador de reuniones gratuito. Compara la hora local entre ciudades y zonas horarias, encuentra las mejores horas para reuniones internacionales y comparte selecciones de hora con soporte automático del horario de verano (DST).",
+    "introLine": "WorldTime es un reloj mundial, conversor de zonas horarias y organizador de reuniones gratuito.",
+    "moreCities": "Más ciudades",
+    "allConverters": "Todas las comparaciones de zonas horarias",
     "popularTitle": "Conversores de zona horaria populares",
     "featuresTitle": "Funciones principales",
     "features": [

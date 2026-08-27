@@ -142,6 +142,9 @@
   "Seo": {
     "introTitle": "Đồng hồ thế giới và trình chuyển đổi múi giờ",
     "introBody": "WorldTime là công cụ đồng hồ thế giới, chuyển đổi múi giờ và lên lịch họp miễn phí. So sánh giờ địa phương giữa các thành phố và múi giờ, tìm khung giờ phù hợp cho các cuộc họp quốc tế và chia sẻ lựa chọn thời gian với hỗ trợ tự động giờ mùa hè (DST).",
+    "introLine": "WorldTime là công cụ đồng hồ thế giới, chuyển đổi múi giờ và lên lịch họp miễn phí.",
+    "moreCities": "Thêm thành phố",
+    "allConverters": "Tất cả so sánh múi giờ",
     "popularTitle": "Trình chuyển đổi múi giờ phổ biến",
     "featuresTitle": "Tính năng chính",
     "features": [

@@ -142,6 +142,9 @@
   "Seo": {
     "introTitle": "Relógio mundial e conversor de fusos horários",
     "introBody": "WorldTime é um relógio mundial, conversor de fusos horários e organizador de reuniões gratuito. Compare o horário local entre cidades e fusos horários, encontre os melhores horários para reuniões internacionais e compartilhe seleções de horário com suporte automático ao horário de verão (DST).",
+    "introLine": "WorldTime é um relógio mundial, conversor de fusos horários e organizador de reuniões gratuito.",
+    "moreCities": "Mais cidades",
+    "allConverters": "Todas as comparações de fusos horários",
     "popularTitle": "Conversores de fuso horário populares",
     "featuresTitle": "Principais recursos",
     "features": [

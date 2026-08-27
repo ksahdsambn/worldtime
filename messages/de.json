@@ -142,6 +142,9 @@
   "Seo": {
     "introTitle": "Weltuhr und Zeitzonenkonverter",
     "introBody": "WorldTime ist eine kostenlose Weltuhr, Zeitzonenkonverter und Terminplaner. Vergleichen Sie die Ortszeit zwischen Städten und Zeitzonen, finden Sie die besten Stunden für internationale Meetings und teilen Sie Zeitauswahlen mit automatischer Sommerzeit-Unterstützung (DST).",
+    "introLine": "WorldTime ist eine kostenlose Weltuhr, ein Zeitzonenkonverter und ein Terminplaner.",
+    "moreCities": "Weitere Städte",
+    "allConverters": "Alle Zeitzonenvergleiche",
     "popularTitle": "Beliebte Zeitzonenkonverter",
     "featuresTitle": "Hauptfunktionen",
     "features": [

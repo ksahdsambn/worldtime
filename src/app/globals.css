@@ -463,6 +463,48 @@
     box-shadow: var(--shadow-sm);
   }
 
+  /* —— SEO 页脚折叠（原生 details/summary，第一期收缩）——
+     键盘：summary 原生可聚焦（Enter/Space 展开收起）；焦点环可见；
+     展开状态由 details 语义暴露给读屏。箭头三角形随展开旋转。 */
+  .seo-fold {
+    /* 外边距由使用方布局控制（独立一行时由空间上下文提供，并排一行时无需） */
+  }
+  .seo-fold__summary {
+    @apply inline-flex cursor-pointer select-none items-center gap-1.5 rounded-sm
+      text-[12px] font-medium transition-colors duration-150;
+    color: var(--text-muted);
+    padding: 0.2rem 0.45rem;
+    margin-left: -0.45rem;
+    list-style: none; /* 去 WebKit 默认三角 */
+  }
+  .seo-fold__summary::-webkit-details-marker {
+    display: none;
+  }
+  .seo-fold__summary:hover {
+    color: var(--text);
+    background-color: var(--surface-hover);
+  }
+  .seo-fold__summary:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .seo-fold__arrow {
+    @apply relative block shrink-0;
+    width: 0;
+    height: 0;
+    border-left: 4px solid currentColor;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    transition: transform var(--dur-fast) var(--ease-out-quint);
+  }
+  .seo-fold[open] > .seo-fold__summary .seo-fold__arrow {
+    transform: rotate(90deg);
+  }
+  .seo-fold__body {
+    padding-top: 0.375rem;
+    padding-bottom: 0.25rem;
+  }
+
   /* —— 动效（data-state 驱动的进/出过渡；配合 usePresence hook 使用）——
      基态 = 隐藏；[data-state="enter"] = 显示。退出时 state 回到 "leave"
      （等价基态），过渡天然反向播放。仅动 transform/opacity。

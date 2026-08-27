@@ -142,6 +142,9 @@
   "Seo": {
     "introTitle": "World clock & time zone converter",
     "introBody": "WorldTime is a free world clock, time zone converter, and meeting planner. Compare the local time across cities and time zones, find the best hours to schedule international meetings, and share time selections with automatic daylight saving time (DST) support.",
+    "introLine": "WorldTime is a free world clock, time zone converter, and meeting planner.",
+    "moreCities": "More cities",
+    "allConverters": "All time zone comparisons",
     "popularTitle": "Popular time zone converters",
     "featuresTitle": "Key features",
     "features": [

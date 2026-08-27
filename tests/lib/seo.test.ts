@@ -24,6 +24,8 @@ import {
   SEO_DEFAULT_LOCALE,
   SITEMAP_LASTMOD,
   popularCityIds,
+  footerCitySplit,
+  FOOTER_VISIBLE_CITY_COUNT,
   websiteJsonLd,
   OG_IMAGE_PATH,
   BRAND_MARK_PNG,
@@ -175,6 +177,43 @@ describe("buildLandingSlugs", () => {
   it("热门 slug 无重复", () => {
     const slugs = buildLandingSlugs();
     expect(new Set(slugs).size).toBe(slugs.length);
+  });
+});
+
+describe("footerCitySplit（第一期：SEO 页脚三段式收缩）", () => {
+  it("可见层 + 折叠层并集等于热门城市全集（一条不少）", () => {
+    const { visible, folded } = footerCitySplit();
+    expect([...visible, ...folded].sort()).toEqual([...popularCityIds()].sort());
+  });
+  it("可见层与折叠层无交集、无重复", () => {
+    const { visible, folded } = footerCitySplit();
+    const set = new Set([...visible, ...folded]);
+    expect(set.size).toBe(visible.length + folded.length);
+  });
+  it("可见层取前 FOOTER_VISIBLE_CITY_COUNT 个（冻结名单）", () => {
+    const { visible } = footerCitySplit();
+    expect(visible).toEqual(popularCityIds().slice(0, FOOTER_VISIBLE_CITY_COUNT));
+    // 冻结名单：北京 / 纽约 / 伦敦 / 东京领衔（热门清单出现顺序）
+    expect(visible[0]).toBe("cn-beijing");
+    expect(visible.slice(0, 4)).toEqual([
+      "cn-beijing",
+      "us-new-york",
+      "gb-london",
+      "jp-tokyo",
+    ]);
+  });
+  it("页脚内链总量恒为 70 条（24 城市 + 46 换算）", () => {
+    const { visible, folded } = footerCitySplit();
+    const total = visible.length + folded.length + buildLandingSlugs().length;
+    expect(total).toBe(70);
+    expect(visible.length).toBe(12);
+    expect(folded.length).toBe(12);
+  });
+  it("全部城市 id 均可在 CITY_BY_ID 解析（防折叠名单出现死链）", () => {
+    const { visible, folded } = footerCitySplit();
+    for (const id of [...visible, ...folded]) {
+      expect(CITY_BY_ID[id], `unknown city id: ${id}`).toBeDefined();
+    }
   });
 });
 

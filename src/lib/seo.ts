@@ -223,6 +223,25 @@ export function popularCityIds(): string[] {
   return [...ids];
 }
 
+/**
+ * 首页 SEO 页脚可见层城市数量（第一期收缩）：按热门清单出现顺序取前 12 城，
+ * 其余进折叠区。可见层保证最有价值的内链权重传递不受折叠降权影响
+ * （需求 4.5 风险对冲）。
+ */
+export const FOOTER_VISIBLE_CITY_COUNT = 12;
+
+/** 首页 SEO 页脚城市分层：可见层 + 折叠层（并集恒等于 popularCityIds）。 */
+export function footerCitySplit(): {
+  visible: string[];
+  folded: string[];
+} {
+  const ids = popularCityIds();
+  return {
+    visible: ids.slice(0, FOOTER_VISIBLE_CITY_COUNT),
+    folded: ids.slice(FOOTER_VISIBLE_CITY_COUNT),
+  };
+}
+
 export function reverseLandingSlug(slug: string): string | null {
   const i = slug.indexOf("--");
   if (i <= 0) return null;

@@ -142,6 +142,9 @@
   "Seo": {
     "introTitle": "世界時計とタイムゾーン変換",
     "introBody": "WorldTime は無料の世界時計・タイムゾーン変換・会議スケジュールツールです。都市間・タイムゾーン間の現地時刻を比較し、国際会議に最適な時間帯を見つけ、夏時間（DST）自動対応で時間選択を共有できます。",
+    "introLine": "WorldTime は無料の世界時計・タイムゾーン変換・会議スケジュールツールです。",
+    "moreCities": "その他の都市",
+    "allConverters": "すべての時差比較",
     "popularTitle": "人気のタイムゾーン変換",
     "featuresTitle": "主な機能",
     "features": [
