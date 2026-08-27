@@ -62,6 +62,14 @@
     "hours": "hours",
     "minutes": "minutes"
   },
+  "Suggestions": {
+    "button": "Suggested times",
+    "title": "Times that work for everyone",
+    "scope": "Next 7 days",
+    "allGreen": "Everyone in work hours",
+    "compromise": "Everyone awake (some early or late)",
+    "empty": "No good window in the next 7 days. Try removing a city, or pick a time manually on the grid."
+  },
   "Summary": {
     "title": "Meeting time",
     "homeSuffix": " (home)"
@@ -70,11 +78,6 @@
     "copySummary": "Copy time summary",
     "shareLink": "Copy share link",
     "copied": "Copied!"
-  },
-  "Heatmap": {
-    "green": "All in work hours",
-    "orange": "Some outside work hours",
-    "red": "Someone asleep"
   },
   "Now": {
     "backToNow": "Back to now"

@@ -62,6 +62,14 @@
     "hours": "시간",
     "minutes": "분"
   },
+  "Suggestions": {
+    "button": "추천 시간대",
+    "title": "모두가 가능한 시간",
+    "scope": "향후 7일",
+    "allGreen": "모두 근무 시간",
+    "compromise": "모두 깨어 있음 (이른·늦은 시간 포함)",
+    "empty": "향후 7일간 적절한 시간대가 없습니다. 도시를 줄이거나 그리드에서 직접 선택해 보세요."
+  },
   "Summary": {
     "title": "회의 시간",
     "homeSuffix": " (기준)"
@@ -70,11 +78,6 @@
     "copySummary": "시간 요약 복사",
     "shareLink": "공유 링크 복사",
     "copied": "복사됨!"
-  },
-  "Heatmap": {
-    "green": "전원 근무 시간대",
-    "orange": "근무 시간 외인 사람 있음",
-    "red": "자는 사람 있음"
   },
   "Now": {
     "backToNow": "현재로 돌아가기"

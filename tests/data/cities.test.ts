@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { DateTime } from "luxon";
 import { CITIES, CITY_BY_ID } from "@/data/cities";
 
 /**
@@ -41,6 +42,16 @@ describe("cities 名称卫生", () => {
       expect(c.nameZh.trim().length, `${c.id} 中文名为空`).toBeGreaterThan(0);
       expect(c.nameEn.trim().length, `${c.id} 英文名为空`).toBeGreaterThan(0);
     }
+  });
+
+  it("所有城市时区均为合法 IANA 时区（Luxon 可解析）", () => {
+    // 城市库是地点时区的唯一来源（addPlace / shareUrl 均经 CITY_BY_ID 白名单）；
+    // 此处锁死数据层合法性，buildColumns 的非法时区防护（第 51 轮）保持纵深防御
+    const bad = CITIES.filter((c) => !DateTime.now().setZone(c.timeZone).isValid);
+    expect(
+      bad.map((c) => `${c.id}: ${c.timeZone}`),
+      "无法被 Luxon 解析的时区名",
+    ).toEqual([]);
   });
 
   it("本轮清理的 14 条残留后缀/错误条目不再出现，纯净名存在", () => {

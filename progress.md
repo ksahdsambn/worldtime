@@ -2621,3 +2621,276 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 
 - 直接在 main 工作；1 个提交 `fix(i18n): fr 撇号统一(47处弯→直) + ja 夏時間术语统一(2处サマータイム→夏時間)`，推送 origin/main。
 - 修改文件：`messages/fr.json`（撇号统一）、`messages/ja.json`（夏时间统一）、`progress.md`（第49轮记录）。
+
+---
+
+## 第 50 轮：推荐时段功能 + 图例文字化（易用性方向一）
+
+> 时间：2026-08-27
+> 范围：易用性改进方向一落地——把「找共同时间」从用户扫热力图解码变成显性功能。计划经三轮审查（v1→v4）后执行。核心原则：推荐算法与网格着色同源（复用 `placeHeatColor` + `buildColumns`），推荐永不与颜色矛盾；选区边界列对齐。
+
+### Phase 1 图例文字化
+
+| 改动 | 文件 | 说明 |
+| --- | --- | --- |
+| 图例改「色点+可见文字」 | `src/components/HeatmapLegend.tsx` | 文案复用 `Places.periodWork/periodContact/periodRest`——原 `Heatmap.*` 三键（"All in work hours" 等）是旧列级语义遗留，对现单元格级着色有误导；改后与 TimeCards 状态行同词汇（同一 `classifyLocalPeriod` 分类源） |
+| 删 `labels` prop | `HeatmapLegend.tsx` / `HelpPopover.tsx` | 两形态收敛为单一形态（工具条与帮助共用），净减代码 |
+| 删 11 语言 `Heatmap` 三键 | `messages/*.json` ×11 | src 零引用（grep 证实）；`heatLabel()` 保留仅测试用，`src/lib/heatmap.ts` 注释同步更新 |
+
+### Phase 2 推荐算法 + 单测
+
+- 新建 `src/lib/overlap.ts`：`findOverlapSlots(places, dayPeriods, homeZone, nowMs, maxResults=6)`——主地点今天午夜起 7 天，逐列逐地点 `placeHeatColor`，排除过去小时列（进行中小时保留；不受 pinnedMs 影响），分档合并极大连续段，green 优先/同档按开始升序/上限 6（green 不足 orange 补齐）。
+- **实施中修正计划缺陷**：v4 的合并规则（"无红段含橙即整段归橙"）会让同时区城市的全绿工作段被前后可联系段吞并成 06:00–22:00 大橙段，green 永不出现。修正为**分档极大段**（green=连续全绿列、orange=连续橙列，互不包含），等价于「无红段剔除全绿段」且实现更简。
+- 新建 `tests/lib/overlap.test.ts`（11 用例）：同时区对、跨 12h 对（京–纽约全 orange）、周末/假日排除（国庆窗口）、过去小时整点边界、DST 秋退周、单城市、全非法时区、混档日（京–伦敦）互不重叠不变式。修正两处自算预期错误（DST 7 天窗口应含 11-05；京–伦敦冬令时全绿重叠仅 17:00–18:00 一小时）。
+
+### Phase 3 弹层 + 入口
+
+- 新建 `src/components/SuggestionsPopover.tsx`：照抄 HelpPopover 模式（GlassMenu + usePresence + Esc/外点关闭 + 焦点管理 + `role="dialog"`，与 KeyboardShortcuts Esc 守卫兼容）；打开时惰性计算（`Date.now()`）；每行=主城市本地「MM-dd EEE · 起止时间」（12/24/mixed 同 TimeGrid Row 逻辑）+ 时长（formatDuration）+ 色点+文字徽章；点击写选区、时段不在当前窗口时 `setViewStartDate` 跳窗（buildColumns 精确判定）、关弹层还焦；<2 城自隐藏；`data-testid="suggested-times"`。
+- `GridToolbar.tsx` 右侧控件组最前加入口（`btn-primary btn-sm`）；新增 `IconSparkles`（lucide 风格）至 `icons.tsx`。
+- 实施中修复 hooks 违规：早退 `return null` 原置于 useMemo/useEffect 之前，移至全部钩子之后。
+
+### Phase 4 i18n（⚠️ 偏离披露）
+
+- `en.json` 新增 `Suggestions` 六键（button/title/scope/allGreen/compromise/empty）；10 语言译文写入前先提取各语言 `Places.period*` 术语表保证词汇一致（如 ja「勤務時間」、ru「Рабочее время」）；法语用直撇号。
+- **⚠️ translator 子智能体不可用**：三次调用均失败（"Function call is not supported for this model"，含无需任何工具调用的纯文本提示词），译文由主模型兜底产出。建议后续做一轮母语级校对（可复用第 49 轮的 i18n 审计流程）。
+- 消息文件改动经 stringify 往返保真校验（11 文件全部字节级一致）后以脚本应用。
+
+### Phase 5 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm test` (vitest) | ✅ 235/235（224 既有 + 11 新增，含 messages-shape 键树一致） |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 0 警告 |
+| `npm run build` | ✅ 全部路由预渲染成功（11 语言无缺键） |
+| 行尾格式 | ✅ LF（stringify + '\n'） |
+
+### Phase 6 浏览器内手动核验（GUI 黑盒测试）
+
+> 环境：dev server（localhost:3000）+ playwright-cli 驱动真实 Chromium。会话内置浏览器（IAB）无法完成该应用的水合（SSR 骨架永驻、时钟不走，与第 48 轮记录的 IAB 沙盒限制同类），故改用 playwright。截图存 `output/playwright/`，视觉核验由 vision 子智能体完成。
+
+| # | 测试点 | 结果 | 证据 |
+| --- | --- | --- | --- |
+| T1 | 亮色桌面：图例文字化（工作时段/可联系时段/休息时段）+ 推荐时段主按钮 | ✅ | `t1_light_grid.png` + DOM 快照；TimeCards 状态行与图例同词汇（同为 Places.period*） |
+| T2 | 弹层打开：标题/副标题/关闭钮聚焦/时段行（日期·时间·时长·徽章） | ✅ | `t2_popover_light.png`；ARIA `dialog "大家都有空的时间"`，关闭按钮 `[active]` |
+| T3 | 应用时段：选区写入 + SelectionBar 出现 + 网格自动跳窗到时段所在日 | ✅ | `t3_applied_light.png`；表头从 08-26 跳至 08-27 |
+| T4 | 纯键盘：Tab+Enter 选时段、Enter 重开、Esc 关闭 | ⚠️ 部分通过 | 键盘选择/还焦/开关弹层均通过；**Esc 关弹层同时清掉选区（P1 既有缺陷，见下）** |
+| T5 | 暗色主题：弹层/徽章/图例可读性 | ✅ | `t5_popover_dark.png`（playwright 中主题切换正常） |
+| T6 | 移动端 390px：工具条换行、弹层视口内锚定 | ✅ | `t6_mobile_toolbar.png` / `t6_mobile_popover.png`，无溢出/裁切 |
+| T7 | 徽章对比度（WCAG AA） | ✅ | 弹层底 55% 混合近似计算：浅色主文字 16.33:1、徽章 muted 6.93:1、热力 ink 4.59:1；深色 15.04/8.00/7.96-10.34:1，全部 ≥4.5 |
+
+控制台：全程仅 favicon.ico 500（dev 环境噪音，与本轮改动无关）。
+
+#### 发现并修复的缺陷（既有，非本轮引入）
+
+**P1：Esc 关闭任意弹层会连带清空选区**。复现：设置选区 → 打开"推荐时段"或"使用提示"弹层 → 按 Esc → 弹层关闭且 SelectionBar 消失（HelpPopover 与 SuggestionsPopover 均复现）。
+根因：① `KeyboardShortcuts`（`src/components/KeyboardShortcuts.tsx:43`）监听 **window** 级 keydown，弹层的 Esc 监听在 **document** 级——document 先触发 `setOpen(false)`，JS 栈清空触发微任务检查点，React 提交把 GlassMenu 卸载；② `usePresence`（`src/lib/usePresence.ts`）关闭路径存在"先卸载再重挂"空窗：commit 时 `mounted = open||leaving = false||false`，effect 才置 `leaving=true`；③ window 级守卫此刻 `querySelector('[role=dialog]')` 落空 → `setSelection(null)`。
+
+**修复（选根因方案）**：`usePresence` 在渲染期同步推导 `closing = !open && prevOpen.current`（仅读 ref，合规），`mounted = open || leaving || closing`——关闭的首次提交不再卸载元素，由 leaving 计时无缝接管，DOM 无空窗，window 级守卫如期命中 `[role=dialog]`。一处修复惠及全部 9 个使用方（HelpPopover / SuggestionsPopover / SettingsPanel / HeaderActions / CitySearch / Dialog / Toaster / SelectionBar / TimeCards）。未采纳的两个方案：`stopPropagation()`（需逐弹层重复添加，且会拦截未来其它 window 级监听）；守卫改查 `.liquid-glass-menu`（与 role 在同一元素上，空窗期同样查不到，无效）。附带收益：退出动画不再经历卸载/重挂，真正符合该 hook 文档承诺的"关闭时多挂载 exitMs 毫秒"。
+
+**浏览器回归（playwright，dev server + 真实 Chromium）**：
+| 场景 | 结果 |
+| --- | --- |
+| 开推荐弹层 → Esc | ✅ 弹层关闭 + 选区保留（修复前被清空） |
+| 开帮助弹层 → Esc | ✅ 弹层关闭 + 选区保留 |
+| 无弹层裸 Esc | ✅ 仍清空选区（原快捷键行为保留），连按无副作用 |
+
+静态验证：`npm run test` 235/235、`type-check` 0 错、`lint` 0 警告。注：测试环境无 jsdom/testing-library，该 hook 无法单测，回归覆盖为浏览器级。
+
+### 未做（建议后续）
+
+- 母语级 i18n 校对（承接 Phase 4 披露）。
+- 易用性方向二/三/四（空状态意图分流、隐性状态清理、双模式架构收敛）待后续轮次。
+
+### Git
+
+- 本轮未提交（用户未要求 commit）。涉及文件：`src/lib/overlap.ts`（新）、`src/components/SuggestionsPopover.tsx`（新）、`HeatmapLegend.tsx`、`HelpPopover.tsx`、`GridToolbar.tsx`、`icons.tsx`、`src/lib/heatmap.ts`（注释）、`src/lib/usePresence.ts`（P1 修复）、`tests/lib/overlap.test.ts`（新）、`messages/*.json` ×11、`progress.md`、`output/playwright/*.png`（核验截图）。
+
+## 第 51 轮：第 50 轮全面审查与修复
+
+> 时间：2026-08-27
+> 范围：按审查任务书对第 50 轮全部变更（推荐时段 + 图例文字化 + usePresence P1 修复 + i18n 六键）做 A–J 十维度审查，发现即修。基线复核先行（四命令全绿后开工）。
+
+### 审查结论总表（A–J）
+
+| 维度 | 结论 | 要点 |
+| --- | --- | --- |
+| A 算法正确性与边界 | ⚠️→✅ | overlap.ts 全分支复核无误（秋退/春进/半时区/假日叠加/整点边界/空集）；**发现 `buildColumns` 非法时区死循环风险**（`toISODate()` 两次返回 null 时跨日判停永假）——已修（入口 isValid 防护返回 `[]`，惠及 TimeGrid 等全部调用方）。跨日时段在默认时段下不可能出现（主地点 22–06 必红断档），自定义时段下选区可能部分超出 1 天视图——行为可接受，记录不修 |
+| B React 正确性 | ✅ | hooks 全部先于早退；useMemo 依赖完整；监听器成对清理；rAF 聚焦/还焦时序正确；GlassMenu portal 随 presence.mounted 卸载 |
+| C usePresence 回归 | ✅ | 9 使用方逐一走查（含 Dialog 倒置 `!!pending && !closing`、Toaster 倒置 `!leaving`、SelectionBar lastSel 保持渲染）均适配「关闭连续挂载」语义；StrictMode 双调用各路径推演无卡死（leaving 必有计时器接管）；理论缺陷一处：`exitMs` 运行中变化且 open=false 时 leaving 可悬挂——所有调用点均为字面量常量，不可达 |
+| D i18n | ⚠️→✅ | translator 子智能体逐语言校对（ja 拒答、ko/ru 输出损坏、es 首轮空返回——均重试；zh/zh-Hant/vi 建议经语言学审查驳回）。**确认 5 语言 compromise 键撞习语**（früh oder spät / tôt ou tard / cedo ou tarde / рано или поздно = "迟早"）→ 约束式委托修正（见 Phase 2）。zh-Hant 简体字扫描 0 命中（命中项均为简繁同形字）；fr 直撇号 0 弯撇号；es 确认全应用 tú 语域一致 |
+| E 无障碍 | ✅ | 键盘全流程实测通过（Enter 开→Tab→Enter 应用）；色点 aria-hidden、徽章有文字；对比度按令牌复算（55% 玻璃混底近似）：暗色 ink 14.55 / muted 8.00 / faint 5.17，浅色 14.1 / 7.31 / 4.59，全部 ≥4.5 AA。vision 子智能体主观判暗色「偏淡」，经数值复算推翻 |
+| F 性能 | ✅ | 弹层打开实测 125ms（3 城，含点击→DOM 全链路）；30 城满载上界 ≈5040 次 placeHeatColor ≈ 数毫秒级（单测全文件 232ms 佐证）；关闭态 slots 直接返回 []，无后台计算；places 引用变化仅在弹层打开时触发重算 |
+| G 视觉/响应式 | ✅ | 390px 工具条换行正常、弹层完整可见无裁切；亮暗双主题截图核验（vision）布局无溢出；ru 长文案无换行错乱 |
+| H 测试缺口 | ✅ | overlap 补 4 用例：非主地点半时区（京–孟买 green 12:00–18:00）、主地点半时区（孟买主场边界 ms ≡ +30min）、DST 春进周（2026-03-08）、30 城满载；grid 补非法时区 1 用例。usePresence 单测评估：无 jsdom/testing-library 下需引入新依赖集（不合算）或纯为测试重构 hook（拒绝），维持浏览器级回归覆盖，记录为遗留 |
+| I 红线核对 | ✅ | 玻璃仅弹层 chrome（GlassMenu）；网格本体不透明未动；Help 文案/dayPeriods/空状态/双模式零触碰；已删 Heatmap 键零引用零复活（grep 证实）；非目标文件未审查未改动 |
+| J 文档一致性 | ✅ | 第 50 轮记录逐项与代码事实核对一致（文件清单/235=224+11/六键/P1 根因描述/未采纳方案），无需修正 |
+
+### Phase 1 修复清单
+
+| # | 问题 | 根因 | 改动 | 验证 |
+| --- | --- | --- | --- | --- |
+| 1 | `buildColumns` 非法时区死循环（页签挂起级风险；防御缺口，主地点非法时区时 TimeGrid 同样暴露） | Luxon invalid 下 `toISODate()` 恒 null，跨日判停 `null !== null` 永假，逐小时内循环无法退出 | `src/lib/grid.ts` 入口 `!startLocal.isValid` 返回 `[]`（placeHeatColor/columnColor 同款防御风格） | 新增 grid 用例「非法时区返回空数组」；合法路径 16 用例不回退 |
+| 2 | overlap 测试缺口：半时区（主/非主）、DST 春进、满载 | 第 50 轮仅覆盖秋退 | `tests/lib/overlap.test.ts` +4 用例（日历事实经 luxon 预核验：03-08 为 2026 美国春进日等） | 15/15 通过 |
+| 3 | 5 语言 compromise 撞「迟早」习语（ru「кому-то рано или поздно」整句可读作"迟早"、de/fr/pt 同型尾缀） | 直译 "(some early or late)" 落入各语言固定搭配 | de「teils früh, teils spät」/ fr「les uns tôt, les autres tard」/ pt「alguns cedo demais, outros tarde demais」/ ru「кому-то рано, кому-то поздно」/ es「algunos muy de mañana o de noche」——全部由 translator 约束式产出，其余 55 键经审保留 | messages-shape 键树测试 + /ru 真机渲染截图核验（6 行徽章全部显示新译文） |
+
+### Phase 2 translator 委托过程披露
+
+- 10 语言并行首校：ja 拒答（模型不受理 review 类任务）、es 空返回、ko/ru 输出损坏（混入乱码、他语言文字与语义错误建议，如 ko「참여를 삭제」（删参与者≠删城市）、ru「Предлагаемые zaman」混入阿拉伯文）。
+- 二轮纯翻译式重试 + 三轮约束式微调（给定句式骨架仅填时间词）：ru/de/pt/fr/es 全部获得合格产出；ja/ko 两轮产出均劣于现有译文（ja「見合う」「削除」生硬失当、ko「감/잠」「약자」乱码级错误），**判定现有译文保留**（语言学理由：现有文案自然度更高、语域贴合品牌语气）。
+- zh/zh-Hant/vi 首校建议逐条审查后驳回：「部分时间较早」误指时段（实为人）、「拖动网格」与实际交互不符、「建議時段/接下來 7 天」属风格偏好且与 zh 版术语不一致等。
+
+### Phase 3 浏览器复核（playwright + 真实 Chromium，dev server）
+
+| # | 测试点 | 结果 | 证据 |
+| --- | --- | --- | --- |
+| B1 | 置场：干净配置档 → 空状态「世界金融时钟」加 3 城 → 切「重叠时段」→ 推荐时段弹层（标题/副标题/关闭钮聚焦 [active]/时段行徽章；周四→周五→跳过周末→周二的推荐序列正确） | ✅ | 快照序列 |
+| B2 | 应用时段：选区写入 + SelectionBar 出现 + 网格跳窗 08-26→08-27 + 焦点还回触发器 | ✅ | 快照 |
+| B3 | **三连 Esc 回归**：推荐弹层 Esc 选区保留 / 帮助弹层 Esc 选区保留 / 无弹层裸 Esc 清空选区 | ✅ 3/3 | grep 计数 1/1/0 |
+| B4 | 纯键盘流：弹层内 Tab 至首行 + Enter 应用 | ✅ | SelectionBar 复现 |
+| B5 | 暗色主题弹层 | ✅ | `r51_dark_popover.png`（vision 布局核验通过；对比度以数值复算为准） |
+| B6 | 390px 移动端工具条换行 + 弹层完整可见 | ✅ | `r51_mobile_toolbar.png` / `r51_mobile_popover.png`（vision 核验通过） |
+| B7 | ru 界面新译文端到端渲染 | ✅ | `r51_ru_popover.png`（vision 核验：标题与 6 行新徽章全部正确显示） |
+| B8 | 弹层打开耗时 | ✅ 125ms | run-code 计时 |
+
+过程事件：dev server 一次卡死（新请求无响应，重启解决），当时归因于 messages 热更新触发 watcher 故障——**第 52 轮复核推翻此归因**：根因是启动命令 `npm run dev 2>&1 | head -30` 的输出管道（卡死实例日志恰好停在 30 行 = head 退出边界，此后编译日志写入已关闭管道令事件循环阻塞；无管道方式重写全部 11 个 messages 文件不复现），与 Next watcher 及应用代码无关。操作规程：dev server 后台运行时不得用 head 等管道截断输出。控制台全程仅 favicon.ico 500（已知 dev 噪音）。
+
+### Phase 4 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run test` (vitest) | ✅ 240/240（235 既有 + 5 新增：overlap 4 + grid 1） |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 0 警告 |
+| `npm run build` | ✅ 全部路由预渲染成功 |
+| messages JSON stringify 往返 | ✅ 5 文件字节级保真 |
+
+### 未做（遗留记录）
+
+- usePresence 无单测：最小测试手段评估结论——需引入 jsdom/happy-dom + testing-library（新依赖集，违反"不为此引入大型依赖"）或纯为测试重构 hook 内联状态机（扩大改动面），两者均不合算；回归覆盖维持浏览器级（本轮 B3 已复测）。
+- buildColumns 非法时区路径当前实际不可达（城市库全部合法、shareUrl 经 CITY_BY_ID 白名单），防护为纵深防御。
+- 30 城满载的弹层打开耗时未做真机实测（125ms 为 3 城实测 + 数毫秒级上界推算）。
+
+### 收尾
+
+- dev server 与 Chromium 已关闭（端口 3000 释放），`.playwright-cli/` 已清理；`output/playwright/` 证据（r51_*.png ×4 + 往轮文件）保留。
+- 本轮未提交（用户未要求 commit）。涉及文件：`src/lib/grid.ts`（防护）、`tests/lib/grid.test.ts`（+1）、`tests/lib/overlap.test.ts`（+4）、`messages/{de,es,fr,pt,ru}.json`（compromise 1 键/语言）、`progress.md`。
+
+## 第 52 轮：第 51 轮遗留项清偿
+
+> 时间：2026-08-27
+> 范围：逐项完成第 51 轮报告的四个遗留项——usePresence 单测、cities 时区合法性校验、30 城满载真机实测、dev server 卡死归因复核（并修正第 51 轮记录中的错误归因）。
+
+### Phase 1 usePresence 单测（遗留 #1）
+
+- **手段**：`happy-dom`（唯一新增 devDependency，轻量单包，非 jsdom/testing-library 依赖集）+ React 18.3 自带 `act`；`// @vitest-environment happy-dom` 按文件生效（全套件环境开销仅 +450ms）。rAF 桩为 `setTimeout(16ms)` 接入 vi 假时钟，完全掌控「双 rAF 进场 / exitMs 退场」编排。
+- 新建 `tests/lib/usePresence.test.ts`（5 用例）：初始即关闭不挂载不误启计时、打开当帧挂载+双 rAF 进场、**P1 不变式（关闭当帧不卸载、连续挂载至 exitMs——`tick(199)` 仍挂载 / `tick(1)` 卸载）**、快速抖动 true→false→true 不卡 leaving、StrictMode effect 双调用下进场与退场均正常。
+- 第 51 轮「无合算测试手段」结论就此解除。
+
+### Phase 2 cities 时区合法性校验（遗留 #2）
+
+- `tests/data/cities.test.ts` +1 用例：全量城市 `timeZone` 须被 Luxon 解析（`DateTime.now().setZone(tz).isValid`）。城市库是地点时区唯一来源（addPlace / shareUrl 均经 `CITY_BY_ID` 白名单），数据层锁死后，`buildColumns` 的非法时区防护（第 51 轮）正式回归纯纵深防御。
+
+### Phase 3 30 城满载真机实测（遗留 #3）
+
+- **置场**：经 `worldtime:v1` localStorage 键注入 30 城（横跨 30 个不同时区，含 +5:30/+5:45/+8:45 等偏移——最不利时区多样性），playwright 驱动真实 Chromium + dev server。
+- **结果**：网格 30 行满载、推荐弹层 6 满额；打开耗时 5 轮 `[471,394,360,329,395]ms`、**中位 394ms**（dev 模式 React 渲染 + waitForSelector 轮询全链路）；纯算法耗时（Node、best-of-5）**57.2ms**（= 168 列 × 30 地点 ≈ 5040 次 placeHeatColor）。证据：`output/playwright/r52_30cities_popover.png`。
+- **结论**：57ms 计算在点击手势内无感知；端到端 394ms 主要为 dev 模式开销，生产构建更低。可接受，不优化。**修正第 51 轮 F 维度「数毫秒级上界推算」为实测 ~57ms**。
+
+### Phase 4 卡死归因复核（遗留 #4，含记录修正）
+
+- **证据链**：卡死实例（第 51 轮）的 dev server 日志恰好 30 行——正是启动命令 `npm run dev 2>&1 | head -30` 中 head 的退出边界；此后 messages 热更编译日志写入已关闭管道，Windows 下 node 事件循环阻塞（监听仍在、新请求无响应）。
+- **反事实复现**：以无管道方式启动 dev server，字节级重写全部 11 个 messages 文件（内容不变、仅触发 watcher），服务器日志增至 43 行仍完全响应（/zh 200、/de 200 冷编译、root 307），HMR 后页面照常产出 6 条推荐。
+- **结论**：根因 = 启动命令的输出管道，与 Next watcher 无关。第 51 轮「过程事件」段已就地修正，并沉淀操作规程（dev server 后台运行不得用管道截断输出）。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run test` (vitest) | ✅ 246/246（240 + usePresence 5 + cities 1） |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 0 警告 |
+| `npm run build` | ✅ 全部路由预渲染成功 |
+
+### 收尾
+
+- dev server 与 Chromium 已关闭（端口 3000 释放），`.playwright-cli/` 与全部 `.tmp-*` 临时脚本已清理；`output/playwright/r52_30cities_popover.png` 证据保留。
+- 本轮未提交（用户未要求 commit）。涉及文件：`tests/lib/usePresence.test.ts`（新）、`tests/data/cities.test.ts`（+1 用例）、`package.json` / `package-lock.json`（devDependency happy-dom ^20.11.8）、`progress.md`（第 51 轮归因修正 + 本轮记录）。
+
+## 第 53 轮：第 50/51/52 轮累计变更全面复审
+
+> 时间：2026-08-27
+> 范围：三轮累计变更（推荐时段功能 + 图例文字化 + usePresence P1 修复 + 51 轮审查修复 + 52 轮遗留清偿）的交付前终审——A–J 十维度审查、7 项已知披露逐一复核、浏览器终审回归（交付门禁）。基线先行：四命令全绿 + git status 与预期清单（23 修改 + 4 新增 + 3 既有未跟踪）完全吻合，无计划外改动。
+
+### 审查结论总表（A–J + 披露项）
+
+| 维度 | 结论 | 要点 |
+| --- | --- | --- |
+| A 累计 diff | ✅ | 全量走查：代码/测试/lock 的每一处改动均在三轮记录范围内（lock 仅新增 happy-dom 依赖树 7 包、entities 为其新依赖项 v7.0.1 dev-only）；无 `.tmp-*` 残留 |
+| B 测试质量 | ✅（修 1 处） | 日历事实程序化核验全对（12 个星期/DST 切换/伦敦冬令时/CN 假日数据）；断言均实质性、无永真；**混档日用例注释「19:00–22:00 orange」与算法实际边界（18:00–22:00）不符——已修正注释**（断言本身正确，用 vitest scratch 跑真实算法确认） |
+| C React/运行时 | ✅ | SuggestionsPopover hooks 顺序（早退在全部 hooks 后）、portal 生命周期、StrictMode 双 effect 推演均安全；三连 Esc 与 KeyboardShortcuts 守卫交互在 P1 修复下正确（浏览器复证） |
+| D i18n | ✅ | 六键 ×11 语言经 translator 子智能体两轮独立审校（审校式 + 纯翻译式重译比对）：de/zh-Hant/zh/en OK；es/fr/pt/ru/vi/ja/ko 的修改建议均为风格偏好或损坏产出（ko 混入德语「Großbritannien」、vi 混入英文「with」、ja 重译含「.rb」后缀与中文词、ko 重译原样回显英文）——**独立复现第 51 轮披露现象，66 值全部保留**；zh-Hant 全繁体、fr 六键无撇号（规则空满足） |
+| E 无障碍 | ✅ | 代码级：aria-haspopup/aria-expanded、role=dialog、色点 aria-hidden、徽章点+文字、focus-visible 样式齐备；浏览器级：开弹层关闭钮聚焦、Tab 至时段行、Enter 应用、关弹层还焦触发器全部实测通过；无令牌/样式改动，对比度维持第 51 轮复算值 |
+| F 性能 | ✅ | 本轮未改动任何计算/渲染路径（仅测试文件），按规程不重测；基准记录（57.2ms/394ms）与代码事实一致 |
+| G 视觉 | ✅ | 亮/暗双主题、390px、ru 长文案共 6 张截图 vision 核验：无溢出/裁切/重叠，徽章均「色点+文字」。**vision 首遍误报移动端工具条溢出**（把顶栏语言选择器的响应式收纳「更多」按钮误认为工具条裁切）——经 DOM 快照（控件齐全）+ 第二遍逐像素精读（两张截图工具条均完整）推翻，与第 51 轮「视觉争议以实证为准」先例同型 |
+| H 红线 | ✅ | 玻璃仅弹层 chrome；网格本体不透明未动；Heatmap 三键零引用零复活（grep 证实）；dayPeriods/双模式/空状态/Help 文案零触碰 |
+| I 文档一致性 | ✅ | 三轮记录数字逐一核对吻合：235→240→246 与文件内用例数一致（overlap 15=11+4、grid 16、cities 6、usePresence 5）、5040=168×30、文件清单并集 = git status、9 个 usePresence 使用方 |
+| J 测试缺口 | ✅（+1 用例） | 补「自定义 dayPeriods 跨午夜合并」用例——规约「连续性按数组相邻判定（跨日不裂段）」此前唯一无测试锁定的行为，且为生产可达路径（时段可在设置中自定义）；先 scratch 验证真实行为（橙段 16:00→次日 02:00 单段 10h）再固化为断言 |
+
+### 已知披露复核（7/7）
+
+1. **happy-dom 仅测试用**：`// @vitest-environment happy-dom` 单文件生效，未进生产 bundle（build 产物无变化），全套件环境开销 ~450-530ms 与披露一致 ✅
+2. **rAF 桩忠实性**：桩将双 rAF 退化为两个串联的 16ms 定时器并保序保取消（clearTimeout 对应 cancelAnimationFrame），用例在首个 tick 后断言 state 仍为 leave——能区分单/双 rAF 编排，测的是 hook 行为而非桩；5 用例覆盖 P1 不变式、StrictMode、快速抖动，评估充分 ✅
+3. **buildColumns 空列降级**：全部调用方（TimeGrid 骨架屏兜底、applySlot `cols.length>0` 守卫 + isValid 守卫、overlap 空列→[]）优雅降级；cities 数据层校验已锁死，防护保持纯纵深 ✅
+4. **i18n 终审**：见 D 维度；5 处 compromise 修正与 ja/ko/zh/zh-Hant/vi 保留判定经两轮独立运行复证 ✅
+5. **数字一致性**：见 I 维度 ✅
+6. **跨日橙段极端场景**：判定仍成立——选区数据正确、SelectionBar 显示完整时长，仅 1 天视图下选区末端可能出画（7 天视图完整可见），自定义时段的边缘场景，维持「记录不修」✅
+7. **usePresence exitMs 理论缺陷**：全部 10 个调用点复核均为字面量/模块常量（200/320/EXIT_MS=320），不可达前提未破坏 ✅
+
+### 修复清单（本轮全部改动）
+
+| # | 问题 | 根因 | 改动 | 验证 |
+| --- | --- | --- | --- | --- |
+| 1 | overlap 混档日用例注释时段错误（19:00→实为 18:00） | 注释手写时段与算法实际边界偏差一小时（断言未受影响） | `tests/lib/overlap.test.ts:161` 注释修正 | vitest scratch 跑真实算法打印全部段边界确认 |
+| 2 | 跨午夜合并行为无测试锁定 | 第 50/51 轮用例的橙段均不跨主地点午夜 | `tests/lib/overlap.test.ts` +1 用例（自定义 dayPeriods，橙段 16:00→次日 02:00 单段 10h） | 247/247 通过 |
+
+### 浏览器终审回归（playwright + 真实 Chromium，dev server :3000）
+
+| # | 测试点 | 结果 |
+| --- | --- | --- |
+| T1 置场 | 空状态「世界金融时钟」加 3 城 → 切「重叠时段」→ 开推荐弹层：关闭钮 `[active]` 聚焦、时段序列（周四→周五→跳过周末→周二）正确、NY/伦敦/东京三城全折中档符合预期 → 应用首时段：网格表头跳至 08-27、SelectionBar 出现并显示「3小时」 | ✅ |
+| T2 三连 Esc | 推荐弹层 Esc 选区保留 / 帮助弹层 Esc 选区保留 / 裸 Esc 选区清空（快照 stdout 计数 1/1/0，弹层开闭逐项前置确认） | ✅ 3/3 |
+| T3 键盘流 | 弹层内 Tab 至首时段行（`[active]`）→ Enter：选区写入、SelectionBar 复现、焦点还回「推荐时段」触发器（`[active]`） | ✅ |
+| T4 双主题 | 亮/暗弹层截图 vision 核验：完整可见、无裁切、徽章点+文字 | ✅ |
+| T5 390px | 工具条 + 弹层截图（×2 组）vision 两遍核验：完整无溢出（首遍误报经 DOM + 逐像素复验推翻） | ✅ |
+| T6 ru 长文案 | /ru 全链路：弹层六键实时渲染（含 compromise 修正「Все не спят (кому-то рано, кому-то поздно)」）、图例三词、关闭钮聚焦 | ✅ |
+
+控制台全程仅 favicon.ico 500（已知 dev 噪音）。截图证据：`output/playwright/r53_*.png` ×7。
+
+### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run test` (vitest) | ✅ 247/247（246 + 1 新增） |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 0 警告 |
+| `npm run build` | ✅ 1056 静态页全部生成 |
+
+### 未做（遗留记录）
+
+- translator 子智能体在审校与重译两种模式下对 ja/ko 仍产出损坏内容（与第 51 轮结论一致）；ja/ko/zh/zh-Hant/vi 的母语级复核维持「现有译文语言学审查 + 双轮独立比对驳回修改建议」的口径。
+- i18n 审校式提示词的损坏产出模式（混入他语言文字/文件名后缀/原样回显）值得在下次依赖 translator 时预设校验步骤。
+
+### 收尾
+
+- dev server 已停止、残留 node 子进程（PID 11588 占 3000）已定点清除、`.playwright-cli/` 已清理；`output/playwright/` 证据（r53_*.png ×7 + 往轮文件）保留。
+- 本轮未提交（用户未要求 commit）。涉及文件：`tests/lib/overlap.test.ts`（注释修正 + 1 用例）、`progress.md`（本记录）。
+
+### 第 53 轮补遗：终审复核与 Git 交付（2026-08-27）
+
+> 应用户要求对本轮任务完成度做二次复核，并将三轮累计变更提交至 GitHub。
+
+- **完成度复核**：第 53 轮提示词七节任务逐项比对全部完成（基线核对 / A–J 十维度 / 7 项披露 / 修复 / 浏览器终审 / progress.md 记录 / 收尾清理）；四条验证命令二次重跑全绿（247/247 测试、0 类型错、0 lint、build exit=0 且 1056/1056 静态页）。
+- **分支盘点**：本地与远端均仅有 `main`（同步于 ac6a85a），「合并到主分支 / 删除其他分支」为空操作，如实记录。
+- **提交范围**：三轮变更 27 个文件（23 修改 + 4 新增）+ progress.md；既有未跟踪 3 个（`deploy.py`、`i18n-translation-prompt.md`、`t1_light_grid.png`）按第 53 轮提示词约定不审查、不提交；`output/playwright/` 证据按 .gitignore 保留在本地。
+- **提交与推送**：单提交至 main 并推送 origin/main（提交信息概括第 50–53 轮功能/修复/测试/文档）。

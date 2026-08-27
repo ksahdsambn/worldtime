@@ -16,8 +16,10 @@ import { useEffect, useRef, useState } from "react";
  *   ) : null;
  *
  * 设计要点：
- *   - **挂载与 open 同步**：mounted = open || leaving。open 翻 true 当帧即挂载，
- *     因此依赖 [open] 的焦点管理（如 HelpPopover 聚焦关闭按钮）仍能命中已存在的节点。
+ *   - **挂载与 open 同步**：mounted = open || leaving || closing（closing 为渲染期
+ *     同步推导的「本次关闭、leaving 尚未接管」状态）。open 翻 true 当帧即挂载，
+ *     翻 false 当帧不卸载，因此依赖 [open] 的焦点管理（如 HelpPopover 聚焦
+ *     关闭按钮）仍能命中已存在的节点，关闭路径也无卸载/重挂空窗（见函数内注释）。
  *   - **进场过渡**：open→true 时先置 state="leave"（隐藏），双 rAF 后切 "enter"，
  *     触发 CSS 过渡（单 rAF 在某些浏览器会合并到同一帧，双 rAF 确保先绘制隐藏态）。
  *   - **退场过渡**：open→false 时置 leaving=true、state="leave"，exitMs 后 leaving=false
@@ -31,7 +33,15 @@ export function usePresence(open: boolean, exitMs: number) {
   const [leaving, setLeaving] = useState(false);
   const [state, setState] = useState<"enter" | "leave">("leave");
   const prevOpen = useRef(open);
-  const mounted = open || leaving;
+
+  // 关闭瞬间同步保持挂载：setLeaving(true) 在 effect 中才执行，若 mounted 只看
+  // `open || leaving`，关闭的首次提交就会先卸载元素、下轮渲染再重挂——出现
+  // 一帧 DOM 空窗。空窗期内 KeyboardShortcuts 的 window 级 Esc 守卫
+  // querySelector('[role=dialog]') 落空，Esc 关弹层会连带清空选区（P1）。
+  // 此处在渲染期同步推导 closing（仅读 ref，不写，合规），保证关闭路径
+  // 元素连续挂载到 leaving 计时接管。
+  const closing = !open && prevOpen.current;
+  const mounted = open || leaving || closing;
 
   useEffect(() => {
     if (open) {

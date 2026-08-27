@@ -62,6 +62,14 @@
     "hours": "giờ",
     "minutes": "phút"
   },
+  "Suggestions": {
+    "button": "Khung giờ gợi ý",
+    "title": "Khung giờ phù hợp với mọi người",
+    "scope": "7 ngày tới",
+    "allGreen": "Tất cả trong giờ làm việc",
+    "compromise": "Tất cả đều thức (có người sớm hoặc muộn)",
+    "empty": "Không có khung giờ phù hợp trong 7 ngày tới. Hãy thử bỏ bớt một thành phố hoặc tự chọn giờ trên lưới."
+  },
   "Summary": {
     "title": "Giờ họp",
     "homeSuffix": " (chính)"
@@ -70,11 +78,6 @@
     "copySummary": "Sao chép tóm tắt thời gian",
     "shareLink": "Sao chép liên kết chia sẻ",
     "copied": "Đã sao chép!"
-  },
-  "Heatmap": {
-    "green": "Tất cả trong giờ làm việc",
-    "orange": "Một số ngoài giờ làm việc",
-    "red": "Có người đang ngủ"
   },
   "Now": {
     "backToNow": "Về hiện tại"

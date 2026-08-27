@@ -36,6 +36,9 @@ describe("buildColumns", () => {
       expect(dt.millisecond).toBe(0);
     }
   });
+  it("非法时区返回空数组（不进入逐小时死循环）", () => {
+    expect(buildColumns("Foo/Bar", Date.now(), 7)).toEqual([]);
+  });
 });
 
 /**

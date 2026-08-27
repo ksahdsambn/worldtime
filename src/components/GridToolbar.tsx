@@ -6,9 +6,10 @@ import { useLiquidGlass } from "@/lib/useLiquidGlass";
 import HeatmapLegend from "./HeatmapLegend";
 import WeekPager from "./WeekPager";
 import NowButton from "./NowButton";
+import SuggestionsPopover from "./SuggestionsPopover";
 
 /**
- * 排期视图工具条：图例色点 ｜ 1天/7天 · ‹ › · 回到现在。
+ * 排期视图工具条：图例（色点+文字）｜ 推荐时段 · 1天/7天 · ‹ › · 回到现在。
  *
  * 两态改造后的减法：日期跳转由网格日期表头点击（原生 picker）与
  * 时间控制条承担；视图选项弹层（时间游标/日期输入）随游标功能一并移除。
@@ -26,7 +27,9 @@ export default function GridToolbar() {
       className="animate-fade-in liquid-glass liquid-glass--bar flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5"
     >
       <HeatmapLegend />
-      <div className="flex items-center gap-1">
+      <div className="flex flex-wrap items-center gap-1">
+        {/* 推荐时段：核心价值的显性入口（<2 城时组件自隐藏） */}
+        <SuggestionsPopover />
         <DaySpanToggle />
         <span className="divider" />
         <WeekPager />

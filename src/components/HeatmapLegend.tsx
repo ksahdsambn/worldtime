@@ -3,48 +3,32 @@
 import { useTranslations } from "next-intl";
 
 /**
- * 热力图三色图例。
+ * 热力图三色图例：色点 + 可见文字（颜色语义不裸靠颜色，WCAG 1.4.1）。
  *
- * 默认紧凑形态：只渲染 3 个色点，完整语义放 title/aria-label——
- * 工具条不再占用一行文字，颜色语义在 Help 弹窗里有全量图文说明。
- * `labels` 形态供 HelpPopover 使用：色点降为装饰（aria-hidden），
- * 文字标签承载语义，避免读屏把同一语义播报两遍。
+ * 文案复用 Places.periodWork/periodContact/periodRest（工作/可联系/休息时段）：
+ * 与 TimeCards 状态行同一套分类词汇（classifyLocalPeriod），且与单元格级
+ * 着色语义一致（每格表达该行城市自身的状态）。工具条与帮助弹层共用本形态。
+ * 色点为纯装饰（aria-hidden），可见文字即标签，避免读屏重复播报。
  */
-export default function HeatmapLegend({ labels = false }: { labels?: boolean }) {
-  const t = useTranslations("Heatmap");
-  const items: Array<{ key: "green" | "orange" | "red"; token: string }> = [
-    { key: "green", token: "var(--heat-good)" },
-    { key: "orange", token: "var(--heat-caution)" },
-    { key: "red", token: "var(--heat-bad)" },
+export default function HeatmapLegend() {
+  const t = useTranslations("Places");
+  const items = [
+    { token: "var(--heat-good)", label: t("periodWork") },
+    { token: "var(--heat-caution)", label: t("periodContact") },
+    { token: "var(--heat-bad)", label: t("periodRest") },
   ];
 
-  if (labels) {
-    return (
-      <div className="space-y-1.5 text-[11px] text-muted">
-        {items.map((it) => (
-          <span key={it.key} className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-2 w-3.5 shrink-0 rounded-[2px] border border-line"
-              style={{ backgroundColor: it.token }}
-              aria-hidden
-            />
-            {t(it.key)}
-          </span>
-        ))}
-      </div>
-    );
-  }
-
   return (
-    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 py-0.5 text-[11px] text-muted">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 py-0.5 text-[11px] text-muted">
       {items.map((it) => (
-        <span
-          key={it.key}
-          className="inline-block h-2 w-3.5 rounded-[2px] border border-line"
-          style={{ backgroundColor: it.token }}
-          title={t(it.key)}
-          aria-label={t(it.key)}
-        />
+        <span key={it.token} className="flex items-center gap-1.5">
+          <span
+            className="inline-block h-2 w-3.5 shrink-0 rounded-[2px] border border-line"
+            style={{ backgroundColor: it.token }}
+            aria-hidden
+          />
+          {it.label}
+        </span>
       ))}
     </div>
   );

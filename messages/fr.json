@@ -62,6 +62,14 @@
     "hours": "heures",
     "minutes": "minutes"
   },
+  "Suggestions": {
+    "button": "Créneaux suggérés",
+    "title": "Des créneaux qui conviennent à tous",
+    "scope": "7 prochains jours",
+    "allGreen": "Tous en heures de travail",
+    "compromise": "Tous éveillés (les uns tôt, les autres tard)",
+    "empty": "Aucun bon créneau dans les 7 prochains jours. Essayez de retirer une ville ou choisissez une heure directement dans la grille."
+  },
   "Summary": {
     "title": "Heure de la réunion",
     "homeSuffix": " (principal)"
@@ -70,11 +78,6 @@
     "copySummary": "Copier le résumé des horaires",
     "shareLink": "Copier le lien de partage",
     "copied": "Copié !"
-  },
-  "Heatmap": {
-    "green": "Tous en heures ouvrables",
-    "orange": "Certains hors heures ouvrables",
-    "red": "Quelqu'un dort"
   },
   "Now": {
     "backToNow": "Revenir à maintenant"

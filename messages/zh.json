@@ -62,6 +62,14 @@
     "hours": "小时",
     "minutes": "分钟"
   },
+  "Suggestions": {
+    "button": "推荐时段",
+    "title": "大家都有空的时间",
+    "scope": "未来 7 天",
+    "allGreen": "全员工作时段",
+    "compromise": "无人休息（有人较早或较晚）",
+    "empty": "未来 7 天没有合适的时段。可以移除一个城市，或直接在网格上手动选取。"
+  },
   "Summary": {
     "title": "会议时段",
     "homeSuffix": " (主)"
@@ -70,11 +78,6 @@
     "copySummary": "复制时间摘要",
     "shareLink": "复制分享链接",
     "copied": "已复制！"
-  },
-  "Heatmap": {
-    "green": "全员在工作时段",
-    "orange": "部分人在非工作时段",
-    "red": "有人在休息"
   },
   "Now": {
     "backToNow": "回到现在"

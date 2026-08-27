@@ -62,6 +62,14 @@
     "hours": "時間",
     "minutes": "分"
   },
+  "Suggestions": {
+    "button": "おすすめ時間帯",
+    "title": "全員に都合のいい時間",
+    "scope": "今後7日間",
+    "allGreen": "全員が勤務時間内",
+    "compromise": "全員起きている（早朝・深夜あり）",
+    "empty": "今後7日間に適切な時間帯がありません。都市を減らすか、グリッド上で直接選んでください。"
+  },
   "Summary": {
     "title": "会議時間",
     "homeSuffix": " (基準)"
@@ -70,11 +78,6 @@
     "copySummary": "時間サマリーをコピー",
     "shareLink": "共有リンクをコピー",
     "copied": "コピーしました！"
-  },
-  "Heatmap": {
-    "green": "全員が勤務時間帯",
-    "orange": "勤務時間外の人がいる",
-    "red": "寝ている人がいる"
   },
   "Now": {
     "backToNow": "現在に戻る"

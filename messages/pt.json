@@ -62,6 +62,14 @@
     "hours": "horas",
     "minutes": "minutos"
   },
+  "Suggestions": {
+    "button": "Horários sugeridos",
+    "title": "Horários que funcionam para todos",
+    "scope": "Próximos 7 dias",
+    "allGreen": "Todos em horário de trabalho",
+    "compromise": "Todos acordados (alguns cedo demais, outros tarde demais)",
+    "empty": "Não há uma boa janela nos próximos 7 dias. Tente remover uma cidade ou escolha um horário manualmente na grade."
+  },
   "Summary": {
     "title": "Horário da reunião",
     "homeSuffix": " (principal)"
@@ -70,11 +78,6 @@
     "copySummary": "Copiar resumo de horários",
     "shareLink": "Copiar link de compartilhamento",
     "copied": "Copiado!"
-  },
-  "Heatmap": {
-    "green": "Todos em horário de trabalho",
-    "orange": "Alguns fora do horário de trabalho",
-    "red": "Alguém dormindo"
   },
   "Now": {
     "backToNow": "Voltar para agora"

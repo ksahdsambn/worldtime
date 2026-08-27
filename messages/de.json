@@ -62,6 +62,14 @@
     "hours": "Stunden",
     "minutes": "Minuten"
   },
+  "Suggestions": {
+    "button": "Vorgeschlagene Zeiten",
+    "title": "Zeiten, die für alle passen",
+    "scope": "Nächste 7 Tage",
+    "allGreen": "Alle in Arbeitszeit",
+    "compromise": "Alle wach (teils früh, teils spät)",
+    "empty": "Kein passendes Zeitfenster in den nächsten 7 Tagen. Entferne eine Stadt oder wähle eine Zeit direkt im Raster."
+  },
   "Summary": {
     "title": "Besprechungszeit",
     "homeSuffix": " (Haupt)"
@@ -70,11 +78,6 @@
     "copySummary": "Zeitzusammenfassung kopieren",
     "shareLink": "Teilen-Link kopieren",
     "copied": "Kopiert!"
-  },
-  "Heatmap": {
-    "green": "Alle in Arbeitszeit",
-    "orange": "Einige außerhalb der Arbeitszeit",
-    "red": "Jemand schläft"
   },
   "Now": {
     "backToNow": "Zurück zu jetzt"

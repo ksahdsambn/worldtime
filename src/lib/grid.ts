@@ -50,6 +50,9 @@ export function buildColumns(
   const startLocal = DateTime.fromMillis(startDateMs, { zone: homeZone }).startOf(
     "day",
   );
+  // 时区非法时 Luxon 全程返回 invalid（toISODate 均为 null），下方逐小时循环的
+  // 跨日判停条件永假会死循环挂起页签——直接返回空列（调用方按无网格处理）
+  if (!startLocal.isValid) return columns;
   for (let d = 0; d < days; d++) {
     const dayStart = startLocal.plus({ days: d }).startOf("day");
     const dayIso = dayStart.toISODate();
