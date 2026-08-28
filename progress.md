@@ -3333,3 +3333,56 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 - 全程直接在 `main` 工作（与第 42–57 轮同惯例），无独立功能分支，无需合并。
 - 临时探测脚本与截图在 `output/`（已 gitignore）；`:3010` 开发服本轮结束后停止。未触碰占用中的 `:3000`。
 - 本轮分 2 个提交：feat `c9fd9e8`（任务卡居中 + 液态玻璃，3 文件）+ docs 本笔（progress.md），推送 `origin/main`。
+
+### 第 59 轮：观测台视觉重做，三轮审查修复后合入 main（2026-08-29）
+
+> 时间：2026-08-29
+> 范围：用户要求放开限制、重做前端气质。把整站从「居中栏 + 白卡片」抬成「时间观测台」：视口氛围层、浮动玻璃甲板、仪器感时间卡、内页磁贴/芯片。随后对未提交 diff 做三轮审查（R1 广度 · R2 深挖 · R3 实证）并修复 8 处，测试全绿后合入 `main` 并推送 GitHub。
+
+#### 改动清单
+
+| # | 文件 | 改动 |
+| --- | --- | --- |
+| 1 | `src/components/WorldField.tsx` | 新建：经纬网格、赤道环、沿轨道卫星、核心光斑（`aria-hidden`，不拦截指针） |
+| 2 | `src/components/OrbitalHero.tsx` | 新建：空状态/404 线框地球；渐变 `id` 用 `useId` |
+| 3 | `src/components/DayArc.tsx` | 新建：24h 工作/可联系/休息色带 + 当前小时金针（装饰，`aria-hidden`） |
+| 4 | `src/app/[locale]/layout.tsx` | `body.liquid-glass-backdrop` + `WorldField`；JetBrains Mono `--font-mono`；themeColor 对齐新画布 |
+| 5 | `src/app/globals.css` | 新令牌（画布/网格线/环）、极光漂移、HUD 四角、仪器卡/日弧/命令搜索/page-hero/link-chip/feature-tile/stat-grid；顶栏甲板 `.liquid-glass--header` |
+| 6 | `src/components/GlassHeader.tsx` / `Workspace.tsx` / `GridToolbar.tsx` | 顶栏/工作条/排期工具条改为浮动圆角玻璃甲板 |
+| 7 | `src/components/FirstUseEmptyState.tsx` | 地球英雄 + 2×2 任务卡；结构仍为 h3>button + `liquid-glass`（测试锁定） |
+| 8 | `src/components/TimeCards.tsx` | 仪器卡：时段芯片 + 日弧 + 等宽大钟 |
+| 9 | 内页（about/faq/city/country/converter/privacy/terms）+ `CityNow` / `LandingComparison` / `SiteFooter` | 去掉重复 backdrop；磁贴/FAQ 卡/四格仪表/双钟对照/芯片链接 |
+| 10 | `tailwind.config.ts` | `font-mono` 指向 `--font-mono` |
+
+数据面（网格、对照表、时间卡、SEO 页脚）保持不透明；玻璃只给 chrome。无新 i18n key。
+
+#### 三轮发现与修复
+
+| # | 轮次 | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- | --- |
+| 1 | R1 | **P2** | 顶栏把 `safe-area` 垫在玻璃**外**，刘海区透明，滚动内容会从缺口漏出来 | 玻璃加 `.liquid-glass--header`（padding 在玻璃内）；桌面用 `md:pt-3` 做悬浮缝 |
+| 2 | R1 | **P2** | `.orbital-hero__glow` 复用 `core-breathe`（含 `translate(-50%,-50%)`），光晕被拽离球体 | 新增 `glow-breathe`（只 scale/opacity） |
+| 3 | R1 | **P2** | 空状态标题 `max-w-[22ch]`，英文 "Find a meeting time…" 被切成窄柱 | 改为 `max-w-xl`（实测 en h2 宽 576px，两行自然折行） |
+| 4 | R1 | **P2** | `OrbitalHero` 写死 `id="oh-sphere"` / `oh-sheen`，同页多实例会抢 `url(#)` | `useId` 生成唯一 id，并标 `"use client"` |
+| 5 | R1 | P3 | 顶栏/工作条/底栏共用 `--deck::after` 底发丝线，选区浮栏底部多一条装饰线 | `::after` 收到 `.liquid-glass--header` |
+| 6 | R1 | P3 | 极光层 `will-change: transform` 常驻整视口合成层 | 删掉 |
+| 7 | R2 | **P2** | `.page-kicker` / `.stat-grid dt` 的 `letter-spacing` + `uppercase` 会把 CJK 城市名/标签撑开 | 去掉 tracking/uppercase，只留字号与字重 |
+| 8 | R2 | P3 | `.wt-grid td[data-selected="1"]` 两处定义，后写只补 box-shadow | 合并进网格主规则 |
+
+R3 未再发现功能性缺陷（假阳性：dev overlay「1 Issue」来自既有 `/favicon.ico` 公共文件与 page 冲突，本轮未改）。
+
+#### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | ✅ 0 错误 |
+| `npx next lint` | ✅ 0 警告 / 0 错误 |
+| `npm test`（vitest） | ✅ 282/282（21 文件）；`uxRedesign` 四卡 h3>button / `liquid-glass` / `aria-pressed` 仍绿 |
+| 浏览器（puppeteer-core + Chrome，next dev :3010） | ✅ 空首页 zh 深色 + en 浅色 1440：地球/2×2 玻璃卡/浮动顶栏；点 overlap 卡 `aria-pressed=true` 且搜索获焦；en 标题两行完整；390 顶栏品牌+⋯ 首行、搜索次行；时钟卡日弧+时段芯片；网格 HUD 与选区；东京城页四格仪表；转换器双钟。SEO 页脚不透明 |
+
+#### 收尾
+
+- 全程直接在 `main` 工作（与第 42–58 轮同惯例），无独立功能分支，无需合并。
+- 临时探测脚本与截图在 `output/`（已 gitignore）；`:3010` 开发服本轮结束后停止。
+- 本轮分 2 个提交：feat `e4ab9fa`（观测台视觉，33 文件）+ docs 本笔（progress.md），推送 `origin/main`。
+
