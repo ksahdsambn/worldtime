@@ -84,7 +84,7 @@ export default function SelectionBar() {
       <div
         ref={glassRef}
         data-state={presence.state}
-        className="motion-sheet liquid-glass mx-auto flex max-w-[1680px] flex-col gap-2 px-4 py-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
+        className="motion-sheet liquid-glass flex flex-col gap-2 px-4 py-2.5 md:flex-row md:flex-wrap md:items-center md:gap-x-3 md:gap-y-2"
       >
         <div className="flex shrink-0 items-baseline">
           <span

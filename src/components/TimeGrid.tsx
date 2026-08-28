@@ -18,7 +18,7 @@ import type { DayPeriods } from "@/store/useWorldTimeStore";
  * 时间网格（TC-1）+ 拖拽选区（TC-2）——「重叠时段」排期视图。
  *
  * 两态改造后的定位：只服务「找共同空闲段 + 分享」；看各地几点走时钟态时间卡。
- * - 行：每座城市一行（无 UTC 参考行，UTC 见顶栏时钟）；
+ * - 行：每座城市一行（无 UTC 参考行）；
  * - 列：默认 1 天（一屏放下、无横滚），可切 7 天全景；
  * - 列锚定到主地点本地整点，再换算为 UTC 绝对时刻，所有行同步对齐；
  * - 拖拽选区锚定到 UTC 毫秒，跨行同步高亮（TC-2）；纯单击 = 把查看时刻
@@ -268,14 +268,29 @@ export default function TimeGrid() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      <table className="wt-grid animate-grid-in text-xs">
+      <table
+        className={
+          gridDays === 1
+            ? "wt-grid wt-grid--fit animate-grid-in text-xs"
+            : "wt-grid animate-grid-in text-xs"
+        }
+      >
+        <colgroup>
+          <col className="wt-grid__label-col" />
+          {columns.map((c) => (
+            <col key={c.ms} />
+          ))}
+        </colgroup>
         <thead>
           <tr>
             <th
               scope="col"
               className="sticky-col sticky left-0 z-10 px-3 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-ink"
             >
-              <span className="block max-w-[38vw] truncate md:max-w-none">
+              <span
+                className="block max-w-[38vw] truncate md:max-w-none"
+                title={localCityName(locale, home)}
+              >
                 {localCityName(locale, home)}
               </span>
             </th>
@@ -315,6 +330,7 @@ export default function TimeGrid() {
               columns={columns}
               dayPeriods={dayPeriods}
               hourFormat={hourFormat}
+              compactHours={gridDays === 1}
               highlight={highlight}
               now={nowRaw}
               pinnedMs={pinnedMs}
@@ -343,6 +359,7 @@ const Row = memo(function Row({
   columns,
   dayPeriods,
   hourFormat,
+  compactHours,
   highlight,
   now,
   pinnedMs,
@@ -353,6 +370,8 @@ const Row = memo(function Row({
   columns: ReturnType<typeof buildColumns>;
   dayPeriods: DayPeriods;
   hourFormat: "12" | "24" | "mixed";
+  /** 1 天均分列宽时 12h 只画小时数字，完整 “h a” 走 title。 */
+  compactHours: boolean;
   /** 选区高亮范围（半开区间）；null 表示无高亮。传范围对象而非闭包，便于 memo。 */
   highlight: { start: number; end: number } | null;
   now: number | null;
@@ -378,14 +397,15 @@ const Row = memo(function Row({
       // 其余列数字淡化（CSS .h-ghost），悬停恢复——降噪但零信息损失。
       const dayFirst = i === 0 || columns[i - 1].dayIndex !== c.dayIndex;
       return {
-        primary: dt.toFormat(use12 ? "h a" : "HH"),
-        alt: use12 && dayFirst ? dt.toFormat("HH") : null,
+        primary: dt.toFormat(use12 ? (compactHours ? "h" : "h a") : "HH"),
+        full: dt.toFormat(use12 ? "h a" : "HH"),
+        alt: use12 && dayFirst && !compactHours ? dt.toFormat("HH") : null,
         weekend,
         heat,
         dayFirst,
       };
     });
-  }, [columns, zone, countryCode, dayPeriods, hourFormat]);
+  }, [columns, zone, countryCode, dayPeriods, hourFormat, compactHours]);
 
   return (
     <tr>
@@ -393,7 +413,9 @@ const Row = memo(function Row({
         scope="row"
         className="sticky-col sticky left-0 z-10 select-text px-3 py-1.5 text-[13px] font-medium text-ink"
       >
-        <span className="block max-w-[38vw] truncate md:max-w-none">{label}</span>
+        <span className="block max-w-[38vw] truncate md:max-w-none" title={label}>
+          {label}
+        </span>
       </td>
       {columns.map((c, i) => {
         const info = cellInfo[i];
@@ -418,6 +440,7 @@ const Row = memo(function Row({
               highlight ? c.ms >= highlight.start && c.ms < highlight.end ? "1" : "0" : "0"
             }
             className="cursor-cell px-1 py-1.5 text-center"
+            title={info.full}
           >
             <span className={info.dayFirst ? "tabular-nums" : "tabular-nums h-ghost"}>
               {info.primary}

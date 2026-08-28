@@ -123,7 +123,7 @@ export default async function CityPage({ params }: Props) {
   return (
     <div className="liquid-glass-backdrop min-h-screen">
       <ContentHeader locale={locale} />
-      <main className="mx-auto max-w-2xl px-4 py-10 text-ink sm:py-16">
+      <main className="site-shell px-4 py-10 text-ink sm:py-16">
         <PageBreadcrumb
           items={[
             { href: "/", label: t("breadcrumbHome") },

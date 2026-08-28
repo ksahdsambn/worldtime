@@ -11,25 +11,10 @@ import type { AppLocale } from "@/i18n/routing";
 import { IconClock, IconGrid, IconHome, IconGlobe } from "./icons";
 
 /**
- * 首用/空状态门面（第三期任务卡片入口；第 56 轮统一为 4 卡等大网格）。
+ * 首用空状态：四张任务/快捷卡。
  *
- * 一个网格四张等大卡片，一排一排向下流动：
- * - 第一排（任务卡）：点卡片选定任务，随即高亮顶部城市搜索引导添加城市；
- *   添加第一个城市后自动进入所选模式（store.addPlace 消费 pendingMode，
- *   见 useWorldTimeStore）。
- * - 第二排（快捷开始卡）：最快补城市，点击立即生效——「从我的时区开始」
- *   本地时区起步 /「世界金融时钟」预设城市组；未选任务直接点快捷卡时
- *   进入默认时钟模式。
- *
- * 无障碍：四张卡均为原生 button（键盘可聚焦、回车触发、焦点可见）；
- * 任务卡的选定态由 aria-pressed 表达（样式同步）；卡片标题由 h3 包裹
- * button 进文档大纲（h1 品牌 → h2 空状态 → h3 卡片），读屏在标题列表
- * 可直达任务，按钮 accessible name 朗读完整卡片信息。
- * 卡片为不透明表面（surface + border 令牌，无玻璃——内容性表面）。
- *
- * flex-1：本分支是 Workspace 三态中唯一会短于视口内容的分支，必须撑满
- * 剩余高度（内容垂直居中），否则首页 footer 上浮、撑满视口的容器余量变成
- * footer 下方的死背景区。
+ * pendingMode 写入 store，addPlace 消费后进入所选视图。
+ * 标题必须是 h3>button：卡片进文档大纲，同时保留原生键盘操作。
  */
 export default function FirstUseEmptyState() {
   const t = useTranslations("Onboarding");
@@ -77,9 +62,9 @@ export default function FirstUseEmptyState() {
   ];
 
   return (
-    <div className="relative flex min-h-[380px] flex-1 flex-col items-center justify-center px-6 py-14">
-      <div className="animate-scale-in relative w-full max-w-2xl space-y-8 text-center">
-        <div className="space-y-3">
+    <div className="site-shell relative flex flex-1 flex-col px-4 py-4 md:py-5">
+      <div className="animate-scale-in relative flex w-full flex-1 flex-col gap-4 text-center">
+        <div className="shrink-0 space-y-2">
           <span className="brand-orbit mx-auto">
             <Image
               src="/brand/worldtime-mark.svg"
@@ -96,15 +81,10 @@ export default function FirstUseEmptyState() {
           </h2>
         </div>
 
-        {/* 四卡等大网格，一排一排向下流动：第一排选任务（aria-pressed 选定态），
-            第二排快捷开始（点击立即加城）。卡片标题用 h3（页面大纲
-            h1→h2→h3 层级合理）；h3 包裹原生 button（button 内容模型允许
-            phrasing content，h3 亦为 phrasing，合法）；读屏在标题列表可直达
-            卡片，按钮 accessible name 仍朗读完整卡片信息。快捷卡 sm 起占满
-            整行（col-span-2），与任务卡同宽同款、面积一致。 */}
-        <div className="grid gap-3 text-left sm:grid-cols-2">
+        {/* 四卡单列：h3 包裹原生 button 进大纲；任务卡 aria-pressed 选定态。 */}
+        <div className="task-card-stack">
           {tasks.map((task) => (
-            <h3 key={task.mode} className="min-w-0">
+            <h3 key={task.mode}>
               <button
                 type="button"
                 aria-pressed={pendingMode === task.mode}
@@ -127,7 +107,7 @@ export default function FirstUseEmptyState() {
             </h3>
           ))}
 
-          <h3 className="min-w-0 sm:col-span-2">
+          <h3>
             <button
               type="button"
               onClick={() => apply(localStarterCities())}
@@ -148,7 +128,7 @@ export default function FirstUseEmptyState() {
             </button>
           </h3>
 
-          <h3 className="min-w-0 sm:col-span-2">
+          <h3>
             <button
               type="button"
               onClick={() => apply(financeStarterCities())}

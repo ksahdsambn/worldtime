@@ -83,7 +83,7 @@ export default function TimeControlBar() {
 
   if (!home) return null;
 
-  // nowRaw 为 null（挂载后首个 tick 前）时与 LiveUtcClock 同款占位，避免闪 1970
+  // nowRaw 为 null（挂载后首个 tick 前）时用占位，避免闪 1970
   const liveLabel =
     nowRaw != null
       ? DateTime.fromMillis(nowRaw, { zone: home.timeZone }).toFormat(

@@ -120,7 +120,7 @@ export default function TimeCards() {
     <section aria-label={t("title")} className="min-h-0 flex-1">
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         <SortableContext items={places.map((p) => p.id)} strategy={verticalListSortingStrategy}>
-          <ul className="time-cards mx-auto w-full max-w-3xl space-y-2 px-3 pb-10 pt-3 md:px-4 md:pt-4">
+          <ul className="time-cards mx-auto w-full space-y-2 px-3 pb-10 pt-3 md:px-4 md:pt-4">
             {places.map((p: PlaceItem) => (
               <PlaceCardRow
                 key={p.id}

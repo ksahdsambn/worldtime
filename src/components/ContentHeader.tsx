@@ -9,8 +9,11 @@ export default async function ContentHeader({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "App" });
   return (
     <GlassHeader>
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
-        <Link href="/" className="flex shrink-0 items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 md:flex-nowrap">
+        <Link
+          href="/"
+          className="flex min-w-0 max-w-[16rem] items-center gap-3 sm:max-w-xs"
+        >
           <span className="brand-orbit brand-orbit--sm">
             <Image
               src="/brand/worldtime-mark.svg"
@@ -22,11 +25,16 @@ export default async function ContentHeader({ locale }: { locale: string }) {
               className="brand-mark"
             />
           </span>
-          <span className="flex flex-col leading-tight">
+          <span className="flex min-w-0 flex-col leading-tight">
             <span className="text-[16px] font-semibold tracking-tight text-gradient">
               {t("title")}
             </span>
-            <span className="text-[11px] tracking-wide text-muted">{t("tagline")}</span>
+            <span
+              className="truncate text-[11px] tracking-wide text-muted"
+              title={t("tagline")}
+            >
+              {t("tagline")}
+            </span>
           </span>
         </Link>
         <div className="ml-auto flex items-center gap-2">

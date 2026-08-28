@@ -62,6 +62,9 @@
     --cell-selected-bg: #dbeafe;
     --cell-selected-fg: #1e3a8a;
 
+    /* —— 整站居中栏（与页脚同宽；两侧露出画布底色）—— */
+    --site-max: 64rem; /* Tailwind max-w-5xl */
+
     /* —— 阴影 / 圆角 —— */
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
     --shadow-md: 0 4px 14px -4px rgba(15, 23, 42, 0.1),
@@ -292,6 +295,14 @@
    组件类（@layer components）—— 统一控件系统，取代散落的内联 className 组合
    ========================================================================== */
 @layer components {
+  /* 整站居中栏：顶栏玻璃 / 工作区 / 页脚共用，两侧露出 --app-bg。 */
+  .site-shell {
+    width: 100%;
+    max-width: var(--site-max);
+    margin-inline: auto;
+    min-width: 0;
+  }
+
   /* —— 按钮 —— */
   .btn {
     @apply inline-flex items-center justify-center gap-1.5 rounded-sm text-sm font-medium
@@ -558,6 +569,24 @@
     transition: border-color var(--dur-fast) var(--ease-out-quint),
       background-color var(--dur-fast) var(--ease-out-quint),
       box-shadow var(--dur-fast) var(--ease-out-quint);
+  }
+  /* 四卡等分剩余高度。不要给按钮写 height:100%——百分比高度会盖掉 flex stretch。 */
+  .task-card-stack {
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: left;
+  }
+  .task-card-stack > h3 {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 0%;
+    flex-direction: column;
+  }
+  .task-card-stack > h3 > .task-card {
+    flex: 1 1 auto;
+    width: 100%;
   }
   .task-card:hover {
     border-color: var(--accent);
@@ -834,17 +863,16 @@
     -webkit-backdrop-filter: blur(2px);
   }
 
-  /* 全宽贴顶/贴工具条：去掉左右与顶硬边，避免与发丝线叠出双线 */
+  /* 居中栏内的贴顶/工具条：圆角与顶边去掉，保留左右硬边勾出栏宽。 */
   .liquid-glass--bar {
     border-radius: 0;
-    border-left: none;
-    border-right: none;
     border-top: none;
   }
-  header.liquid-glass--bar {
+  /* 发丝线挂在顶栏玻璃面上（sticky 的是外层 header，玻璃是其子节点）。 */
+  header .liquid-glass--bar {
     border-bottom: none;
   }
-  header.liquid-glass--bar::after {
+  header .liquid-glass--bar::after {
     content: "";
     position: absolute;
     inset-inline: 0;
@@ -1100,6 +1128,17 @@
   border-spacing: 0;
 }
 
+/* 1 天视图（桌面）：24 列均分壳宽，避免 24×2.5rem + 冻结列撑出 64rem 栏。
+   单元格 min-width 覆盖必须写在基底规则之后（同特异性后写生效）。
+   手机端不均分：恢复 2.5rem 底宽 + 横滚，才能把「现在」滚到视口中部。 */
+.wt-grid--fit {
+  width: 100%;
+  table-layout: fixed;
+}
+.wt-grid--fit .wt-grid__label-col {
+  width: 7.25rem;
+}
+
 /* 表头 / 冻结列：不透明 --surface。
    表头是日期读数面。衬底是不透明 hud-frame，玻璃化没有网格可采、只会发灰；
    表头也未 sticky-top（纵向滚动整表一起走）。若将来改吸顶，半透明才会把
@@ -1132,6 +1171,38 @@
 }
 .wt-grid td[data-ms]:hover {
   background-color: var(--surface-hover);
+}
+.wt-grid--fit td[data-ms] {
+  min-width: 0;
+  padding-left: 0.125rem;
+  padding-right: 0.125rem;
+}
+.wt-grid--fit td[data-ms] > span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.wt-grid--fit th.sticky-col > span,
+.wt-grid--fit td.sticky-col > span {
+  max-width: 100%;
+}
+@media (max-width: 767px) {
+  .wt-grid--fit {
+    width: max-content;
+    table-layout: auto;
+  }
+  .wt-grid--fit .wt-grid__label-col {
+    width: auto;
+  }
+  .wt-grid--fit td[data-ms] {
+    min-width: 2.5rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  .wt-grid--fit th.sticky-col > span,
+  .wt-grid--fit td.sticky-col > span {
+    max-width: 38vw;
+  }
 }
 
 /* 周末（内凹表面，弱化）—— 日期列头已显示 Sat/Sun，非仅靠颜色 */

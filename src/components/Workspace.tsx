@@ -33,7 +33,7 @@ export default function Workspace() {
 
   if (!restored) {
     return (
-      <div className="mx-auto flex w-full max-w-[1680px] flex-1 flex-col px-3 md:px-4">
+      <div className="site-shell flex w-full flex-1 flex-col px-3 md:px-4">
         <div className="hud-frame flex min-h-[40vh] items-center justify-center" aria-busy="true">
           <LoadingLabel />
         </div>
@@ -46,11 +46,11 @@ export default function Workspace() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[1680px] min-w-0 flex-1 flex-col">
+    <div className="site-shell flex min-w-0 w-full flex-1 flex-col">
       {/* 工作条：模式分段控件 + 时间控制条 */}
       <div
         ref={glassRef}
-        className="liquid-glass liquid-glass--bar flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5"
+        className="liquid-glass liquid-glass--bar flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-none px-4 py-2.5"
       >
         {/* 不用 role="group"：该值被 KeyboardShortcuts 的 Esc 守卫视为「浮层打开」，
             常驻模式卡片会永久短路 Esc 清选区。按钮 aria-pressed 已表达状态。
@@ -87,7 +87,7 @@ export default function Workspace() {
               一次性拖选提示：新用户首访排期视图时出现，读过即不再出现。 */}
           <RecommendationCard />
           <DragHint />
-          <div className="min-h-0 flex-1 p-3 md:p-4">
+          <div className="min-h-0 min-w-0 flex-1 p-3 md:p-4">
             <TimeGrid />
           </div>
           {/* 选区操作栏仅在排期视图出现：时钟态没有可操作的选区画布 */}
