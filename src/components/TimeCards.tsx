@@ -36,6 +36,7 @@ import {
   IconSun,
   IconMoon,
 } from "./icons";
+import DayArc from "./DayArc";
 import type { AppLocale } from "@/i18n/routing";
 import {
   classifyLocalPeriod,
@@ -120,7 +121,7 @@ export default function TimeCards() {
     <section aria-label={t("title")} className="min-h-0 flex-1">
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         <SortableContext items={places.map((p) => p.id)} strategy={verticalListSortingStrategy}>
-          <ul className="time-cards mx-auto w-full space-y-2 px-3 pb-10 pt-3 md:px-4 md:pt-4">
+          <ul className="time-cards mx-auto w-full space-y-3 px-3 pb-12 pt-3 md:px-4 md:pt-4">
             {places.map((p: PlaceItem) => (
               <PlaceCardRow
                 key={p.id}
@@ -249,12 +250,11 @@ const PlaceCardRow = memo(function PlaceCardRow({
     <li
       ref={setNodeRef}
       style={style}
-      className={`surface group animate-fade-in overflow-hidden rounded-lg shadow-sm transition-shadow duration-200 hover:shadow-glow ${
-        isHome ? "home-row" : ""
+      className={`time-card surface group animate-fade-in rounded-lg px-3 py-3 shadow-sm transition-shadow duration-200 md:px-4 md:py-3.5 ${
+        isHome ? "home-row time-card--home" : ""
       }`}
     >
-      <div className="flex items-center gap-2.5 px-3 py-3 md:gap-3 md:px-4">
-        {/* 拖拽手柄（WC-6）：桌面悬停显现，触屏常驻（弱化）以保留拖拽排序 */}
+      <div className="time-card__row">
         <button
           type="button"
           aria-label={t("dragHandle")}
@@ -268,7 +268,7 @@ const PlaceCardRow = memo(function PlaceCardRow({
           {p.flag}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-sm font-medium text-ink">
+          <div className="truncate text-sm font-semibold tracking-tight text-ink">
             {isHome && (
               <>
                 <span className="sr-only">{t("home")}</span>
@@ -280,9 +280,8 @@ const PlaceCardRow = memo(function PlaceCardRow({
             )}
             {p.customName || localCityName(locale, p)}
           </div>
-          {/* 状态行：昼夜图标 + 相对主地点时差；完整时区细节在 title 悬浮 */}
           <div
-            className="mt-0.5 flex items-center gap-1.5 text-[11px] text-faint"
+            className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-faint"
             title={hoverDetail}
           >
             {(() => {
@@ -294,24 +293,27 @@ const PlaceCardRow = memo(function PlaceCardRow({
                     ? t("periodContact")
                     : t("periodRest");
               return (
-                <span className="text-faint" aria-label={label}>
-                  <dn.Icon className="h-3.5 w-3.5" />
+                <span className={`period-chip period-chip--${dn.state}`} aria-label={label}>
+                  <dn.Icon className="h-3 w-3" aria-hidden />
+                  {label}
                 </span>
               );
             })()}
             {offsetMin != null && (
-              <span data-testid={`offset-${p.id}`} className="tabular-nums">
+              <span data-testid={`offset-${p.id}`} className="chrono text-[12px] text-muted">
                 {formatOffset(offsetMin)}
               </span>
             )}
           </div>
         </div>
-        {/* 右侧时间组：大号分钟级时钟 + 日期星期（右对齐，逐字读数面） */}
         <div className="shrink-0 text-right">
-          <div className="chrono text-3xl font-semibold leading-tight tracking-tight text-ink md:text-4xl" data-testid={`clock-${p.id}`}>
+          <div
+            className="chrono time-card__clock"
+            data-testid={`clock-${p.id}`}
+          >
             {timeStr}
           </div>
-          <div className="text-[11px] tabular-nums text-faint">{dateStr}</div>
+          <div className="mt-1 text-[11px] tabular-nums text-faint">{dateStr}</div>
         </div>
         <PlaceActionsMenu
           place={p}
@@ -326,6 +328,7 @@ const PlaceCardRow = memo(function PlaceCardRow({
           confirm={confirm}
         />
       </div>
+      <DayArc hour={localHour} periods={dayPeriods} />
     </li>
   );
 });

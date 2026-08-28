@@ -3,7 +3,7 @@
 import { useLiquidGlass } from "@/lib/useLiquidGlass";
 
 /**
- * sticky 顶栏：panel 层玻璃 + Chromium 折射。
+ * sticky 顶栏：浮动圆角玻璃甲板 + Chromium 折射。
  *
  * page.tsx 是 Server Component，不能调 hook，故抽出 client 岛。
  * 进场用 fade-in 而非 blur-in：残留的 filter:blur(0) 会自成 containing
@@ -14,10 +14,10 @@ import { useLiquidGlass } from "@/lib/useLiquidGlass";
 export default function GlassHeader({ children }: { children: React.ReactNode }) {
   const glassRef = useLiquidGlass();
   return (
-    <header className="sticky top-0 z-30 w-full shrink-0">
+    <header className="sticky top-0 z-30 w-full shrink-0 px-3 md:pt-3">
       <div
         ref={glassRef}
-        className="site-shell safe-top animate-fade-in liquid-glass liquid-glass--bar rounded-none"
+        className="site-shell animate-fade-in liquid-glass liquid-glass--deck liquid-glass--header"
       >
         {children}
       </div>

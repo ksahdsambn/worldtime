@@ -8,7 +8,7 @@ export default async function Loading() {
   const t = await getTranslations("Loading");
   return (
     <main
-      className="liquid-glass-backdrop flex min-h-screen items-center justify-center p-8"
+      className="relative z-[1] flex min-h-screen items-center justify-center p-8"
       aria-busy="true"
       aria-live="polite"
     >

@@ -54,7 +54,7 @@ export default async function AboutPage({ params }: Props) {
     : [];
 
   return (
-    <div className="liquid-glass-backdrop min-h-screen">
+    <div className="relative z-[1] min-h-screen">
       <ContentHeader locale={locale} />
       <main className="site-shell px-4 py-10 text-ink sm:py-16">
         <PageBreadcrumb
@@ -63,17 +63,17 @@ export default async function AboutPage({ params }: Props) {
             { label: t("title") },
           ]}
         />
-        <h1 className="text-2xl font-bold tracking-tight sm:text-[32px]">{t("title")}</h1>
-        <p className="mt-4 leading-relaxed text-muted">{t("lead")}</p>
+        <h1 className="page-title">{t("title")}</h1>
+        <p className="page-lede">{t("lead")}</p>
 
         {features.length > 0 ? (
           <>
-            <h2 className="mt-10 text-base font-semibold text-gradient">{tSeo("featuresTitle")}</h2>
-            <dl className="mt-4 divide-y divide-line">
+            <h2 className="mt-12 text-base font-semibold text-gradient">{tSeo("featuresTitle")}</h2>
+            <dl className="feature-grid">
               {features.map((f) => (
-                <div key={f.title} className="py-3 first:pt-0">
-                  <dt className="font-medium text-ink">{f.title}</dt>
-                  <dd className="mt-1 leading-relaxed text-muted">{f.desc}</dd>
+                <div key={f.title} className="feature-tile">
+                  <dt>{f.title}</dt>
+                  <dd>{f.desc}</dd>
                 </div>
               ))}
             </dl>
@@ -82,38 +82,38 @@ export default async function AboutPage({ params }: Props) {
 
         {useCases.length > 0 ? (
           <>
-            <h2 className="mt-10 text-base font-semibold text-gradient">{tSeo("useCasesTitle")}</h2>
-            <dl className="mt-4 divide-y divide-line">
+            <h2 className="mt-12 text-base font-semibold text-gradient">{tSeo("useCasesTitle")}</h2>
+            <dl className="feature-grid">
               {useCases.map((u) => (
-                <div key={u.title} className="py-3 first:pt-0">
-                  <dt className="font-medium text-ink">{u.title}</dt>
-                  <dd className="mt-1 leading-relaxed text-muted">{u.desc}</dd>
+                <div key={u.title} className="feature-tile">
+                  <dt>{u.title}</dt>
+                  <dd>{u.desc}</dd>
                 </div>
               ))}
             </dl>
           </>
         ) : null}
 
-        <h2 className="mt-10 text-base font-semibold text-gradient">{t("howTitle")}</h2>
-        <p className="mt-2 leading-relaxed text-muted">{t("howBody")}</p>
+        <h2 className="mt-12 text-base font-semibold text-gradient">{t("howTitle")}</h2>
+        <p className="mt-2 max-w-3xl leading-relaxed text-muted">{t("howBody")}</p>
 
-        <h2 className="mt-8 text-base font-semibold text-gradient">{t("dataTitle")}</h2>
-        <p className="mt-2 leading-relaxed text-muted">{t("dataBody")}</p>
+        <h2 className="mt-10 text-base font-semibold text-gradient">{t("dataTitle")}</h2>
+        <p className="mt-2 max-w-3xl leading-relaxed text-muted">{t("dataBody")}</p>
 
-        <h2 className="mt-8 text-base font-semibold text-gradient">{t("dstTitle")}</h2>
-        <p className="mt-2 leading-relaxed text-muted">{t("dstBody")}</p>
+        <h2 className="mt-10 text-base font-semibold text-gradient">{t("dstTitle")}</h2>
+        <p className="mt-2 max-w-3xl leading-relaxed text-muted">{t("dstBody")}</p>
 
-        <h2 className="mt-8 text-base font-semibold text-gradient">{t("shareTitle")}</h2>
-        <p className="mt-2 leading-relaxed text-muted">{t("shareBody")}</p>
+        <h2 className="mt-10 text-base font-semibold text-gradient">{t("shareTitle")}</h2>
+        <p className="mt-2 max-w-3xl leading-relaxed text-muted">{t("shareBody")}</p>
 
-        <h2 className="mt-8 text-base font-semibold text-gradient">{t("offlineTitle")}</h2>
-        <p className="mt-2 leading-relaxed text-muted">{t("offlineBody")}</p>
+        <h2 className="mt-10 text-base font-semibold text-gradient">{t("offlineTitle")}</h2>
+        <p className="mt-2 max-w-3xl leading-relaxed text-muted">{t("offlineBody")}</p>
 
         <p className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1 text-sm text-muted">
-          <Link href="/privacy" className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover">
+          <Link href="/privacy" className="link-chip">
             {t("privacyBlurb")}
           </Link>
-          <Link href="/terms" className="text-accent underline underline-offset-2 transition-colors duration-150 hover:text-accent-hover">
+          <Link href="/terms" className="link-chip">
             {t("termsBlurb")}
           </Link>
         </p>

@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import OrbitalHero from "./OrbitalHero";
 
 /**
  * 统一的状态 / 空状态表面（科技 premium）。
@@ -7,7 +8,8 @@ import { type ReactNode } from "react";
  * not-found / 事件失效态等，统一这些「边缘界面」的视觉语言。纯展示（动效由
  * CSS 提供），无 hook，可被 server 或 client 组件直接渲染。
  *
- * - icon：通常是 emoji 或小型 SVG；以 scale-in 进场。
+ * - icon：非空时在标题上方画线框地球（传入节点仅作「要图标」开关，
+ *   实际渲染统一 OrbitalHero，避免 emoji 与观测台语言打架）。
  * - title：页面主标题（渲染为 h1）。
  * - description：副文案。
  * - children：操作区（按钮等）。
@@ -30,11 +32,11 @@ export function StateSurface({
 }: StateSurfaceProps) {
   return (
     <main
-      className={`flex min-h-[60vh] flex-col items-center justify-center gap-5 p-8 text-center ${className}`}
+      className={`relative z-[1] flex min-h-[60vh] flex-col items-center justify-center gap-5 p-8 text-center ${className}`}
     >
       {icon != null && (
-        <div className="brand-orbit animate-scale-in text-5xl" aria-hidden>
-          {icon}
+        <div className="animate-scale-in" aria-hidden>
+          <OrbitalHero size={88} />
         </div>
       )}
       <div className="hud-frame max-w-md space-y-2.5 px-7 py-8">

@@ -107,7 +107,7 @@ export default function RecommendationCard() {
 
   return (
     <section
-      className="hud-frame animate-fade-in mx-3 mb-2 px-4 py-3 md:mx-4"
+      className="hud-frame animate-fade-in mx-3 mb-2 mt-2 px-4 py-3.5 md:mx-4"
       data-testid="recommendation-card"
       aria-label={t("title")}
     >

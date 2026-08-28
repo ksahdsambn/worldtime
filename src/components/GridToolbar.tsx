@@ -21,17 +21,16 @@ export default function GridToolbar() {
   if (places.length === 0) return null;
 
   return (
-    <div
-      ref={glassRef}
-      className="animate-fade-in liquid-glass liquid-glass--bar flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-none px-4 py-2.5"
-    >
-      <HeatmapLegend />
-      <div className="flex flex-wrap items-center gap-1">
-        {/* 推荐时段：核心价值的显性入口（<2 城时组件自隐藏）。
-            D4 决策：保留为高级用户的次要入口，与结论卡并存。 */}
-        <SuggestionsPopover />
-        {/* 视图选项收纳：1天/7天 · 周翻页 · 回到现在 */}
-        <ViewOptionsMenu />
+    <div className="px-3 pt-2">
+      <div
+        ref={glassRef}
+        className="animate-fade-in liquid-glass liquid-glass--deck flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5"
+      >
+        <HeatmapLegend />
+        <div className="flex flex-wrap items-center gap-1">
+          <SuggestionsPopover />
+          <ViewOptionsMenu />
+        </div>
       </div>
     </div>
   );

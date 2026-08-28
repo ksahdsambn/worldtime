@@ -81,7 +81,7 @@ export default async function CountryPage({ params }: Props) {
   const pageUrl = localeUrl(locale, path);
 
   return (
-    <div className="liquid-glass-backdrop min-h-screen">
+    <div className="relative z-[1] min-h-screen">
       <ContentHeader locale={locale} />
       <main className="site-shell px-4 py-10 text-ink sm:py-16">
         <PageBreadcrumb
@@ -91,34 +91,34 @@ export default async function CountryPage({ params }: Props) {
           ]}
         />
         <header className="animate-fade-up mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-[32px]">
+          <h1 className="page-title">
             {t("title", { country })}
           </h1>
-          <p className="mt-3 leading-relaxed text-muted">
+          <p className="page-lede">
             {t("intro", { country, zones: String(zones.length) })}
           </p>
         </header>
 
         <p className="mb-4 text-sm text-muted">{t("zoneCount", { n: String(zones.length) })}</p>
-        <ul className="mb-8 flex flex-wrap gap-2 text-xs text-faint">
+        <ul className="mb-8 flex flex-wrap gap-1.5 text-xs text-faint">
           {zones.map((z) => (
-            <li key={z} className="chrono rounded-full border border-line px-2.5 py-1">
+            <li key={z} className="chrono link-chip">
               {z}
             </li>
           ))}
         </ul>
 
         <h2 className="mb-3 text-base font-semibold text-gradient">{t("citiesTitle")}</h2>
-        <ul className="divide-y divide-line">
+        <ul className="flex flex-wrap gap-1.5">
           {cities.map((c) => (
-            <li key={c.id} className="flex items-baseline justify-between gap-3 py-2.5">
+            <li key={c.id}>
               <Link
                 href={`/time/${c.id}`}
-                className="text-accent underline underline-offset-2 hover:text-accent-hover"
+                className="link-chip"
+                title={c.timeZone}
               >
-                {localCityName(loc, c)}
+                <span aria-hidden>{c.flag}</span> {localCityName(loc, c)}
               </Link>
-              <span className="chrono text-xs text-faint">{c.timeZone}</span>
             </li>
           ))}
         </ul>

@@ -3,8 +3,7 @@ import { Link } from "@/i18n/navigation";
 
 type FooterCurrent = "about" | "faq" | "privacy" | "terms";
 
-const linkClass =
-  "text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent";
+const linkClass = "link-chip";
 
 export default async function SiteFooter({
   locale,

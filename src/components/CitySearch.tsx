@@ -183,9 +183,9 @@ export default function CitySearch() {
   }
 
   return (
-    <div className="relative w-full max-w-md" ref={anchorRef}>
-      <div className={`relative ${pulsing ? "search-pulse" : ""}`}>
-        <IconSearch className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
+    <div className="relative w-full max-w-2xl" ref={anchorRef}>
+      <div className={`cmd-search relative ${pulsing ? "search-pulse" : ""}`}>
+        <IconSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-faint" />
         <input
           ref={inputRef}
           type="text"

@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Sora } from "next/font/google";
+import { Sora, JetBrains_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import ThemeRegistry from "@/components/ThemeRegistry";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import WorldField from "@/components/WorldField";
 import {
   getSiteUrl,
   buildAlternates,
@@ -20,6 +21,12 @@ const sora = Sora({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-display",
+});
+
+const jetbrains = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-mono",
 });
 
 export function generateStaticParams() {
@@ -38,11 +45,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   // viewport-fit=cover：让 env(safe-area-inset-*) 在 notched / 全面屏生效，
-  // 配合 .safe-top / .safe-bottom 避免 sticky 顶栏与底部浮栏被遮挡。
+  // 配合顶栏玻璃内 padding（.liquid-glass--header）与 .safe-bottom，避免刘海/Home 条遮挡。
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eef2f8" },
-    { media: "(prefers-color-scheme: dark)", color: "#070b14" },
+    { media: "(prefers-color-scheme: light)", color: "#dce7f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#030712" },
   ],
 };
 
@@ -120,8 +127,13 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <NextIntlClientProvider locale={locale}>
-      <html lang={locale} className={sora.variable} suppressHydrationWarning>
-        <body>
+      <html
+        lang={locale}
+        className={`${sora.variable} ${jetbrains.variable}`}
+        suppressHydrationWarning
+      >
+        <body className="liquid-glass-backdrop">
+          <WorldField />
           <ThemeRegistry>
             <ServiceWorkerRegister />
             {children}

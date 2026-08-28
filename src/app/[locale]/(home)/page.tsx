@@ -54,15 +54,15 @@ export default async function Home({ params }: Props) {
   const tSeo = await getTranslations({ locale, namespace: "Seo" });
 
   return (
-    <div className="liquid-glass-backdrop flex min-h-screen supports-[height:100dvh]:min-h-dvh flex-col text-ink">
+    <div className="relative z-[1] flex min-h-screen supports-[height:100dvh]:min-h-dvh flex-col text-ink">
       <UrlStateSync />
       <KeyboardShortcuts />
 
       {/* 顶部导航栏：品牌 · 城市搜索 · 语言/设置/主题。
-          panel 层玻璃 + 折射（GlassHeader）；safe-top 避开全面屏安全区。 */}
+          panel 层玻璃 + 折射（GlassHeader）；刘海安全区垫在玻璃内。 */}
       <GlassHeader>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 md:flex-nowrap">
-          <h1 className="flex min-w-0 max-w-[16rem] items-center gap-3 sm:max-w-xs">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2.5 px-4 py-3.5 md:flex-nowrap">
+          <h1 className="flex min-w-0 max-w-[16rem] flex-1 items-center gap-3 sm:max-w-xs md:flex-none">
             <span className="brand-orbit brand-orbit--sm">
               <Image
                 src="/brand/worldtime-mark.svg"
@@ -87,7 +87,7 @@ export default async function Home({ params }: Props) {
             </span>
           </h1>
 
-          <div className="w-full min-w-0 md:flex-1">
+          <div className="order-last w-full min-w-0 md:order-none md:flex-1">
             <CitySearch />
           </div>
 
@@ -109,8 +109,8 @@ export default async function Home({ params }: Props) {
       */}
       {/* mt-auto：内容不足一屏时把 footer 压到容器底部，避免视口余量
           留在 footer 下方成为空白背景区。 */}
-      <footer className="site-shell mt-auto border-t border-line bg-surface px-4 py-2.5 text-sm">
-        <Reveal className="space-y-1.5">
+      <footer className="site-shell mt-auto px-4 py-8 text-sm">
+        <Reveal className="footer-deck space-y-4">
           {/* 一段：一句实体定义（世界时钟 / 时区转换器 / 会议安排工具三实体必备） */}
           <p className="max-w-3xl leading-relaxed text-muted">
             {tSeo("introLine")}
@@ -130,7 +130,7 @@ export default async function Home({ params }: Props) {
                 labelledBy="seo-cities"
                 className="!mt-0"
               >
-                <ul className="grid grid-cols-2 gap-x-5 gap-y-1 sm:grid-cols-4">
+                <ul className="flex flex-wrap gap-1.5">
                   {footerCitySplit().folded.map((id) => {
                     const city = CITY_BY_ID[id];
                     if (!city) return null;
@@ -138,7 +138,7 @@ export default async function Home({ params }: Props) {
                       <li key={id}>
                         <Link
                           href={`/time/${id}`}
-                          className="text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent"
+                          className="link-chip"
                         >
                           {localCityName(locale as AppLocale, city)}
                         </Link>
@@ -148,8 +148,8 @@ export default async function Home({ params }: Props) {
                 </ul>
               </SeoFold>
             </div>
-            <nav aria-labelledby="seo-cities" className="mt-1">
-              <ul className="grid grid-cols-3 gap-x-5 gap-y-0.5 text-xs sm:grid-cols-6">
+            <nav aria-labelledby="seo-cities" className="mt-2">
+              <ul className="flex flex-wrap gap-1.5">
                 {footerCitySplit().visible.map((id) => {
                   const city = CITY_BY_ID[id];
                   if (!city) return null;
@@ -157,7 +157,7 @@ export default async function Home({ params }: Props) {
                     <li key={id}>
                       <Link
                         href={`/time/${id}`}
-                        className="text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent"
+                        className="link-chip"
                       >
                         {localCityName(locale as AppLocale, city)}
                       </Link>
@@ -182,12 +182,12 @@ export default async function Home({ params }: Props) {
                 labelledBy="seo-converters"
                 className="!mt-0"
               >
-                <ul className="grid grid-cols-2 gap-x-5 gap-y-1 sm:grid-cols-4">
+                <ul className="flex flex-wrap gap-1.5">
                   {popularConverterLinks(locale as AppLocale).map((item) => (
                     <li key={item.slug}>
                       <Link
                         href={`/time-converter/${item.slug}`}
-                        className="text-muted underline underline-offset-2 transition-colors duration-150 hover:text-accent"
+                        className="link-chip"
                       >
                         {item.label}
                       </Link>

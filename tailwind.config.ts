@@ -79,6 +79,7 @@ const config: Config = {
           "sans-serif",
         ],
         mono: [
+          "var(--font-mono)",
           "ui-monospace",
           "SF Mono",
           "Cascadia Code",

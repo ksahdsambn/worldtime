@@ -33,16 +33,17 @@ export default function CityNow({
     ? nextDstLabel.replaceAll("{date}", formatDstDate(facts.nextDstMs, timeZone, locale))
     : null;
   return (
-    <div className="hud-frame shadow-glow mt-5 px-6 py-5">
-      <p className="chrono text-5xl font-bold tracking-tight text-gradient sm:text-6xl">
+    <div className="hud-frame shadow-glow mt-6 px-6 py-7 sm:px-8 sm:py-8">
+      <p className="chrono text-6xl font-medium tracking-tight text-gradient sm:text-7xl">
         {facts.time}
       </p>
-      <p className="mt-2 text-sm text-muted">{facts.date}</p>
-      <p className="mt-1 text-sm text-muted">
-        UTC {facts.offsetLabel}
-        {facts.abbrev ? ` · ${facts.abbrev}` : ""}
+      <p className="mt-3 text-sm text-muted">{facts.date}</p>
+      <p className="mt-1 flex flex-wrap items-center gap-x-2 text-sm text-muted">
+        <span className="live-dot" aria-hidden />
+        <span className="chrono">UTC {facts.offsetLabel}</span>
+        {facts.abbrev ? <span>· {facts.abbrev}</span> : null}
       </p>
-      <p className="mt-2 text-sm text-muted">{dstText}</p>
+      <p className="mt-3 text-sm text-muted">{dstText}</p>
       {nextText ? <p className="mt-1 text-xs text-faint">{nextText}</p> : null}
     </div>
   );

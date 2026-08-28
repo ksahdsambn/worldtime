@@ -33,28 +33,30 @@ export function LandingHero({
       <p className="mt-4 text-base leading-relaxed text-ink">
         {t("factLead", { a: aLabel, b: bLabel, aTime: live.aNow, bTime: live.bNow })}
       </p>
-      <div className="hud-frame shadow-glow mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1 px-6 py-5">
-        <span className="text-gradient chrono text-4xl font-bold sm:text-5xl">
-          {formatOffset(live.diffMinutes)}
-        </span>
-        <span className="text-sm text-muted">
-          {bLabel} {bAhead ? t("isAhead") : t("lags")} {t("vs")} {aLabel}
-        </span>
-        <span className="text-xs text-faint">{t("currentOffsetNote")}</span>
-      </div>
-      <div className="mt-4 flex flex-wrap gap-6 text-sm">
-        <p>
-          <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-            {aLabel}
-          </span>
-          <span className="chrono text-2xl font-semibold text-ink">{live.aNow}</span>
-        </p>
-        <p>
-          <span className="block text-[11px] font-semibold uppercase tracking-[0.16em] text-faint">
-            {bLabel}
-          </span>
-          <span className="chrono text-2xl font-semibold text-ink">{live.bNow}</span>
-        </p>
+      <div className="hud-frame shadow-glow mt-6 px-6 py-7 sm:px-8">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <p>
+            <span className="page-kicker">{aLabel}</span>
+            <span className="chrono mt-1 block text-4xl font-medium text-ink sm:text-5xl">
+              {live.aNow}
+            </span>
+          </p>
+          <p className="text-center">
+            <span className="text-gradient chrono text-3xl font-medium sm:text-4xl">
+              {formatOffset(live.diffMinutes)}
+            </span>
+            <span className="mt-1 block text-xs text-muted">
+              {bLabel} {bAhead ? t("isAhead") : t("lags")} {t("vs")} {aLabel}
+            </span>
+          </p>
+          <p className="sm:text-right">
+            <span className="page-kicker">{bLabel}</span>
+            <span className="chrono mt-1 block text-4xl font-medium text-ink sm:text-5xl">
+              {live.bNow}
+            </span>
+          </p>
+        </div>
+        <p className="mt-4 text-xs text-faint">{t("currentOffsetNote")}</p>
       </div>
       <p className="mt-4 text-sm leading-relaxed text-muted">
         {t("bNote", {

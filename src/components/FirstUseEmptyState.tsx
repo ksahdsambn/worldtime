@@ -1,7 +1,6 @@
 "use client";
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
 import type { ViewMode } from "@/store/useWorldTimeStore";
@@ -11,6 +10,7 @@ import type { CityRecord } from "@/lib/types";
 import type { AppLocale } from "@/i18n/routing";
 import { useLiquidGlass, type LiquidGlassConfig } from "@/lib/useLiquidGlass";
 import { IconClock, IconGrid, IconHome, IconGlobe } from "./icons";
+import OrbitalHero from "./OrbitalHero";
 
 /**
  * 首页大卡比顶栏更宽更高，默认 shader 的 1–2px 边带在顶/底长边上几乎看不见。
@@ -27,7 +27,7 @@ const TASK_CARD_GLASS: Partial<LiquidGlassConfig> = {
 };
 
 /**
- * 首用空状态：四张任务/快捷卡。
+ * 首用空状态：英雄地球 + 四张任务/快捷卡。
  *
  * pendingMode 写入 store，addPlace 消费后进入所选视图。
  * 标题必须是 h3>button：卡片进文档大纲，同时保留原生键盘操作。
@@ -36,6 +36,7 @@ const TASK_CARD_GLASS: Partial<LiquidGlassConfig> = {
  */
 export default function FirstUseEmptyState() {
   const t = useTranslations("Onboarding");
+  const tApp = useTranslations("App");
   const locale = useLocale() as AppLocale;
   const addPlace = useWorldTimeStore((s) => s.addPlace);
   const pendingMode = useWorldTimeStore((s) => s.pendingMode);
@@ -48,12 +49,9 @@ export default function FirstUseEmptyState() {
 
   function chooseTask(mode: ViewMode) {
     setPendingMode(mode);
-    // 引导：高亮并聚焦顶部城市搜索
     pulseSearch();
   }
 
-  // 金融预设的 chips：城市名随页面 locale（SSR 与客户端同构，无水合风险）。
-  // 国旗 emoji 对读屏是噪音（逐个朗读"国旗"），以 aria-hidden 只暴露城市名。
   const financeCities = financeStarterCities();
 
   const tasks: Array<{
@@ -80,26 +78,18 @@ export default function FirstUseEmptyState() {
   ];
 
   return (
-    <div className="site-shell relative flex flex-1 flex-col px-4 py-4 md:py-5">
-      <div className="animate-fade-in relative flex w-full flex-1 flex-col gap-4 text-center">
-        <div className="shrink-0 space-y-2">
-          <span className="brand-orbit mx-auto">
-            <Image
-              src="/brand/worldtime-mark.svg"
-              alt=""
-              width={48}
-              height={48}
-              unoptimized
-              className="brand-mark"
-              aria-hidden
-            />
-          </span>
-          <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
+    <div className="site-shell relative flex flex-1 flex-col justify-center px-4 py-6 md:py-10">
+      <div className="animate-fade-in relative flex w-full flex-col gap-7">
+        <div className="empty-hero">
+          <OrbitalHero size={136} />
+          <h2 className="page-title max-w-xl text-balance">
             {t("emptyHeadline")}
           </h2>
+          <p className="max-w-[40ch] text-sm leading-relaxed text-muted">
+            {tApp("tagline")}
+          </p>
         </div>
 
-        {/* 四卡单列：h3 包裹原生 button 进大纲；任务卡 aria-pressed 选定态。 */}
         <div className="task-card-stack">
           {tasks.map((task) => (
             <h3 key={task.mode}>

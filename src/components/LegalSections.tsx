@@ -9,11 +9,11 @@ export type LegalSection = {
 
 export default function LegalSections({ sections }: { sections: LegalSection[] }) {
   return (
-    <div className="mt-8 space-y-8">
+    <div className="mt-8 space-y-6">
       {sections.map((section) => (
-        <section key={section.heading}>
-          <h2 className="text-base font-semibold text-ink">{section.heading}</h2>
-          <div className="mt-2 space-y-3 leading-relaxed text-muted">
+        <section key={section.heading} className="faq-card">
+          <h2>{section.heading}</h2>
+          <div className="faq-a mt-2 space-y-3">
             {section.paragraphs.map((paragraph, i) => (
               <p key={i}>{paragraph}</p>
             ))}

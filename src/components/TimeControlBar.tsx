@@ -133,7 +133,7 @@ export default function TimeControlBar() {
           </button>
         </span>
       ) : pinnedMs != null ? (
-        <span className="animate-fade-in flex items-center gap-1 rounded-full border border-line bg-surface-inset py-1 pl-3 pr-1">
+        <span className="animate-fade-in flex items-center gap-1 rounded-full border border-line py-1 pl-3 pr-1">
           <IconClock className="h-3.5 w-3.5 text-warm-strong" aria-hidden />
           {/* 点值重新编辑；× 回到实时 */}
           <button
@@ -162,7 +162,7 @@ export default function TimeControlBar() {
           onClick={openEditor}
           data-testid="time-bar-now"
           title={t("pick")}
-          className="flex items-center gap-2 rounded-full border border-line bg-surface-inset px-3 py-1 transition-colors duration-150 hover:border-line-strong hover:text-ink focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
+          className="flex items-center gap-2 rounded-full border border-line px-3 py-1.5 transition-colors duration-150 hover:border-line-strong hover:text-ink focus-visible:outline focus-visible:outline-1 focus-visible:outline-accent"
         >
           <span className="live-dot" aria-hidden />
           <span className="text-xs font-medium text-muted">{t("now")}</span>

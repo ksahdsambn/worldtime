@@ -9,7 +9,7 @@ export default async function ContentHeader({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "App" });
   return (
     <GlassHeader>
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 md:flex-nowrap">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2.5 px-4 py-3.5 md:flex-nowrap">
         <Link
           href="/"
           className="flex min-w-0 max-w-[16rem] items-center gap-3 sm:max-w-xs"

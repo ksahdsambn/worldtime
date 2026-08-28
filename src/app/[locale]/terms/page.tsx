@@ -49,7 +49,7 @@ export default async function TermsPage({ params }: Props) {
     : [];
 
   return (
-    <div className="liquid-glass-backdrop min-h-screen">
+    <div className="relative z-[1] min-h-screen">
       <ContentHeader locale={locale} />
       <main className="site-shell px-4 py-10 text-ink sm:py-16">
         <PageBreadcrumb
@@ -58,7 +58,7 @@ export default async function TermsPage({ params }: Props) {
             { label: t("title") },
           ]}
         />
-        <h1 className="text-2xl font-bold tracking-tight sm:text-[32px]">{t("title")}</h1>
+        <h1 className="page-title">{t("title")}</h1>
         <p className="mt-2 text-sm text-muted">{t("updated")}</p>
         <p className="mt-4 leading-relaxed text-muted">{t("lead")}</p>
         <LegalSections sections={sections} />

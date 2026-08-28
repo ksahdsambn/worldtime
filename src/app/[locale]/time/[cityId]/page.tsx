@@ -121,7 +121,7 @@ export default async function CityPage({ params }: Props) {
     .slice(0, 24);
 
   return (
-    <div className="liquid-glass-backdrop min-h-screen">
+    <div className="relative z-[1] min-h-screen">
       <ContentHeader locale={locale} />
       <main className="site-shell px-4 py-10 text-ink sm:py-16">
         <PageBreadcrumb
@@ -132,10 +132,8 @@ export default async function CityPage({ params }: Props) {
           ]}
         />
         <header className="animate-fade-up mb-8">
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
-            {country}
-          </p>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-[32px]">
+          <p className="page-kicker">{country}</p>
+          <h1 className="page-title">
             {t("title", { city: name })}
           </h1>
           <CityNow
@@ -159,33 +157,33 @@ export default async function CityPage({ params }: Props) {
           </p>
         </header>
 
-        <dl className="hud-frame divide-y divide-line text-sm">
-          <div className="flex justify-between gap-4 px-4 py-2.5">
-            <dt className="text-muted">{t("country")}</dt>
+        <dl className="hud-frame stat-grid text-sm">
+          <div>
+            <dt>{t("country")}</dt>
             <dd>
               <Link
                 href={`/country/${city.countryCode.toLowerCase()}`}
-                className="text-accent underline underline-offset-2"
+                className="text-accent hover:text-accent-hover"
               >
                 {country}
               </Link>
             </dd>
           </div>
-          <div className="flex justify-between gap-4 px-4 py-2.5">
-            <dt className="text-muted">{t("iana")}</dt>
+          <div>
+            <dt>{t("iana")}</dt>
             <dd className="chrono">{city.timeZone}</dd>
           </div>
-          <div className="flex justify-between gap-4 px-4 py-2.5">
-            <dt className="text-muted">{t("utcOffset")}</dt>
+          <div>
+            <dt>{t("utcOffset")}</dt>
             <dd className="chrono">UTC {facts.offsetLabel}</dd>
           </div>
-          <div className="flex justify-between gap-4 px-4 py-2.5">
-            <dt className="text-muted">{t("dst")}</dt>
+          <div>
+            <dt>{t("dst")}</dt>
             <dd>{dstAnswer}</dd>
           </div>
           {facts.nextDstMs ? (
-            <div className="flex justify-between gap-4 px-4 py-2.5">
-              <dt className="text-muted">{t("nextDstLabel")}</dt>
+            <div>
+              <dt>{t("nextDstLabel")}</dt>
               <dd className="chrono">{formatDstDate(facts.nextDstMs, city.timeZone, locale)}</dd>
             </div>
           ) : null}
@@ -199,7 +197,7 @@ export default async function CityPage({ params }: Props) {
         {pairs.length > 0 && (
           <section className="mt-8">
             <h2 className="mb-3 text-base font-semibold text-gradient">{t("convertersTitle")}</h2>
-            <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+            <ul className="flex flex-wrap gap-1.5">
               {pairs.map(([a, b]) => {
                 const ca = CITY_BY_ID[a];
                 const cb = CITY_BY_ID[b];
@@ -209,7 +207,7 @@ export default async function CityPage({ params }: Props) {
                   <li key={`${a}--${b}`}>
                     <Link
                       href={`/time-converter/${a}--${b}`}
-                      className="text-accent underline underline-offset-2 hover:text-accent-hover"
+                      className="link-chip"
                     >
                       {la} ↔ {lb}
                     </Link>
@@ -225,12 +223,12 @@ export default async function CityPage({ params }: Props) {
             <h2 className="mb-3 text-base font-semibold text-gradient">
               {t("moreInCountry", { country })}
             </h2>
-            <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+            <ul className="flex flex-wrap gap-1.5">
               {siblings.map((c) => (
                 <li key={c.id}>
                   <Link
                     href={`/time/${c.id}`}
-                    className="text-accent underline underline-offset-2 hover:text-accent-hover"
+                    className="link-chip"
                   >
                     {localCityName(loc, c)}
                   </Link>
@@ -242,11 +240,11 @@ export default async function CityPage({ params }: Props) {
 
         <section className="mt-10">
           <h2 className="mb-3 text-base font-semibold text-gradient">{t("faqTitle")}</h2>
-          <ul className="divide-y divide-line">
+          <ul>
             {faqItems.map((item) => (
-              <li key={item.q} className="py-3">
-                <p className="font-medium text-ink">{item.q}</p>
-                <p className="mt-1 text-sm leading-relaxed text-muted">{item.a}</p>
+              <li key={item.q} className="faq-card">
+                <p className="faq-q">{item.q}</p>
+                <p className="faq-a">{item.a}</p>
               </li>
             ))}
           </ul>

@@ -54,7 +54,7 @@ export default function DragHint() {
     <div
       role="note"
       data-testid="drag-hint"
-      className="mx-3 mb-2 flex items-center gap-2.5 rounded-md border border-line bg-surface-inset px-3 py-2 md:mx-4"
+      className="hud-frame mx-3 mb-2 mt-2 flex items-center gap-2.5 px-3 py-2.5 md:mx-4"
     >
       <IconDrag className="h-4 w-4 shrink-0 text-accent" aria-hidden />
       <p className="min-w-0 flex-1 text-[13px] leading-snug text-muted">

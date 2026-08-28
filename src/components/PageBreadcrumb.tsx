@@ -6,7 +6,7 @@ export default function PageBreadcrumb({
   items: Array<{ href?: string; label: string }>;
 }) {
   return (
-    <nav aria-label="Breadcrumb" className="mb-4 text-[12px] text-muted">
+    <nav aria-label="Breadcrumb" className="mb-5 text-[12px] text-muted">
       <ol className="flex flex-wrap items-center gap-1.5">
         {items.map((it, i) => (
           <li key={`${it.label}-${i}`} className="flex items-center gap-1.5">

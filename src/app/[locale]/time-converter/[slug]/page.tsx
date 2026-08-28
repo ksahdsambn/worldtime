@@ -170,15 +170,13 @@ export default async function LandingPage({ params }: Props) {
   ];
 
   return (
-    <div className="liquid-glass-backdrop min-h-screen">
+    <div className="relative z-[1] min-h-screen">
       <ContentHeader locale={locale} />
       <main className="site-shell px-4 py-10 text-ink sm:py-16">
         <PageBreadcrumb items={crumbs} />
         <header className="animate-fade-up mb-8">
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
-            {pairKind}
-          </p>
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-[32px]">
+          <p className="page-kicker">{pairKind}</p>
+          <h1 className="page-title">
             {labels.a} <span className="text-gradient">↔</span> {labels.b}
           </h1>
 
@@ -234,11 +232,11 @@ export default async function LandingPage({ params }: Props) {
         <Reveal className="mt-10" delay={60}>
           <section>
             <h2 className="mb-3 text-base font-semibold text-gradient">{t("faqTitle")}</h2>
-            <ul className="divide-y divide-line">
+            <ul>
               {faqItems.map((item) => (
-                <li key={item.q} className="py-3">
-                  <p className="font-medium text-ink">{item.q}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted">{item.a}</p>
+                <li key={item.q} className="faq-card">
+                  <p className="faq-q">{item.q}</p>
+                  <p className="faq-a">{item.a}</p>
                 </li>
               ))}
             </ul>
@@ -249,13 +247,10 @@ export default async function LandingPage({ params }: Props) {
           <Reveal className="mt-10" delay={90}>
             <section>
               <h2 className="mb-3 text-base font-semibold text-gradient">{t("relatedCitiesTitle")}</h2>
-              <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+              <ul className="flex flex-wrap gap-1.5">
                 {relatedCities.map((item) => (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-accent underline underline-offset-2 hover:text-accent-hover"
-                    >
+                    <Link href={item.href} className="link-chip">
                       {item.label}
                     </Link>
                   </li>
@@ -269,12 +264,12 @@ export default async function LandingPage({ params }: Props) {
           <section>
             <h2 className="mb-3 text-base font-semibold text-gradient">{t("relatedTitle")}</h2>
             <nav>
-              <ul className="flex flex-wrap gap-x-5 gap-y-1.5">
+              <ul className="flex flex-wrap gap-1.5">
                 {relatedConverterLinks(slug, locale as AppLocale).map((item) => (
                   <li key={item.slug}>
                     <Link
                       href={`/time-converter/${item.slug}`}
-                      className="text-accent underline underline-offset-2 hover:text-accent-hover"
+                      className="link-chip"
                     >
                       {item.label}
                     </Link>
