@@ -103,6 +103,15 @@ describe("任务卡片无障碍结构（第三期）", () => {
     expect(
       container.querySelectorAll('[role="button"]'),
     ).toHaveLength(0);
+
+    // 四卡均为液态玻璃面板；标题/正文走独立 copy 槽（CSS 居中，与 emptyHeadline 对齐）
+    for (const card of [clock, overlap, quickLocal, finance]) {
+      expect(card?.classList.contains("liquid-glass")).toBe(true);
+      expect(card?.classList.contains("liquid-glass--hover")).toBe(true);
+      expect(card?.querySelector(".task-card__copy")).toBeTruthy();
+      expect(card?.querySelector(".task-card__title")).toBeTruthy();
+      expect(card?.querySelector(".task-card__body")).toBeTruthy();
+    }
   });
 
   it("点击卡片即选定任务：aria-pressed 同步 + 触发搜索高亮脉冲", async () => {

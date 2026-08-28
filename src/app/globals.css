@@ -104,9 +104,9 @@
     --glass-tint-top-hover: rgba(255, 255, 255, 0.11);
     --glass-tint-bottom-hover: rgba(179, 179, 179, 0.11);
 
-    --glass-rim-top: rgba(255, 255, 255, 0.55);
-    --glass-rim-hairline: rgba(255, 255, 255, 0.12);
-    --glass-rim-bottom: rgba(255, 255, 255, 0.06);
+    --glass-rim-top: rgba(255, 255, 255, 0.72);
+    --glass-rim-hairline: rgba(255, 255, 255, 0.22);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.28);
 
     --glass-border: rgba(30, 33, 45, 0.12);
     --glass-shadow: 0 10px 30px rgba(30, 33, 45, 0.1);
@@ -118,11 +118,11 @@
     --glass-modal-tint: rgba(255, 255, 255, 0.44);
     --glass-scrim: rgba(20, 22, 30, 0.35);
 
-    --glass-mesh-sky: rgba(56, 189, 248, 0.16);
-    --glass-mesh-blue: rgba(37, 99, 235, 0.2);
-    --glass-mesh-amber: rgba(251, 191, 36, 0.16);
-    --glass-mesh-corner-top: rgba(56, 189, 248, 0.06);
-    --glass-mesh-corner-bottom: rgba(37, 99, 235, 0.08);
+    --glass-mesh-sky: rgba(56, 189, 248, 0.26);
+    --glass-mesh-blue: rgba(37, 99, 235, 0.32);
+    --glass-mesh-amber: rgba(251, 191, 36, 0.26);
+    --glass-mesh-corner-top: rgba(56, 189, 248, 0.14);
+    --glass-mesh-corner-bottom: rgba(37, 99, 235, 0.16);
 
     /* —— 发光（Glow）—— 主色/暖色染色外发光，用于交互高亮 —— */
     --glow-accent: rgba(37, 99, 235, 0.35);
@@ -197,9 +197,9 @@
     --glass-tint-top-hover: rgba(255, 255, 255, 0.11);
     --glass-tint-bottom-hover: rgba(179, 179, 179, 0.11);
 
-    --glass-rim-top: rgba(255, 255, 255, 0.5);
-    --glass-rim-hairline: rgba(255, 255, 255, 0.1);
-    --glass-rim-bottom: rgba(255, 255, 255, 0.06);
+    --glass-rim-top: rgba(255, 255, 255, 0.62);
+    --glass-rim-hairline: rgba(255, 255, 255, 0.16);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.2);
 
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
@@ -211,11 +211,11 @@
     --glass-modal-tint: rgba(0, 0, 0, 0.3);
     --glass-scrim: rgba(0, 0, 0, 0.55);
 
-    --glass-mesh-sky: rgba(56, 189, 248, 0.18);
-    --glass-mesh-blue: rgba(37, 99, 235, 0.26);
-    --glass-mesh-amber: rgba(251, 191, 36, 0.2);
-    --glass-mesh-corner-top: rgba(56, 189, 248, 0.14);
-    --glass-mesh-corner-bottom: rgba(37, 99, 235, 0.22);
+    --glass-mesh-sky: rgba(56, 189, 248, 0.28);
+    --glass-mesh-blue: rgba(37, 99, 235, 0.36);
+    --glass-mesh-amber: rgba(251, 191, 36, 0.3);
+    --glass-mesh-corner-top: rgba(56, 189, 248, 0.2);
+    --glass-mesh-corner-bottom: rgba(37, 99, 235, 0.28);
 
     /* 发光：暗色下外发光更显著（「秀场」）*/
     --glow-accent: rgba(59, 130, 246, 0.45);
@@ -557,28 +557,47 @@
     padding-bottom: 0.25rem;
   }
 
-  /* —— 任务卡片（第三期：首用空状态门面）——
-     不透明内容性表面（surface + border 令牌，无玻璃）；选定态由
-     aria-pressed 驱动；键盘可达（原生 button）、焦点环可见。 */
+  /* —— 任务卡片：首用空状态门面 ——
+     panel 层液态玻璃 + 折射（TaskCard 挂 useLiquidGlass）。顶/底高光刻出
+     玻璃厚度，文案与 emptyHeadline 同为居中。子级不铺不透明底，否则折射被盖住。
+     选定态用着色 tint，不用 --surface / --accent-soft 实色。 */
   .task-card {
-    @apply flex items-start gap-3 rounded-lg p-4 text-left;
-    border: 1px solid var(--border);
-    background-color: var(--surface);
-    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 1.15rem 1.5rem;
+    text-align: center;
     cursor: pointer;
-    transition: border-color var(--dur-fast) var(--ease-out-quint),
-      background-color var(--dur-fast) var(--ease-out-quint),
-      box-shadow var(--dur-fast) var(--ease-out-quint);
+    border-radius: var(--glass-radius-lg);
   }
   /* 四卡等分剩余高度。不要给按钮写 height:100%——百分比高度会盖掉 flex stretch。 */
   .task-card-stack {
+    position: relative;
     display: flex;
     flex: 1 1 0%;
     flex-direction: column;
-    gap: 0.75rem;
-    text-align: left;
+    gap: 0.85rem;
+    text-align: center;
+  }
+  /* 卡间/卡后的色斑：玻璃要采到不均匀衬底，顶底长边才看得出折射。 */
+  .task-card-stack::before {
+    content: "";
+    position: absolute;
+    /* 只向上下伸出：左右负 inset 会撑出 site-shell，窄视口出现横向滚动。 */
+    inset: -12% 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(22rem 14rem at 18% 8%, var(--glass-mesh-sky), transparent 72%),
+      radial-gradient(26rem 16rem at 82% 28%, var(--glass-mesh-blue), transparent 70%),
+      radial-gradient(24rem 15rem at 24% 58%, var(--glass-mesh-amber), transparent 72%),
+      radial-gradient(28rem 16rem at 78% 88%, var(--glass-mesh-sky), transparent 70%);
   }
   .task-card-stack > h3 {
+    position: relative;
+    z-index: 1;
     display: flex;
     min-width: 0;
     flex: 1 1 0%;
@@ -588,30 +607,155 @@
     flex: 1 1 auto;
     width: 100%;
   }
-  .task-card:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow-glow);
+  .task-card.liquid-glass {
+    border-radius: var(--glass-radius-lg);
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.2),
+      rgba(255, 255, 255, 0.06) 42%,
+      rgba(179, 179, 179, 0.1)
+    );
+    box-shadow:
+      0 14px 40px rgba(30, 33, 45, 0.12),
+      0 2px 8px rgba(30, 33, 45, 0.05),
+      inset 0 2px 0 rgba(255, 255, 255, 0.92),
+      inset 0 -2px 0 rgba(255, 255, 255, 0.62),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.34),
+      inset 0 28px 36px -18px rgba(255, 255, 255, 0.55),
+      inset 0 -24px 32px -16px rgba(15, 23, 42, 0.14);
+    /* 非 Chromium 回退：大卡 3px 霜不够，顶底会看成实色描边。hook 会覆盖此声明。 */
+    backdrop-filter: blur(16px) saturate(170%);
+    -webkit-backdrop-filter: blur(16px) saturate(170%);
+  }
+  /* 顶缘高光 + 底缘厚度，画在内容之下，避免盖住文案。 */
+  .task-card::before,
+  .task-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .task-card::before {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.62) 0%,
+      rgba(255, 255, 255, 0.18) 12%,
+      transparent 36%
+    );
+  }
+  .task-card::after {
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.42) 0%,
+      rgba(255, 255, 255, 0.12) 8%,
+      rgba(100, 116, 139, 0.12) 18%,
+      transparent 40%
+    );
+  }
+  .task-card > * {
+    position: relative;
+    z-index: 1;
+  }
+  .task-card__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: 34rem;
+  }
+  .task-card__title {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .task-card__body {
+    display: block;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+  }
+  .task-card.liquid-glass--hover:hover {
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.3),
+      rgba(255, 255, 255, 0.1) 42%,
+      rgba(179, 179, 179, 0.14)
+    );
   }
   .task-card:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
   .task-card[aria-pressed="true"] {
-    border-color: var(--accent);
-    background-color: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+    background: linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      color-mix(in srgb, var(--accent) 10%, transparent)
+    );
   }
   .task-card__icon {
-    @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-md;
+    display: flex;
+    height: 2.5rem;
+    width: 2.5rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
     color: var(--accent);
-    background-color: var(--accent-soft);
+    background: color-mix(in srgb, var(--accent) 14%, transparent);
   }
   .task-card[aria-pressed="true"] .task-card__icon {
-    background-color: var(--surface);
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
   }
-  /* 实心图标章：快捷开始卡的「立即执行」分量（对应原主按钮的蓝色权重） */
+  /* 快捷开始卡的「立即执行」分量：仍是玻璃上的着色 wash，不是实心蓝章 */
   .task-card__icon--solid {
-    color: var(--accent-fg);
-    background-color: var(--accent);
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .dark .task-card.liquid-glass {
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.04) 42%,
+      rgba(179, 179, 179, 0.08)
+    );
+    box-shadow:
+      0 18px 44px rgba(0, 0, 0, 0.42),
+      inset 0 2px 0 rgba(255, 255, 255, 0.7),
+      inset 0 -2px 0 rgba(255, 255, 255, 0.28),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+      inset 0 28px 36px -18px rgba(255, 255, 255, 0.2),
+      inset 0 -24px 32px -16px rgba(0, 0, 0, 0.42);
+  }
+  .dark .task-card::before {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.08) 14%,
+      transparent 38%
+    );
+  }
+  .dark .task-card::after {
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.16) 0%,
+      rgba(255, 255, 255, 0.05) 8%,
+      rgba(0, 0, 0, 0.28) 18%,
+      transparent 42%
+    );
+  }
+  .dark .task-card.liquid-glass--hover:hover {
+    background: linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.18),
+      rgba(255, 255, 255, 0.07) 42%,
+      rgba(179, 179, 179, 0.12)
+    );
   }
 
   /* —— 任务卡片引导：搜索框高亮脉冲（第三期）—— */
@@ -769,6 +913,8 @@
       radial-gradient(40rem 32rem at 42% 38%, var(--glass-mesh-blue), transparent 60%),
       radial-gradient(34rem 30rem at 62% 52%, var(--glass-mesh-amber), transparent 62%),
       radial-gradient(38rem 34rem at 48% 66%, var(--glass-mesh-sky), transparent 62%),
+      radial-gradient(36rem 24rem at 22% 16%, var(--glass-mesh-sky), transparent 68%),
+      radial-gradient(32rem 22rem at 78% 82%, var(--glass-mesh-amber), transparent 68%),
       radial-gradient(60rem 40rem at 12% -10%, var(--glass-mesh-corner-top), transparent 60%),
       radial-gradient(50rem 36rem at 95% 110%, var(--glass-mesh-corner-bottom), transparent 60%);
   }

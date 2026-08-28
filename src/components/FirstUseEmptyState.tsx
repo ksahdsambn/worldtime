@@ -1,5 +1,6 @@
 "use client";
 
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useWorldTimeStore } from "@/store/useWorldTimeStore";
@@ -8,13 +9,30 @@ import { localStarterCities, financeStarterCities } from "@/data/starterSets";
 import { localCityName } from "@/lib/cityName";
 import type { CityRecord } from "@/lib/types";
 import type { AppLocale } from "@/i18n/routing";
+import { useLiquidGlass, type LiquidGlassConfig } from "@/lib/useLiquidGlass";
 import { IconClock, IconGrid, IconHome, IconGlobe } from "./icons";
+
+/**
+ * 首页大卡比顶栏更宽更高，默认 shader 的 1–2px 边带在顶/底长边上几乎看不见。
+ * 只抬这四张卡的边缘/涟漪强度，全局 GLASS_PRESET 不动。
+ */
+const TASK_CARD_GLASS: Partial<LiquidGlassConfig> = {
+  edgeIntensity: 0.05,
+  rimIntensity: 0.085,
+  edgeDistance: 0.16,
+  rimDistance: 0.42,
+  cornerBoost: 0.16,
+  rippleEffect: 0.58,
+  blurRadius: 4,
+};
 
 /**
  * 首用空状态：四张任务/快捷卡。
  *
  * pendingMode 写入 store，addPlace 消费后进入所选视图。
  * 标题必须是 h3>button：卡片进文档大纲，同时保留原生键盘操作。
+ * 进场用 fade-in 而非 scale-in：父级残留 transform 会自成 containing
+ * block，把卡片上的 backdrop-filter 折射采空。
  */
 export default function FirstUseEmptyState() {
   const t = useTranslations("Onboarding");
@@ -41,7 +59,7 @@ export default function FirstUseEmptyState() {
   const tasks: Array<{
     mode: ViewMode;
     testId: string;
-    icon: React.ReactNode;
+    icon: ReactNode;
     title: string;
     body: string;
   }> = [
@@ -63,7 +81,7 @@ export default function FirstUseEmptyState() {
 
   return (
     <div className="site-shell relative flex flex-1 flex-col px-4 py-4 md:py-5">
-      <div className="animate-scale-in relative flex w-full flex-1 flex-col gap-4 text-center">
+      <div className="animate-fade-in relative flex w-full flex-1 flex-col gap-4 text-center">
         <div className="shrink-0 space-y-2">
           <span className="brand-orbit mx-auto">
             <Image
@@ -85,64 +103,48 @@ export default function FirstUseEmptyState() {
         <div className="task-card-stack">
           {tasks.map((task) => (
             <h3 key={task.mode}>
-              <button
-                type="button"
+              <TaskCard
                 aria-pressed={pendingMode === task.mode}
                 onClick={() => chooseTask(task.mode)}
                 data-testid={task.testId}
-                className="task-card w-full"
               >
                 <span className="task-card__icon" aria-hidden>
                   {task.icon}
                 </span>
-                <span className="min-w-0 flex-1 space-y-1">
-                  <span className="block text-[15px] font-semibold leading-snug text-ink">
-                    {task.title}
-                  </span>
-                  <span className="block text-[13px] leading-relaxed text-muted">
-                    {task.body}
-                  </span>
+                <span className="task-card__copy">
+                  <span className="task-card__title">{task.title}</span>
+                  <span className="task-card__body">{task.body}</span>
                 </span>
-              </button>
+              </TaskCard>
             </h3>
           ))}
 
           <h3>
-            <button
-              type="button"
+            <TaskCard
               onClick={() => apply(localStarterCities())}
               data-testid="quick-start-local"
-              className="task-card w-full"
             >
               <span className="task-card__icon task-card__icon--solid" aria-hidden>
                 <IconHome className="h-5 w-5" />
               </span>
-              <span className="min-w-0 flex-1 space-y-1">
-                <span className="block text-[15px] font-semibold leading-snug text-ink">
-                  {t("startLocal")}
-                </span>
-                <span className="block text-[13px] leading-relaxed text-muted">
-                  {t("startLocalBody")}
-                </span>
+              <span className="task-card__copy">
+                <span className="task-card__title">{t("startLocal")}</span>
+                <span className="task-card__body">{t("startLocalBody")}</span>
               </span>
-            </button>
+            </TaskCard>
           </h3>
 
           <h3>
-            <button
-              type="button"
+            <TaskCard
               onClick={() => apply(financeStarterCities())}
               data-testid="preset-finance"
-              className="task-card w-full"
             >
               <span className="task-card__icon" aria-hidden>
                 <IconGlobe className="h-5 w-5" />
               </span>
-              <span className="min-w-0 flex-1 space-y-1">
-                <span className="block text-[15px] font-semibold leading-snug text-ink">
-                  {t("presetFinance")}
-                </span>
-                <span className="block text-[13px] leading-relaxed text-muted">
+              <span className="task-card__copy">
+                <span className="task-card__title">{t("presetFinance")}</span>
+                <span className="task-card__body">
                   {financeCities.map((c, i) => (
                     <span key={c.id}>
                       <span aria-hidden>{c.flag}</span>{" "}
@@ -154,10 +156,28 @@ export default function FirstUseEmptyState() {
                   ))}
                 </span>
               </span>
-            </button>
+            </TaskCard>
           </h3>
         </div>
       </div>
     </div>
+  );
+}
+
+function TaskCard({
+  className,
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement>) {
+  const glassRef = useLiquidGlass(TASK_CARD_GLASS);
+  return (
+    <button
+      {...props}
+      ref={glassRef}
+      type="button"
+      className={`task-card liquid-glass liquid-glass--hover w-full${className ? ` ${className}` : ""}`}
+    >
+      {children}
+    </button>
   );
 }
