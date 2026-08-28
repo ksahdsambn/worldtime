@@ -3235,3 +3235,57 @@ PORT=8080 docker compose up -d # 自定义宿主端口
   .gitignore）+ docs 本笔（progress.md），已按用户要求推送 GitHub main；
   `deploy.py` / `i18n-translation-prompt.md` 已入 .gitignore 不再出现在
   git status。
+
+### 第 57 轮：整站居中栏 + 首页四卡单列铺满第一屏，两轮审查修复后合入 main（2026-08-28）
+
+> 时间：2026-08-28
+> 范围：按用户两点改布局——①首页四张任务/快捷卡改为一行一张，与标题一起铺满
+> 顶栏到页脚的第一屏；②整站（顶栏玻璃、正文、页脚、工作区、内容页）收到与页脚
+> 同宽的居中栏（`--site-max: 64rem` / `max-w-5xl`），两侧露出画布。随后对未提交
+> 改动做两轮独立审查并修复，测试全绿后合入 `main` 并推送 GitHub。
+
+#### 改动清单
+
+| # | 文件 | 改动 |
+| --- | --- | --- |
+| 1 | `src/app/globals.css` | 新增 `--site-max` / `.site-shell`；`.task-card-stack` 单列等分剩余高度；`.wt-grid--fit` 1 天桌面均分 24 列（手机恢复 2.5rem + 横滚）；`header .liquid-glass--bar` 发丝线 |
+| 2 | `src/components/FirstUseEmptyState.tsx` | 四卡单列铺满第一屏（`.task-card-stack` + `flex-1`） |
+| 3 | `src/components/GlassHeader.tsx` | sticky 全宽包装 + 内层 `.site-shell` 玻璃；`safe-top` 挂在玻璃面上 |
+| 4 | `src/app/[locale]/(home)/page.tsx` | 顶栏品牌封顶 + 标语截断 + `md:flex-nowrap`；去掉顶栏 UTC（64rem 壳放不下 viewport-`xl` 铬） |
+| 5 | `src/components/ContentHeader.tsx` 与 about/faq/privacy/terms/city/country/converter `page.tsx` | `max-w-2xl`/`max-w-5xl` → `.site-shell`，与页脚同宽 |
+| 6 | `src/components/{Workspace,TimeCards,GridToolbar,SelectionBar}.tsx` | 工作区/时间卡/工具条随壳；选区栏恢复 `px-3` 内边距 |
+| 7 | `src/components/TimeGrid.tsx` | 1 天 `wt-grid--fit` + colgroup；12h 紧凑小时数字（完整 `h a` 走 `title`）；冻结列 `title` |
+| 8 | `src/components/LiveUtcClock.tsx` | 删除（已无引用） |
+| 9 | `src/components/TimeControlBar.tsx` | 去掉对已删 UTC 钟的注释对照 |
+
+#### 两轮审查与修复
+
+**第一轮**（2 bug / 5 suggestion / 0 nit）：
+- **bug** 默认 1 天网格 `min-width: 2.5rem × 24` + 冻结列撑出 64rem 壳，出现横滚。修复：`.wt-grid--fit` + `table-layout: fixed` + colgroup。
+- **bug** 顶栏 `md:shrink-0` 品牌 + `md:max-w-md` 搜索 + viewport `xl` UTC 在 992px 内换行，吃掉第一屏高度。修复：品牌封顶、标语截断、搜索 `flex-1`、去掉 UTC、`md:flex-nowrap`。
+- **suggestion** 长文行长：用户明确要求正文与页脚同宽，**不收** `max-w-prose`。
+- **suggestion** sticky + `max-width` + auto margin 贴顶后可能跳到左槽。修复：sticky 全宽、玻璃走内层 `.site-shell`；CSS `header.liquid-glass--bar` 改为 `header .liquid-glass--bar` 以免发丝线脱落。
+- **suggestion** 选区栏丢了 `px-3`、任务卡 `items-center` 在拉高后字悬空、JSDoc 过长：分别恢复内边距、改 `items-start`、压缩注释。
+
+**第二轮**（2 bug / 4 suggestion / 1 nit）：
+- **bug** `--fit` 在 12h 下裁切 `12 AM`，手机上把小时格压到约 10px，且 `overflow: hidden` 裁掉 now 线；手机自动滚到「现在」列失效。修复：1 天 12h 只画小时数字（完整 `h a` 走 `title`）；`max-width: 767px` 恢复 `table-layout: auto` + `min-width: 2.5rem`；网格外包 `min-w-0` 让 `hud-frame` 的 `overflow-x-auto` 真正约束宽度。
+- **bug** `safe-top` 落在透明 sticky 包装上，刘海屏状态栏带不再被霜化。修复：`safe-top` 挪到内层玻璃。
+- **suggestion** ContentHeader 截断标语缺 `title`、1 天冻结列城市名缺 `title`、`LiveUtcClock` 死代码、叙述性注释：已补 / 已删 / 已收。
+- **nit** `--fit` 的 `min-width: 0` 写在基底 `2.5rem` 之前被盖掉。覆盖规则改到基底之后。
+
+#### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 无警告无错误 |
+| `npm test`（vitest） | ✅ 282/282 |
+| `npm run build` | ✅ 1056 静态页 |
+| 生产冒烟（`next start :3101`） | ✅ `/zh` `/zh/about` `/en/time/cn-beijing` `/zh/faq` `/zh/time-converter/cn-beijing--us-new-york` 均 200，含 `.site-shell`，h1=1 |
+| 浏览器断言（puppeteer-core + Chrome，next dev :3010） | ✅ 空首页 1440：四卡等宽单列、顶栏/页脚 1024 对齐、顶栏单行、无 UTC、卡底距页脚 20px；390 无文档横溢；1 天 24 列桌面无横滚（12h 数字未裁切，`title="12 AM"`）；手机 1 天 cell=40px 且网格内横滚；任务卡 `aria-pressed` + 搜索聚焦 + 快捷开始进时钟；ru 顶栏单行；关于页顶栏/正文对齐且标语有 `title` |
+
+#### 收尾
+
+- 全程直接在 `main` 工作（与第 42–56 轮同惯例），无独立功能分支，无需合并。
+- 临时验证脚本已删除；`:3010` 开发服与 `:3101` 冒烟服本轮结束后停止。未触碰占用中的 `:3000`。
+- 本轮分 2 个提交：feat `deaf3a3`（布局/网格/顶栏，19 文件）+ docs 本笔（progress.md），推送 `origin/main`。
