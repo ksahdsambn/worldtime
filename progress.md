@@ -3289,3 +3289,47 @@ PORT=8080 docker compose up -d # 自定义宿主端口
 - 全程直接在 `main` 工作（与第 42–56 轮同惯例），无独立功能分支，无需合并。
 - 临时验证脚本已删除；`:3010` 开发服与 `:3101` 冒烟服本轮结束后停止。未触碰占用中的 `:3000`。
 - 本轮分 2 个提交：feat `deaf3a3`（布局/网格/顶栏，19 文件）+ docs 本笔（progress.md），推送 `origin/main`。
+
+### 第 58 轮：首页任务卡文案居中 + iOS 26 液态玻璃，审查修复后合入 main（2026-08-29）
+
+> 时间：2026-08-29
+> 范围：按用户截图反馈两点改首页空状态四卡——①文案全部居中，与标题「找到一个大家都合适的会议时间」同一中轴；②四张卡从实色白底改为 iOS 26 液态玻璃（顶/底长边要看得出折射与厚度，不能再看成描边矩形）。随后审查未提交改动并修复 3 处，测试全绿后合入 `main` 并推送 GitHub。
+
+#### 改动清单
+
+| # | 文件 | 改动 |
+| --- | --- | --- |
+| 1 | `src/components/FirstUseEmptyState.tsx` | 抽出 `TaskCard`：`liquid-glass` + `useLiquidGlass(TASK_CARD_GLASS)`（只抬这四张卡的边缘/涟漪，全局 `GLASS_PRESET` 不动）；图标在上、标题/正文走 `.task-card__copy` 居中槽；进场 `animate-scale-in` → `animate-fade-in`（父级残留 `transform` 会自成 containing block，把折射采空） |
+| 2 | `src/app/globals.css` | `.task-card` 改为 panel 层玻璃：顶/底 inset 高光 + 厚度阴影、`::before`/`::after` 高光带画在文案之下；选定态用着色 tint 不用 `--surface`；图标改为 accent wash（不再实心蓝章）；环境网格略加强并在卡堆加纵向色斑；全局 rim token 略提亮（顶栏等同受惠） |
+| 3 | `tests/components/uxRedesign.test.tsx` | 结构断言锁定四卡带 `liquid-glass` / `liquid-glass--hover`，以及 `__copy` / `__title` / `__body` 槽 |
+
+#### 设计说明
+
+- 这四张卡是首用 CTA，不是逐字读数的表格/网格；用户明确要求液态玻璃。SEO 页脚、时钟时间卡、对照表仍不透明（原则 6 的阅读面边界未破）。
+- `TASK_CARD_GLASS` 把 `edgeDistance` / `rimDistance` 降到约 0.16 / 0.42，让顶/底长边的折射带从 1–2px 扩到可见的玻璃厚度；`warp` 仍关，中间文案不变形。
+- 子级不铺不透明底：选定态、图标章都是 `color-mix` wash，否则折射被盖住。
+
+#### 审查与修复
+
+审查未提交 diff（3 文件）后修 3 处，无 P0/P1：
+
+| # | 级别 | 问题 | 修复 |
+| --- | --- | --- | --- |
+| 1 | **P2** | `.task-card-stack::before` 用 `inset: -12% -8%`，左右负 inset 会撑出 `.site-shell`，窄视口可能横向滚动 | 改为 `inset: -12% 0`（只向上下伸出色斑） |
+| 2 | **P2** | `TaskCard` 先写 `ref`/`type` 再 `{...props}`，调用方若传入 `type`/`ref` 会盖掉玻璃 hook 与 button 语义 | 改为先 `{...props}`，再锁定 `ref={glassRef}` `type="button"` |
+| 3 | **P3** | 测试里对 `.task-card-stack` 的 `classList.contains` 恒真 | 删掉；改为逐卡断言 `__copy` / `__title` / `__body` 存在 |
+
+#### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `npm test`（vitest） | ✅ 282/282（21 文件） |
+| `npm run type-check` | ✅ 0 错误 |
+| `npm run lint` | ✅ 0 警告 / 0 错误 |
+| 浏览器（puppeteer-core + Chrome，next dev :3010） | ✅ 空首页 1440/390 浅色 + 1440 深色：四卡 `text-align:center` 与标题对齐、`backdrop-filter: url(#liquid-glass-*)` 折射已挂、顶/底 inset 高光可见、色斑从玻璃透出；点 overlap 卡 `aria-pressed=true` 并聚焦搜索；快捷开始加 3 城进入时钟；关于页顶栏玻璃仍在。SEO 页脚保持不透明 |
+
+#### 收尾
+
+- 全程直接在 `main` 工作（与第 42–57 轮同惯例），无独立功能分支，无需合并。
+- 临时探测脚本与截图在 `output/`（已 gitignore）；`:3010` 开发服本轮结束后停止。未触碰占用中的 `:3000`。
+- 本轮分 2 个提交：feat `c9fd9e8`（任务卡居中 + 液态玻璃，3 文件）+ docs 本笔（progress.md），推送 `origin/main`。
