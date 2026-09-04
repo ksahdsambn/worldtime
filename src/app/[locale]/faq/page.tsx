@@ -52,6 +52,7 @@ export default async function FaqPage({ params }: Props) {
       <ContentHeader locale={locale} />
       <main className="site-shell px-4 py-10 text-ink sm:py-16">
         <PageBreadcrumb
+          locale={locale}
           items={[
             { href: "/", label: t("breadcrumbHome") },
             { label: t("title") },

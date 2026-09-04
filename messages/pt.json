@@ -6,6 +6,10 @@
     "homeDescription": "Relógio mundial e conversor de fusos horários gratuito. Compare o horário local entre cidades, planeje reuniões internacionais e organize sua agenda entre fusos com suporte automático ao horário de verão.",
     "openApp": "Abrir relógio mundial"
   },
+  "A11y": {
+    "site": "Site",
+    "breadcrumb": "Estrutura de navegação"
+  },
   "Common": {
     "add": "Adicionar",
     "delete": "Excluir",
@@ -105,8 +109,8 @@
     "isAhead": "à frente",
     "lags": "atrás",
     "vs": "vs",
-    "aheadNote": "está à frente (mais tarde)",
-    "behindNote": "está atrás (mais cedo)",
+    "aheadNote": "à frente (mais tarde)",
+    "behindNote": "atrás (mais cedo)",
     "bNote": "{b} está {dir} em relação a {a}.",
     "currentOffsetNote": "(diferença atual; pode variar nos dias de mudança de horário de verão)",
     "comparisonNote": "Comparação hora a hora de um dia local completo (24 horas).",
@@ -127,7 +131,7 @@
       },
       {
         "q": "Qual o melhor horário para uma reunião entre {a} e {b}?",
-        "a": "{overlap} Também pode abrir o relógio mundial e arrastar uma janela personalizada."
+        "a": "{overlap} Você também pode abrir o relógio mundial e arrastar uma janela personalizada entre ambas as cidades."
       }
     ],
     "relatedTitle": "Conversores de fuso horário relacionados",
@@ -280,8 +284,8 @@
     "dstYes": "Atualmente no horário de verão.",
     "dstNo": "Não está no horário de verão agora.",
     "noDst": "Este fuso não observa horário de verão.",
-    "nextDst": "Próxima mudança de DST: {date}.",
-    "nextDstLabel": "Próxima mudança de DST",
+    "nextDst": "Próxima mudança de horário de verão: {date}.",
+    "nextDstLabel": "Próxima mudança de horário de verão",
     "country": "País",
     "workHours": "Horário de trabalho típico",
     "workHoursBody": "09:00–18:00 hora local em {city}.",

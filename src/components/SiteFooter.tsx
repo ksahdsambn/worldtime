@@ -13,10 +13,11 @@ export default async function SiteFooter({
   current?: FooterCurrent;
 }) {
   const t = await getTranslations({ locale, namespace: "Seo" });
+  const tA11y = await getTranslations({ locale, namespace: "A11y" });
   return (
     <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1.5 text-sm text-muted">
       <nav
-        aria-label="Site"
+        aria-label={tA11y("site")}
         className="flex flex-wrap items-baseline gap-x-5 gap-y-1.5"
       >
         <Link

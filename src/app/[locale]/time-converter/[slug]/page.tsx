@@ -173,7 +173,7 @@ export default async function LandingPage({ params }: Props) {
     <div className="relative z-[1] min-h-screen">
       <ContentHeader locale={locale} />
       <main className="site-shell px-4 py-10 text-ink sm:py-16">
-        <PageBreadcrumb items={crumbs} />
+        <PageBreadcrumb locale={locale} items={crumbs} />
         <header className="animate-fade-up mb-8">
           <p className="page-kicker">{pairKind}</p>
           <h1 className="page-title">

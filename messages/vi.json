@@ -6,6 +6,10 @@
     "homeDescription": "Đồng hồ thế giới và trình chuyển đổi múi giờ miễn phí. So sánh giờ địa phương giữa các thành phố, lên lịch họp quốc tế và sắp xếp thời gian biểu giữa các múi giờ với hỗ trợ giờ mùa hè tự động.",
     "openApp": "Mở đồng hồ thế giới"
   },
+  "A11y": {
+    "site": "Trang web",
+    "breadcrumb": "Điều hướng định vị"
+  },
   "Common": {
     "add": "Thêm",
     "delete": "Xoá",
@@ -253,7 +257,7 @@
     "legendTitle": "Chú giải màu",
     "shortcutsTitle": "Phím tắt",
     "shortcutDelete": "Xoá thành phố chính",
-    "shortcutEscape": "Xóa vùng chọn",
+    "shortcutEscape": "Xoá vùng chọn",
     "close": "Đóng"
   },
   "Errors": {
@@ -280,8 +284,8 @@
     "dstYes": "Đang ở giờ mùa hè.",
     "dstNo": "Hiện không ở giờ mùa hè.",
     "noDst": "Múi giờ này không dùng giờ mùa hè.",
-    "nextDst": "Lần đổi DST tiếp theo: {date}.",
-    "nextDstLabel": "Lần đổi DST tiếp theo",
+    "nextDst": "Lần đổi giờ mùa hè tiếp theo: {date}.",
+    "nextDstLabel": "Lần đổi giờ mùa hè tiếp theo",
     "country": "Quốc gia",
     "workHours": "Giờ làm việc thông thường",
     "workHoursBody": "09:00–18:00 giờ địa phương ở {city}.",
@@ -353,7 +357,7 @@
         "heading": "Dữ liệu lưu trên thiết bị của bạn",
         "paragraphs": [
           "Các thành phố bạn thêm, thành phố gốc, định dạng giờ, cài đặt giờ làm việc, vùng đang chọn và giao diện được lưu trong bộ nhớ cục bộ của trình duyệt để khôi phục lưới ở lần truy cập sau.",
-          "Dữ liệu này ở lại trên thiết bị của bạn. Xóa dữ liệu trang trong trình duyệt sẽ xóa tất cả."
+          "Dữ liệu này ở lại trên thiết bị của bạn. Xoá dữ liệu trang trong trình duyệt sẽ xoá tất cả."
         ]
       },
       {
@@ -367,7 +371,7 @@
         "heading": "Cookie",
         "paragraphs": [
           "WorldTime không hiển thị quảng cáo, không nhúng script phân tích và không chứa trình theo dõi của bên thứ ba.",
-          "Cookie duy nhất bạn có thể nhận được là NEXT_LOCALE — một cookie kỹ thuật nhỏ nhớ lựa chọn ngôn ngữ của bạn. Nó không chứa thông tin định danh cá nhân và có thể xóa bằng cách xóa cookie của trang này."
+          "Cookie duy nhất bạn có thể nhận được là NEXT_LOCALE — một cookie kỹ thuật nhỏ nhớ lựa chọn ngôn ngữ của bạn. Nó không chứa thông tin định danh cá nhân và có thể xoá bằng cách xoá cookie của trang này."
         ]
       },
       {
@@ -402,7 +406,7 @@
     "next": "Sau",
     "day1": "1 ngày",
     "day7": "7 ngày",
-    "viewOptions": "Tùy chọn hiển thị"
+    "viewOptions": "Tuỳ chọn hiển thị"
   },
   "Modes": {
     "clock": "Đồng hồ",

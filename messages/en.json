@@ -6,6 +6,10 @@
     "homeDescription": "Free world clock and time zone converter. Compare local time across cities, plan international meetings, and schedule across time zones with automatic daylight saving support.",
     "openApp": "Open world clock"
   },
+  "A11y": {
+    "site": "Site",
+    "breadcrumb": "Breadcrumb"
+  },
   "Common": {
     "add": "Add",
     "delete": "Delete",
@@ -105,8 +109,8 @@
     "isAhead": "is ahead",
     "lags": "lags",
     "vs": "vs",
-    "aheadNote": "is ahead (later)",
-    "behindNote": "is behind (earlier)",
+    "aheadNote": "ahead (later)",
+    "behindNote": "behind (earlier)",
     "bNote": "{b} is {dir} relative to {a}.",
     "currentOffsetNote": "(current offset; may differ on DST transition days)",
     "comparisonNote": "Hour-by-hour comparison for a full local day (24 hours).",

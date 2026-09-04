@@ -6,6 +6,10 @@
     "homeDescription": "Horloge mondiale et convertisseur de fuseaux horaires gratuits. Comparez l'heure locale entre villes, planifiez vos réunions internationales et organisez votre agenda entre fuseaux avec prise en charge automatique de l'heure d'été.",
     "openApp": "Ouvrir l'horloge mondiale"
   },
+  "A11y": {
+    "site": "Site",
+    "breadcrumb": "Fil d'Ariane"
+  },
   "Common": {
     "add": "Ajouter",
     "delete": "Supprimer",
@@ -105,8 +109,8 @@
     "isAhead": "en avance",
     "lags": "en retard",
     "vs": "vs",
-    "aheadNote": "est en avance (plus tard)",
-    "behindNote": "est en retard (plus tôt)",
+    "aheadNote": "en avance (plus tard)",
+    "behindNote": "en retard (plus tôt)",
     "bNote": "{b} est {dir} par rapport à {a}.",
     "currentOffsetNote": "(décalage actuel ; peut différer les jours de passage à l'heure d'été)",
     "comparisonNote": "Comparaison heure par heure sur une journée locale complète (24 h).",
@@ -159,7 +163,7 @@
       },
       {
         "title": "Convertisseur de fuseaux horaires",
-        "desc": "Convertit n'importe quelle heure entre deux villes ou fuseaux et donne le décalage en temps réel."
+        "desc": "Convertissez n'importe quelle heure entre deux villes ou fuseaux et obtenez un décalage mis à jour en temps réel."
       },
       {
         "title": "Planificateur de réunions",
@@ -315,7 +319,7 @@
   },
   "About": {
     "title": "À propos de WorldTime",
-    "metaDescription": "Comment WorldTime calcule l'heure locale, les décalages et l'heure d'été à partir d'IANA — plus fonctions et cas d'usage.",
+    "metaDescription": "Comment WorldTime calcule l'heure locale, les décalages et l'heure d'été à partir d'IANA — ainsi que les fonctionnalités et cas d'usage.",
     "lead": "WorldTime est une horloge mondiale, un convertisseur de fuseaux et un planificateur de réunions gratuits. Le chevauchement se lit d'un coup d'œil — pas de compte, pas de péage.",
     "howTitle": "Calcul des heures",
     "howBody": "Chaque ville est liée à un fuseau IANA. Luxon calcule décalages et dates à l'instant donné. Le navigateur et le HTML pour les robots partagent le même résultat.",
