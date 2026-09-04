@@ -3386,3 +3386,59 @@ R3 未再发现功能性缺陷（假阳性：dev overlay「1 Issue」来自既�
 - 临时探测脚本与截图在 `output/`（已 gitignore）；`:3010` 开发服本轮结束后停止。
 - 本轮分 2 个提交：feat `e4ab9fa`（观测台视觉，33 文件）+ docs 本笔（progress.md），推送 `origin/main`。
 
+### 第 60 轮：全量翻译审查修复（组合句法 bug + 术语/语域统一 + A11y 标签本地化）（2026-09-04）
+
+> 时间：2026-09-04
+> 范围：用户要求审查并修复所有翻译。通读 `messages/` 全部 11 个语言包（216 键 × 11）+ 源码硬编码文案扫描，发现 1 个 EN 源头组合句法 bug、各语言共 40+ 处译文缺陷并全部修复；新增 `A11y` 命名空间（2 键 × 11）并接入仅剩的两处硬编码 aria-label。译文全部经 translator 子代理产出（四批次并行 + 三轮追修），主模型仅做审查定位与应用。
+
+#### Phase 1 审计（结构完整性）
+
+新增 `scripts/i18n-check.cjs`（键对齐 + sameAsEn 检测）与 `scripts/i18n-placeholders.cjs`（ICU 占位符比对）：
+
+| 检查项 | 结果 |
+| --- | --- |
+| 11 文件键对齐（以 en 为基准） | ✅ missing/extra = 0 |
+| ICU 占位符（{a}/{b}/{place}/{abbr}/{date}/{zones}/{n}…） | ✅ 全部一致 |
+| sameAsEn | 全部合理保留（WorldTime 品牌名、语言端词 English、OK/DST/FAQ/vs 国际缩写、法语 minute、西语 no） |
+| 源码硬编码文案扫描 | ❗仅 2 处：`PageBreadcrumb` `aria-label="Breadcrumb"`、`SiteFooter` `aria-label="Site"`（`global-error.tsx` 自带 11 语全量、manifest 为应用级单例属刻意英文） |
+
+#### Phase 2 发现的翻译缺陷与修复（全部经 translator 子代理）
+
+| # | 语言 | 缺陷 | 修复 |
+| --- | --- | --- | --- |
+| 1 | **en（源头 bug）** | `bNote="{b} is {dir} relative to {a}."` 组合 `aheadNote="is ahead (later)"` 渲染出「is is」双动词 | aheadNote/behindNote 去掉前导 be 动词；de「ist ist」/es「está está」/fr「est est」/pt「está está」同源问题一并修复 |
+| 2 | de | `dirAhead="vor"` 有歧义（vor=在…之前=更早，方向可能读反）；`hinkt hinterher` 在 bNote 组合不通 | faq 答句重构为 `"{b} liegt {a} gegenüber {offset} Stunden {dir}."`，dir 改 `voraus`/`zurück`（无歧义） |
+| 3 | ja | `{n} の時間帯` 缺量词（"6 の時間帯” 不合语法）；follow-the-sun 误译为「サンセット引き継ぎ」（日落交接） | 「{n} つのタイムゾーン」；「グローバルサポート・24 時間体制」 |
+| 4 | ko | 夏令时术语三种混用（서머타임/일광 절약 시간/DST）；`{place}는` 对拉丁城市名助词失配 | 全文统一「일광 절약 시간」（徽章 DST）；`{place}은(는)` 中性助词（12 键） |
+| 5 | es | 语域混乱：全文 tú 体混入 usted（puede/Elija/sabe）；`Volver al ahora` 不合语法；`cambio DST` 英文缩写 | 统一 tú 体（4 键）；「Volver a ahora」；「cambio de horario de verano」 |
+| 6 | fr | `Convertit…donne`（三人称）与其余命令式不一致；`About.metaDescription` 尾部「— plus fonctions et cas d'usage」病句 | 改命令式「Convertissez…obtenez」；「— ainsi que les fonctionnalités et cas d'usage」 |
+| 7 | pt | `Também pode`（欧葡无主语）与全文 você 体不一致；`mudança de DST` 缩写 | 「Você também pode abrir…」；「mudança de horário de verão」 |
+| 8 | ru | `vs="и"` 使对照条读成「莫斯科领先和伦敦」；`своё имя` 误指用户本人姓名；三处命令式与陈述式混用；`переход DST` 缩写 | vs 保留（俄语通行）；「Введите название для этого города」；三处改命令式；「переход на летнее время」 |
+| 9 | vi | `Lần đổi DST` 缩写；正字法混用（Common 用 xoá/huỷ/tuỳ，Privacy/Terms 用 xóa/tùy） | 「Lần đổi giờ mùa hè tiếp theo」；统一 xoá/huỷ/tuỳ 风格（4 处） |
+
+新增 `A11y` 命名空间（`site`/`breadcrumb`）11 语言全量：zh 网站导航/面包屑导航 · zh-Hant 網站導航/麵包屑導覽 · ja サイト/パンくずリスト · ko 사이트/이동 경로 · de Seite/Navigationspfad · es Sitio/Ruta de navegación · fr Site/Fil d'Ariane · pt Site/Estrutura de navegação · ru Меню сайта/Хлебные крошки · vi Trang web/Điều hướng định vị。
+
+#### 代码改动（2 组件 + 7 页面）
+
+| # | 文件 | 改动 |
+| --- | --- | --- |
+| 1 | `src/components/PageBreadcrumb.tsx` | 改异步服务端组件，`aria-label` 取 `A11y.breadcrumb`，新增 `locale` prop |
+| 2 | `src/components/SiteFooter.tsx` | `aria-label` 取 `A11y.site` |
+| 3 | 7 个内页（about/faq/privacy/terms/country/time/time-converter） | `<PageBreadcrumb locale={locale} …>` 传入 locale |
+
+#### 过程事件（translator 子代理质量管控）
+
+韩语首轮输出混入汉字（「日光」「吗」）且丢失 `{abbr}` 占位符、次轮返回注释而非译文，第三轮加严约束（禁汉字/占位符强校验/示例句式）后通过；俄语 `A11y.site` 两次截断（«Сайты»/«Сай»），换代理定为 «Меню сайта»；德语首轮将片段键答成整句，从其整句中提取片段。所有最终译文均逐条核对占位符与目标语字符集。
+
+#### 验证
+
+| 检查项 | 结果 |
+| --- | --- |
+| `node scripts/i18n-check.cjs` | ✅ 11 文件 218 键（216+2）全对齐，sameAsEn 均合理 |
+| `node scripts/i18n-placeholders.cjs` | ✅ 全部一致 |
+| `npm run type-check` | ✅ 0 错误 |
+| `npx next lint` | ✅ 0 警告 / 0 错误 |
+| `npm test`（vitest） | ✅ 282/282（21 文件） |
+| `npx next build` | ✅ 成功；503 转换器 + 264 城市页等 SSG 全量预渲染无错误 |
+
+
